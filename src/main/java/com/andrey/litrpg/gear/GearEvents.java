@@ -281,7 +281,16 @@ public final class GearEvents {
         GearData d = GearData.get(left);
         if (d == null || d.unique != null) return;
         var rnd = net.minecraft.util.RandomSource.create(left.hashCode() * 31L + right.getCount());
-        if (right.is(ModItems.ASCENSION_STONE.get()) && d.rarity != Rarity.DIVINE) {
+        if (right.is(ModItems.DIVINE_SPARK.get()) && d.rarity == Rarity.LEGENDARY) {
+            // только Искра Божества превращает легендарный предмет в божественный
+            ItemStack out = left.copy();
+            out.removeTagKey(GearData.TAG);
+            out.resetHoverName();
+            GearGen.apply(out, rnd, d.level, Rarity.DIVINE);
+            event.setOutput(out);
+            event.setCost(30);
+            event.setMaterialCost(1);
+        } else if (right.is(ModItems.ASCENSION_STONE.get()) && d.rarity.ordinal() < Rarity.LEGENDARY.ordinal()) {
             ItemStack out = left.copy();
             out.removeTagKey(GearData.TAG);
             out.resetHoverName();

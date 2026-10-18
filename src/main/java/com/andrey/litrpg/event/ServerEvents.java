@@ -217,6 +217,37 @@ public class ServerEvents {
                 if (dead instanceof GoblinKingEntity) StatsManager.count(p, Title.Counter.GOBLIN_KING, 1);
                 if (dead instanceof LichEntity) StatsManager.count(p, Title.Counter.LICH, 1);
                 StatsManager.count(p, Title.Counter.KILLS, 1);
+                StatsManager.count(p, Title.Counter.BOSSES, 1);
+                if (dead instanceof com.andrey.litrpg.entity.boss.ArchdemonEntity) StatsManager.count(p, Title.Counter.ARCHDEMON, 1);
+                if (dead instanceof com.andrey.litrpg.entity.BossBase boss) {
+                    var dungeon = com.andrey.litrpg.world.Dungeon.byBoss(boss.bossId());
+                    if (dungeon != null) com.andrey.litrpg.rep.RepEvents.bossKilled(p, dungeon.rep);
+                    com.andrey.litrpg.quest.QuestEvents.onBossKill(p, boss.bossId());
+                }
+            }
+            if (dead instanceof com.andrey.litrpg.entity.BossBase boss) {
+                if (boss.getHome() != null && dead.level().getBlockEntity(boss.getHome())
+                        instanceof com.andrey.litrpg.block.BossAltarBlockEntity altar) {
+                    altar.onBossDefeated();
+                }
+                // призванные боссом существа рассыпаются вместе с ним
+                for (var m : dead.level().getEntitiesOfClass(net.minecraft.world.entity.Mob.class, area, boss::isMinion)) {
+                    ((net.minecraft.server.level.ServerLevel) dead.level()).sendParticles(net.minecraft.core.particles.ParticleTypes.POOF,
+                            m.getX(), m.getY() + 0.5, m.getZ(), 8, 0.3, 0.4, 0.3, 0.02);
+                    m.discard();
+                }
+                var server = dead.getServer();
+                if (server != null) {
+                    var killers = dead.level().getEntitiesOfClass(ServerPlayer.class, area);
+                    if (!killers.isEmpty()) {
+                        StringBuilder names = new StringBuilder();
+                        for (ServerPlayer k : killers) names.append(names.length() > 0 ? ", " : "").append(k.getGameProfile().getName());
+                        server.getPlayerList().broadcastSystemMessage(Component.literal("⚔ ").withStyle(ChatFormatting.GOLD)
+                                .append(Component.literal(names.toString()).withStyle(ChatFormatting.YELLOW))
+                                .append(Component.literal(" " + (killers.size() > 1 ? "одолели" : "одолел(а)") + " хранителя: ").withStyle(ChatFormatting.GRAY))
+                                .append(dead.getName().copy().withStyle(ChatFormatting.LIGHT_PURPLE)), false);
+                    }
+                }
             }
             return;
         }

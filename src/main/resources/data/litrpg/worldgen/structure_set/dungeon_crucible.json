@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "litrpg:dungeon_crucible",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 52,
+    "separation": 20,
+    "salt": 812339
+  }
+}

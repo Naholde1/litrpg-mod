@@ -13,7 +13,7 @@ public interface TemplateItem {
 
     default void ensureGear(ItemStack stack, Level level) {
         if (level.isClientSide || GearData.has(stack)) return;
-        Rarity r = GearGen.rollRarity(level.random, 0.2f);
+        Rarity r = GearGen.rollRarity(level.random, 0.2f, false);
         if (r.ordinal() < def().minRarity.ordinal()) r = def().minRarity;
         GearGen.apply(stack, level.random, Math.max(1, def().tier + level.random.nextInt(3) - 1), r);
     }

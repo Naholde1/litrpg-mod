@@ -26,11 +26,12 @@ import java.util.List;
 
 /** Окно персонажа с вкладками: Статус, Навыки, Профессии, Титулы. */
 public class CharacterScreen extends SystemScreen {
-    private static final String[] TABS = {"Статус", "Навыки", "Профессии", "Титулы", "Репутация"};
+    private static final String[] TABS = {"Статус", "Навыки", "Профессии", "Титулы", "Репутация", "Задания"};
 
     private static int tab = 0;
     private int titleScroll = 0;
     private int repScroll = 0;
+    private int questScroll = 0;
     private final List<Hit> hits = new ArrayList<>();
     private Component tooltip;
 
@@ -41,7 +42,7 @@ public class CharacterScreen extends SystemScreen {
     }
 
     public CharacterScreen() {
-        super(Component.literal("Персонаж"), 380, 250);
+        super(Component.literal("Персонаж"), 404, 256);
     }
 
     @Override
@@ -69,6 +70,7 @@ public class CharacterScreen extends SystemScreen {
             case 2 -> professions(g, s, cx, cy, mx, my);
             case 3 -> titles(g, s, cx, cy, mx, my);
             case 4 -> reputation(g, s, cx, cy, mx, my);
+            case 5 -> quests(g, s, cx, cy, mx, my);
         }
 
         if (tooltip != null) g.renderTooltip(font, font.split(tooltip, 220), mx, my);
@@ -301,6 +303,87 @@ public class CharacterScreen extends SystemScreen {
         }
     }
 
+    // ---------------- Задания ----------------
+
+    private void quests(GuiGraphics g, PlayerStats s, int x, int y, int mx, int my) {
+        var log = s.quests();
+        int w = W - 20;
+        int bottom = top + H - 8;
+        // строки: сюжет, заголовок, задания, заголовок, предложения
+        List<Runnable> rows = new ArrayList<>();
+        List<Integer> heights = new ArrayList<>();
+        final int[] cy = {y};
+        if (log.story != null) {
+            var q = log.story;
+            int h = 40 + Math.min(3, font.split(Component.literal(q.desc), w - 12).size()) * 10;
+            heights.add(h + 4);
+            rows.add(() -> {
+                QuestUi.card(g, font, q, x, cy[0], w, true);
+                if (q.type == com.andrey.litrpg.quest.Quest.Type.BOSS) {
+                    questButton(g, mx, my, x + w - 46, cy[0] + 14, 40, 14, "Где?", 0x4FC3F7,
+                            () -> QuestUi.send(com.andrey.litrpg.network.QuestActionPacket.Action.LOCATE, "", q.id));
+                }
+            });
+        } else if (log.storyStep >= com.andrey.litrpg.quest.Story.length()) {
+            heights.add(14);
+            rows.add(() -> g.drawString(font, "✦ Сюжет «Путь Избранного» пройден!", x, cy[0] + 2, UiKit.GOLD, false));
+        }
+        heights.add(14);
+        rows.add(() -> g.drawString(font, "Задания (" + log.active.size() + "/" + com.andrey.litrpg.quest.QuestLog.MAX_ACTIVE
+                + ")  •  выполнено всего: " + log.completed, x, cy[0] + 3, UiKit.GOLD, false));
+        if (log.active.isEmpty()) {
+            heights.add(14);
+            rows.add(() -> g.drawString(font, "Нет заданий. Возьмите поручение ниже или у жителей народов (ПКМ).", x, cy[0] + 2, UiKit.MUTED, false));
+        }
+        for (var q : log.active) {
+            heights.add(42);
+            rows.add(() -> {
+                QuestUi.card(g, font, q, x, cy[0], w - 52, false);
+                int bx = x + w - 48;
+                questButton(g, mx, my, bx, cy[0], 48, 12, "Отказ", 0xE53935,
+                        () -> QuestUi.send(com.andrey.litrpg.network.QuestActionPacket.Action.ABANDON, "", q.id));
+                if (q.type == com.andrey.litrpg.quest.Quest.Type.COLLECT) {
+                    boolean ok = QuestUi.carried(q) >= q.need;
+                    questButton(g, mx, my, bx, cy[0] + 14, 48, 12, "Сдать", ok ? 0x66DD44 : 0x555555,
+                            () -> QuestUi.send(com.andrey.litrpg.network.QuestActionPacket.Action.TURN_IN, "", q.id));
+                }
+                if (q.type == com.andrey.litrpg.quest.Quest.Type.BOSS) {
+                    questButton(g, mx, my, bx, cy[0] + 14, 48, 12, "Где?", 0x4FC3F7,
+                            () -> QuestUi.send(com.andrey.litrpg.network.QuestActionPacket.Action.LOCATE, "", q.id));
+                }
+            });
+        }
+        var offers = log.offers(com.andrey.litrpg.quest.QuestLog.SYSTEM);
+        heights.add(14);
+        rows.add(() -> g.drawString(font, "Поручения Системы (обновляются каждый игровой день)", x, cy[0] + 3, 0xFF8FE3FF, false));
+        for (var q : offers) {
+            heights.add(42);
+            rows.add(() -> {
+                QuestUi.card(g, font, q, x, cy[0], w - 52, false);
+                questButton(g, mx, my, x + w - 48, cy[0] + 12, 48, 14, "Принять", 0x4CAF50,
+                        () -> QuestUi.send(com.andrey.litrpg.network.QuestActionPacket.Action.ACCEPT, com.andrey.litrpg.quest.QuestLog.SYSTEM, q.id));
+            });
+        }
+        questScroll = Math.max(0, Math.min(questScroll, rows.size() - 1));
+        for (int i = questScroll; i < rows.size(); i++) {
+            if (cy[0] + heights.get(i) > bottom + 4) {
+                g.drawString(font, "▼ колесо мыши", x + w - font.width("▼ колесо мыши"), bottom - 8, UiKit.MUTED, false);
+                break;
+            }
+            rows.get(i).run();
+            cy[0] += heights.get(i);
+        }
+        if (questScroll > 0) g.drawString(font, "▲", x + w - 6, y - 10, UiKit.MUTED, false);
+    }
+
+    private void questButton(GuiGraphics g, int mx, int my, int x, int y, int w, int h, String label, int accent, Runnable r) {
+        boolean hov = UiKit.inside(mx, my, x, y, w, h);
+        g.fill(x, y, x + w, y + h, hov ? 0xF0204A30 : 0xE0122636);
+        UiKit.frame(g, x, y, w, h, 0xFF000000 | accent);
+        g.drawString(font, label, x + w / 2 - font.width(label) / 2, y + (h - 8) / 2, 0xFFFFFFFF, false);
+        hits.add(new Hit(x, y, w, h, r));
+    }
+
     // ---------------- ввод ----------------
 
     @Override
@@ -323,6 +406,10 @@ public class CharacterScreen extends SystemScreen {
         }
         if (tab == 4) {
             repScroll -= (int) Math.signum(delta);
+            return true;
+        }
+        if (tab == 5) {
+            questScroll -= (int) Math.signum(delta);
             return true;
         }
         return false;

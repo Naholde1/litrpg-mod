@@ -14,6 +14,10 @@
     },
     {
       "type": "patchouli:text",
+      "text": "$(l)Подземелья и задания:$()$(li)/place structure litrpg:dungeon_crypt$(li)/locate structure litrpg:dungeon_mire$(li)/summon litrpg:minotaur$(li)/litrpg quest step @s 4$(li)/litrpg quest finish @s$(li)/litrpg quest refresh @s"
+    },
+    {
+      "type": "patchouli:text",
       "text": "$(li)/litrpg spawn litrpg:goblin 25 champion$(li)/litrpg spawn minecraft:zombie 10 elite$(li)/litrpg respec @s$(li)/litrpg reset @s$(li)/litrpg codex @s$(li)/litrpg zone$(li)/litrpg bloodmoon"
     }
   ]

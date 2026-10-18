@@ -124,6 +124,7 @@ public final class RepEvents {
             return;
         }
         if (dead instanceof com.andrey.litrpg.entity.GoblinEntity) change(p, Faction.DWARVES, 2);
+        rewardEnemyKill(p, dead);
         // защита поселений рас: монстр убит рядом с их жителями
         if (dead instanceof net.minecraft.world.entity.monster.Enemy) {
             var near = dead.level().getEntitiesOfClass(com.andrey.litrpg.npc.RaceNpcEntity.class, dead.getBoundingBox().inflate(32));
@@ -156,6 +157,73 @@ public final class RepEvents {
         } else if (dead instanceof Monster && !dead.level().getEntitiesOfClass(Villager.class, dead.getBoundingBox().inflate(32)).isEmpty()) {
             change(p, Faction.KINGDOM, 1);
         }
+    }
+
+    /**
+     * У каждого народа есть свои враги среди монстров. Их убийство повышает
+     * репутацию: элиты ценятся вдвое, чемпионы — впятеро.
+     */
+    private static void rewardEnemyKill(ServerPlayer p, LivingEntity dead) {
+        if (dead instanceof com.andrey.litrpg.npc.RaceNpcEntity || dead instanceof com.andrey.litrpg.entity.LitBoss) return;
+        var rank = com.andrey.litrpg.event.MobLevels.getRank(dead);
+        int mult = rank == com.andrey.litrpg.event.MobLevels.Rank.CHAMPION ? 5 : rank == com.andrey.litrpg.event.MobLevels.Rank.ELITE ? 2 : 1;
+        java.util.Map<Faction, Integer> gain = new java.util.EnumMap<>(Faction.class);
+        var rnd = p.getRandom();
+        if (dead instanceof Monster m && m.getMobType() == MobType.UNDEAD) {
+            // нежить — общий враг живых
+            gain.merge(Faction.KINGDOM, 1, Integer::sum);
+            if (rnd.nextBoolean()) gain.merge(Faction.ELVES, 1, Integer::sum);
+            if (rnd.nextInt(3) == 0) gain.merge(Faction.BEASTKIN, 1, Integer::sum);
+            if (dead instanceof net.minecraft.world.entity.monster.WitherSkeleton) gain.merge(Faction.PIGLINS, 3, Integer::sum);
+        }
+        if (dead instanceof net.minecraft.world.entity.monster.CaveSpider || dead instanceof net.minecraft.world.entity.monster.Silverfish) {
+            gain.merge(Faction.DWARVES, 2, Integer::sum); // вредители шахт
+        } else if (dead instanceof net.minecraft.world.entity.monster.Spider) {
+            gain.merge(Faction.ELVES, 2, Integer::sum); // пауки губят леса
+            if (rnd.nextBoolean()) gain.merge(Faction.BEASTKIN, 1, Integer::sum);
+        }
+        if (dead instanceof net.minecraft.world.entity.monster.Creeper) {
+            gain.merge(Faction.DWARVES, 1, Integer::sum);
+            gain.merge(Faction.KINGDOM, 1, Integer::sum);
+        }
+        if (dead instanceof net.minecraft.world.entity.raid.Raider && !(dead instanceof Witch)) {
+            // разбойники и браконьеры
+            gain.merge(Faction.BEASTKIN, 3, Integer::sum);
+            gain.merge(Faction.ELVES, 2, Integer::sum);
+            gain.merge(Faction.DWARVES, 1, Integer::sum);
+            if (dead instanceof net.minecraft.world.entity.monster.Evoker) gain.merge(Faction.DEMONKIN, 4, Integer::sum);
+        }
+        if (dead instanceof Witch) {
+            gain.merge(Faction.BEASTKIN, 2, Integer::sum);
+            gain.merge(Faction.ELVES, 1, Integer::sum);
+        }
+        if (dead instanceof GoblinEntity) {
+            gain.merge(Faction.ELVES, 1, Integer::sum);
+            if (rnd.nextBoolean()) gain.merge(Faction.ORCS, -1, Integer::sum); // гоблины — родня орков
+        }
+        if (dead instanceof net.minecraft.world.entity.monster.Phantom) {
+            gain.merge(Faction.BEASTKIN, 2, Integer::sum);
+            gain.merge(Faction.ELVES, 1, Integer::sum);
+        }
+        if (dead instanceof net.minecraft.world.entity.monster.EnderMan || dead instanceof net.minecraft.world.entity.monster.Shulker) {
+            gain.merge(Faction.DEMONKIN, 2, Integer::sum); // Пустота — соперница Пепла
+        }
+        if (dead instanceof net.minecraft.world.entity.monster.Blaze || dead instanceof net.minecraft.world.entity.monster.Ghast
+                || dead instanceof net.minecraft.world.entity.monster.MagmaCube) {
+            gain.merge(Faction.DWARVES, 1, Integer::sum);
+        }
+        if (dead instanceof net.minecraft.world.entity.monster.Slime && !(dead instanceof net.minecraft.world.entity.monster.MagmaCube)
+                && rnd.nextBoolean()) {
+            gain.merge(Faction.WILDS, 1, Integer::sum);
+        }
+        // орки уважают силу: победа над элитой или чемпионом
+        if (mult > 1 && dead instanceof net.minecraft.world.entity.monster.Enemy) gain.merge(Faction.ORCS, mult, Integer::sum);
+        for (var e : gain.entrySet()) change(p, e.getKey(), e.getValue() * (e.getValue() > 0 ? mult : 1));
+    }
+
+    /** Победа над боссом подземелья: благодарность одних народов и гнев других. */
+    public static void bossKilled(ServerPlayer p, java.util.Map<Faction, Integer> rep) {
+        for (var e : rep.entrySet()) change(p, e.getKey(), e.getValue());
     }
 
     @SubscribeEvent

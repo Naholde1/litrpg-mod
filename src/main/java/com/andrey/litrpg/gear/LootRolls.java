@@ -49,6 +49,30 @@ public final class LootRolls {
             if (dead instanceof GoblinKingEntity && rnd.nextFloat() < 0.5f * findMult) out.add(GearGen.unique("kings_ring"));
             if (dead instanceof LichEntity && rnd.nextFloat() < 0.5f * findMult) out.add(GearGen.unique("lich_amulet"));
             if (dead instanceof LichEntity && rnd.nextFloat() < 0.25f * findMult) out.add(GearGen.unique("archmage_staff"));
+            if (dead instanceof com.andrey.litrpg.entity.BossBase boss) {
+                // трофеи хранителя: каждый — со своим шансом, редкость не ниже эпической
+                for (ItemTemplates.Def def : ItemTemplates.bossLoot(boss.bossId())) {
+                    if (rnd.nextFloat() < 0.3f * findMult) {
+                        ItemStack t = new ItemStack(com.andrey.litrpg.registry.ModItems.TEMPLATE_ITEMS.get(def.id).get());
+                        Rarity r = GearGen.rollRarity(rnd, 2.5f + luckBoost);
+                        if (r.ordinal() < Rarity.EPIC.ordinal()) r = Rarity.EPIC;
+                        GearGen.apply(t, rnd, Math.max(def.tier, lvl), r);
+                        out.add(t);
+                    }
+                }
+                out.addAll(coinStacks(Math.round(lvl * (30 + rnd.nextInt(30)) * (1 + g.get(GearBonus.COIN_FIND) / 100f))));
+                if (rnd.nextFloat() < 0.35f) out.add(new ItemStack(com.andrey.litrpg.registry.ModItems.ASCENSION_STONE.get()));
+                // Искра Божества — только у сильнейших
+                float spark = switch (boss.bossId()) {
+                    case "archdemon" -> 0.25f;
+                    case "flame_lord" -> 0.08f;
+                    case "frost_giant" -> 0.05f;
+                    case "lich" -> 0.03f;
+                    default -> 0f;
+                };
+                if (rnd.nextFloat() < spark) out.add(new ItemStack(com.andrey.litrpg.registry.ModItems.DIVINE_SPARK.get()));
+                if (boss.bossId().equals("archdemon") && rnd.nextFloat() < 0.04f) out.add(GearGen.random(rnd, lvl, Rarity.DIVINE));
+            }
             return out;
         }
 
@@ -85,8 +109,8 @@ public final class LootRolls {
         if (rank == MobLevels.Rank.CHAMPION) {
             if (lvl >= 22 && rnd.nextFloat() < 0.02f * findMult) out.add(GearGen.unique("dawn_blade"));
             if (lvl >= 28 && rnd.nextFloat() < 0.015f * findMult) out.add(GearGen.unique("archmage_staff"));
-            if (lvl >= 35 && rnd.nextFloat() < 0.01f * findMult) out.add(GearGen.unique("frost_sorrow"));
-            if (lvl >= 40 && rnd.nextFloat() < 0.005f * findMult) out.add(GearGen.unique("heart_of_system"));
+            if (lvl >= 35 && rnd.nextFloat() < 0.002f * findMult) out.add(GearGen.unique("frost_sorrow"));
+            if (lvl >= 40 && rnd.nextFloat() < 0.0008f * findMult) out.add(GearGen.unique("heart_of_system"));
         }
         return out;
     }

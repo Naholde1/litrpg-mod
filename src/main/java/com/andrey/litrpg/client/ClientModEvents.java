@@ -28,8 +28,27 @@ public class ClientModEvents {
         event.registerEntityRenderer(ModEntities.LICH.get(), LichRenderer::new);
         event.registerEntityRenderer(ModEntities.SKELETON_WARDEN.get(), SkeletonWardenRenderer::new);
         event.registerEntityRenderer(ModEntities.MANA_BOLT.get(), ctx -> new ThrownItemRenderer<>(ctx, 1.4f, true));
+        event.registerEntityRenderer(ModEntities.RUIN_GOLEM.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "ruin_golem"));
+        event.registerEntityRenderer(ModEntities.ROTTING_ENT.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "rotting_ent"));
+        event.registerEntityRenderer(ModEntities.SPIDER_QUEEN.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "spider_queen"));
+        event.registerEntityRenderer(ModEntities.SWAMP_HAG.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "swamp_hag"));
+        event.registerEntityRenderer(ModEntities.MINOTAUR.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "minotaur"));
+        event.registerEntityRenderer(ModEntities.FROST_GIANT.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "frost_giant"));
+        event.registerEntityRenderer(ModEntities.FLAME_LORD.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "flame_lord"));
+        event.registerEntityRenderer(ModEntities.ARCHDEMON.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "archdemon"));
+        event.registerEntityRenderer(ModEntities.BOSS_PROJECTILE.get(), ctx -> new ThrownItemRenderer<>(ctx, 1.0f, true));
         com.andrey.litrpg.npc.NpcRegistry.TYPES.values().forEach(t ->
                 event.registerEntityRenderer(t.get(), com.andrey.litrpg.client.render.NpcRenderer::new));
+    }
+
+    public static final String[] BOSS_MODELS = {"ruin_golem", "rotting_ent", "spider_queen", "swamp_hag", "minotaur", "frost_giant", "flame_lord", "archdemon"};
+
+    @SubscribeEvent
+    public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        for (String name : BOSS_MODELS) {
+            event.registerLayerDefinition(com.andrey.litrpg.client.render.DataBossRenderer.layer(name),
+                    () -> com.andrey.litrpg.client.model.DataModel.createLayer(name));
+        }
     }
 
     @SubscribeEvent

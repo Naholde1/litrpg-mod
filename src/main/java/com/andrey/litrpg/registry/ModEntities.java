@@ -41,6 +41,42 @@ public class ModEntities {
             () -> EntityType.Builder.<ManaBoltEntity>of(ManaBoltEntity::new, MobCategory.MISC)
                     .sized(0.4f, 0.4f).clientTrackingRange(4).updateInterval(10).build("mana_bolt"));
 
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.boss.RuinGolemEntity>> RUIN_GOLEM = ENTITY_TYPES.register("ruin_golem",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.boss.RuinGolemEntity>of(com.andrey.litrpg.entity.boss.RuinGolemEntity::new, MobCategory.MONSTER)
+                    .sized(1.6f, 2.8f).clientTrackingRange(10).build("ruin_golem"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.boss.RottingEntEntity>> ROTTING_ENT = ENTITY_TYPES.register("rotting_ent",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.boss.RottingEntEntity>of(com.andrey.litrpg.entity.boss.RottingEntEntity::new, MobCategory.MONSTER)
+                    .sized(1.4f, 3.6f).clientTrackingRange(10).build("rotting_ent"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.boss.SpiderQueenEntity>> SPIDER_QUEEN = ENTITY_TYPES.register("spider_queen",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.boss.SpiderQueenEntity>of(com.andrey.litrpg.entity.boss.SpiderQueenEntity::new, MobCategory.MONSTER)
+                    .sized(2.2f, 1.6f).clientTrackingRange(10).build("spider_queen"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.boss.SwampHagEntity>> SWAMP_HAG = ENTITY_TYPES.register("swamp_hag",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.boss.SwampHagEntity>of(com.andrey.litrpg.entity.boss.SwampHagEntity::new, MobCategory.MONSTER)
+                    .sized(0.8f, 2.4f).clientTrackingRange(10).build("swamp_hag"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.boss.MinotaurEntity>> MINOTAUR = ENTITY_TYPES.register("minotaur",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.boss.MinotaurEntity>of(com.andrey.litrpg.entity.boss.MinotaurEntity::new, MobCategory.MONSTER)
+                    .sized(1.3f, 3.0f).clientTrackingRange(10).build("minotaur"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.boss.FrostGiantEntity>> FROST_GIANT = ENTITY_TYPES.register("frost_giant",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.boss.FrostGiantEntity>of(com.andrey.litrpg.entity.boss.FrostGiantEntity::new, MobCategory.MONSTER)
+                    .sized(1.6f, 3.8f).clientTrackingRange(10).build("frost_giant"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.boss.FlameLordEntity>> FLAME_LORD = ENTITY_TYPES.register("flame_lord",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.boss.FlameLordEntity>of(com.andrey.litrpg.entity.boss.FlameLordEntity::new, MobCategory.MONSTER)
+                    .sized(1.4f, 3.4f).fireImmune().clientTrackingRange(10).build("flame_lord"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.boss.ArchdemonEntity>> ARCHDEMON = ENTITY_TYPES.register("archdemon",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.boss.ArchdemonEntity>of(com.andrey.litrpg.entity.boss.ArchdemonEntity::new, MobCategory.MONSTER)
+                    .sized(1.6f, 4.2f).fireImmune().clientTrackingRange(10).build("archdemon"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.BossProjectile>> BOSS_PROJECTILE = ENTITY_TYPES.register("boss_projectile",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.BossProjectile>of(com.andrey.litrpg.entity.BossProjectile::new, MobCategory.MISC)
+                    .sized(0.4f, 0.4f).clientTrackingRange(6).updateInterval(5).build("boss_projectile"));
+
     static {
         com.andrey.litrpg.npc.NpcRegistry.init();
     }

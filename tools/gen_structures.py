@@ -135,10 +135,12 @@ class Build:
                 e['nbt'] = self.nbt[(x, y, z)]
             blocks.append(e)
         ents = TList(10)
-        for x, y, z, eid in self.entities:
+        for e in self.entities:
+            x, y, z, eid = e[:4]
+            extra = e[4] if len(e) > 4 else {}
             ents.append({'pos': TList(6, [TDouble(x + 0.5), TDouble(y), TDouble(z + 0.5)]),
                          'blockPos': TList(3, [TInt(x), TInt(y), TInt(z)]),
-                         'nbt': {'id': eid, 'PersistenceRequired': TByte(1)}})
+                         'nbt': {'id': eid, 'PersistenceRequired': TByte(1), **extra}})
         root = {'DataVersion': TInt(3465), 'size': TList(3, [TInt(v) for v in self.size]),
                 'palette': TList(10, palette), 'blocks': blocks, 'entities': ents}
         os.makedirs(os.path.join(ROOT, 'structures'), exist_ok=True)

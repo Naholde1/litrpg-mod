@@ -34,6 +34,21 @@ public class ChestLootModifier extends LootModifier {
     protected @NotNull ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> loot, LootContext ctx) {
         if (!ctx.getQueriedLootTableId().getPath().startsWith("chests/")) return loot;
         var rnd = ctx.getRandom();
+        String table = ctx.getQueriedLootTableId().getPath();
+        if (table.startsWith("chests/dungeon_")) {
+            // сундуки подземелий: предметы уровня подземелья, всегда и щедрее
+            var d = com.andrey.litrpg.world.Dungeon.byKey(table.substring("chests/dungeon_".length()));
+            if (d != null) {
+                int n = 2 + rnd.nextInt(2);
+                for (int i = 0; i < n; i++) {
+                    loot.add(GearGen.random(rnd, Math.max(1, d.level + rnd.nextInt(5) - 2), GearGen.rollRarity(rnd, 1.0f + d.level * 0.02f)));
+                }
+                loot.addAll(LootRolls.coinStacks(20 + d.level * (6 + rnd.nextInt(6))));
+                if (rnd.nextFloat() < 0.15f) loot.add(new ItemStack(com.andrey.litrpg.registry.ModItems.ASCENSION_STONE.get()));
+                if (rnd.nextFloat() < 0.25f) loot.add(new ItemStack(com.andrey.litrpg.registry.ModItems.REFORGE_STONE.get()));
+                return loot;
+            }
+        }
         if (rnd.nextFloat() >= chance) return loot;
         Vec3 origin = ctx.getParamOrNull(LootContextParams.ORIGIN);
         int level = 3;

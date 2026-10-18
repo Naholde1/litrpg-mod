@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "litrpg:dungeon_mire",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 40,
+    "separation": 14,
+    "salt": 812335
+  }
+}

@@ -15,6 +15,12 @@ public enum Title {
     GIANT_SLAYER("giant_slayer", Counter.GIANT_KILLS, 1, 2, 1, 0, 0, 1),
     KINGSLAYER("kingslayer", Counter.GOBLIN_KING, 1, 3, 0, 3, 0, 0),
     LICHBANE("lichbane", Counter.LICH, 1, 0, 0, 2, 4, 2),
+    BOSS_HUNTER("boss_hunter", Counter.BOSSES, 5, 1, 1, 1, 1, 1),
+    DUNGEON_MASTER("dungeon_master", Counter.BOSSES, 30, 3, 3, 3, 3, 3),
+    DEMON_SLAYER("demon_slayer", Counter.ARCHDEMON, 1, 4, 2, 4, 2, 3),
+    HELPER("helper", Counter.QUESTS, 10, 0, 1, 1, 0, 1),
+    HERO_OF_PEOPLES("hero_of_peoples", Counter.QUESTS, 75, 2, 2, 2, 2, 2),
+    CHOSEN_ONE("chosen_one", Counter.STORY, Integer.MAX_VALUE, 5, 5, 5, 5, 5),
     REALM_WALKER("realm_walker", Counter.REALM_VISITS, 1, 0, 1, 0, 1, 0),
     UNLUCKY("unlucky", Counter.DEATHS, 10, 0, 0, 1, 0, 3),
     DEEP_DELVER("deep_delver", Counter.ORES, 500, 1, 0, 2, 0, 1),
@@ -27,7 +33,8 @@ public enum Title {
     KINGDOM_FRIEND("kingdom_friend", Counter.REPUTATION, Integer.MAX_VALUE, 1, 1, 1, 1, 1);
 
     public enum Counter {
-        KILLS, GOBLINS, UNDEAD, ELITES, GIANT_KILLS, GOBLIN_KING, LICH, REALM_VISITS, DEATHS, ORES, REPUTATION;
+        KILLS, GOBLINS, UNDEAD, ELITES, GIANT_KILLS, GOBLIN_KING, LICH, REALM_VISITS, DEATHS, ORES, REPUTATION,
+        BOSSES, ARCHDEMON, QUESTS, STORY;
 
         public String key() { return name().toLowerCase(); }
     }

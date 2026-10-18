@@ -1446,6 +1446,225 @@
     "dmg_beast": 8
    },
    "set": "hunter_gear"
+  },
+  {
+   "id": "golem_core",
+   "kind": "charm",
+   "tier": 8,
+   "implicit": {
+    "armor": 2,
+    "vitality": 2
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "ruin_golem"
+  },
+  {
+   "id": "golem_fist",
+   "kind": "sword",
+   "tier": 8,
+   "implicit": {
+    "damage": 1,
+    "res_explosion": 10
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "ruin_golem",
+   "damage": 6,
+   "speed": -3.0
+  },
+  {
+   "id": "ent_heartwood",
+   "kind": "necklace",
+   "tier": 11,
+   "implicit": {
+    "health": 8,
+    "health_regen": 0.6
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "rotting_ent",
+   "passive": "regeneration"
+  },
+  {
+   "id": "ent_staff",
+   "kind": "staff",
+   "tier": 11,
+   "implicit": {
+    "spell_power": 6,
+    "mana_regen": 10
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "rotting_ent",
+   "damage": 0,
+   "speed": 0
+  },
+  {
+   "id": "arachna_fang",
+   "kind": "dagger",
+   "tier": 14,
+   "implicit": {
+    "crit_chance": 3,
+    "dmg_arthropod": 20
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "spider_queen",
+   "damage": 2,
+   "speed": 0,
+   "passive": "venom"
+  },
+  {
+   "id": "arachna_cloak",
+   "kind": "back",
+   "tier": 14,
+   "implicit": {
+    "dodge": 4,
+    "res_arthropod": 15
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "spider_queen"
+  },
+  {
+   "id": "morra_ring",
+   "kind": "ring",
+   "tier": 20,
+   "implicit": {
+    "spell_power": 8,
+    "mana": 20
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "swamp_hag"
+  },
+  {
+   "id": "morra_staff",
+   "kind": "staff",
+   "tier": 20,
+   "implicit": {
+    "spell_power": 10,
+    "cooldown": 4
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "swamp_hag",
+   "damage": 0,
+   "speed": 0
+  },
+  {
+   "id": "minotaur_axe",
+   "kind": "axe",
+   "tier": 25,
+   "implicit": {
+    "damage": 2,
+    "crit_damage": 15
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "minotaur",
+   "damage": 9,
+   "speed": -3.2,
+   "passive": "berserker"
+  },
+  {
+   "id": "minotaur_horn",
+   "kind": "charm",
+   "tier": 25,
+   "implicit": {
+    "strength": 3,
+    "res_projectile": 10
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "minotaur"
+  },
+  {
+   "id": "ymir_heart",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "vitality": 4,
+    "health": 15,
+    "res_fire": 10
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "frost_giant"
+  },
+  {
+   "id": "ymir_maul",
+   "kind": "sword",
+   "tier": 38,
+   "implicit": {
+    "damage": 3,
+    "crit_damage": 20
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "frost_giant",
+   "damage": 9,
+   "speed": -3.0,
+   "passive": "frost_touch"
+  },
+  {
+   "id": "ignis_ember",
+   "kind": "ring",
+   "tier": 45,
+   "implicit": {
+    "spell_power": 14,
+    "res_fire": 20
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "flame_lord",
+   "passive": "fireproof"
+  },
+  {
+   "id": "ignis_blade",
+   "kind": "sword",
+   "tier": 45,
+   "implicit": {
+    "damage": 3,
+    "crit_chance": 4
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "flame_lord",
+   "damage": 7,
+   "speed": -2.4,
+   "passive": "flame_touch"
+  },
+  {
+   "id": "baalzar_horn",
+   "kind": "necklace",
+   "tier": 55,
+   "implicit": {
+    "strength": 4,
+    "intelligence": 4,
+    "lifesteal": 3
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "archdemon",
+   "passive": "phoenix"
+  },
+  {
+   "id": "baalzar_blade",
+   "kind": "sword",
+   "tier": 55,
+   "implicit": {
+    "damage": 4,
+    "lifesteal": 4,
+    "crit_damage": 25
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "archdemon",
+   "damage": 9,
+   "speed": -2.4,
+   "passive": "soul_eater"
   }
  ],
  "sets": [
@@ -1867,6 +2086,55 @@
       "spell_power": 8
      },
      "passive": "fireproof"
+    }
+   ]
+  },
+  {
+   "id": "conqueror",
+   "title": "Регалии Покорителя",
+   "items": [
+    "golem_core",
+    "golem_fist",
+    "ent_heartwood",
+    "ent_staff",
+    "arachna_fang",
+    "arachna_cloak",
+    "morra_ring",
+    "morra_staff",
+    "minotaur_axe",
+    "minotaur_horn",
+    "ymir_heart",
+    "ymir_maul",
+    "ignis_ember",
+    "ignis_blade",
+    "baalzar_horn",
+    "baalzar_blade"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "health": 10,
+      "dmg_elite": 10
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "strength": 3,
+      "agility": 3,
+      "vitality": 3,
+      "intelligence": 3
+     }
+    },
+    {
+     "pieces": 6,
+     "mods": {
+      "xp": 10,
+      "loot": 10,
+      "crit_chance": 5
+     },
+     "passive": "giant_slayer"
     }
    ]
   },

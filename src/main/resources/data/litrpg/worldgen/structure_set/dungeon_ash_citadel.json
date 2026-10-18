@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "litrpg:dungeon_ash_citadel",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 64,
+    "separation": 24,
+    "salt": 812340
+  }
+}

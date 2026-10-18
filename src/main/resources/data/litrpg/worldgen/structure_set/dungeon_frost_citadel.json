@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "litrpg:dungeon_frost_citadel",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 48,
+    "separation": 18,
+    "salt": 812338
+  }
+}

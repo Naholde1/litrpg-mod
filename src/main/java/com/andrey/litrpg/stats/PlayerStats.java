@@ -40,6 +40,9 @@ public class PlayerStats {
     /** Репутация с народами: -1000..1000. */
     private final Map<com.andrey.litrpg.rep.Faction, Integer> reputation = new EnumMap<>(com.andrey.litrpg.rep.Faction.class);
 
+    /** Журнал заданий. */
+    private final com.andrey.litrpg.quest.QuestLog quests = new com.andrey.litrpg.quest.QuestLog();
+
     /** Время (gameTime), когда способность снова станет доступна. Не сохраняется. */
     private final long[] cooldownEnd = new long[Ability.count()];
 
@@ -265,6 +268,7 @@ public class PlayerStats {
         CompoundTag rep = new CompoundTag();
         reputation.forEach((f, v) -> rep.putInt(f.key, v));
         tag.put("rep", rep);
+        tag.put("quests", quests.save());
         return tag;
     }
 
@@ -319,7 +323,10 @@ public class PlayerStats {
         CompoundTag rep = tag.getCompound("rep");
         for (var f : com.andrey.litrpg.rep.Faction.values()) if (rep.contains(f.key)) reputation.put(f, rep.getInt(f.key));
         if (tag.contains("gear")) gear.load(tag.getCompound("gear"));
+        quests.load(tag.getCompound("quests"));
     }
+
+    public com.andrey.litrpg.quest.QuestLog quests() { return quests; }
 
     public com.andrey.litrpg.gear.PlayerGear gear() { return gear; }
 

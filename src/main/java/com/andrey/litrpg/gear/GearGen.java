@@ -17,10 +17,18 @@ import java.util.List;
 public final class GearGen {
     private GearGen() {}
 
-    private static final int[] BASE_WEIGHTS = {600, 260, 100, 32, 7, 1};
+    /** Веса редкостей от обычной до легендарной. Божественные выпадают отдельным, крошечным броском. */
+    private static final int[] BASE_WEIGHTS = {600, 260, 100, 32, 7};
+    /** Шанс, что легендарный предмет окажется божественным (у босса, при boost 2.5). */
+    private static final float DIVINE_FROM_LEGENDARY = 0.01f;
 
     /** Бросок редкости. boost: 0 — обычный моб, 0.6 — элита, 1.2 — чемпион, 2.5 — босс. */
     public static Rarity rollRarity(RandomSource rnd, float boost) {
+        return rollRarity(rnd, boost, true);
+    }
+
+    /** @param divine может ли выпасть божественный предмет (у торговцев и в ремесле — нет) */
+    public static Rarity rollRarity(RandomSource rnd, float boost, boolean divine) {
         double[] w = new double[BASE_WEIGHTS.length];
         double sum = 0;
         for (int i = 0; i < w.length; i++) {
@@ -30,7 +38,13 @@ public final class GearGen {
         double r = rnd.nextDouble() * sum;
         for (int i = 0; i < w.length; i++) {
             r -= w[i];
-            if (r <= 0) return Rarity.values()[i];
+            if (r <= 0) {
+                Rarity res = Rarity.values()[i];
+                if (divine && res == Rarity.LEGENDARY && rnd.nextFloat() < DIVINE_FROM_LEGENDARY * (1 + boost) / 3.5f) {
+                    return Rarity.DIVINE;
+                }
+                return res;
+            }
         }
         return Rarity.COMMON;
     }
@@ -105,7 +119,7 @@ public final class GearGen {
     public static ItemStack templateNear(RandomSource rnd, int level, boolean jewelsOnly) {
         java.util.List<ItemTemplates.Def> pool = new java.util.ArrayList<>();
         for (ItemTemplates.Def d : ItemTemplates.ITEMS) {
-            if (d.tier <= level + 5 && d.tier >= level - 15 && (!jewelsOnly || d.isJewel())) pool.add(d);
+            if (d.boss == null && d.tier <= level + 5 && d.tier >= level - 15 && (!jewelsOnly || d.isJewel())) pool.add(d);
         }
         if (pool.isEmpty()) return ItemStack.EMPTY;
         ItemTemplates.Def def = pool.get(rnd.nextInt(pool.size()));

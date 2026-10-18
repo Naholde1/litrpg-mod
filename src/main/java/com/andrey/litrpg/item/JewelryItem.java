@@ -34,7 +34,7 @@ public class JewelryItem extends Item {
             stack.setTag(u.getTag());
         } else {
             int lvl = 5 + tier * 12;
-            GearGen.apply(stack, level.random, lvl, GearGen.rollRarity(level.random, tier * 0.3f));
+            GearGen.apply(stack, level.random, lvl, GearGen.rollRarity(level.random, tier * 0.3f, false));
         }
     }
 

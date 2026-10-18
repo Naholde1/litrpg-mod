@@ -28,7 +28,7 @@ public final class GearTrades {
         @Override
         public MerchantOffer getOffer(Entity trader, RandomSource rnd) {
             int lvl = itemLevel + rnd.nextInt(4);
-            Rarity r = GearGen.rollRarity(rnd, boost);
+            Rarity r = GearGen.rollRarity(rnd, boost, false);
             ItemStack item = GearGen.random(rnd, lvl, r);
             int price = Math.min(64, 3 + r.ordinal() * r.ordinal() * 5 + lvl / 2 + rnd.nextInt(4));
             return new MerchantOffer(new ItemStack(Items.EMERALD, price), item, 2, 10 + villagerLevel * 5, 0.05f);

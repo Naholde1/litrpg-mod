@@ -138,4 +138,25 @@ public class ModItems {
             () -> new ForgeSpawnEggItem(ModEntities.GOBLIN_KING, 0x3B6B1F, 0xE0B020, new Item.Properties()));
     public static final RegistryObject<Item> LICH_SPAWN_EGG = ITEMS.register("lich_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.LICH, 0x1A1028, 0x8F4FE0, new Item.Properties()));
+    public static final RegistryObject<Item> RUIN_GOLEM_SPAWN_EGG = ITEMS.register("ruin_golem_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.RUIN_GOLEM, 0x6E7B80, 0x5FD3E8, new Item.Properties()));
+    public static final RegistryObject<Item> ROTTING_ENT_SPAWN_EGG = ITEMS.register("rotting_ent_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.ROTTING_ENT, 0x4A3A24, 0x8DA34A, new Item.Properties()));
+    public static final RegistryObject<Item> SPIDER_QUEEN_SPAWN_EGG = ITEMS.register("spider_queen_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.SPIDER_QUEEN, 0x241A2E, 0xC0204A, new Item.Properties()));
+    public static final RegistryObject<Item> SWAMP_HAG_SPAWN_EGG = ITEMS.register("swamp_hag_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.SWAMP_HAG, 0x2E4A34, 0xB8D040, new Item.Properties()));
+    public static final RegistryObject<Item> MINOTAUR_SPAWN_EGG = ITEMS.register("minotaur_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.MINOTAUR, 0x6A4428, 0xD0B080, new Item.Properties()));
+    public static final RegistryObject<Item> FROST_GIANT_SPAWN_EGG = ITEMS.register("frost_giant_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.FROST_GIANT, 0x9ED8F0, 0xEAF6FF, new Item.Properties()));
+    public static final RegistryObject<Item> FLAME_LORD_SPAWN_EGG = ITEMS.register("flame_lord_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.FLAME_LORD, 0x3A1A10, 0xFF7A20, new Item.Properties()));
+    public static final RegistryObject<Item> ARCHDEMON_SPAWN_EGG = ITEMS.register("archdemon_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.ARCHDEMON, 0x5A0C14, 0xFF4020, new Item.Properties()));
+    // ---- подземелья ----
+    public static final RegistryObject<Item> BOSS_ALTAR = ITEMS.register("boss_altar",
+            () -> new net.minecraft.world.item.BlockItem(ModBlocks.BOSS_ALTAR.get(), new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistryObject<Item> DIVINE_SPARK = ITEMS.register("divine_spark",
+            () -> new UpgradeStoneItem(new Item.Properties().rarity(Rarity.EPIC).fireResistant(), "item.litrpg.divine_spark.tooltip"));
 }

@@ -29,6 +29,8 @@ public class MobLevels {
     public static final String TAG = "litrpg_lvl";
     public static final String RANK_TAG = "litrpg_rank";
     public static final String AFFIX_TAG = "litrpg_affix";
+    /** Уровень подземелья, в котором стоит моб (ставится в структуре). */
+    public static final String DUNGEON_TAG = "litrpg_dlvl";
     private static final UUID HP_ID = UUID.fromString("8a4d1f52-77b0-4c4e-a1c2-9b3e5d7f1101");
     private static final UUID DMG_ID = UUID.fromString("8a4d1f52-77b0-4c4e-a1c2-9b3e5d7f1102");
     private static final UUID ARMOR_ID = UUID.fromString("8a4d1f52-77b0-4c4e-a1c2-9b3e5d7f1103");
@@ -103,6 +105,15 @@ public class MobLevels {
         }
 
         RandomSource rnd = mob.getRandom();
+        // обитатели подземелий: уровень задан самим подземельем, элиты встречаются чаще
+        int dlvl = mob.getPersistentData().getInt(DUNGEON_TAG);
+        if (dlvl > 0) {
+            mob.setPersistenceRequired();
+            float r = rnd.nextFloat();
+            Rank dr = r < 0.04f ? Rank.CHAMPION : r < 0.2f ? Rank.ELITE : Rank.NORMAL;
+            apply(mob, Mth.clamp(dlvl - 1 + rnd.nextInt(3), 1, 99), dr);
+            return;
+        }
         Zone zone = Zone.at(level, mob.blockPosition());
         int lvl = zone.minLevel + rnd.nextInt(Math.max(1, zone.maxLevel - zone.minLevel + 1));
         if (level.isNight() && level.dimension() == net.minecraft.world.level.Level.OVERWORLD) {

@@ -363,6 +363,27 @@ WEAPONS = [
     ('hunter_dagger', 'Нож охотника', "Hunter's Knife", 'dagger', 'dagger', ('iron', 'bone', 'leather'), 6, 1, 0, {'dmg_beast': 8}, 'hunter_gear', None),
 ]
 
+# --- трофеи боссов подземелий: падают только с них (набор «Регалии Покорителя») ---
+BOSS_LOOT = [
+    # id, рус., англ., вид, форма, палитра, уровень, урон, скорость, врождённое, босс, пассивка
+    ('golem_core', 'Сердце Голема', 'Golem Core', 'charm', 'crystal', ('stone', 'sapphire'), 8, 0, 0, {'armor': 2, 'vitality': 2}, 'ruin_golem', None),
+    ('golem_fist', 'Кулак Руин', 'Fist of the Ruins', 'sword', 'mace', ('stone', 'sapphire', 'stone'), 8, 6, -3.0, {'damage': 1, 'res_explosion': 10}, 'ruin_golem', None),
+    ('ent_heartwood', 'Сердцевина Энта', 'Ent Heartwood', 'necklace', 'amulet', ('wood', 'green'), 11, 0, 0, {'health': 8, 'health_regen': 0.6}, 'rotting_ent', 'regeneration'),
+    ('ent_staff', 'Посох Гнилого Корня', 'Rotroot Staff', 'staff', 'staff', ('wood', 'green', 'brown'), 11, 0, 0, {'spell_power': 6, 'mana_regen': 10}, 'rotting_ent', None),
+    ('arachna_fang', 'Клык Арахны', "Arachna's Fang", 'dagger', 'dagger', ('black', 'green', 'bone'), 14, 2, 0, {'crit_chance': 3, 'dmg_arthropod': 20}, 'spider_queen', 'venom'),
+    ('arachna_cloak', 'Шёлковый плащ Королевы', "Queen's Silk Cloak", 'back', 'cloak', ('white', 'emerald'), 14, 0, 0, {'dodge': 4, 'res_arthropod': 15}, 'spider_queen', None),
+    ('morra_ring', 'Кольцо Проклятой Топи', 'Ring of the Cursed Mire', 'ring', 'ring', ('obsidian', 'green'), 20, 0, 0, {'spell_power': 8, 'mana': 20}, 'swamp_hag', None),
+    ('morra_staff', 'Клюка Морры', "Morra's Crook", 'staff', 'staff', ('green', 'void', 'wood'), 20, 0, 0, {'spell_power': 10, 'cooldown': 4}, 'swamp_hag', None),
+    ('minotaur_axe', 'Секира Астериона', "Asterion's Greataxe", 'axe', 'axe', ('iron', 'blood', 'brown'), 25, 9, -3.2, {'damage': 2, 'crit_damage': 15}, 'minotaur', 'berserker'),
+    ('minotaur_horn', 'Рог Минотавра', 'Minotaur Horn', 'charm', 'fang', ('bone', 'blood'), 25, 0, 0, {'strength': 3, 'res_projectile': 10}, 'minotaur', None),
+    ('ymir_heart', 'Вечный Лёд Имира', "Ymir's Eternal Ice", 'charm', 'crystal', ('ice', 'ice'), 38, 0, 0, {'vitality': 4, 'health': 15, 'res_fire': 10}, 'frost_giant', None),
+    ('ymir_maul', 'Молот Вечной Зимы', 'Maul of Endless Winter', 'sword', 'mace', ('ice', 'ice', 'iron'), 38, 9, -3.0, {'damage': 3, 'crit_damage': 20}, 'frost_giant', 'frost_touch'),
+    ('ignis_ember', 'Кольцо Живого Пламени', 'Ring of Living Flame', 'ring', 'ring', ('fire', 'fire'), 45, 0, 0, {'spell_power': 14, 'res_fire': 20}, 'flame_lord', 'fireproof'),
+    ('ignis_blade', 'Клинок Горнила', 'Crucible Blade', 'sword', 'sword', ('fire', 'fire', 'black'), 45, 7, -2.4, {'damage': 3, 'crit_chance': 4}, 'flame_lord', 'flame_touch'),
+    ('baalzar_horn', "Венец Баал'Зара", "Baal'zar's Crown", 'necklace', 'amulet', ('demonic', 'void'), 55, 0, 0, {'strength': 4, 'intelligence': 4, 'lifesteal': 3}, 'archdemon', 'phoenix'),
+    ('baalzar_blade', 'Пожиратель Миров', 'Worldeater', 'sword', 'sword', ('obsidian', 'void', 'demonic'), 55, 9, -2.4, {'damage': 4, 'lifesteal': 4, 'crit_damage': 25}, 'archdemon', 'soul_eater'),
+]
+
 # --- наборы (эффекты за количество разных предметов) ---
 SETS = [
     dict(id='hunter_gear', title='Снаряжение охотника', tiers=[
@@ -401,6 +422,9 @@ SETS = [
         dict(pieces=6, mods={'luck': 3})]),
     dict(id='tears_of_flame', title='Слёзы пламени', tiers=[
         dict(pieces=2, mods={'res_fire': 15}), dict(pieces=4, mods={'spell_power': 8}, passive='fireproof')]),
+    dict(id='conqueror', title='Регалии Покорителя', tiers=[
+        dict(pieces=2, mods={'health': 10, 'dmg_elite': 10}), dict(pieces=4, mods={'strength': 3, 'agility': 3, 'vitality': 3, 'intelligence': 3}),
+        dict(pieces=6, mods={'xp': 10, 'loot': 10, 'crit_chance': 5}, passive='giant_slayer')]),
     dict(id='assassins_night', title='Ночь убийцы', tiers=[
         dict(pieces=2, mods={'dodge': 3}), dict(pieces=4, mods={'crit_damage': 20}, passive='executioner')]),
 ]
@@ -482,6 +506,22 @@ def main():
         en['item.litrpg.' + id] = ename
         e = dict(id=id, kind=kind, tier=tier, damage=dmg, speed=speed, implicit=implicit, set=set_id)
         if minr: e['min'] = minr
+        items_json.append(e)
+
+    # трофеи боссов
+    for id, rname, ename, kind, shape, p, tier, dmg, speed, implicit, boss, passive in BOSS_LOOT:
+        pal = palette(p[0], p[1], p[2] if len(p) > 2 else 'leather')
+        texture(id, render(shape, pal))
+        model(id, handheld=kind in ('sword', 'axe', 'staff', 'dagger'))
+        ru['item.litrpg.' + id] = rname
+        en['item.litrpg.' + id] = ename
+        e = dict(id=id, kind=kind, tier=tier, implicit=implicit, set='conqueror', min='epic', boss=boss)
+        if kind in ('sword', 'axe', 'staff', 'dagger'):
+            e['damage'] = dmg
+            e['speed'] = speed
+        if kind in CURIO_TAG:
+            tags[CURIO_TAG[kind]].append('litrpg:' + id)
+        if passive: e['passive'] = passive
         items_json.append(e)
 
     # жетоны и монеты

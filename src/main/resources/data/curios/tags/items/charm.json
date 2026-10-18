@@ -24,6 +24,9 @@
     "litrpg:charm_ender_eye",
     "litrpg:charm_piglin_trinket",
     "litrpg:charm_warden_bone",
-    "litrpg:charm_stardust"
+    "litrpg:charm_stardust",
+    "litrpg:golem_core",
+    "litrpg:minotaur_horn",
+    "litrpg:ymir_heart"
   ]
 }

@@ -25,7 +25,7 @@ public class GearSetArmorItem extends ArmorItem {
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected) {
         if (level.isClientSide || GearData.has(stack)) return;
-        Rarity r = GearGen.rollRarity(level.random, 0.4f);
+        Rarity r = GearGen.rollRarity(level.random, 0.4f, false);
         if (r.ordinal() < minRarity.ordinal()) r = minRarity;
         GearGen.apply(stack, level.random, baseLevel, r);
     }

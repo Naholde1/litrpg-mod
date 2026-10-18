@@ -6,6 +6,7 @@ import com.andrey.litrpg.entity.GoblinShamanEntity;
 import com.andrey.litrpg.entity.LichEntity;
 import com.andrey.litrpg.entity.SkeletonWardenEntity;
 import com.andrey.litrpg.network.ModNetwork;
+import com.andrey.litrpg.registry.ModBlocks;
 import com.andrey.litrpg.registry.ModCreativeTabs;
 import com.andrey.litrpg.registry.ModEntities;
 import com.andrey.litrpg.registry.ModItems;
@@ -29,6 +30,8 @@ public class LitRPG {
 
     public LitRPG() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        ModBlocks.BLOCKS.register(bus);
+        ModBlocks.BLOCK_ENTITIES.register(bus);
         ModItems.ITEMS.register(bus);
         ModEntities.ENTITY_TYPES.register(bus);
         ModCreativeTabs.TABS.register(bus);
@@ -65,6 +68,14 @@ public class LitRPG {
         event.put(ModEntities.SKELETON_WARDEN.get(), SkeletonWardenEntity.createAttributes().build());
         event.put(ModEntities.GOBLIN_KING.get(), GoblinKingEntity.createAttributes().build());
         event.put(ModEntities.LICH.get(), LichEntity.createAttributes().build());
+        event.put(ModEntities.RUIN_GOLEM.get(), com.andrey.litrpg.entity.boss.RuinGolemEntity.createAttributes().build());
+        event.put(ModEntities.ROTTING_ENT.get(), com.andrey.litrpg.entity.boss.RottingEntEntity.createAttributes().build());
+        event.put(ModEntities.SPIDER_QUEEN.get(), com.andrey.litrpg.entity.boss.SpiderQueenEntity.createAttributes().build());
+        event.put(ModEntities.SWAMP_HAG.get(), com.andrey.litrpg.entity.boss.SwampHagEntity.createAttributes().build());
+        event.put(ModEntities.MINOTAUR.get(), com.andrey.litrpg.entity.boss.MinotaurEntity.createAttributes().build());
+        event.put(ModEntities.FROST_GIANT.get(), com.andrey.litrpg.entity.boss.FrostGiantEntity.createAttributes().build());
+        event.put(ModEntities.FLAME_LORD.get(), com.andrey.litrpg.entity.boss.FlameLordEntity.createAttributes().build());
+        event.put(ModEntities.ARCHDEMON.get(), com.andrey.litrpg.entity.boss.ArchdemonEntity.createAttributes().build());
         com.andrey.litrpg.npc.NpcRegistry.attributes(event);
     }
 

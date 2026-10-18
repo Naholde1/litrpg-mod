@@ -110,7 +110,7 @@ public class ProfessionEvents {
         if (lvl <= 0 || player.getRandom().nextFloat() > 0.15f + lvl * 0.012f) return;
         // «Мастерская работа»: предмет получает свойства Системы, редкость растёт с уровнем кузнеца
         float boost = lvl * 0.04f;
-        com.andrey.litrpg.gear.Rarity r = com.andrey.litrpg.gear.GearGen.rollRarity(player.getRandom(), boost);
+        com.andrey.litrpg.gear.Rarity r = com.andrey.litrpg.gear.GearGen.rollRarity(player.getRandom(), boost, false);
         if (r == com.andrey.litrpg.gear.Rarity.COMMON) r = com.andrey.litrpg.gear.Rarity.UNCOMMON;
         com.andrey.litrpg.gear.GearGen.apply(out, player.getRandom(), Math.max(1, StatsManager.get(player).getLevel()), r);
         player.displayClientMessage(Component.literal("Мастерская работа: ").withStyle(ChatFormatting.GOLD)

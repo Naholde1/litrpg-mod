@@ -244,7 +244,23 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
-        if (npc.role != NpcType.Role.TRADER || !isAlive() || getTarget() == player) return super.mobInteract(player, hand);
+        if (!isAlive() || getTarget() == player) return super.mobInteract(player, hand);
+        if (npc.role != NpcType.Role.TRADER) {
+            // воины, маги и вожди раздают поручения своего народа
+            if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
+            if (level().isClientSide) return InteractionResult.SUCCESS;
+            ServerPlayer sp = (ServerPlayer) player;
+            if (StatsManager.get(sp).getRep(npc.faction) < Faction.Tier.UNFRIENDLY.from) {
+                StatsManager.message(sp, Component.literal(getName().getString() + ": «Убирайся, чужак».").withStyle(ChatFormatting.RED));
+                playSound(SoundEvents.VILLAGER_NO, 1f, 1f);
+                return InteractionResult.CONSUME;
+            }
+            com.andrey.litrpg.quest.QuestEvents.ensureFactionOffers(sp, npc.faction);
+            StatsManager.sync(sp);
+            com.andrey.litrpg.network.ModNetwork.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> sp),
+                    new com.andrey.litrpg.network.OpenQuestsPacket(npc.faction.key, getName().getString()));
+            return InteractionResult.CONSUME;
+        }
         if (level().isClientSide) return InteractionResult.SUCCESS;
         ServerPlayer sp = (ServerPlayer) player;
         int rep = StatsManager.get(sp).getRep(npc.faction);

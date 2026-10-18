@@ -23,6 +23,8 @@
     "litrpg:amulet_warlord",
     "litrpg:amulet_shadow",
     "litrpg:amulet_void",
-    "litrpg:amulet_firstlight"
+    "litrpg:amulet_firstlight",
+    "litrpg:ent_heartwood",
+    "litrpg:baalzar_horn"
   ]
 }

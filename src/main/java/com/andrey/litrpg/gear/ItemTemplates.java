@@ -36,6 +36,8 @@ public final class ItemTemplates {
         public final Map<GearBonus, Float> implicitBonus = new EnumMap<>(GearBonus.class);
         public final int[] implicitStats = new int[Stat.values().length];
         public String passive;
+        /** Трофей босса: падает только с него (id босса), в общий лут не входит. */
+        public String boss;
 
         public boolean isJewel() {
             return switch (kind) {
@@ -124,10 +126,11 @@ public final class ItemTemplates {
                 if (o.has("damage")) d.damage = o.get("damage").getAsFloat();
                 if (o.has("speed")) d.speed = o.get("speed").getAsFloat();
                 if (o.has("passive")) d.passive = o.get("passive").getAsString();
+                if (o.has("boss")) d.boss = o.get("boss").getAsString();
                 if (o.has("implicit")) readMods(o.getAsJsonObject("implicit"), d.implicitBonus, d.implicitStats);
                 ITEMS.add(d);
                 BY_ID.put(d.id, d);
-                if (d.isJewel()) JEWELS_BY_TIER.computeIfAbsent(d.tier, k -> new ArrayList<>()).add(d);
+                if (d.isJewel() && d.boss == null) JEWELS_BY_TIER.computeIfAbsent(d.tier, k -> new ArrayList<>()).add(d);
             }
             for (JsonElement el : root.getAsJsonArray("sets")) {
                 JsonObject o = el.getAsJsonObject();
@@ -172,6 +175,13 @@ public final class ItemTemplates {
     private static Rarity rarity(String key) {
         for (Rarity r : Rarity.values()) if (r.key.equals(key)) return r;
         return Rarity.COMMON;
+    }
+
+    /** Трофеи босса с данным id. */
+    public static List<Def> bossLoot(String bossId) {
+        List<Def> out = new ArrayList<>();
+        for (Def d : ITEMS) if (bossId.equals(d.boss)) out.add(d);
+        return out;
     }
 
     /** Случайный шаблон украшения уровня около level. */

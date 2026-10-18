@@ -199,6 +199,27 @@ public class LitRpgCommand {
             s.wipe();
             StatsManager.openOriginScreen(p);
         }))));
+        root.then(Commands.literal("quest")
+                .then(Commands.literal("step").then(players().then(Commands.argument("step", IntegerArgumentType.integer(0, 30))
+                        .executes(c -> each(c, (p, s) -> {
+                            s.quests().storyStep = IntegerArgumentType.getInteger(c, "step");
+                            s.quests().story = null;
+                        })))))
+                .then(Commands.literal("finish").then(players().executes(c -> each(c, (p, s) -> {
+                    if (s.quests().story != null) s.quests().story.have = s.quests().story.need;
+                    for (var q : s.quests().active) q.have = q.need;
+                    com.andrey.litrpg.quest.QuestEvents.checkAll(p);
+                }))))
+                .then(Commands.literal("refresh").then(players().executes(c -> each(c, (p, s) -> s.quests().offersDay.clear()))))
+                .then(Commands.literal("board").then(players().then(Commands.argument("faction", StringArgumentType.word())
+                        .executes(c -> each(c, (p, s) -> {
+                            var f = com.andrey.litrpg.rep.Faction.byKey(StringArgumentType.getString(c, "faction"));
+                            if (f == null) return;
+                            com.andrey.litrpg.quest.QuestEvents.ensureFactionOffers(p, f);
+                            StatsManager.sync(p);
+                            com.andrey.litrpg.network.ModNetwork.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
+                                    new com.andrey.litrpg.network.OpenQuestsPacket(f.key, "Вождь"));
+                        }))))));
         root.then(Commands.literal("codex").then(players().executes(c -> {
             for (ServerPlayer p : EntityArgument.getPlayers(c, "players")) StatsManager.giveCodex(p);
             return 1;

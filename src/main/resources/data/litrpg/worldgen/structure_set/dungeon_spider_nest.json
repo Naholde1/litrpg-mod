@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "litrpg:dungeon_spider_nest",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 38,
+    "separation": 14,
+    "salt": 812333
+  }
+}
