@@ -194,6 +194,30 @@ public class StatsManager {
         }
     }
 
+    /** Разослать всем игрокам расы всех игроков (для внешности). */
+    public static void broadcastRaces(net.minecraft.server.MinecraftServer server) {
+        java.util.Map<java.util.UUID, Integer> map = new java.util.HashMap<>();
+        for (ServerPlayer p : server.getPlayerList().getPlayers()) {
+            Race r = get(p).getRace();
+            if (r != null) map.put(p.getUUID(), r.ordinal());
+        }
+        ModNetwork.CHANNEL.send(PacketDistributor.ALL.noArg(), new com.andrey.litrpg.network.RacesPacket(map));
+    }
+
+    /** «+1 Сила, +2 Удача» — что даёт титул. */
+    public static MutableComponent titleReward(Title t) {
+        MutableComponent out = Component.empty();
+        boolean first = true;
+        for (Stat st : Stat.values()) {
+            int v = t.bonus(st);
+            if (v == 0) continue;
+            if (!first) out.append(", ");
+            out.append("+" + v + " ").append(Component.translatable(st.translationKey()));
+            first = false;
+        }
+        return out;
+    }
+
     public static void grantTitle(ServerPlayer player, Title t) {
         PlayerStats s = get(player);
         if (s.hasTitle(t)) return;
@@ -203,12 +227,14 @@ public class StatsManager {
         player.connection.send(new ClientboundSetTitleTextPacket(
                 Component.literal("ПОЛУЧЕН ТИТУЛ").withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD)));
         player.connection.send(new ClientboundSetSubtitleTextPacket(
-                Component.literal("«").append(Component.translatable(t.nameKey())).append("»").withStyle(ChatFormatting.AQUA)));
+                Component.literal("«").append(Component.translatable(t.nameKey())).append("»  ").withStyle(ChatFormatting.AQUA)
+                        .append(titleReward(t).withStyle(ChatFormatting.GREEN))));
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.PLAYERS, 0.8f, 1.0f);
         message(player, Component.literal("Получен титул ")
                 .append(Component.literal("«").append(Component.translatable(t.nameKey())).append("»").withStyle(ChatFormatting.LIGHT_PURPLE))
                 .append(": ").append(Component.translatable(t.descKey())));
+        message(player, Component.literal("Награда (навсегда): ").withStyle(ChatFormatting.GOLD).append(titleReward(t).withStyle(ChatFormatting.GREEN)));
         sync(player);
     }
 
@@ -223,6 +249,7 @@ public class StatsManager {
         boolean first = !s.hasOrigin();
         s.setRace(race);
         if (first) com.andrey.litrpg.rep.RepEvents.initFor(player);
+        broadcastRaces(player.server);
         applyAttributes(player);
         player.setHealth(player.getMaxHealth());
         s.setMana(s.getMaxMana());
@@ -302,6 +329,8 @@ public class StatsManager {
 
     private static void giveStarterKit(ServerPlayer player) {
         give(player, new ItemStack(Items.STONE_SWORD));
+        give(player, new ItemStack(Items.BOW));
+        give(player, new ItemStack(Items.ARROW, 48));
         give(player, new ItemStack(Items.LEATHER_CHESTPLATE));
         give(player, new ItemStack(Items.BREAD, 12));
         give(player, new ItemStack(Items.TORCH, 16));

@@ -16,7 +16,17 @@ public enum Faction {
     UNDEAD("undead", "Легион нежити", 0x8E44AD,
             "Мертвецы уважают некромантов и тех, кто сеет смерть среди живых. Дружелюбная нежить не нападает."),
     WILDS("wilds", "Дети природы", 0x27AE60,
-            "Звери и лесные создания. Разведение и приручение животных повышают репутацию, бессмысленная охота — роняет.");
+            "Звери и лесные создания. Разведение и приручение животных повышают репутацию, бессмысленная охота — роняет."),
+    ELVES("elves", "Эльфы Сильвендара", 0x9BE38C,
+            "Древний лесной народ. Живут в рощах среди лесов. Не любят орков и демонидов, ценят защиту леса."),
+    DWARVES("dwarves", "Подгорные кланы", 0xD08A4A,
+            "Дварфы горных твердынь. Мастера стали и рун, ненавидят гоблинов. Уважают тех, кто торгует честно."),
+    ORCS("orcs", "Орочья Орда", 0x6FA34A,
+            "Военные лагеря в саваннах и пустошах. Уважают силу. Враги эльфов и дварфов."),
+    BEASTKIN("beastkin", "Племена зверолюдов", 0xC9A36B,
+            "Охотничьи стойбища в тайге и джунглях. Дружны с природой, не терпят браконьеров."),
+    DEMONKIN("demonkin", "Культ Пепла", 0xC0405A,
+            "Демониды и их святилища в бесплодных землях. Опасны, но платят адской серой за услуги.");
 
     public final String key;
     public final String title;
@@ -61,12 +71,16 @@ public enum Faction {
     public int start(Race race) {
         if (race == null) return 0;
         return switch (race) {
-            case HUMAN -> this == KINGDOM ? 150 : this == ILLAGERS ? -100 : 0;
-            case ELF -> this == WILDS ? 250 : this == KINGDOM ? 50 : this == UNDEAD ? -100 : 0;
-            case DWARF -> this == KINGDOM ? 150 : this == GOBLINS ? -150 : 0;
-            case ORC -> this == GOBLINS ? 300 : this == KINGDOM ? -150 : this == ILLAGERS ? 50 : 0;
-            case BEASTKIN -> this == WILDS ? 400 : 0;
-            case DEMONKIN -> this == PIGLINS ? 350 : this == KINGDOM ? -100 : this == UNDEAD ? 100 : 0;
+            case HUMAN -> switch (this) { case KINGDOM -> 150; case ILLAGERS -> -100; case DWARVES, ELVES -> 50; default -> 0; };
+            case ELF -> switch (this) { case ELVES -> 500; case WILDS -> 250; case BEASTKIN -> 100; case KINGDOM -> 50;
+                case ORCS -> -300; case DEMONKIN -> -300; case UNDEAD -> -100; case DWARVES -> -50; default -> 0; };
+            case DWARF -> switch (this) { case DWARVES -> 500; case KINGDOM -> 150; case GOBLINS -> -250; case ORCS -> -250;
+                case ELVES -> -50; default -> 0; };
+            case ORC -> switch (this) { case ORCS -> 500; case GOBLINS -> 300; case ILLAGERS -> 50; case KINGDOM -> -150;
+                case ELVES -> -300; case DWARVES -> -250; default -> 0; };
+            case BEASTKIN -> switch (this) { case BEASTKIN -> 500; case WILDS -> 400; case ELVES -> 100; default -> 0; };
+            case DEMONKIN -> switch (this) { case DEMONKIN -> 500; case PIGLINS -> 350; case UNDEAD -> 100; case KINGDOM -> -100;
+                case ELVES -> -300; default -> 0; };
         };
     }
 

@@ -182,7 +182,7 @@ public class CombatEvents {
     @SubscribeEvent
     public static void onDrops(LivingDropsEvent event) {
         LivingEntity dead = event.getEntity();
-        if (!(dead instanceof Enemy)) return;
+        if (!(dead instanceof Enemy) && !(dead instanceof com.andrey.litrpg.npc.RaceNpcEntity)) return;
         ServerPlayer player = com.andrey.litrpg.party.DamageTracker.topContributor(dead, event.getSource());
         if (player == null) return;
         for (ItemStack gear : com.andrey.litrpg.gear.LootRolls.mobDrops(dead, player)) drop(event, dead, gear);

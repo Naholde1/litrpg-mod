@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "litrpg:cloak_travel",
+    "litrpg:cloak_hunter",
+    "litrpg:cloak_student",
+    "litrpg:cloak_wolfhide",
+    "litrpg:cloak_guard",
+    "litrpg:cloak_shadow",
+    "litrpg:cloak_fireproof",
+    "litrpg:cloak_paladin",
+    "litrpg:cloak_archmage",
+    "litrpg:cloak_night"
+  ]
+}

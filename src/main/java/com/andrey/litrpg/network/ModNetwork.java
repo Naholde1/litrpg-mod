@@ -6,7 +6,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public class ModNetwork {
-    private static final String VERSION = "4";
+    private static final String VERSION = "5";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             LitRPG.id("main"), () -> VERSION, VERSION::equals, VERSION::equals);
 
@@ -42,5 +42,8 @@ public class ModNetwork {
         CHANNEL.messageBuilder(PartyPacket.class, id++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(PartyPacket::encode).decoder(PartyPacket::new)
                 .consumerMainThread(PartyPacket::handle).add();
+        CHANNEL.messageBuilder(RacesPacket.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(RacesPacket::encode).decoder(RacesPacket::new)
+                .consumerMainThread(RacesPacket::handle).add();
     }
 }

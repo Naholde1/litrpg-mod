@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "litrpg:gloves_work",
+    "litrpg:gloves_leather",
+    "litrpg:gloves_archer",
+    "litrpg:gloves_thief",
+    "litrpg:gloves_plate",
+    "litrpg:gloves_miner",
+    "litrpg:gloves_mage",
+    "litrpg:gloves_claw",
+    "litrpg:gloves_smith",
+    "litrpg:gloves_assassin"
+  ]
+}

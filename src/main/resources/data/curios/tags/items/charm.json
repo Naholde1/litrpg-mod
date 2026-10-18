@@ -1,0 +1,29 @@
+{
+  "replace": false,
+  "values": [
+    "litrpg:charm_rabbit",
+    "litrpg:charm_horseshoe",
+    "litrpg:charm_coin",
+    "litrpg:charm_wolf_fang",
+    "litrpg:charm_bear_claw",
+    "litrpg:charm_hawk_feather",
+    "litrpg:charm_spider_eye",
+    "litrpg:charm_skull",
+    "litrpg:charm_goblin_idol",
+    "litrpg:charm_rune_guard",
+    "litrpg:charm_rune_might",
+    "litrpg:charm_rune_mind",
+    "litrpg:charm_rune_wind",
+    "litrpg:charm_totem",
+    "litrpg:charm_bell",
+    "litrpg:charm_acorn",
+    "litrpg:charm_shell",
+    "litrpg:charm_fire_crystal",
+    "litrpg:charm_ice_crystal",
+    "litrpg:charm_phoenix_feather",
+    "litrpg:charm_ender_eye",
+    "litrpg:charm_piglin_trinket",
+    "litrpg:charm_warden_bone",
+    "litrpg:charm_stardust"
+  ]
+}

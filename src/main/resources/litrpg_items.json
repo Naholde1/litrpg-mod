@@ -1,0 +1,2021 @@
+{
+ "items": [
+  {
+   "id": "ring_novice",
+   "kind": "ring",
+   "tier": 1,
+   "implicit": {
+    "luck": 1
+   }
+  },
+  {
+   "id": "ring_iron",
+   "kind": "ring",
+   "tier": 3,
+   "implicit": {
+    "armor": 0.5
+   }
+  },
+  {
+   "id": "ring_trickster",
+   "kind": "ring",
+   "tier": 4,
+   "implicit": {
+    "dodge": 2
+   }
+  },
+  {
+   "id": "ring_wolf",
+   "kind": "ring",
+   "tier": 5,
+   "implicit": {
+    "dmg_beast": 15
+   },
+   "set": "hunter_trophies"
+  },
+  {
+   "id": "ring_gravedigger",
+   "kind": "ring",
+   "tier": 6,
+   "implicit": {
+    "dmg_undead": 15
+   },
+   "set": "deadmans_legacy"
+  },
+  {
+   "id": "ring_spider",
+   "kind": "ring",
+   "tier": 6,
+   "implicit": {
+    "dmg_arthropod": 15
+   }
+  },
+  {
+   "id": "ring_archer",
+   "kind": "ring",
+   "tier": 7,
+   "implicit": {
+    "arrow_damage": 8
+   }
+  },
+  {
+   "id": "ring_miser",
+   "kind": "ring",
+   "tier": 5,
+   "implicit": {
+    "coin_find": 15
+   },
+   "set": "gifts_of_fortune"
+  },
+  {
+   "id": "ring_merchant",
+   "kind": "ring",
+   "tier": 8,
+   "implicit": {
+    "sell_price": 10
+   }
+  },
+  {
+   "id": "ring_spark",
+   "kind": "ring",
+   "tier": 9,
+   "implicit": {
+    "mana_regen": 10
+   }
+  },
+  {
+   "id": "ring_goblinbane",
+   "kind": "ring",
+   "tier": 8,
+   "implicit": {
+    "dmg_goblin": 20
+   }
+  },
+  {
+   "id": "ring_guard",
+   "kind": "ring",
+   "tier": 10,
+   "implicit": {
+    "health": 6
+   }
+  },
+  {
+   "id": "ring_brute",
+   "kind": "ring",
+   "tier": 12,
+   "implicit": {
+    "damage": 1.5
+   }
+  },
+  {
+   "id": "ring_sage",
+   "kind": "ring",
+   "tier": 12,
+   "implicit": {
+    "intelligence": 2
+   }
+  },
+  {
+   "id": "ring_strongman",
+   "kind": "ring",
+   "tier": 12,
+   "implicit": {
+    "strength": 2
+   }
+  },
+  {
+   "id": "ring_witchhunter",
+   "kind": "ring",
+   "tier": 14,
+   "implicit": {
+    "dmg_illager": 15,
+    "res_magic": 5
+   }
+  },
+  {
+   "id": "ring_flame",
+   "kind": "ring",
+   "tier": 16,
+   "implicit": {
+    "res_fire": 15
+   },
+   "set": "tears_of_flame"
+  },
+  {
+   "id": "ring_feather",
+   "kind": "ring",
+   "tier": 10,
+   "implicit": {
+    "res_fall": 20
+   }
+  },
+  {
+   "id": "ring_vampire",
+   "kind": "ring",
+   "tier": 18,
+   "implicit": {
+    "lifesteal": 2
+   }
+  },
+  {
+   "id": "ring_luck",
+   "kind": "ring",
+   "tier": 15,
+   "implicit": {
+    "luck": 3
+   },
+   "set": "gifts_of_fortune"
+  },
+  {
+   "id": "ring_miner",
+   "kind": "ring",
+   "tier": 6,
+   "implicit": {
+    "mining": 10
+   }
+  },
+  {
+   "id": "ring_storm",
+   "kind": "ring",
+   "tier": 22,
+   "implicit": {
+    "crit_chance": 3
+   }
+  },
+  {
+   "id": "ring_netherforged",
+   "kind": "ring",
+   "tier": 25,
+   "implicit": {
+    "dmg_nether": 15,
+    "res_fire": 5
+   }
+  },
+  {
+   "id": "ring_bounty",
+   "kind": "ring",
+   "tier": 28,
+   "implicit": {
+    "dmg_elite": 8
+   }
+  },
+  {
+   "id": "amulet_wooden",
+   "kind": "necklace",
+   "tier": 1,
+   "implicit": {
+    "health": 2
+   }
+  },
+  {
+   "id": "amulet_fang",
+   "kind": "necklace",
+   "tier": 4,
+   "implicit": {
+    "crit_damage": 5
+   },
+   "set": "hunter_trophies"
+  },
+  {
+   "id": "amulet_light",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {
+    "dmg_undead": 10,
+    "res_undead": 5
+   },
+   "set": "deadmans_legacy"
+  },
+  {
+   "id": "amulet_apprentice",
+   "kind": "necklace",
+   "tier": 5,
+   "implicit": {
+    "mana": 15
+   }
+  },
+  {
+   "id": "amulet_traveler",
+   "kind": "necklace",
+   "tier": 6,
+   "implicit": {
+    "move_speed": 3
+   }
+  },
+  {
+   "id": "amulet_wind",
+   "kind": "necklace",
+   "tier": 10,
+   "implicit": {
+    "agility": 2
+   }
+  },
+  {
+   "id": "amulet_stone",
+   "kind": "necklace",
+   "tier": 10,
+   "implicit": {
+    "vitality": 2
+   }
+  },
+  {
+   "id": "amulet_flame",
+   "kind": "necklace",
+   "tier": 14,
+   "implicit": {
+    "spell_power": 6
+   },
+   "set": "tears_of_flame"
+  },
+  {
+   "id": "amulet_trapper",
+   "kind": "necklace",
+   "tier": 9,
+   "implicit": {
+    "dmg_beast": 12,
+    "xp": 3
+   },
+   "set": "hunter_trophies"
+  },
+  {
+   "id": "amulet_leech",
+   "kind": "necklace",
+   "tier": 15,
+   "implicit": {
+    "health_regen": 0.5
+   }
+  },
+  {
+   "id": "amulet_scholar",
+   "kind": "necklace",
+   "tier": 12,
+   "implicit": {
+    "xp": 6
+   }
+  },
+  {
+   "id": "amulet_plague",
+   "kind": "necklace",
+   "tier": 13,
+   "implicit": {
+    "res_arthropod": 10,
+    "res_undead": 5
+   }
+  },
+  {
+   "id": "amulet_shield",
+   "kind": "necklace",
+   "tier": 16,
+   "implicit": {
+    "armor": 2
+   }
+  },
+  {
+   "id": "amulet_manakeeper",
+   "kind": "necklace",
+   "tier": 18,
+   "implicit": {
+    "mana": 30,
+    "mana_cost": 3
+   }
+  },
+  {
+   "id": "amulet_warlord",
+   "kind": "necklace",
+   "tier": 22,
+   "implicit": {
+    "strength": 2,
+    "vitality": 2
+   }
+  },
+  {
+   "id": "amulet_shadow",
+   "kind": "necklace",
+   "tier": 24,
+   "implicit": {
+    "dodge": 3,
+    "crit_chance": 2
+   },
+   "set": "assassins_night"
+  },
+  {
+   "id": "amulet_void",
+   "kind": "necklace",
+   "tier": 30,
+   "implicit": {
+    "res_magic": 10,
+    "spell_power": 8
+   }
+  },
+  {
+   "id": "amulet_firstlight",
+   "kind": "necklace",
+   "tier": 35,
+   "implicit": {
+    "luck": 2,
+    "intelligence": 2,
+    "health": 10
+   },
+   "min": "rare"
+  },
+  {
+   "id": "belt_rope",
+   "kind": "belt",
+   "tier": 1,
+   "implicit": {
+    "health": 1
+   }
+  },
+  {
+   "id": "belt_apprentice",
+   "kind": "belt",
+   "tier": 3,
+   "implicit": {
+    "mining": 5
+   }
+  },
+  {
+   "id": "belt_crafter",
+   "kind": "belt",
+   "tier": 6,
+   "implicit": {
+    "sell_price": 6
+   }
+  },
+  {
+   "id": "belt_hunter",
+   "kind": "belt",
+   "tier": 6,
+   "implicit": {
+    "arrow_damage": 5
+   },
+   "set": "hunter_gear"
+  },
+  {
+   "id": "belt_wide",
+   "kind": "belt",
+   "tier": 8,
+   "implicit": {
+    "armor": 1
+   }
+  },
+  {
+   "id": "belt_runner",
+   "kind": "belt",
+   "tier": 10,
+   "implicit": {
+    "move_speed": 4
+   }
+  },
+  {
+   "id": "belt_alchemist",
+   "kind": "belt",
+   "tier": 12,
+   "implicit": {
+    "mana_regen": 8
+   }
+  },
+  {
+   "id": "belt_warrior",
+   "kind": "belt",
+   "tier": 14,
+   "implicit": {
+    "health": 8
+   },
+   "set": "knights_oath"
+  },
+  {
+   "id": "belt_flasks",
+   "kind": "belt",
+   "tier": 15,
+   "implicit": {
+    "health_regen": 0.4
+   }
+  },
+  {
+   "id": "belt_climber",
+   "kind": "belt",
+   "tier": 12,
+   "implicit": {
+    "res_fall": 20
+   }
+  },
+  {
+   "id": "belt_treasure",
+   "kind": "belt",
+   "tier": 18,
+   "implicit": {
+    "loot": 6,
+    "coin_find": 8
+   },
+   "set": "gifts_of_fortune"
+  },
+  {
+   "id": "belt_titan",
+   "kind": "belt",
+   "tier": 28,
+   "implicit": {
+    "strength": 3,
+    "health": 10
+   },
+   "min": "uncommon"
+  },
+  {
+   "id": "bracelet_woven",
+   "kind": "bracelet",
+   "tier": 1,
+   "implicit": {
+    "luck": 1
+   }
+  },
+  {
+   "id": "bracelet_copper",
+   "kind": "bracelet",
+   "tier": 3,
+   "implicit": {
+    "attack_speed": 2
+   }
+  },
+  {
+   "id": "bracelet_bone",
+   "kind": "bracelet",
+   "tier": 6,
+   "implicit": {
+    "dmg_undead": 8
+   },
+   "set": "deadmans_legacy"
+  },
+  {
+   "id": "bracelet_archer",
+   "kind": "bracelet",
+   "tier": 5,
+   "implicit": {
+    "arrow_damage": 6
+   },
+   "set": "hunter_gear"
+  },
+  {
+   "id": "bracelet_scale",
+   "kind": "bracelet",
+   "tier": 9,
+   "implicit": {
+    "res_projectile": 8
+   }
+  },
+  {
+   "id": "bracelet_might",
+   "kind": "bracelet",
+   "tier": 10,
+   "implicit": {
+    "damage": 1
+   }
+  },
+  {
+   "id": "bracelet_focus",
+   "kind": "bracelet",
+   "tier": 10,
+   "implicit": {
+    "cooldown": 3
+   }
+  },
+  {
+   "id": "bracelet_mage",
+   "kind": "bracelet",
+   "tier": 12,
+   "implicit": {
+    "spell_power": 5
+   },
+   "set": "archmage_vestments"
+  },
+  {
+   "id": "bracelet_spiked",
+   "kind": "bracelet",
+   "tier": 12,
+   "implicit": {
+    "crit_damage": 8
+   }
+  },
+  {
+   "id": "bracelet_fangs",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {
+    "dmg_beast": 10,
+    "dmg_goblin": 10
+   },
+   "set": "hunter_trophies"
+  },
+  {
+   "id": "bracelet_blood",
+   "kind": "bracelet",
+   "tier": 18,
+   "implicit": {
+    "lifesteal": 1.5
+   }
+  },
+  {
+   "id": "bracelet_obsidian",
+   "kind": "bracelet",
+   "tier": 20,
+   "implicit": {
+    "res_explosion": 15
+   }
+  },
+  {
+   "id": "bracelet_silver",
+   "kind": "bracelet",
+   "tier": 16,
+   "implicit": {
+    "res_undead": 10
+   }
+  },
+  {
+   "id": "bracelet_storm",
+   "kind": "bracelet",
+   "tier": 26,
+   "implicit": {
+    "attack_speed": 5
+   }
+  },
+  {
+   "id": "charm_rabbit",
+   "kind": "charm",
+   "tier": 1,
+   "implicit": {
+    "luck": 2
+   },
+   "set": "gifts_of_fortune"
+  },
+  {
+   "id": "charm_horseshoe",
+   "kind": "charm",
+   "tier": 2,
+   "implicit": {
+    "move_speed": 2
+   },
+   "set": "gifts_of_fortune"
+  },
+  {
+   "id": "charm_coin",
+   "kind": "charm",
+   "tier": 3,
+   "implicit": {
+    "coin_find": 10
+   }
+  },
+  {
+   "id": "charm_wolf_fang",
+   "kind": "charm",
+   "tier": 4,
+   "implicit": {
+    "dmg_beast": 10
+   },
+   "set": "hunter_trophies"
+  },
+  {
+   "id": "charm_bear_claw",
+   "kind": "charm",
+   "tier": 6,
+   "implicit": {
+    "damage": 1
+   }
+  },
+  {
+   "id": "charm_hawk_feather",
+   "kind": "charm",
+   "tier": 5,
+   "implicit": {
+    "res_fall": 15
+   }
+  },
+  {
+   "id": "charm_spider_eye",
+   "kind": "charm",
+   "tier": 6,
+   "implicit": {
+    "dmg_arthropod": 12
+   }
+  },
+  {
+   "id": "charm_skull",
+   "kind": "charm",
+   "tier": 8,
+   "implicit": {
+    "dmg_undead": 12
+   },
+   "set": "deadmans_legacy"
+  },
+  {
+   "id": "charm_goblin_idol",
+   "kind": "charm",
+   "tier": 8,
+   "implicit": {
+    "dmg_goblin": 15
+   }
+  },
+  {
+   "id": "charm_rune_guard",
+   "kind": "charm",
+   "tier": 10,
+   "implicit": {
+    "armor": 1.5
+   },
+   "set": "elemental_runes"
+  },
+  {
+   "id": "charm_rune_might",
+   "kind": "charm",
+   "tier": 10,
+   "implicit": {
+    "strength": 2
+   },
+   "set": "elemental_runes"
+  },
+  {
+   "id": "charm_rune_mind",
+   "kind": "charm",
+   "tier": 10,
+   "implicit": {
+    "intelligence": 2
+   },
+   "set": "elemental_runes"
+  },
+  {
+   "id": "charm_rune_wind",
+   "kind": "charm",
+   "tier": 10,
+   "implicit": {
+    "agility": 2
+   },
+   "set": "elemental_runes"
+  },
+  {
+   "id": "charm_totem",
+   "kind": "charm",
+   "tier": 14,
+   "implicit": {
+    "health": 6
+   }
+  },
+  {
+   "id": "charm_bell",
+   "kind": "charm",
+   "tier": 9,
+   "implicit": {
+    "xp": 4
+   }
+  },
+  {
+   "id": "charm_acorn",
+   "kind": "charm",
+   "tier": 7,
+   "implicit": {
+    "health_regen": 0.3
+   }
+  },
+  {
+   "id": "charm_shell",
+   "kind": "charm",
+   "tier": 6,
+   "implicit": {
+    "mana_regen": 6
+   }
+  },
+  {
+   "id": "charm_fire_crystal",
+   "kind": "charm",
+   "tier": 16,
+   "implicit": {
+    "res_fire": 12
+   },
+   "set": "tears_of_flame"
+  },
+  {
+   "id": "charm_ice_crystal",
+   "kind": "charm",
+   "tier": 16,
+   "implicit": {
+    "spell_power": 5
+   }
+  },
+  {
+   "id": "charm_phoenix_feather",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {
+    "res_fire": 15,
+    "health_regen": 0.8
+   },
+   "min": "rare"
+  },
+  {
+   "id": "charm_ender_eye",
+   "kind": "charm",
+   "tier": 26,
+   "implicit": {
+    "dmg_elite": 6
+   }
+  },
+  {
+   "id": "charm_piglin_trinket",
+   "kind": "charm",
+   "tier": 20,
+   "implicit": {
+    "dmg_nether": 12
+   }
+  },
+  {
+   "id": "charm_warden_bone",
+   "kind": "charm",
+   "tier": 15,
+   "implicit": {
+    "res_undead": 8
+   }
+  },
+  {
+   "id": "charm_stardust",
+   "kind": "charm",
+   "tier": 32,
+   "implicit": {
+    "luck": 3,
+    "crit_chance": 2
+   },
+   "min": "uncommon"
+  },
+  {
+   "id": "cloak_travel",
+   "kind": "back",
+   "tier": 2,
+   "implicit": {
+    "move_speed": 2
+   }
+  },
+  {
+   "id": "cloak_hunter",
+   "kind": "back",
+   "tier": 6,
+   "implicit": {
+    "arrow_damage": 5,
+    "dodge": 1
+   },
+   "set": "hunter_gear"
+  },
+  {
+   "id": "cloak_student",
+   "kind": "back",
+   "tier": 6,
+   "implicit": {
+    "mana": 15
+   },
+   "set": "archmage_vestments"
+  },
+  {
+   "id": "cloak_wolfhide",
+   "kind": "back",
+   "tier": 9,
+   "implicit": {
+    "health": 4,
+    "dmg_beast": 6
+   },
+   "set": "hunter_trophies"
+  },
+  {
+   "id": "cloak_guard",
+   "kind": "back",
+   "tier": 12,
+   "implicit": {
+    "armor": 1.5
+   },
+   "set": "knights_oath"
+  },
+  {
+   "id": "cloak_shadow",
+   "kind": "back",
+   "tier": 18,
+   "implicit": {
+    "dodge": 3
+   },
+   "set": "assassins_night"
+  },
+  {
+   "id": "cloak_fireproof",
+   "kind": "back",
+   "tier": 16,
+   "implicit": {
+    "res_fire": 15
+   },
+   "set": "tears_of_flame"
+  },
+  {
+   "id": "cloak_paladin",
+   "kind": "back",
+   "tier": 22,
+   "implicit": {
+    "res_undead": 10,
+    "health": 6
+   }
+  },
+  {
+   "id": "cloak_archmage",
+   "kind": "back",
+   "tier": 30,
+   "implicit": {
+    "spell_power": 10,
+    "mana": 30
+   },
+   "set": "archmage_vestments",
+   "min": "rare"
+  },
+  {
+   "id": "cloak_night",
+   "kind": "back",
+   "tier": 34,
+   "implicit": {
+    "crit_chance": 4,
+    "dodge": 2
+   },
+   "set": "assassins_night",
+   "min": "rare"
+  },
+  {
+   "id": "gloves_work",
+   "kind": "hands",
+   "tier": 1,
+   "implicit": {
+    "mining": 6
+   }
+  },
+  {
+   "id": "gloves_leather",
+   "kind": "hands",
+   "tier": 3,
+   "implicit": {
+    "attack_speed": 2
+   }
+  },
+  {
+   "id": "gloves_archer",
+   "kind": "hands",
+   "tier": 5,
+   "implicit": {
+    "arrow_damage": 6
+   },
+   "set": "hunter_gear"
+  },
+  {
+   "id": "gloves_thief",
+   "kind": "hands",
+   "tier": 8,
+   "implicit": {
+    "loot": 4,
+    "coin_find": 6
+   }
+  },
+  {
+   "id": "gloves_plate",
+   "kind": "hands",
+   "tier": 12,
+   "implicit": {
+    "armor": 1,
+    "damage": 0.5
+   },
+   "set": "knights_oath"
+  },
+  {
+   "id": "gloves_miner",
+   "kind": "hands",
+   "tier": 10,
+   "implicit": {
+    "mining": 15
+   }
+  },
+  {
+   "id": "gloves_mage",
+   "kind": "hands",
+   "tier": 12,
+   "implicit": {
+    "cooldown": 4
+   },
+   "set": "archmage_vestments"
+  },
+  {
+   "id": "gloves_claw",
+   "kind": "hands",
+   "tier": 16,
+   "implicit": {
+    "crit_damage": 10
+   }
+  },
+  {
+   "id": "gloves_smith",
+   "kind": "hands",
+   "tier": 14,
+   "implicit": {
+    "res_fire": 8,
+    "mining": 8
+   }
+  },
+  {
+   "id": "gloves_assassin",
+   "kind": "hands",
+   "tier": 28,
+   "implicit": {
+    "crit_chance": 4,
+    "dmg_humanoid": 8
+   },
+   "set": "assassins_night",
+   "min": "uncommon"
+  },
+  {
+   "id": "hunter_helmet",
+   "kind": "helmet",
+   "tier": 6,
+   "material": "hunter",
+   "implicit": {
+    "arrow_damage": 2
+   },
+   "set": "hunter_gear"
+  },
+  {
+   "id": "hunter_chestplate",
+   "kind": "chestplate",
+   "tier": 6,
+   "material": "hunter",
+   "implicit": {
+    "arrow_damage": 2
+   },
+   "set": "hunter_gear"
+  },
+  {
+   "id": "hunter_leggings",
+   "kind": "leggings",
+   "tier": 6,
+   "material": "hunter",
+   "implicit": {
+    "arrow_damage": 2
+   },
+   "set": "hunter_gear"
+  },
+  {
+   "id": "hunter_boots",
+   "kind": "boots",
+   "tier": 6,
+   "material": "hunter",
+   "implicit": {
+    "arrow_damage": 2
+   },
+   "set": "hunter_gear"
+  },
+  {
+   "id": "knight_helmet",
+   "kind": "helmet",
+   "tier": 12,
+   "material": "knight",
+   "implicit": {
+    "armor": 0.5
+   },
+   "set": "knights_oath"
+  },
+  {
+   "id": "knight_chestplate",
+   "kind": "chestplate",
+   "tier": 12,
+   "material": "knight",
+   "implicit": {
+    "armor": 0.5
+   },
+   "set": "knights_oath"
+  },
+  {
+   "id": "knight_leggings",
+   "kind": "leggings",
+   "tier": 12,
+   "material": "knight",
+   "implicit": {
+    "armor": 0.5
+   },
+   "set": "knights_oath"
+  },
+  {
+   "id": "knight_boots",
+   "kind": "boots",
+   "tier": 12,
+   "material": "knight",
+   "implicit": {
+    "armor": 0.5
+   },
+   "set": "knights_oath"
+  },
+  {
+   "id": "mage_helmet",
+   "kind": "helmet",
+   "tier": 10,
+   "material": "magus",
+   "implicit": {
+    "mana": 8
+   },
+   "set": "archmage_vestments"
+  },
+  {
+   "id": "mage_chestplate",
+   "kind": "chestplate",
+   "tier": 10,
+   "material": "magus",
+   "implicit": {
+    "mana": 8
+   },
+   "set": "archmage_vestments"
+  },
+  {
+   "id": "mage_leggings",
+   "kind": "leggings",
+   "tier": 10,
+   "material": "magus",
+   "implicit": {
+    "mana": 8
+   },
+   "set": "archmage_vestments"
+  },
+  {
+   "id": "mage_boots",
+   "kind": "boots",
+   "tier": 10,
+   "material": "magus",
+   "implicit": {
+    "mana": 8
+   },
+   "set": "archmage_vestments"
+  },
+  {
+   "id": "elven_helmet",
+   "kind": "helmet",
+   "tier": 18,
+   "material": "elven",
+   "implicit": {
+    "dodge": 1
+   },
+   "set": "elven_grace",
+   "min": "uncommon"
+  },
+  {
+   "id": "elven_chestplate",
+   "kind": "chestplate",
+   "tier": 18,
+   "material": "elven",
+   "implicit": {
+    "dodge": 1
+   },
+   "set": "elven_grace",
+   "min": "uncommon"
+  },
+  {
+   "id": "elven_leggings",
+   "kind": "leggings",
+   "tier": 18,
+   "material": "elven",
+   "implicit": {
+    "dodge": 1
+   },
+   "set": "elven_grace",
+   "min": "uncommon"
+  },
+  {
+   "id": "elven_boots",
+   "kind": "boots",
+   "tier": 18,
+   "material": "elven",
+   "implicit": {
+    "dodge": 1
+   },
+   "set": "elven_grace",
+   "min": "uncommon"
+  },
+  {
+   "id": "dwarven_helmet",
+   "kind": "helmet",
+   "tier": 18,
+   "material": "dwarven",
+   "implicit": {
+    "armor": 1
+   },
+   "set": "dwarven_bulwark",
+   "min": "uncommon"
+  },
+  {
+   "id": "dwarven_chestplate",
+   "kind": "chestplate",
+   "tier": 18,
+   "material": "dwarven",
+   "implicit": {
+    "armor": 1
+   },
+   "set": "dwarven_bulwark",
+   "min": "uncommon"
+  },
+  {
+   "id": "dwarven_leggings",
+   "kind": "leggings",
+   "tier": 18,
+   "material": "dwarven",
+   "implicit": {
+    "armor": 1
+   },
+   "set": "dwarven_bulwark",
+   "min": "uncommon"
+  },
+  {
+   "id": "dwarven_boots",
+   "kind": "boots",
+   "tier": 18,
+   "material": "dwarven",
+   "implicit": {
+    "armor": 1
+   },
+   "set": "dwarven_bulwark",
+   "min": "uncommon"
+  },
+  {
+   "id": "orcish_helmet",
+   "kind": "helmet",
+   "tier": 16,
+   "material": "orcish",
+   "implicit": {
+    "damage": 0.5
+   },
+   "set": "orcish_fury",
+   "min": "uncommon"
+  },
+  {
+   "id": "orcish_chestplate",
+   "kind": "chestplate",
+   "tier": 16,
+   "material": "orcish",
+   "implicit": {
+    "damage": 0.5
+   },
+   "set": "orcish_fury",
+   "min": "uncommon"
+  },
+  {
+   "id": "orcish_leggings",
+   "kind": "leggings",
+   "tier": 16,
+   "material": "orcish",
+   "implicit": {
+    "damage": 0.5
+   },
+   "set": "orcish_fury",
+   "min": "uncommon"
+  },
+  {
+   "id": "orcish_boots",
+   "kind": "boots",
+   "tier": 16,
+   "material": "orcish",
+   "implicit": {
+    "damage": 0.5
+   },
+   "set": "orcish_fury",
+   "min": "uncommon"
+  },
+  {
+   "id": "beast_helmet",
+   "kind": "helmet",
+   "tier": 16,
+   "material": "beasthide",
+   "implicit": {
+    "move_speed": 1
+   },
+   "set": "beast_instinct",
+   "min": "uncommon"
+  },
+  {
+   "id": "beast_chestplate",
+   "kind": "chestplate",
+   "tier": 16,
+   "material": "beasthide",
+   "implicit": {
+    "move_speed": 1
+   },
+   "set": "beast_instinct",
+   "min": "uncommon"
+  },
+  {
+   "id": "beast_leggings",
+   "kind": "leggings",
+   "tier": 16,
+   "material": "beasthide",
+   "implicit": {
+    "move_speed": 1
+   },
+   "set": "beast_instinct",
+   "min": "uncommon"
+  },
+  {
+   "id": "beast_boots",
+   "kind": "boots",
+   "tier": 16,
+   "material": "beasthide",
+   "implicit": {
+    "move_speed": 1
+   },
+   "set": "beast_instinct",
+   "min": "uncommon"
+  },
+  {
+   "id": "demonic_helmet",
+   "kind": "helmet",
+   "tier": 26,
+   "material": "demonic",
+   "implicit": {
+    "res_fire": 4
+   },
+   "set": "infernal_pact",
+   "min": "rare"
+  },
+  {
+   "id": "demonic_chestplate",
+   "kind": "chestplate",
+   "tier": 26,
+   "material": "demonic",
+   "implicit": {
+    "res_fire": 4
+   },
+   "set": "infernal_pact",
+   "min": "rare"
+  },
+  {
+   "id": "demonic_leggings",
+   "kind": "leggings",
+   "tier": 26,
+   "material": "demonic",
+   "implicit": {
+    "res_fire": 4
+   },
+   "set": "infernal_pact",
+   "min": "rare"
+  },
+  {
+   "id": "demonic_boots",
+   "kind": "boots",
+   "tier": 26,
+   "material": "demonic",
+   "implicit": {
+    "res_fire": 4
+   },
+   "set": "infernal_pact",
+   "min": "rare"
+  },
+  {
+   "id": "elven_blade",
+   "kind": "sword",
+   "tier": 18,
+   "damage": 3,
+   "speed": -2.2,
+   "implicit": {
+    "agility": 2
+   },
+   "set": "elven_grace",
+   "min": "uncommon"
+  },
+  {
+   "id": "elven_staff",
+   "kind": "staff",
+   "tier": 18,
+   "damage": 0,
+   "speed": 0,
+   "implicit": {
+    "mana_regen": 10
+   },
+   "set": "elven_grace",
+   "min": "uncommon"
+  },
+  {
+   "id": "dwarven_axe",
+   "kind": "axe",
+   "tier": 18,
+   "damage": 7,
+   "speed": -3.0,
+   "implicit": {
+    "mining": 15
+   },
+   "set": "dwarven_bulwark",
+   "min": "uncommon"
+  },
+  {
+   "id": "dwarven_hammer",
+   "kind": "sword",
+   "tier": 22,
+   "damage": 6,
+   "speed": -3.0,
+   "implicit": {
+    "dmg_goblin": 15
+   },
+   "set": "dwarven_bulwark",
+   "min": "uncommon"
+  },
+  {
+   "id": "orc_cleaver",
+   "kind": "axe",
+   "tier": 16,
+   "damage": 8,
+   "speed": -3.2,
+   "implicit": {
+    "damage": 1
+   },
+   "set": "orcish_fury",
+   "min": "uncommon"
+  },
+  {
+   "id": "orc_club",
+   "kind": "sword",
+   "tier": 14,
+   "damage": 5,
+   "speed": -2.8,
+   "implicit": {
+    "crit_damage": 6
+   },
+   "set": "orcish_fury"
+  },
+  {
+   "id": "beast_spear",
+   "kind": "sword",
+   "tier": 16,
+   "damage": 4,
+   "speed": -2.6,
+   "implicit": {
+    "dmg_beast": 15
+   },
+   "set": "beast_instinct",
+   "min": "uncommon"
+  },
+  {
+   "id": "beast_claws",
+   "kind": "dagger",
+   "tier": 16,
+   "damage": 2,
+   "speed": 0,
+   "implicit": {
+    "crit_chance": 2
+   },
+   "set": "beast_instinct",
+   "min": "uncommon"
+  },
+  {
+   "id": "demon_blade",
+   "kind": "sword",
+   "tier": 26,
+   "damage": 5,
+   "speed": -2.4,
+   "implicit": {
+    "res_fire": 5
+   },
+   "set": "infernal_pact",
+   "min": "rare"
+  },
+  {
+   "id": "demon_staff",
+   "kind": "staff",
+   "tier": 26,
+   "damage": 0,
+   "speed": 0,
+   "implicit": {
+    "spell_power": 6
+   },
+   "set": "infernal_pact",
+   "min": "rare"
+  },
+  {
+   "id": "knight_sword",
+   "kind": "sword",
+   "tier": 12,
+   "damage": 4,
+   "speed": -2.4,
+   "implicit": {
+    "health": 3
+   },
+   "set": "knights_oath"
+  },
+  {
+   "id": "hunter_dagger",
+   "kind": "dagger",
+   "tier": 6,
+   "damage": 1,
+   "speed": 0,
+   "implicit": {
+    "dmg_beast": 8
+   },
+   "set": "hunter_gear"
+  }
+ ],
+ "sets": [
+  {
+   "id": "hunter_gear",
+   "title": "Снаряжение охотника",
+   "items": [
+    "belt_hunter",
+    "bracelet_archer",
+    "cloak_hunter",
+    "gloves_archer",
+    "hunter_helmet",
+    "hunter_chestplate",
+    "hunter_leggings",
+    "hunter_boots",
+    "hunter_dagger"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "arrow_damage": 8
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "agility": 3,
+      "crit_chance": 4
+     }
+    },
+    {
+     "pieces": 6,
+     "mods": {
+      "move_speed": 6
+     },
+     "passive": "swiftness"
+    }
+   ]
+  },
+  {
+   "id": "knights_oath",
+   "title": "Клятва рыцаря",
+   "items": [
+    "belt_warrior",
+    "cloak_guard",
+    "gloves_plate",
+    "knight_helmet",
+    "knight_chestplate",
+    "knight_leggings",
+    "knight_boots",
+    "knight_sword"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "armor": 3
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "health": 12,
+      "res_projectile": 10
+     }
+    },
+    {
+     "pieces": 6,
+     "mods": {
+      "vitality": 4
+     },
+     "passive": "thorns"
+    }
+   ]
+  },
+  {
+   "id": "archmage_vestments",
+   "title": "Облачение архимага",
+   "items": [
+    "bracelet_mage",
+    "cloak_student",
+    "cloak_archmage",
+    "gloves_mage",
+    "mage_helmet",
+    "mage_chestplate",
+    "mage_leggings",
+    "mage_boots"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "mana": 30
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "spell_power": 12,
+      "cooldown": 6
+     }
+    },
+    {
+     "pieces": 6,
+     "mods": {
+      "intelligence": 5
+     },
+     "passive": "arcane_echo"
+    }
+   ]
+  },
+  {
+   "id": "elven_grace",
+   "title": "Эльфийская грация",
+   "items": [
+    "elven_helmet",
+    "elven_chestplate",
+    "elven_leggings",
+    "elven_boots",
+    "elven_blade",
+    "elven_staff"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "dodge": 4
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "agility": 4,
+      "arrow_damage": 10
+     }
+    },
+    {
+     "pieces": 6,
+     "mods": {
+      "crit_chance": 6
+     },
+     "passive": "night_eye"
+    }
+   ]
+  },
+  {
+   "id": "dwarven_bulwark",
+   "title": "Дварфийский бастион",
+   "items": [
+    "dwarven_helmet",
+    "dwarven_chestplate",
+    "dwarven_leggings",
+    "dwarven_boots",
+    "dwarven_axe",
+    "dwarven_hammer"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "mining": 15
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "vitality": 4,
+      "armor": 4,
+      "res_explosion": 20
+     }
+    },
+    {
+     "pieces": 6,
+     "mods": {
+      "health": 20,
+      "dmg_goblin": 20
+     }
+    }
+   ]
+  },
+  {
+   "id": "orcish_fury",
+   "title": "Орочья ярость",
+   "items": [
+    "orcish_helmet",
+    "orcish_chestplate",
+    "orcish_leggings",
+    "orcish_boots",
+    "orc_cleaver",
+    "orc_club"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "damage": 2
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "strength": 4
+     },
+     "passive": "berserker"
+    },
+    {
+     "pieces": 5,
+     "mods": {
+      "lifesteal": 3
+     }
+    }
+   ]
+  },
+  {
+   "id": "beast_instinct",
+   "title": "Звериный инстинкт",
+   "items": [
+    "beast_helmet",
+    "beast_chestplate",
+    "beast_leggings",
+    "beast_boots",
+    "beast_spear",
+    "beast_claws"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "move_speed": 6
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "crit_chance": 6,
+      "dmg_beast": 20
+     }
+    },
+    {
+     "pieces": 6,
+     "mods": {
+      "agility": 4
+     },
+     "passive": "featherfall"
+    }
+   ]
+  },
+  {
+   "id": "infernal_pact",
+   "title": "Адский договор",
+   "items": [
+    "demonic_helmet",
+    "demonic_chestplate",
+    "demonic_leggings",
+    "demonic_boots",
+    "demon_blade",
+    "demon_staff"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "res_fire": 25
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "spell_power": 15
+     },
+     "passive": "fireproof"
+    },
+    {
+     "pieces": 6,
+     "mods": {
+      "dmg_nether": 25,
+      "intelligence": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "deadmans_legacy",
+   "title": "Наследие мертвеца",
+   "items": [
+    "ring_gravedigger",
+    "amulet_light",
+    "bracelet_bone",
+    "charm_skull"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "dmg_undead": 10
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "res_undead": 15
+     },
+     "passive": "night_eye"
+    }
+   ]
+  },
+  {
+   "id": "gifts_of_fortune",
+   "title": "Дары удачи",
+   "items": [
+    "ring_miser",
+    "ring_luck",
+    "belt_treasure",
+    "charm_rabbit",
+    "charm_horseshoe"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "luck": 2
+     }
+    },
+    {
+     "pieces": 3,
+     "mods": {
+      "coin_find": 15
+     }
+    },
+    {
+     "pieces": 5,
+     "mods": {
+      "loot": 10
+     },
+     "passive": "treasure_hunter"
+    }
+   ]
+  },
+  {
+   "id": "elemental_runes",
+   "title": "Руны стихий",
+   "items": [
+    "charm_rune_guard",
+    "charm_rune_might",
+    "charm_rune_mind",
+    "charm_rune_wind"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "health": 6
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "strength": 2,
+      "agility": 2,
+      "intelligence": 2,
+      "vitality": 2
+     }
+    }
+   ]
+  },
+  {
+   "id": "hunter_trophies",
+   "title": "Трофеи зверолова",
+   "items": [
+    "ring_wolf",
+    "amulet_fang",
+    "amulet_trapper",
+    "bracelet_fangs",
+    "charm_wolf_fang",
+    "cloak_wolfhide"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "dmg_beast": 10
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "crit_damage": 12,
+      "xp": 5
+     }
+    },
+    {
+     "pieces": 6,
+     "mods": {
+      "luck": 3
+     }
+    }
+   ]
+  },
+  {
+   "id": "tears_of_flame",
+   "title": "Слёзы пламени",
+   "items": [
+    "ring_flame",
+    "amulet_flame",
+    "charm_fire_crystal",
+    "cloak_fireproof"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "res_fire": 15
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "spell_power": 8
+     },
+     "passive": "fireproof"
+    }
+   ]
+  },
+  {
+   "id": "assassins_night",
+   "title": "Ночь убийцы",
+   "items": [
+    "amulet_shadow",
+    "cloak_shadow",
+    "cloak_night",
+    "gloves_assassin"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "dodge": 3
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "crit_damage": 20
+     },
+     "passive": "executioner"
+    }
+   ]
+  }
+ ],
+ "materials": [
+  {
+   "id": "hunter",
+   "durability": 12,
+   "defense": [
+    1,
+    4,
+    3,
+    1
+   ],
+   "enchant": 15,
+   "toughness": 0,
+   "knockback": 0,
+   "repair": "minecraft:leather",
+   "sound": "leather"
+  },
+  {
+   "id": "knight",
+   "durability": 25,
+   "defense": [
+    2,
+    6,
+    5,
+    2
+   ],
+   "enchant": 10,
+   "toughness": 1,
+   "knockback": 0,
+   "repair": "minecraft:iron_ingot",
+   "sound": "iron"
+  },
+  {
+   "id": "magus",
+   "durability": 10,
+   "defense": [
+    1,
+    3,
+    2,
+    1
+   ],
+   "enchant": 25,
+   "toughness": 0,
+   "knockback": 0,
+   "repair": "minecraft:purple_wool",
+   "sound": "leather"
+  },
+  {
+   "id": "elven",
+   "durability": 22,
+   "defense": [
+    2,
+    5,
+    5,
+    2
+   ],
+   "enchant": 20,
+   "toughness": 1,
+   "knockback": 0,
+   "repair": "litrpg:elf_token",
+   "sound": "chain"
+  },
+  {
+   "id": "dwarven",
+   "durability": 33,
+   "defense": [
+    3,
+    7,
+    6,
+    3
+   ],
+   "enchant": 10,
+   "toughness": 2,
+   "knockback": 0.1,
+   "repair": "litrpg:dwarf_token",
+   "sound": "iron"
+  },
+  {
+   "id": "orcish",
+   "durability": 28,
+   "defense": [
+    3,
+    7,
+    6,
+    2
+   ],
+   "enchant": 8,
+   "toughness": 1,
+   "knockback": 0.05,
+   "repair": "litrpg:orc_token",
+   "sound": "iron"
+  },
+  {
+   "id": "beasthide",
+   "durability": 22,
+   "defense": [
+    2,
+    5,
+    5,
+    2
+   ],
+   "enchant": 15,
+   "toughness": 0.5,
+   "knockback": 0,
+   "repair": "litrpg:beast_token",
+   "sound": "leather"
+  },
+  {
+   "id": "demonic",
+   "durability": 35,
+   "defense": [
+    3,
+    7,
+    6,
+    3
+   ],
+   "enchant": 18,
+   "toughness": 2.5,
+   "knockback": 0.05,
+   "repair": "litrpg:demon_token",
+   "sound": "netherite"
+  }
+ ]
+}

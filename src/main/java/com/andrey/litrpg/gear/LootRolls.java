@@ -20,9 +20,19 @@ import java.util.List;
 public final class LootRolls {
     private LootRolls() {}
 
+    /** Разложить сумму в медных монетах на золото, серебро и медь. */
+    public static List<ItemStack> coinStacks(int copper) {
+        List<ItemStack> out = new ArrayList<>();
+        int g = copper / 81, s = copper % 81 / 9, c = copper % 9;
+        if (g > 0) out.add(new ItemStack(com.andrey.litrpg.registry.ModItems.GOLD_COIN.get(), Math.min(64, g)));
+        if (s > 0) out.add(new ItemStack(com.andrey.litrpg.registry.ModItems.SILVER_COIN.get(), s));
+        if (c > 0) out.add(new ItemStack(com.andrey.litrpg.registry.ModItems.COPPER_COIN.get(), c));
+        return out;
+    }
+
     public static List<ItemStack> mobDrops(LivingEntity dead, ServerPlayer player) {
         List<ItemStack> out = new ArrayList<>();
-        if (!(dead instanceof Enemy)) return out;
+        if (!(dead instanceof Enemy) && !(dead instanceof com.andrey.litrpg.npc.RaceNpcEntity)) return out;
         RandomSource rnd = dead.getRandom();
         PlayerStats s = StatsManager.get(player);
         PlayerGear g = s.gear();
@@ -58,6 +68,18 @@ public final class LootRolls {
                 out.add(GearGen.random(rnd, itemLvl, GearGen.rollRarity(rnd, boost)));
             }
             chance *= 0.4f;
+        }
+        // монеты: медь, с элит и чемпионов — серебро и золото
+        float coinMult = 1 + g.get(GearBonus.COIN_FIND) / 100f;
+        if (rnd.nextFloat() < 0.35f) {
+            int copper = Math.round((1 + rnd.nextInt(3) + lvl / 4f) * coinMult * (rank == MobLevels.Rank.CHAMPION ? 12 : rank == MobLevels.Rank.ELITE ? 4 : 1));
+            out.addAll(coinStacks(copper));
+        }
+        // «мелочёвка»: украшения падают часто — их можно носить или продать
+        float trinket = (rank == MobLevels.Rank.CHAMPION ? 0.6f : rank == MobLevels.Rank.ELITE ? 0.3f : 0.06f + lvl * 0.001f) * findMult;
+        if (rnd.nextFloat() < trinket) {
+            ItemStack t = GearGen.trinket(rnd, lvl, boost * 0.5f);
+            if (!t.isEmpty()) out.add(t);
         }
         // редчайшие уникальные предметы с чемпионов
         if (rank == MobLevels.Rank.CHAMPION) {

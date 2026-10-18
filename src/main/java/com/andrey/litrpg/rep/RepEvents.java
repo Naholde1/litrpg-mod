@@ -73,7 +73,20 @@ public final class RepEvents {
         for (Faction f : Faction.values()) s.setRep(f, f.start(s.getRace()));
     }
 
+    /** Враги народа: убийство его жителей радует этих соседей. */
+    public static Faction[] rivals(Faction f) {
+        return switch (f) {
+            case ELVES -> new Faction[]{Faction.ORCS, Faction.DEMONKIN};
+            case DWARVES -> new Faction[]{Faction.ORCS, Faction.GOBLINS};
+            case ORCS -> new Faction[]{Faction.ELVES, Faction.DWARVES, Faction.KINGDOM};
+            case DEMONKIN -> new Faction[]{Faction.ELVES, Faction.KINGDOM};
+            case BEASTKIN -> new Faction[]{Faction.ORCS};
+            default -> new Faction[0];
+        };
+    }
+
     public static Faction factionOf(Entity e) {
+        if (e instanceof com.andrey.litrpg.npc.RaceNpcEntity npc) return npc.npcType().faction;
         if (e instanceof AbstractVillager || e instanceof IronGolem) return Faction.KINGDOM;
         if (e instanceof GoblinEntity) return Faction.GOBLINS;
         if (e instanceof AbstractPiglin) return Faction.PIGLINS;
@@ -92,6 +105,18 @@ public final class RepEvents {
         ServerPlayer p = DamageTracker.topContributor(dead, event.getSource());
         if (p == null) return;
         Faction f = factionOf(dead);
+        if (dead instanceof com.andrey.litrpg.npc.RaceNpcEntity npc) {
+            boolean chief = npc.npcType().role == com.andrey.litrpg.npc.NpcType.Role.CHIEF;
+            change(p, f, chief ? -120 : -25);
+            for (Faction rival : rivals(f)) change(p, rival, chief ? 25 : 5);
+            return;
+        }
+        if (dead instanceof com.andrey.litrpg.entity.GoblinEntity) change(p, Faction.DWARVES, 2);
+        // защита поселений рас: монстр убит рядом с их жителями
+        if (dead instanceof net.minecraft.world.entity.monster.Enemy) {
+            var near = dead.level().getEntitiesOfClass(com.andrey.litrpg.npc.RaceNpcEntity.class, dead.getBoundingBox().inflate(32));
+            if (!near.isEmpty()) change(p, near.get(0).npcType().faction, 2);
+        }
         if (dead instanceof Villager) {
             change(p, Faction.KINGDOM, -60);
             change(p, Faction.ILLAGERS, 15);
@@ -197,6 +222,10 @@ public final class RepEvents {
         LivingEntity target = event.getEntity();
         Faction f = factionOf(target);
         if (f == null) return;
+        if (target instanceof com.andrey.litrpg.npc.RaceNpcEntity && event.getSource().getEntity() instanceof ServerPlayer sp
+                && !target.getPersistentData().getBoolean(PROVOKED_TAG)) {
+            change(sp, f, -10); // нападение на жителя
+        }
         target.getPersistentData().putBoolean(PROVOKED_TAG, true);
         for (LivingEntity e : target.level().getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(12),
                 e -> factionOf(e) == f)) {

@@ -16,7 +16,32 @@ public enum GearBonus {
     SPELL_POWER("spell_power", "силы навыков", true, Slot.ANY),
     COOLDOWN("cooldown", "сокращения перезарядки", true, Slot.JEWEL),
     XP("xp", "опыта", true, Slot.JEWEL),
-    LOOT("loot", "шанса добычи", true, Slot.JEWEL);
+    LOOT("loot", "шанса добычи", true, Slot.JEWEL),
+    // против семейств монстров
+    DMG_UNDEAD("dmg_undead", "урона по нежити", true, Slot.ANY),
+    DMG_ARTHROPOD("dmg_arthropod", "урона по паукам и насекомым", true, Slot.ANY),
+    DMG_ILLAGER("dmg_illager", "урона по иллагерам и разбойникам", true, Slot.ANY),
+    DMG_GOBLIN("dmg_goblin", "урона по гоблинам", true, Slot.ANY),
+    DMG_BEAST("dmg_beast", "урона по зверям", true, Slot.ANY),
+    DMG_NETHER("dmg_nether", "урона по существам Преисподней", true, Slot.ANY),
+    DMG_ELITE("dmg_elite", "урона по элитам и боссам", true, Slot.ANY),
+    DMG_HUMANOID("dmg_humanoid", "урона по разумным расам", true, Slot.ANY),
+    RES_UNDEAD("res_undead", "защиты от нежити", true, Slot.ARMOR),
+    RES_ARTHROPOD("res_arthropod", "защиты от пауков и насекомых", true, Slot.ARMOR),
+    RES_ILLAGER("res_illager", "защиты от иллагеров", true, Slot.ARMOR),
+    RES_GOBLIN("res_goblin", "защиты от гоблинов", true, Slot.ARMOR),
+    RES_FIRE("res_fire", "защиты от огня", true, Slot.ARMOR),
+    RES_FALL("res_fall", "защиты от падения", true, Slot.ARMOR),
+    RES_PROJECTILE("res_projectile", "защиты от снарядов", true, Slot.ARMOR),
+    RES_EXPLOSION("res_explosion", "защиты от взрывов", true, Slot.ARMOR),
+    RES_MAGIC("res_magic", "защиты от магии", true, Slot.ARMOR),
+    // прочее
+    MINING("mining", "скорости добычи", true, Slot.JEWEL),
+    ARROW_DAMAGE("arrow_damage", "урона стрелами", true, Slot.ANY),
+    MANA_COST("mana_cost", "экономии маны", true, Slot.JEWEL),
+    HEALTH_REGEN("health_regen", "здоровья каждые 5 с", false, Slot.JEWEL),
+    COIN_FIND("coin_find", "монет с монстров", true, Slot.JEWEL),
+    SELL_PRICE("sell_price", "к цене продажи", true, Slot.JEWEL);
 
     public enum Slot { WEAPON, ARMOR, JEWEL, ANY }
 
@@ -54,8 +79,17 @@ public enum GearBonus {
             case LIFESTEAL -> 2 + lvl * 0.05f;
             case MANA_REGEN, SPELL_POWER, XP, LOOT -> 5 + lvl * 0.2f;
             case COOLDOWN -> 3 + lvl * 0.1f;
+            case DMG_UNDEAD, DMG_ARTHROPOD, DMG_ILLAGER, DMG_GOBLIN, DMG_BEAST, DMG_NETHER, DMG_HUMANOID -> 8 + lvl * 0.3f;
+            case DMG_ELITE -> 5 + lvl * 0.2f;
+            case RES_UNDEAD, RES_ARTHROPOD, RES_ILLAGER, RES_GOBLIN -> 5 + lvl * 0.2f;
+            case RES_FIRE, RES_FALL, RES_PROJECTILE, RES_EXPLOSION, RES_MAGIC -> 6 + lvl * 0.2f;
+            case MINING, ARROW_DAMAGE -> 6 + lvl * 0.2f;
+            case MANA_COST -> 3 + lvl * 0.1f;
+            case HEALTH_REGEN -> 0.5f + lvl * 0.04f;
+            case COIN_FIND, SELL_PRICE -> 8 + lvl * 0.3f;
         };
         v *= mult * (0.75f + rnd * 0.5f);
+        if (this == MANA_COST || this == COOLDOWN) v = Math.min(v, 40);
         return percent || this == HEALTH || this == MANA ? Math.round(v) : Math.round(v * 10) / 10f;
     }
 

@@ -78,12 +78,13 @@ public class AbilityHandler {
             return;
         }
         boolean free = player.isCreative();
-        if (!free && s.getMana() < a.mana) {
+        int cost = Math.round(a.mana * (1 - Math.min(40f, s.gear().get(com.andrey.litrpg.gear.GearBonus.MANA_COST)) / 100f));
+        if (!free && s.getMana() < cost) {
             player.displayClientMessage(Component.literal("Недостаточно маны!").withStyle(ChatFormatting.BLUE), true);
             return;
         }
         if (execute(player, s, a)) {
-            if (!free) s.setMana(s.getMana() - a.mana);
+            if (!free) s.setMana(s.getMana() - cost);
             s.addStyle(Style.MAGIC, a.mana / 4);
             var g = s.gear();
             int cd = Math.round(a.cooldown * (1 - Math.min(50f, g.get(com.andrey.litrpg.gear.GearBonus.COOLDOWN)) / 100f));

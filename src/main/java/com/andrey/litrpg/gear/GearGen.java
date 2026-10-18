@@ -37,6 +37,14 @@ public final class GearGen {
 
     /** Случайный предмет уровня level и редкости rarity. */
     public static ItemStack random(RandomSource rnd, int level, Rarity rarity) {
+        // треть предметов — из шаблонов мода (украшения, наборы, оружие рас)
+        if (rnd.nextFloat() < 0.35f) {
+            ItemStack t = templateNear(rnd, level, false);
+            if (!t.isEmpty()) {
+                apply(t, rnd, level, rarity.ordinal() < templateMin(t).ordinal() ? templateMin(t) : rarity);
+                return t;
+            }
+        }
         float c = rnd.nextFloat();
         ItemStack base = c < 0.42f ? weaponBaseStack(rnd, level) : c < 0.82f ? armorBase(rnd, level) : jewelBase(rnd, level);
         apply(base, rnd, level, rarity);
@@ -70,8 +78,42 @@ public final class GearGen {
         for (Passive p : Passive.values()) if (p.weapon == (cat == GearData.Category.WEAPON)) passives.add(p);
         for (int i = 0; i < rarity.passives && !passives.isEmpty(); i++) d.passives.add(passives.remove(rnd.nextInt(passives.size())));
         if (rarity.ability && cat == GearData.Category.WEAPON) d.ability = ABILITIES[rnd.nextInt(ABILITIES.length)];
+        // врождённые свойства шаблона есть у предмета любой редкости
+        if (stack.getItem() instanceof TemplateItem t) {
+            var def = t.def();
+            def.implicitBonus.forEach((b, v) -> d.bonuses.merge(b, v, Float::sum));
+            for (int i = 0; i < d.stats.length; i++) d.stats[i] += def.implicitStats[i];
+            Passive ip = def.passive == null ? null : Passive.byKey(def.passive);
+            if (ip != null && !d.passives.contains(ip)) d.passives.add(ip);
+        }
         d.write(stack);
         stack.setHoverName(name(stack, rarity, rnd));
+    }
+
+    /** Мелкое украшение уровня около level (часто падает с монстров, основа торговли). */
+    public static ItemStack trinket(RandomSource rnd, int level, float boost) {
+        ItemTemplates.Def def = ItemTemplates.randomJewel(rnd, level);
+        if (def == null) return ItemStack.EMPTY;
+        ItemStack st = new ItemStack(com.andrey.litrpg.registry.ModItems.TEMPLATE_ITEMS.get(def.id).get());
+        Rarity r = rollRarity(rnd, boost);
+        if (r.ordinal() < def.minRarity.ordinal()) r = def.minRarity;
+        apply(st, rnd, Math.max(1, def.tier + rnd.nextInt(3) - 1), r);
+        return st;
+    }
+
+    /** Любой предмет-шаблон с уровнем не выше level+5. */
+    public static ItemStack templateNear(RandomSource rnd, int level, boolean jewelsOnly) {
+        java.util.List<ItemTemplates.Def> pool = new java.util.ArrayList<>();
+        for (ItemTemplates.Def d : ItemTemplates.ITEMS) {
+            if (d.tier <= level + 5 && d.tier >= level - 15 && (!jewelsOnly || d.isJewel())) pool.add(d);
+        }
+        if (pool.isEmpty()) return ItemStack.EMPTY;
+        ItemTemplates.Def def = pool.get(rnd.nextInt(pool.size()));
+        return new ItemStack(com.andrey.litrpg.registry.ModItems.TEMPLATE_ITEMS.get(def.id).get());
+    }
+
+    private static Rarity templateMin(ItemStack st) {
+        return st.getItem() instanceof TemplateItem t ? t.def().minRarity : Rarity.COMMON;
     }
 
     private static final String[] ABILITIES = {"fireball", "chain_lightning", "frost_nova", "blink", "meteor", "war_cry",

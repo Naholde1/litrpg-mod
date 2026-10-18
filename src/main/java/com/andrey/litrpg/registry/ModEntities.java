@@ -40,4 +40,8 @@ public class ModEntities {
     public static final RegistryObject<EntityType<ManaBoltEntity>> MANA_BOLT = ENTITY_TYPES.register("mana_bolt",
             () -> EntityType.Builder.<ManaBoltEntity>of(ManaBoltEntity::new, MobCategory.MISC)
                     .sized(0.4f, 0.4f).clientTrackingRange(4).updateInterval(10).build("mana_bolt"));
+
+    static {
+        com.andrey.litrpg.npc.NpcRegistry.init();
+    }
 }

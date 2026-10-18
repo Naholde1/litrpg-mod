@@ -5,6 +5,10 @@
   "slots": [
     "ring",
     "necklace",
-    "belt"
+    "belt",
+    "bracelet",
+    "charm",
+    "back",
+    "hands"
   ]
 }

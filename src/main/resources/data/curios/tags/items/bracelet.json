@@ -1,0 +1,19 @@
+{
+  "replace": false,
+  "values": [
+    "litrpg:bracelet_woven",
+    "litrpg:bracelet_copper",
+    "litrpg:bracelet_bone",
+    "litrpg:bracelet_archer",
+    "litrpg:bracelet_scale",
+    "litrpg:bracelet_might",
+    "litrpg:bracelet_focus",
+    "litrpg:bracelet_mage",
+    "litrpg:bracelet_spiked",
+    "litrpg:bracelet_fangs",
+    "litrpg:bracelet_blood",
+    "litrpg:bracelet_obsidian",
+    "litrpg:bracelet_silver",
+    "litrpg:bracelet_storm"
+  ]
+}

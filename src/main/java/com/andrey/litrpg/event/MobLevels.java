@@ -90,7 +90,7 @@ public class MobLevels {
 
     /** Кому положен уровень: монстрам, нейтральным мобам и големам. */
     public static boolean hasLevels(Mob mob) {
-        return mob instanceof Enemy || mob instanceof net.minecraft.world.entity.NeutralMob
+        return mob instanceof Enemy || mob instanceof com.andrey.litrpg.npc.RaceNpcEntity || mob instanceof net.minecraft.world.entity.NeutralMob
                 || mob instanceof net.minecraft.world.entity.animal.AbstractGolem;
     }
 
@@ -180,7 +180,7 @@ public class MobLevels {
         if (killed instanceof LitBoss boss) return boss.getXpReward();
         int lvl = getLevel(killed);
         double base;
-        if (killed instanceof Enemy) {
+        if (killed instanceof Enemy || killed instanceof com.andrey.litrpg.npc.RaceNpcEntity) {
             base = 6 + killed.getMaxHealth() / getRank(killed).hp * 0.6;
             base *= 1.0 + 0.22 * (lvl - 1);
             base *= getRank(killed).xpMult;

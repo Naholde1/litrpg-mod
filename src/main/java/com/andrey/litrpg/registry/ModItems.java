@@ -106,6 +106,25 @@ public class ModItems {
     @SuppressWarnings("unchecked")
     public static final RegistryObject<Item>[] SHADOW_SET = armorSet("shadow", LitArmorMaterial.SHADOW, GearSet.SHADOW, 32, com.andrey.litrpg.gear.Rarity.EPIC);
 
+    // ---- жетоны рас (материал для их снаряжения) и монеты ----
+    public static final RegistryObject<Item> ELF_TOKEN = ITEMS.register("elf_token", () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> DWARF_TOKEN = ITEMS.register("dwarf_token", () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> ORC_TOKEN = ITEMS.register("orc_token", () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> BEAST_TOKEN = ITEMS.register("beast_token", () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> DEMON_TOKEN = ITEMS.register("demon_token", () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).fireResistant()));
+    public static final RegistryObject<Item> COPPER_COIN = ITEMS.register("copper_coin", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> SILVER_COIN = ITEMS.register("silver_coin", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> GOLD_COIN = ITEMS.register("gold_coin", () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+
+    // ---- предметы по шаблонам (украшения, наборы, оружие) — см. litrpg_items.json ----
+    public static final java.util.Map<String, RegistryObject<Item>> TEMPLATE_ITEMS = new java.util.LinkedHashMap<>();
+
+    static {
+        for (var def : com.andrey.litrpg.gear.ItemTemplates.ITEMS) {
+            TEMPLATE_ITEMS.put(def.id, ITEMS.register(def.id, () -> com.andrey.litrpg.item.TemplateItems.create(def)));
+        }
+    }
+
     public static final RegistryObject<Item> MANA_ORB = ITEMS.register("mana_orb",
             () -> new Item(new Item.Properties()));
 

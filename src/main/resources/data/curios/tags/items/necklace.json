@@ -5,6 +5,24 @@
     "litrpg:ruby_amulet",
     "litrpg:star_amulet",
     "litrpg:lich_amulet",
-    "litrpg:heart_of_system"
+    "litrpg:heart_of_system",
+    "litrpg:amulet_wooden",
+    "litrpg:amulet_fang",
+    "litrpg:amulet_light",
+    "litrpg:amulet_apprentice",
+    "litrpg:amulet_traveler",
+    "litrpg:amulet_wind",
+    "litrpg:amulet_stone",
+    "litrpg:amulet_flame",
+    "litrpg:amulet_trapper",
+    "litrpg:amulet_leech",
+    "litrpg:amulet_scholar",
+    "litrpg:amulet_plague",
+    "litrpg:amulet_shield",
+    "litrpg:amulet_manakeeper",
+    "litrpg:amulet_warlord",
+    "litrpg:amulet_shadow",
+    "litrpg:amulet_void",
+    "litrpg:amulet_firstlight"
   ]
 }

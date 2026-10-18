@@ -100,6 +100,23 @@ public final class GearData {
         stack.getOrCreateTag().put(TAG, t);
     }
 
+    /** Цена продажи в медных монетах (1 серебряная = 9 медных, 1 золотая = 81 медная). */
+    public int value() {
+        int[] mult = {1, 3, 8, 25, 80, 300};
+        int base = 4 + level * 2 + bonuses.size() * 3 + passives.size() * 10;
+        return base * mult[rarity.ordinal()];
+    }
+
+    /** «2 з 5 с 3 м» */
+    public static String coins(int copper) {
+        int g = copper / 81, s = copper % 81 / 9, c = copper % 9;
+        StringBuilder sb = new StringBuilder();
+        if (g > 0) sb.append(g).append(" з ");
+        if (s > 0) sb.append(s).append(" с ");
+        if (c > 0 || sb.length() == 0) sb.append(c).append(" м");
+        return sb.toString().trim();
+    }
+
     /** Грубая оценка «силы» предмета — для цены у торговцев. */
     public int power() {
         int p = level * 2;

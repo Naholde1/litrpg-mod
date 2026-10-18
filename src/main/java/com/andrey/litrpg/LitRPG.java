@@ -65,9 +65,11 @@ public class LitRPG {
         event.put(ModEntities.SKELETON_WARDEN.get(), SkeletonWardenEntity.createAttributes().build());
         event.put(ModEntities.GOBLIN_KING.get(), GoblinKingEntity.createAttributes().build());
         event.put(ModEntities.LICH.get(), LichEntity.createAttributes().build());
+        com.andrey.litrpg.npc.NpcRegistry.attributes(event);
     }
 
     private void registerSpawnPlacements(SpawnPlacementRegisterEvent event) {
+        com.andrey.litrpg.npc.NpcRegistry.placements(event);
         event.register(ModEntities.GOBLIN.get(), SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules,
                 SpawnPlacementRegisterEvent.Operation.REPLACE);

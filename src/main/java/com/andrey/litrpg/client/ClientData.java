@@ -10,6 +10,14 @@ public class ClientData {
     /** Оставшиеся тики перезарядки. */
     public static final int[] COOLDOWN = new int[Ability.count()];
     public static boolean received = false;
+    /** Расы игроков на сервере (для внешности). */
+    public static final java.util.Map<java.util.UUID, Integer> RACES = new java.util.HashMap<>();
+
+    public static com.andrey.litrpg.stats.Race raceOf(java.util.UUID id) {
+        Integer r = RACES.get(id);
+        com.andrey.litrpg.stats.Race[] v = com.andrey.litrpg.stats.Race.values();
+        return r == null || r < 0 || r >= v.length ? null : v[r];
+    }
     /** Товарищи по группе (обновляется раз в секунду). */
     public static java.util.List<com.andrey.litrpg.network.PartyPacket.Member> party = java.util.List.of();
 

@@ -63,6 +63,25 @@ public final class GearTooltip {
             lines.add(Component.literal(" 2: " + set.bonus2).withStyle(worn >= 2 ? ChatFormatting.GREEN : ChatFormatting.DARK_GRAY));
             lines.add(Component.literal(" 4: " + set.bonus4).withStyle(worn >= 4 ? ChatFormatting.GREEN : ChatFormatting.DARK_GRAY));
         }
+        if (stack.getItem() instanceof com.andrey.litrpg.gear.TemplateItem t && t.def().set != null) {
+            var sd = com.andrey.litrpg.gear.ItemTemplates.SETS.get(t.def().set);
+            if (sd != null) {
+                int worn = ClientData.STATS.gear().dataSets.getOrDefault(sd.id, 0);
+                lines.add(Component.literal(sd.title + " (" + worn + "/" + sd.items.size() + ")").withStyle(ChatFormatting.GOLD));
+                for (var tier : sd.tiers) {
+                    StringBuilder b = new StringBuilder();
+                    for (var st : Stat.values()) {
+                        int v = tier.stats[st.ordinal()];
+                        if (v != 0) b.append(b.length() > 0 ? ", " : "").append('+').append(v).append(' ')
+                                .append(Component.translatable(st.translationKey()).getString());
+                    }
+                    tier.bonus.forEach((bo, v) -> b.append(b.length() > 0 ? ", " : "").append(fmt(bo, v).substring(0)));
+                    if (tier.passive != null) b.append(b.length() > 0 ? ", " : "").append("«").append(tier.passive.title).append("»");
+                    lines.add(Component.literal(" " + tier.pieces + ": " + b).withStyle(worn >= tier.pieces ? ChatFormatting.GREEN : ChatFormatting.DARK_GRAY));
+                }
+            }
+        }
+        lines.add(Component.literal("Цена: " + GearData.coins(d.value())).withStyle(ChatFormatting.YELLOW));
         if (d.unique != null) {
             lines.add(Component.literal("«" + GearGen.lore(d.unique) + "»").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
         }

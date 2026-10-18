@@ -28,6 +28,8 @@ public class ClientModEvents {
         event.registerEntityRenderer(ModEntities.LICH.get(), LichRenderer::new);
         event.registerEntityRenderer(ModEntities.SKELETON_WARDEN.get(), SkeletonWardenRenderer::new);
         event.registerEntityRenderer(ModEntities.MANA_BOLT.get(), ctx -> new ThrownItemRenderer<>(ctx, 1.4f, true));
+        com.andrey.litrpg.npc.NpcRegistry.TYPES.values().forEach(t ->
+                event.registerEntityRenderer(t.get(), com.andrey.litrpg.client.render.NpcRenderer::new));
     }
 
     @SubscribeEvent

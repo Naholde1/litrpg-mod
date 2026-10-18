@@ -83,13 +83,29 @@ public final class GearEvents {
         PlayerStats s = StatsManager.get(p);
         PlayerGear g = s.gear();
         g.clear();
+        java.util.Map<String, java.util.Set<String>> setItems = new java.util.HashMap<>();
         for (ItemStack st : eq) {
             GearData d = GearData.get(st);
             if (d != null && s.getLevel() >= d.requiredLevel()) g.addItem(d);
             GearSet set = GearData.setOf(st);
             if (set != null) g.setPieces.merge(set, 1, Integer::sum);
+            if (st.getItem() instanceof TemplateItem t && t.def().set != null) {
+                setItems.computeIfAbsent(t.def().set, k -> new java.util.HashSet<>()).add(t.def().id);
+            }
         }
         g.setPieces.forEach((set, n) -> set.apply(g, n));
+        // наборы из шаблонов: считаются разные предметы набора
+        setItems.forEach((id, items) -> {
+            g.dataSets.put(id, items.size());
+            ItemTemplates.SetDef def = ItemTemplates.SETS.get(id);
+            if (def == null) return;
+            for (ItemTemplates.SetTier tier : def.tiers) {
+                if (items.size() < tier.pieces) continue;
+                tier.bonus.forEach(g::add);
+                for (int i = 0; i < tier.stats.length; i++) g.stats[i] += tier.stats[i];
+                if (tier.passive != null) g.passives.add(tier.passive);
+            }
+        });
         StatsManager.applyAttributes(p);
         StatsManager.sync(p);
     }
@@ -100,6 +116,8 @@ public final class GearEvents {
         if (g.has(Passive.REGENERATION)) hidden(p, MobEffects.REGENERATION, 0, 100);
         if (g.has(Passive.FIREPROOF)) hidden(p, MobEffects.FIRE_RESISTANCE, 0, 100);
         if (g.has(Passive.WATER_BREATHING)) hidden(p, MobEffects.WATER_BREATHING, 0, 100);
+        float regen = g.get(GearBonus.HEALTH_REGEN);
+        if (regen > 0 && p.getHealth() < p.getMaxHealth()) p.heal(regen * 0.4f); // раз в 2 с = regen за 5 с
     }
 
     private static void hidden(ServerPlayer p, MobEffect effect, int amp, int duration) {
@@ -128,6 +146,7 @@ public final class GearEvents {
             if (g.hasSet(GearSet.BONEWARDEN) && event.getSource().getEntity() instanceof LivingEntity a && a.getMobType() == MobType.UNDEAD) {
                 amount *= 0.75f;
             }
+            amount *= 1f - Families.incomingReduction(g, event.getSource());
             if (g.has(Passive.MANA_SHIELD) && vs.getMana() > 0) {
                 float absorbed = Math.min(amount * 0.2f, (float) vs.getMana() / 2f);
                 vs.setMana(vs.getMana() - absorbed * 2);
@@ -154,6 +173,8 @@ public final class GearEvents {
         boolean skill = !melee && !arrow;
 
         if (skill) amount *= 1 + g.get(GearBonus.SPELL_POWER) / 100f;
+        if (arrow) amount *= 1 + g.get(GearBonus.ARROW_DAMAGE) / 100f;
+        amount *= Families.outgoing(g, target);
         if (g.has(Passive.EXECUTIONER) && target.getHealth() < target.getMaxHealth() * 0.3f) amount *= 1.5f;
         if (g.has(Passive.GIANT_SLAYER) && MobLevels.getLevel(target) > s.getLevel()) amount *= 1.25f;
         if (g.has(Passive.BERSERKER) && p.getHealth() < p.getMaxHealth() * 0.4f) amount *= 1.3f;
@@ -220,6 +241,13 @@ public final class GearEvents {
             p.serverLevel().sendParticles(ParticleTypes.SOUL, event.getEntity().getX(), event.getEntity().getY() + 1,
                     event.getEntity().getZ(), 10, 0.3, 0.5, 0.3, 0.05);
         }
+    }
+
+    /** Скорость добычи блоков. */
+    @SubscribeEvent
+    public static void onBreakSpeed(net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed event) {
+        float m = StatsManager.get(event.getEntity()).gear().get(GearBonus.MINING);
+        if (m > 0) event.setNewSpeed(event.getNewSpeed() * (1 + m / 100f));
     }
 
     // ================= способности предметов =================

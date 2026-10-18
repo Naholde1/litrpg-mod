@@ -18,6 +18,8 @@ public final class PlayerGear {
     public final Set<Passive> passives = EnumSet.noneOf(Passive.class);
     public final Set<GearSet> fullSets = EnumSet.noneOf(GearSet.class);
     public final Map<GearSet, Integer> setPieces = new EnumMap<>(GearSet.class);
+    /** Наборы из шаблонов: id набора → сколько разных предметов надето. */
+    public final Map<String, Integer> dataSets = new java.util.HashMap<>();
 
     public float get(GearBonus b) { return bonus.getOrDefault(b, 0f); }
     public void add(GearBonus b, float v) { bonus.merge(b, v, Float::sum); }
@@ -31,6 +33,7 @@ public final class PlayerGear {
         passives.clear();
         fullSets.clear();
         setPieces.clear();
+        dataSets.clear();
     }
 
     public void addItem(GearData d) {
@@ -51,6 +54,9 @@ public final class PlayerGear {
         CompoundTag sp = new CompoundTag();
         setPieces.forEach((s, n) -> sp.putInt(s.key, n));
         t.put("sets", sp);
+        CompoundTag ds = new CompoundTag();
+        dataSets.forEach(ds::putInt);
+        t.put("dsets", ds);
         return t;
     }
 
@@ -76,5 +82,7 @@ public final class PlayerGear {
                 if (sp.getInt(k) >= 4) fullSets.add(s);
             }
         }
+        CompoundTag ds = t.getCompound("dsets");
+        for (String k : ds.getAllKeys()) dataSets.put(k, ds.getInt(k));
     }
 }

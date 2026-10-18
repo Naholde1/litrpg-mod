@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "X X",
+    "M M"
+  ],
+  "key": {
+    "X": {
+      "item": "litrpg:dwarf_token"
+    },
+    "M": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "litrpg:dwarven_boots",
+    "count": 1
+  }
+}

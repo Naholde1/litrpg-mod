@@ -1,6 +1,18 @@
 {
   "replace": false,
   "values": [
-    "litrpg:leather_belt"
+    "litrpg:leather_belt",
+    "litrpg:belt_rope",
+    "litrpg:belt_apprentice",
+    "litrpg:belt_crafter",
+    "litrpg:belt_hunter",
+    "litrpg:belt_wide",
+    "litrpg:belt_runner",
+    "litrpg:belt_alchemist",
+    "litrpg:belt_warrior",
+    "litrpg:belt_flasks",
+    "litrpg:belt_climber",
+    "litrpg:belt_treasure",
+    "litrpg:belt_titan"
   ]
 }

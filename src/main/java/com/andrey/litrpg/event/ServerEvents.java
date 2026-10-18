@@ -84,6 +84,7 @@ public class ServerEvents {
             StatsManager.message(player, Component.literal("K — персонаж, M — карта, Z/X/C/V/B — навыки."));
         }
         StatsManager.sync(player);
+        StatsManager.broadcastRaces(player.server);
         if (!s.hasOrigin()) StatsManager.openOriginScreen(player);
         else if (s.canChooseClass()) StatsManager.offerClasses(player);
     }

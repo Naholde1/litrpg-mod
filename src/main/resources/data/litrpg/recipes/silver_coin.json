@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "litrpg:copper_coin"
+    },
+    {
+      "item": "litrpg:copper_coin"
+    },
+    {
+      "item": "litrpg:copper_coin"
+    },
+    {
+      "item": "litrpg:copper_coin"
+    },
+    {
+      "item": "litrpg:copper_coin"
+    },
+    {
+      "item": "litrpg:copper_coin"
+    },
+    {
+      "item": "litrpg:copper_coin"
+    },
+    {
+      "item": "litrpg:copper_coin"
+    },
+    {
+      "item": "litrpg:copper_coin"
+    }
+  ],
+  "result": {
+    "item": "litrpg:silver_coin",
+    "count": 1
+  }
+}
