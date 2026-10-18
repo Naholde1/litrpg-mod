@@ -26,7 +26,7 @@ import java.util.List;
 
 /** Окно персонажа с вкладками: Статус, Навыки, Профессии, Титулы. */
 public class CharacterScreen extends SystemScreen {
-    private static final String[] TABS = {"Статус", "Навыки", "Профессии", "Титулы"};
+    private static final String[] TABS = {"Статус", "Навыки", "Профессии", "Титулы", "Репутация"};
 
     private static int tab = 0;
     private int titleScroll = 0;
@@ -63,6 +63,7 @@ public class CharacterScreen extends SystemScreen {
             case 1 -> skills(g, s, cx, cy, mx, my);
             case 2 -> professions(g, s, cx, cy, mx, my);
             case 3 -> titles(g, s, cx, cy, mx, my);
+            case 4 -> reputation(g, s, cx, cy, mx, my);
         }
 
         if (tooltip != null) g.renderTooltip(font, font.split(tooltip, 220), mx, my);
@@ -261,6 +262,33 @@ public class CharacterScreen extends SystemScreen {
                 tooltip = Component.translatable(t.descKey()).copy()
                         .append(Component.literal(has ? "\nБонус: " + b : "").withStyle(ChatFormatting.GREEN));
             }
+        }
+    }
+
+    // ---------------- Репутация ----------------
+
+    private void reputation(GuiGraphics g, PlayerStats s, int x, int y, int mx, int my) {
+        var factions = com.andrey.litrpg.rep.Faction.values();
+        for (int i = 0; i < factions.length; i++) {
+            var f = factions[i];
+            int ry = y + i * 31;
+            int rep = s.getRep(f);
+            var tier = com.andrey.litrpg.rep.Faction.Tier.of(rep);
+            g.fill(x, ry, x + W - 20, ry + 28, 0x600C1824);
+            UiKit.frame(g, x, ry, W - 20, 28, UiKit.FRAME_DIM);
+            g.drawString(font, f.title, x + 6, ry + 4, 0xFF000000 | f.color, false);
+            String t = tier.title + " (" + rep + ")";
+            g.drawString(font, Component.literal(t).withStyle(tier.color), x + W - 26 - font.width(t), ry + 4, 0xFFFFFFFF, false);
+            // шкала -1000..1000 с отметкой нуля
+            int bx = x + 6, bw = W - 32, by = ry + 17;
+            g.fill(bx - 1, by - 1, bx + bw + 1, by + 6, 0xFF000000);
+            g.fill(bx, by, bx + bw, by + 5, 0xFF1A1A24);
+            int zero = bx + bw / 2;
+            int pos = bx + (int) ((rep + 1000) / 2000f * bw);
+            int col = rep >= 0 ? 0xFF4CAF50 : 0xFFE53935;
+            g.fill(Math.min(zero, pos), by, Math.max(zero, pos), by + 5, col);
+            g.fill(zero, by - 1, zero + 1, by + 6, 0xFFFFFFFF);
+            if (UiKit.inside(mx, my, x, ry, W - 20, 28)) tooltip = Component.literal(f.desc);
         }
     }
 

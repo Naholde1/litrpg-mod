@@ -32,11 +32,19 @@ public class LitRPG {
         ModItems.ITEMS.register(bus);
         ModEntities.ENTITY_TYPES.register(bus);
         ModCreativeTabs.TABS.register(bus);
+        LOOT_MODIFIERS.register(bus);
 
         bus.addListener(this::commonSetup);
         bus.addListener(this::registerCaps);
         bus.addListener(this::registerAttributes);
         bus.addListener(this::registerSpawnPlacements);
+    }
+
+    public static final net.minecraftforge.registries.DeferredRegister<com.mojang.serialization.Codec<? extends net.minecraftforge.common.loot.IGlobalLootModifier>> LOOT_MODIFIERS =
+            net.minecraftforge.registries.DeferredRegister.create(net.minecraftforge.registries.ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
+
+    static {
+        LOOT_MODIFIERS.register("chest_gear", () -> com.andrey.litrpg.gear.ChestLootModifier.CODEC);
     }
 
     public static ResourceLocation id(String path) {

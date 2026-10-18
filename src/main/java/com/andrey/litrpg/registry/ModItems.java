@@ -1,7 +1,15 @@
 package com.andrey.litrpg.registry;
 
 import com.andrey.litrpg.LitRPG;
+import com.andrey.litrpg.gear.GearSet;
+import com.andrey.litrpg.item.ArchmageStaffItem;
 import com.andrey.litrpg.item.BossSummonItem;
+import com.andrey.litrpg.item.GearSetArmorItem;
+import com.andrey.litrpg.item.JewelryItem;
+import com.andrey.litrpg.item.LitArmorMaterial;
+import com.andrey.litrpg.item.UniqueSwordItem;
+import com.andrey.litrpg.item.UpgradeStoneItem;
+import net.minecraft.world.item.ArmorItem;
 import com.andrey.litrpg.item.DaggerItem;
 import com.andrey.litrpg.item.KingCleaverItem;
 import com.andrey.litrpg.item.LichStaffItem;
@@ -18,6 +26,20 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class ModItems {
+    private static final String[] PIECES = {"helmet", "chestplate", "leggings", "boots"};
+    private static final ArmorItem.Type[] TYPES = {ArmorItem.Type.HELMET, ArmorItem.Type.CHESTPLATE, ArmorItem.Type.LEGGINGS, ArmorItem.Type.BOOTS};
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static RegistryObject<Item>[] armorSet(String name, LitArmorMaterial mat, GearSet set, int lvl, com.andrey.litrpg.gear.Rarity min) {
+        RegistryObject[] out = new RegistryObject[4];
+        for (int i = 0; i < 4; i++) {
+            ArmorItem.Type type = TYPES[i];
+            out[i] = ITEMS.register(name + "_" + PIECES[i],
+                    () -> new GearSetArmorItem(mat, type, new Item.Properties(), set, lvl, min));
+        }
+        return out;
+    }
+
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, LitRPG.MODID);
 
     public static final RegistryObject<Item> SYSTEM_KEY = ITEMS.register("system_key",
@@ -50,6 +72,40 @@ public class ModItems {
             () -> new KingCleaverItem(new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
     public static final RegistryObject<Item> LICH_STAFF = ITEMS.register("lich_staff",
             () -> new LichStaffItem(new Item.Properties().stacksTo(1).durability(600).rarity(Rarity.EPIC).fireResistant()));
+    // ---- украшения (слоты Curios) ----
+    public static final RegistryObject<Item> COPPER_RING = ITEMS.register("copper_ring", () -> new JewelryItem(new Item.Properties(), 0));
+    public static final RegistryObject<Item> SILVER_RING = ITEMS.register("silver_ring", () -> new JewelryItem(new Item.Properties(), 1));
+    public static final RegistryObject<Item> GOLD_RING = ITEMS.register("gold_ring", () -> new JewelryItem(new Item.Properties(), 2));
+    public static final RegistryObject<Item> JADE_AMULET = ITEMS.register("jade_amulet", () -> new JewelryItem(new Item.Properties(), 0));
+    public static final RegistryObject<Item> RUBY_AMULET = ITEMS.register("ruby_amulet", () -> new JewelryItem(new Item.Properties(), 1));
+    public static final RegistryObject<Item> STAR_AMULET = ITEMS.register("star_amulet", () -> new JewelryItem(new Item.Properties(), 2));
+    public static final RegistryObject<Item> LEATHER_BELT = ITEMS.register("leather_belt", () -> new JewelryItem(new Item.Properties(), 1));
+    // ---- уникальные предметы ----
+    public static final RegistryObject<Item> KINGS_RING = ITEMS.register("kings_ring",
+            () -> new JewelryItem(new Item.Properties().rarity(Rarity.EPIC), 1, "kings_ring"));
+    public static final RegistryObject<Item> LICH_AMULET = ITEMS.register("lich_amulet",
+            () -> new JewelryItem(new Item.Properties().rarity(Rarity.EPIC), 2, "lich_amulet"));
+    public static final RegistryObject<Item> HEART_OF_SYSTEM = ITEMS.register("heart_of_system",
+            () -> new JewelryItem(new Item.Properties().rarity(Rarity.EPIC).fireResistant(), 2, "heart_of_system"));
+    public static final RegistryObject<Item> DAWN_BLADE = ITEMS.register("dawn_blade",
+            () -> new UniqueSwordItem(Tiers.DIAMOND, 5, -2.4f, new Item.Properties().rarity(Rarity.EPIC).fireResistant(), "dawn_blade"));
+    public static final RegistryObject<Item> FROST_SORROW = ITEMS.register("frost_sorrow",
+            () -> new UniqueSwordItem(Tiers.NETHERITE, 7, -2.6f, new Item.Properties().rarity(Rarity.EPIC).fireResistant(), "frost_sorrow"));
+    public static final RegistryObject<Item> ARCHMAGE_STAFF = ITEMS.register("archmage_staff",
+            () -> new ArchmageStaffItem(new Item.Properties().stacksTo(1).durability(1200).rarity(Rarity.EPIC).fireResistant()));
+    // ---- камни для наковальни ----
+    public static final RegistryObject<Item> ASCENSION_STONE = ITEMS.register("ascension_stone",
+            () -> new UpgradeStoneItem(new Item.Properties().rarity(Rarity.RARE), "item.litrpg.ascension_stone.tooltip"));
+    public static final RegistryObject<Item> REFORGE_STONE = ITEMS.register("reforge_stone",
+            () -> new UpgradeStoneItem(new Item.Properties().rarity(Rarity.UNCOMMON), "item.litrpg.reforge_stone.tooltip"));
+    // ---- наборы брони: шлем, нагрудник, поножи, ботинки ----
+    @SuppressWarnings("unchecked")
+    public static final RegistryObject<Item>[] GOBLIN_SET = armorSet("goblin", LitArmorMaterial.GOBLIN, GearSet.GOBLIN, 10, com.andrey.litrpg.gear.Rarity.UNCOMMON);
+    @SuppressWarnings("unchecked")
+    public static final RegistryObject<Item>[] BONEWARDEN_SET = armorSet("bonewarden", LitArmorMaterial.BONEWARDEN, GearSet.BONEWARDEN, 20, com.andrey.litrpg.gear.Rarity.RARE);
+    @SuppressWarnings("unchecked")
+    public static final RegistryObject<Item>[] SHADOW_SET = armorSet("shadow", LitArmorMaterial.SHADOW, GearSet.SHADOW, 32, com.andrey.litrpg.gear.Rarity.EPIC);
+
     public static final RegistryObject<Item> MANA_ORB = ITEMS.register("mana_orb",
             () -> new Item(new Item.Properties()));
 

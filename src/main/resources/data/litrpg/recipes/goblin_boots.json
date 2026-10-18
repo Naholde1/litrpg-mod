@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "X X",
+    "M M"
+  ],
+  "key": {
+    "X": {
+      "item": "litrpg:goblin_ear"
+    },
+    "M": {
+      "item": "minecraft:leather"
+    }
+  },
+  "result": {
+    "item": "litrpg:goblin_boots",
+    "count": 1
+  }
+}

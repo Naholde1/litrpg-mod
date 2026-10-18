@@ -88,6 +88,17 @@ public class ServerEvents {
         else if (s.canChooseClass()) StatsManager.offerClasses(player);
     }
 
+    /** Резервная копия данных — при автосохранении и выходе, а не на каждое изменение. */
+    @SubscribeEvent
+    public static void onSave(PlayerEvent.SaveToFile event) {
+        if (event.getEntity() instanceof ServerPlayer p) StatsManager.backup(p);
+    }
+
+    @SubscribeEvent
+    public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer p) StatsManager.backup(p);
+    }
+
     @SubscribeEvent
     public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
@@ -133,7 +144,7 @@ public class ServerEvents {
         PlayerStats s = StatsManager.get(player);
         if (s.getMana() < s.getMaxMana()) {
             s.setMana(s.getMana() + s.getManaRegenPerSecond());
-            StatsManager.sync(player);
+            StatsManager.syncMana(player);
         }
         if (player.tickCount % 40 == 0) {
             racePassives(player, s);
@@ -209,20 +220,16 @@ public class ServerEvents {
             return;
         }
 
-        Entity src = event.getSource().getEntity();
-        // убийство прислужником засчитывается хозяину
-        if (src != null && com.andrey.litrpg.ability.Minions.owner(src) != null) src = com.andrey.litrpg.ability.Minions.owner(src);
-        if (src instanceof ServerPlayer player) {
-            PlayerStats s = StatsManager.get(player);
-            int xp = MobLevels.xpReward(dead, s.getLevel());
-            StatsManager.giveXp(player, xp);
-            if (dead instanceof Enemy) {
-                StatsManager.count(player, Title.Counter.KILLS, 1);
-                if (dead instanceof GoblinEntity) StatsManager.count(player, Title.Counter.GOBLINS, 1);
-                if (dead.getMobType() == MobType.UNDEAD) StatsManager.count(player, Title.Counter.UNDEAD, 1);
-                if (MobLevels.getRank(dead) != MobLevels.Rank.NORMAL) StatsManager.count(player, Title.Counter.ELITES, 1);
-                if (MobLevels.getLevel(dead) - s.getLevel() >= 10) StatsManager.count(player, Title.Counter.GIANT_KILLS, 1);
-            }
+        // опыт делится между всеми, кто наносил урон (и их группами)
+        ServerPlayer player = com.andrey.litrpg.party.DamageTracker.distribute(dead);
+        if (player == null) return;
+        PlayerStats s = StatsManager.get(player);
+        if (dead instanceof Enemy) {
+            StatsManager.count(player, Title.Counter.KILLS, 1);
+            if (dead instanceof GoblinEntity) StatsManager.count(player, Title.Counter.GOBLINS, 1);
+            if (dead.getMobType() == MobType.UNDEAD) StatsManager.count(player, Title.Counter.UNDEAD, 1);
+            if (MobLevels.getRank(dead) != MobLevels.Rank.NORMAL) StatsManager.count(player, Title.Counter.ELITES, 1);
+            if (MobLevels.getLevel(dead) - s.getLevel() >= 10) StatsManager.count(player, Title.Counter.GIANT_KILLS, 1);
         }
     }
 }

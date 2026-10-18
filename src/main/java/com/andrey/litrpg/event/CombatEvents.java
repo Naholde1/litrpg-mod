@@ -69,18 +69,20 @@ public class CombatEvents {
         float c = 0.05f + s.getStat(Stat.LUCK) * 0.006f + s.getStat(Stat.AGILITY) * 0.002f;
         c += 0.03f * classWeight(s, Style.STEALTH);
         c += 0.015f * classWeight(s, Style.RANGED);
+        c += s.gear().get(com.andrey.litrpg.gear.GearBonus.CRIT_CHANCE) / 100f;
         return Math.min(0.6f, c);
     }
 
     public static float critMultiplier(PlayerStats s) {
-        return Math.min(2.5f, 1.5f + s.getStat(Stat.LUCK) * 0.01f);
+        return Math.min(3.5f, 1.5f + s.getStat(Stat.LUCK) * 0.01f + s.gear().get(com.andrey.litrpg.gear.GearBonus.CRIT_DAMAGE) / 100f);
     }
 
     public static float dodgeChance(PlayerStats s) {
         float c = s.getStat(Stat.AGILITY) * 0.003f + s.getStat(Stat.LUCK) * 0.002f;
         if (s.getRace() == Race.BEASTKIN) c += 0.04f;
         c += 0.015f * classWeight(s, Style.STEALTH);
-        return Math.min(0.3f, c);
+        c += s.gear().get(com.andrey.litrpg.gear.GearBonus.DODGE) / 100f;
+        return Math.min(0.4f, c);
     }
 
     @SubscribeEvent
@@ -180,7 +182,10 @@ public class CombatEvents {
     @SubscribeEvent
     public static void onDrops(LivingDropsEvent event) {
         LivingEntity dead = event.getEntity();
-        if (!(dead instanceof Enemy) || !(event.getSource().getEntity() instanceof ServerPlayer player)) return;
+        if (!(dead instanceof Enemy)) return;
+        ServerPlayer player = com.andrey.litrpg.party.DamageTracker.topContributor(dead, event.getSource());
+        if (player == null) return;
+        for (ItemStack gear : com.andrey.litrpg.gear.LootRolls.mobDrops(dead, player)) drop(event, dead, gear);
         MobLevels.Rank rank = MobLevels.getRank(dead);
         float luck = StatsManager.get(player).getStat(Stat.LUCK) * 0.004f;
         var rnd = dead.getRandom();

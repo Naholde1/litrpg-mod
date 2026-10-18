@@ -35,6 +35,11 @@ public class PlayerStats {
     /** Классы, которые Система предложила на 10 уровне. */
     private final java.util.List<PlayerClass> offers = new java.util.ArrayList<>();
 
+    /** Сводка надетой экипировки. Не сохраняется — пересчитывается по инвентарю. */
+    private final com.andrey.litrpg.gear.PlayerGear gear = new com.andrey.litrpg.gear.PlayerGear();
+    /** Репутация с народами: -1000..1000. */
+    private final Map<com.andrey.litrpg.rep.Faction, Integer> reputation = new EnumMap<>(com.andrey.litrpg.rep.Faction.class);
+
     /** Время (gameTime), когда способность снова станет доступна. Не сохраняется. */
     private final long[] cooldownEnd = new long[Ability.count()];
 
@@ -56,6 +61,7 @@ public class PlayerStats {
     public int addXp(int amount) {
         if (level >= MAX_LEVEL) return 0;
         if (race == Race.HUMAN) amount = (int) Math.ceil(amount * 1.10);
+        amount = (int) Math.ceil(amount * (1 + gear.get(com.andrey.litrpg.gear.GearBonus.XP) / 100.0));
         xp += amount;
         int gained = 0;
         while (level < MAX_LEVEL && xp >= xpForNext()) {
@@ -98,6 +104,7 @@ public class PlayerStats {
         if (race != null) v += race.bonus(s);
         if (playerClass != null) v += playerClass.growth(s, level);
         for (Title t : titles) v += t.bonus(s);
+        v += gear.stats[s.ordinal()];
         return Math.max(0, v);
     }
 
@@ -130,13 +137,13 @@ public class PlayerStats {
         int base = 40 + getStat(Stat.INTELLIGENCE) * 8 + (level - 1) * 3;
         if (playerClass != null && playerClass.primary == Stat.INTELLIGENCE) base += 30;
         if (playerClass == PlayerClass.MAGE) base += 20;
-        return base;
+        return base + Math.round(gear.get(com.andrey.litrpg.gear.GearBonus.MANA));
     }
 
     public double getManaRegenPerSecond() {
         double r = 0.8 + getStat(Stat.INTELLIGENCE) * 0.12 + level * 0.04;
         if (race == Race.ELF) r *= 1.3;
-        return r;
+        return r * (1 + gear.get(com.andrey.litrpg.gear.GearBonus.MANA_REGEN) / 100.0);
     }
 
     // ---------- раса, класс ----------
@@ -255,6 +262,9 @@ public class PlayerStats {
         ListTag of = new ListTag();
         for (PlayerClass c : offers) of.add(StringTag.valueOf(c.key));
         tag.put("offers", of);
+        CompoundTag rep = new CompoundTag();
+        reputation.forEach((f, v) -> rep.putInt(f.key, v));
+        tag.put("rep", rep);
         return tag;
     }
 
@@ -305,6 +315,25 @@ public class PlayerStats {
             PlayerClass c = PlayerClass.byKey(of.getString(i));
             if (c != null) offers.add(c);
         }
+        reputation.clear();
+        CompoundTag rep = tag.getCompound("rep");
+        for (var f : com.andrey.litrpg.rep.Faction.values()) if (rep.contains(f.key)) reputation.put(f, rep.getInt(f.key));
+        if (tag.contains("gear")) gear.load(tag.getCompound("gear"));
+    }
+
+    public com.andrey.litrpg.gear.PlayerGear gear() { return gear; }
+
+    // ---------- репутация ----------
+
+    public int getRep(com.andrey.litrpg.rep.Faction f) { return reputation.getOrDefault(f, 0); }
+    public void setRep(com.andrey.litrpg.rep.Faction f, int v) { reputation.put(f, Math.max(-1000, Math.min(1000, v))); }
+    public void addRep(com.andrey.litrpg.rep.Faction f, int v) { setRep(f, getRep(f) + v); }
+
+    /** Данные для клиента: сохранение + сводка экипировки. */
+    public CompoundTag saveForSync() {
+        CompoundTag t = save();
+        t.put("gear", gear.save());
+        return t;
     }
 
     public void copyFrom(PlayerStats other) {

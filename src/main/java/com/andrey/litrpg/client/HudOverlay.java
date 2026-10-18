@@ -57,6 +57,7 @@ public class HudOverlay {
 
         abilities(g, font, s, height);
         target(g, font, mc, width);
+        party(g, font, y + 14);
     }
 
     /** Панель навыков класса (снизу слева). */
@@ -97,6 +98,24 @@ public class HudOverlay {
                 String lv = String.valueOf(need);
                 g.drawString(font, lv, sx + slot - font.width(lv) - 1, ay + slot - 8, 0xFFFF9800, false);
             }
+        }
+    }
+
+    /** Панель группы: имена, уровни, здоровье и мана товарищей. */
+    private static void party(GuiGraphics g, Font font, int y) {
+        var list = ClientData.party;
+        if (list.isEmpty()) return;
+        int x = 6, w = 110;
+        g.drawString(font, "ГРУППА", x, y, UiKit.FRAME, false);
+        y += 10;
+        for (var m : list) {
+            g.fill(x - 2, y - 2, x + w + 2, y + 20, 0x90050A12);
+            g.drawString(font, m.name(), x, y, 0xFF000000 | m.color(), false);
+            String lv = String.valueOf(m.level());
+            g.drawString(font, lv, x + w - font.width(lv), y, UiKit.GOLD, false);
+            UiKit.bar(g, x, y + 10, w, 4, m.hp() / Math.max(1f, m.maxHp()), 0xFF2A0A0A, 0xFFD03A3A);
+            UiKit.bar(g, x, y + 15, w, 2, m.mana(), 0xFF1A2340, 0xFF3D8BFF);
+            y += 25;
         }
     }
 

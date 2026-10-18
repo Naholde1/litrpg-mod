@@ -16,7 +16,7 @@ public class SyncStatsPacket {
     private final int[] cooldownLeft;
 
     public SyncStatsPacket(PlayerStats stats, long now) {
-        this.data = stats.save();
+        this.data = stats.saveForSync();
         Ability[] all = Ability.values();
         this.cooldownLeft = new int[all.length];
         for (Ability a : all) {

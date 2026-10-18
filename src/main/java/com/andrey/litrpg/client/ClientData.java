@@ -10,6 +10,8 @@ public class ClientData {
     /** Оставшиеся тики перезарядки. */
     public static final int[] COOLDOWN = new int[Ability.count()];
     public static boolean received = false;
+    /** Товарищи по группе (обновляется раз в секунду). */
+    public static java.util.List<com.andrey.litrpg.network.PartyPacket.Member> party = java.util.List.of();
 
     public static void update(CompoundTag data, int[] cooldowns) {
         if (data != null) STATS.load(data);

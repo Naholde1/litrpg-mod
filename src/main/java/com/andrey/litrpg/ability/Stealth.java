@@ -58,7 +58,8 @@ public final class Stealth {
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onHurt(LivingHurtEvent event) {
         if (event.getSource().getEntity() instanceof ServerPlayer p && isHidden(p)) {
-            event.setAmount(event.getAmount() * 1.5f);
+            boolean shadow = com.andrey.litrpg.stats.StatsManager.get(p).gear().hasSet(com.andrey.litrpg.gear.GearSet.SHADOW);
+            event.setAmount(event.getAmount() * (shadow ? 2f : 1.5f));
             reveal(p);
         }
     }

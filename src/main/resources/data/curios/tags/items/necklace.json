@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "litrpg:jade_amulet",
+    "litrpg:ruby_amulet",
+    "litrpg:star_amulet",
+    "litrpg:lich_amulet",
+    "litrpg:heart_of_system"
+  ]
+}

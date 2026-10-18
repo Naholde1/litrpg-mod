@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SAS",
+    "ADA",
+    "SAS"
+  ],
+  "key": {
+    "S": {
+      "item": "litrpg:soul_shard"
+    },
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    }
+  },
+  "result": {
+    "item": "litrpg:ascension_stone",
+    "count": 1
+  }
+}

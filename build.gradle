@@ -40,6 +40,7 @@ minecraft {
 
 repositories {
     maven { name = 'BlameJared (JEI, Patchouli)'; url = 'https://maven.blamejared.com/' }
+    maven { name = 'Curios'; url = 'https://maven.theillusivec4.top/' }
 }
 
 dependencies {
@@ -51,6 +52,9 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge:${jei_version}")
     // Patchouli: книга «Кодекс Системы» описана в JSON, код нужен только для запуска в dev
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+    // Curios: слоты для колец, амулета и пояса
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 }
 
 tasks.named('jar', Jar).configure {

@@ -108,17 +108,13 @@ public class ProfessionEvents {
         giveProfXp(player, Profession.BLACKSMITH, 10);
         int lvl = StatsManager.get(player).getProfLevel(Profession.BLACKSMITH);
         if (lvl <= 0 || player.getRandom().nextFloat() > 0.15f + lvl * 0.012f) return;
-        // «Мастерская работа»: прочность и защита/острота в зависимости от уровня
-        int tier = lvl >= 40 ? 3 : lvl >= 20 ? 2 : 1;
-        out.enchant(Enchantments.UNBREAKING, tier);
-        if (out.getItem() instanceof ArmorItem) {
-            if (lvl >= 15) out.enchant(Enchantments.ALL_DAMAGE_PROTECTION, Math.min(4, tier));
-        } else if (lvl >= 15) {
-            out.enchant(Enchantments.SHARPNESS, Math.min(4, tier));
-        }
-        out.setHoverName(Component.literal("Мастерская работа: ").withStyle(ChatFormatting.GOLD)
-                .append(out.getHoverName().copy().withStyle(ChatFormatting.WHITE)));
-        player.displayClientMessage(Component.literal("Мастерская работа!").withStyle(ChatFormatting.GOLD), true);
+        // «Мастерская работа»: предмет получает свойства Системы, редкость растёт с уровнем кузнеца
+        float boost = lvl * 0.04f;
+        com.andrey.litrpg.gear.Rarity r = com.andrey.litrpg.gear.GearGen.rollRarity(player.getRandom(), boost);
+        if (r == com.andrey.litrpg.gear.Rarity.COMMON) r = com.andrey.litrpg.gear.Rarity.UNCOMMON;
+        com.andrey.litrpg.gear.GearGen.apply(out, player.getRandom(), Math.max(1, StatsManager.get(player).getLevel()), r);
+        player.displayClientMessage(Component.literal("Мастерская работа: ").withStyle(ChatFormatting.GOLD)
+                .append(Component.literal(r.title).withStyle(r.color)), true);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ANVIL_USE, SoundSource.PLAYERS, 0.6f, 1.4f);
     }
 

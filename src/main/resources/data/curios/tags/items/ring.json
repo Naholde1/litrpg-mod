@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "litrpg:copper_ring",
+    "litrpg:silver_ring",
+    "litrpg:gold_ring",
+    "litrpg:kings_ring"
+  ]
+}

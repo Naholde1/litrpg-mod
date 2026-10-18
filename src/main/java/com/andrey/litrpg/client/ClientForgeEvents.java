@@ -60,6 +60,7 @@ public class ClientForgeEvents {
     @SubscribeEvent
     public static void onLogout(ClientPlayerNetworkEvent.LoggingOut event) {
         ClientData.received = false;
+        ClientData.party = java.util.List.of();
         Waypoints.clearLoaded();
     }
 }

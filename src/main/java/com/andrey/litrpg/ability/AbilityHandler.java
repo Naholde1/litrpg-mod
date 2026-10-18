@@ -85,9 +85,27 @@ public class AbilityHandler {
         if (execute(player, s, a)) {
             if (!free) s.setMana(s.getMana() - a.mana);
             s.addStyle(Style.MAGIC, a.mana / 4);
-            s.setCooldownEnd(a, now + a.cooldown);
+            var g = s.gear();
+            int cd = Math.round(a.cooldown * (1 - Math.min(50f, g.get(com.andrey.litrpg.gear.GearBonus.COOLDOWN)) / 100f));
+            if (g.has(com.andrey.litrpg.gear.Passive.ARCANE_ECHO) && player.getRandom().nextFloat() < 0.15f) {
+                cd = 0;
+                player.displayClientMessage(Component.literal("Магическое эхо!").withStyle(ChatFormatting.LIGHT_PURPLE), true);
+            }
+            s.setCooldownEnd(a, now + cd);
             StatsManager.sync(player);
         }
+    }
+
+    /** Способность предмета (Shift+ПКМ): тратит ману, перезарядку ведёт предмет. */
+    public static boolean castFromItem(ServerPlayer player, PlayerStats s, Ability a) {
+        if (!player.isCreative() && s.getMana() < a.mana) {
+            player.displayClientMessage(Component.literal("Недостаточно маны!").withStyle(ChatFormatting.BLUE), true);
+            return false;
+        }
+        if (!execute(player, s, a)) return false;
+        if (!player.isCreative()) s.setMana(s.getMana() - a.mana);
+        StatsManager.syncMana(player);
+        return true;
     }
 
     private static boolean execute(ServerPlayer p, PlayerStats s, Ability a) {

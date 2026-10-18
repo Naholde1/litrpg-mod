@@ -53,9 +53,18 @@ public class StatsManager {
 
     public static void sync(ServerPlayer player) {
         PlayerStats s = get(player);
-        backup(player, s);
         long now = player.level().getGameTime();
         ModNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new SyncStatsPacket(s, now));
+    }
+
+    /** Лёгкая синхронизация: только мана (раз в секунду при восстановлении). */
+    public static void syncMana(ServerPlayer player) {
+        ModNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
+                new com.andrey.litrpg.network.ManaPacket(get(player).getMana()));
+    }
+
+    public static void backup(ServerPlayer player) {
+        backup(player, get(player));
     }
 
     public static void backup(ServerPlayer player, PlayerStats s) {
@@ -94,16 +103,20 @@ public class StatsManager {
         if (race == Race.DWARF) hp += 2;
         int tank = cls == null ? 0 : cls.styles.getOrDefault(Style.TANK, 0) + cls.styles.getOrDefault(Style.MELEE, 0) / 2;
         hp += tank * (1 + lvl * 0.15);
+        var gear = s.gear();
+        hp += gear.get(com.andrey.litrpg.gear.GearBonus.HEALTH);
         set(player, Attributes.MAX_HEALTH, HEALTH_ID, "litrpg_health", hp, AttributeModifier.Operation.ADDITION);
-        set(player, Attributes.ATTACK_DAMAGE, DAMAGE_ID, "litrpg_damage", str * 0.4, AttributeModifier.Operation.ADDITION);
+        set(player, Attributes.ATTACK_DAMAGE, DAMAGE_ID, "litrpg_damage",
+                str * 0.4 + gear.get(com.andrey.litrpg.gear.GearBonus.DAMAGE), AttributeModifier.Operation.ADDITION);
 
         double speed = Math.min(agi * 0.006, 0.5);
         if (race == Race.BEASTKIN) speed += 0.08;
+        speed += gear.get(com.andrey.litrpg.gear.GearBonus.MOVE_SPEED) / 100.0;
         set(player, Attributes.MOVEMENT_SPEED, SPEED_ID, "litrpg_speed", speed, AttributeModifier.Operation.MULTIPLY_BASE);
         set(player, Attributes.ATTACK_SPEED, ATK_SPEED_ID, "litrpg_attack_speed",
-                Math.min(agi * 0.012, 0.8), AttributeModifier.Operation.MULTIPLY_BASE);
+                Math.min(agi * 0.012, 0.8) + gear.get(com.andrey.litrpg.gear.GearBonus.ATTACK_SPEED) / 100.0, AttributeModifier.Operation.MULTIPLY_BASE);
         double armor = Math.min(vit * 0.2, 12.0);
-        armor += tank * 0.8;
+        armor += tank * 0.8 + gear.get(com.andrey.litrpg.gear.GearBonus.ARMOR);
         set(player, Attributes.ARMOR, ARMOR_ID, "litrpg_armor", armor, AttributeModifier.Operation.ADDITION);
         set(player, Attributes.KNOCKBACK_RESISTANCE, KNOCKBACK_ID, "litrpg_knockback",
                 race == Race.DWARF ? 0.35 : race == Race.ORC ? 0.2 : 0, AttributeModifier.Operation.ADDITION);
@@ -209,6 +222,7 @@ public class StatsManager {
         PlayerStats s = get(player);
         boolean first = !s.hasOrigin();
         s.setRace(race);
+        if (first) com.andrey.litrpg.rep.RepEvents.initFor(player);
         applyAttributes(player);
         player.setHealth(player.getMaxHealth());
         s.setMana(s.getMaxMana());

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "MXM",
+    "M M",
+    "M M"
+  ],
+  "key": {
+    "X": {
+      "item": "litrpg:bone_shard"
+    },
+    "M": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "litrpg:bonewarden_leggings",
+    "count": 1
+  }
+}

@@ -88,8 +88,14 @@ public class MobLevels {
         return (e.getPersistentData().getInt(AFFIX_TAG) & (1 << a.ordinal())) != 0;
     }
 
+    /** Кому положен уровень: монстрам, нейтральным мобам и големам. */
+    public static boolean hasLevels(Mob mob) {
+        return mob instanceof Enemy || mob instanceof net.minecraft.world.entity.NeutralMob
+                || mob instanceof net.minecraft.world.entity.animal.AbstractGolem;
+    }
+
     public static void assignLevel(Mob mob, ServerLevel level) {
-        if (!(mob instanceof Enemy) || mob instanceof LitBoss) return;
+        if (!hasLevels(mob) || mob instanceof LitBoss) return;
         if (mob.getPersistentData().contains(TAG)) {
             // мобы из старых версий мода показывали имя сквозь стены
             mob.setCustomNameVisible(false);
@@ -105,7 +111,7 @@ public class MobLevels {
         boolean bloodMoon = com.andrey.litrpg.world.BloodMoon.isActive(level);
         if (bloodMoon) lvl += 4;
         Rank rank = Rank.NORMAL;
-        float roll = rnd.nextFloat() / (bloodMoon ? 3f : 1f);
+        float roll = mob instanceof Enemy ? rnd.nextFloat() / (bloodMoon ? 3f : 1f) : 1f;
         if (roll < 0.015f + zone.ordinal() * 0.004f) rank = Rank.CHAMPION;
         else if (roll < 0.08f + zone.ordinal() * 0.012f) rank = Rank.ELITE;
         apply(mob, Mth.clamp(lvl, 1, 99), rank);

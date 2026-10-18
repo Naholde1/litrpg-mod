@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Player;
 /** Мини-карта: 128×128 блоков вокруг игрока, север сверху. */
 public class Minimap {
     public static final int SIZE = 128;           // блоков по стороне
-    private static final int ROWS_PER_TICK = 16;  // полное обновление за 8 тиков
+    private static final int ROWS_PER_TICK = 6;   // полное обновление примерно за секунду, без рывков
     private static final ResourceLocation TEX_ID = LitRPG.id("dynamic/minimap");
 
     /** Своя мини-карта выключена, если стоит Xaero's Minimap или JourneyMap. */
@@ -26,6 +26,7 @@ public class Minimap {
     private static int scanRow = 0;
     private static int centerX, centerZ;
     private static boolean dirty = false;
+    private static int uploadCooldown = 0;
 
     private static void ensureTexture(Minecraft mc) {
         if (texture == null) {
@@ -65,9 +66,11 @@ public class Minimap {
     public static void render(GuiGraphics g, int x, int y, int drawSize) {
         Minecraft mc = Minecraft.getInstance();
         if (!enabled || mc.player == null || texture == null) return;
-        if (dirty) {
+        // загрузка текстуры в видеокарту — не чаще раза в 5 кадров
+        if (dirty && --uploadCooldown <= 0) {
             texture.upload();
             dirty = false;
+            uploadCooldown = 5;
         }
 
         // рамка
