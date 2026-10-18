@@ -25,6 +25,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @Mod(LitRPG.MODID)
 public class LitRPG {
     public static final String MODID = "litrpg";
+    public static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
 
     public LitRPG() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();

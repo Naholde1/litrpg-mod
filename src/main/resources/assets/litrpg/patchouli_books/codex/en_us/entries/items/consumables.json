@@ -1,0 +1,29 @@
+{
+  "name": "Расходники",
+  "icon": "litrpg:mana_potion",
+  "category": "litrpg:items",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:crafting",
+      "recipe": "litrpg:mana_potion",
+      "text": "Восстанавливает 60 маны."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "litrpg:tome_of_experience",
+      "text": "Даёт 25% опыта до следующего уровня."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "litrpg:scroll_of_oblivion",
+      "text": "Возвращает все вложенные очки характеристик."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "litrpg:soul_shard",
+      "text": "Падает с элитных монстров и чемпионов. Основа для лучших предметов.",
+      "title": "Осколок души"
+    }
+  ]
+}

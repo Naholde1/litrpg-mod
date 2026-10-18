@@ -6,7 +6,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public class ModNetwork {
-    private static final String VERSION = "1";
+    private static final String VERSION = "3";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             LitRPG.id("main"), () -> VERSION, VERSION::equals, VERSION::equals);
 
@@ -21,5 +21,20 @@ public class ModNetwork {
         CHANNEL.messageBuilder(SpendPointPacket.class, id++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(SpendPointPacket::encode).decoder(SpendPointPacket::new)
                 .consumerMainThread(SpendPointPacket::handle).add();
+        CHANNEL.messageBuilder(OpenOriginPacket.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(OpenOriginPacket::encode).decoder(OpenOriginPacket::new)
+                .consumerMainThread(OpenOriginPacket::handle).add();
+        CHANNEL.messageBuilder(ChooseOriginPacket.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(ChooseOriginPacket::encode).decoder(ChooseOriginPacket::new)
+                .consumerMainThread(ChooseOriginPacket::handle).add();
+        CHANNEL.messageBuilder(ProfessionPacket.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(ProfessionPacket::encode).decoder(ProfessionPacket::new)
+                .consumerMainThread(ProfessionPacket::handle).add();
+        CHANNEL.messageBuilder(OpenClassChoicePacket.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(OpenClassChoicePacket::encode).decoder(OpenClassChoicePacket::new)
+                .consumerMainThread(OpenClassChoicePacket::handle).add();
+        CHANNEL.messageBuilder(ChooseClassPacket.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(ChooseClassPacket::encode).decoder(ChooseClassPacket::new)
+                .consumerMainThread(ChooseClassPacket::handle).add();
     }
 }

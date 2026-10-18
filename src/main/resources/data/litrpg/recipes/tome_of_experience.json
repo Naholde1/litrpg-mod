@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " S ",
+    "SBS",
+    " E "
+  ],
+  "key": {
+    "S": {
+      "item": "litrpg:soul_shard"
+    },
+    "B": {
+      "item": "minecraft:book"
+    },
+    "E": {
+      "item": "minecraft:experience_bottle"
+    }
+  },
+  "result": {
+    "item": "litrpg:tome_of_experience",
+    "count": 1
+  }
+}

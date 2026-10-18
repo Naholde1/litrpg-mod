@@ -8,19 +8,19 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
+/** Нажатие клавиши навыка: передаётся номер слота 0–4. */
 public class UseAbilityPacket {
-    private final int id;
+    private final int slot;
 
-    public UseAbilityPacket(int id) { this.id = id; }
-    public UseAbilityPacket(FriendlyByteBuf buf) { this.id = buf.readVarInt(); }
+    public UseAbilityPacket(int slot) { this.slot = slot; }
+    public UseAbilityPacket(FriendlyByteBuf buf) { this.slot = buf.readVarInt(); }
 
-    public void encode(FriendlyByteBuf buf) { buf.writeVarInt(id); }
+    public void encode(FriendlyByteBuf buf) { buf.writeVarInt(slot); }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ServerPlayer player = ctx.get().getSender();
-        Ability a = Ability.byId(id);
-        if (player != null && a != null && player.isAlive()) {
-            AbilityHandler.tryUse(player, a);
+        if (player != null && slot >= 0 && slot < Ability.SLOTS && player.isAlive()) {
+            AbilityHandler.tryUse(player, slot);
         }
     }
 }

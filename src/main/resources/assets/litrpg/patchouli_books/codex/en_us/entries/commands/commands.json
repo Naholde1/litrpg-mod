@@ -1,0 +1,20 @@
+{
+  "name": "Команды",
+  "icon": "minecraft:command_block",
+  "category": "litrpg:commands",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Нужны права оператора (в одиночной игре — «Открыть для сети» → «Читы: вкл»).$(li)/litrpg info$(li)/litrpg level set @s 30$(li)/litrpg xp @s 5000$(li)/litrpg points @s 50$(li)/litrpg stat @s strength 40"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(li)/litrpg race @s elf$(li)/litrpg class set @s necromancer$(li)/litrpg class offer @s$(li)/litrpg style @s magic 500$(li)/litrpg origin reset @s$(li)/litrpg prof level @s miner 30$(li)/litrpg title give @s kingslayer$(li)/litrpg mana @s$(li)/litrpg cooldowns @s"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(li)/litrpg spawn litrpg:goblin 25 champion$(li)/litrpg spawn minecraft:zombie 10 elite$(li)/litrpg respec @s$(li)/litrpg reset @s$(li)/litrpg codex @s$(li)/litrpg zone$(li)/litrpg bloodmoon"
+    }
+  ]
+}

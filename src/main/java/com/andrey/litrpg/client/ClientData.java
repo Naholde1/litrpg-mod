@@ -8,7 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 public class ClientData {
     public static final PlayerStats STATS = new PlayerStats();
     /** Оставшиеся тики перезарядки. */
-    public static final int[] COOLDOWN = new int[Ability.values().length];
+    public static final int[] COOLDOWN = new int[Ability.count()];
     public static boolean received = false;
 
     public static void update(CompoundTag data, int[] cooldowns) {
@@ -17,6 +17,13 @@ public class ClientData {
             COOLDOWN[i] = cooldowns[i];
         }
         received = true;
+        // окна выбора закрываются, если выбор уже сделан (например, командой)
+        net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+        if (mc.screen instanceof OriginScreen && STATS.hasOrigin()) {
+            mc.setScreen(null);
+        } else if (mc.screen instanceof ClassChoiceScreen && STATS.hasClass()) {
+            mc.setScreen(null);
+        }
     }
 
     public static void tick() {

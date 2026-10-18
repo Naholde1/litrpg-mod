@@ -4,12 +4,13 @@ license="All rights reserved"
 
 [[mods]]
 modId="litrpg"
-version="1.0.0"
+version="${file.jarVersion}"
 displayName="LitRPG: Система"
 authors="Андрей Арсентьев"
 description='''
 Система уровней в духе литРПГ: опыт, характеристики, способности, мана,
-уровни мобов, кастомные мобы и боссы, измерение «Изнанка», мини-карта и карта мира.
+расы, классы и 25 навыков, профессии, титулы, уровни и ранги мобов, зоны мира,
+боссы, измерение «Изнанка» и книга «Кодекс Системы».
 '''
 
 [[dependencies.litrpg]]
@@ -25,3 +26,17 @@ mandatory=true
 versionRange="[1.20.1,1.21)"
 ordering="NONE"
 side="BOTH"
+
+[[dependencies.litrpg]]
+modId="patchouli"
+mandatory=true
+versionRange="[1.20.1-80,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.litrpg]]
+modId="jei"
+mandatory=false
+versionRange="[15.0,)"
+ordering="NONE"
+side="CLIENT"

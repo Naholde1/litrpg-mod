@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.andrey.litrpg'
-version = '1.0.0'
+version = '2.1.0'
 
 base {
     archivesName = 'litrpg-system'
@@ -20,23 +20,37 @@ minecraft {
     runs {
         configureEach {
             workingDirectory project.file('run')
-            property 'forge.logging.console.level', 'debug'
+            property 'forge.logging.console.level', 'info'
+            // миксины сторонних модов (Patchouli) в dev-окружении
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             mods {
                 "litrpg" {
                     source sourceSets.main
                 }
             }
         }
-        client {}
+        client {
+            // ./gradlew runClient -Pquickplay=testworld — сразу зайти в мир
+            if (project.hasProperty('quickplay')) args '--quickPlaySingleplayer', project.property('quickplay')
+        }
         server { args '--nogui' }
     }
 }
 
 repositories {
+    maven { name = 'BlameJared (JEI, Patchouli)'; url = 'https://maven.blamejared.com/' }
 }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.20.1-47.3.0'
+
+    // JEI: только API для компиляции, сам мод игрок ставит отдельно
+    compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:${jei_version}")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge:${jei_version}")
+    // Patchouli: книга «Кодекс Системы» описана в JSON, код нужен только для запуска в dev
+    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 }
 
 tasks.named('jar', Jar).configure {

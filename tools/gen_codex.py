@@ -1,0 +1,204 @@
+"""
+Генератор книги «Кодекс Системы» (Patchouli). Тексты лежат здесь же,
+чтобы их было удобно править. Запуск: python tools/gen_codex.py
+"""
+import json
+import os
+import shutil
+import sys
+sys.path.insert(0, os.path.dirname(__file__))
+
+ROOT = os.path.join(os.path.dirname(__file__), '..', 'src', 'main', 'resources')
+DATA = os.path.join(ROOT, 'data', 'litrpg', 'patchouli_books', 'codex')
+ASSETS = os.path.join(ROOT, 'assets', 'litrpg', 'patchouli_books', 'codex', 'en_us')
+
+BOOK = {
+    "name": "Кодекс Системы",
+    "landing_text": "Приветствую, игрок. Я — $(4)Система$(). В этом кодексе собрано всё, что нужно знать о новом мире: расы и классы, бой, профессии, монстры и способы их одолеть.$(br2)Окно персонажа — $(k:litrpg.character)$(). Навыки — $(k:litrpg.ability1)$(), $(k:litrpg.ability2)$(), $(k:litrpg.ability3)$(), $(k:litrpg.ability4)$(), $(k:litrpg.ability5)$().",
+    "version": 1,
+    "use_resource_pack": True,
+    "book_texture": "patchouli:textures/gui/book_blue.png",
+    "model": "patchouli:book_blue",
+    "show_progress": False,
+    "creative_tab": "litrpg:main",
+    "subtitle": "Руководство игрока",
+    "i18n": False,
+}
+
+CATEGORIES = [
+    ("start", "Начало пути", "Первые шаги в мире Системы.", "minecraft:compass"),
+    ("races", "Расы", "Шесть рас, их бонусы и пассивные умения.", "minecraft:player_head"),
+    ("classes", "Классы и навыки", "Пять классов и двадцать пять навыков.", "litrpg:apprentice_staff"),
+    ("combat", "Бой и уровни", "Как работают уровни, криты, уклонение и элитные монстры.", "minecraft:iron_sword"),
+    ("professions", "Профессии", "Мирные ремёсла и их бонусы.", "minecraft:iron_pickaxe"),
+    ("titles", "Титулы", "Награды Системы за достижения.", "minecraft:name_tag"),
+    ("world", "Мир и зоны", "Кольца сложности, Изнанка и боссы.", "litrpg:system_key"),
+    ("bestiary", "Бестиарий", "Монстры мира и их повадки.", "litrpg:goblin_ear"),
+    ("items", "Предметы и рецепты", "Особые предметы и как их сделать.", "litrpg:mana_potion"),
+    ("commands", "Команды для тестов", "Команды /litrpg для администратора.", "minecraft:command_block"),
+]
+
+
+def text(t, title=None):
+    p = {"type": "patchouli:text", "text": t}
+    if title:
+        p["title"] = title
+    return p
+
+
+def spotlight(item, t, title=None):
+    p = {"type": "patchouli:spotlight", "item": item, "text": t}
+    if title:
+        p["title"] = title
+    return p
+
+
+def crafting(recipe, t=None, recipe2=None):
+    p = {"type": "patchouli:crafting", "recipe": recipe}
+    if recipe2:
+        p["recipe2"] = recipe2
+    if t:
+        p["text"] = t
+    return p
+
+
+ENTRIES = {
+    "start": [
+        ("welcome", "Добро пожаловать", "minecraft:compass", [
+            text("При первом входе Система предложит выбрать $(l)расу$(): она даёт стартовые характеристики и пассивное умение.$(br2)До 10 уровня ты $(l)Новичок$() с навыками Рывок и Второе дыхание. Система наблюдает за твоим стилем игры, а на 10 уровне предложит $(l)три класса$() из 31."),
+            text("$(l)Как расти:$()$(li)Убивай монстров — получай опыт.$(li)Каждый уровень даёт 3 свободных очка характеристик и автоматический рост основной характеристики класса.$(li)Навыки класса открываются на 10, 13, 17, 22 и 28 уровнях.$(li)Смерть отнимает 10% текущего опыта.", "Развитие"),
+            text("$(l)Окно персонажа ($(k:litrpg.character))$()$(li)Статус — характеристики, крит, уклонение.$(li)Навыки — описание и перезарядка.$(li)Профессии — изучить до двух.$(li)Титулы — прогресс достижений.$(br2)Рамка вверху экрана показывает уровень и здоровье монстра под прицелом.", "Интерфейс"),
+        ]),
+        ("mods", "Полезные моды", "minecraft:book", [
+            text("Мод дружит с другими модами:$(li)$(l)JEI$() — рецепты любого предмета: наведи и нажми R (рецепт) или U (применение). Для предметов мода есть страница «Информация».$(li)$(l)Xaero's Minimap и World Map$() — карта мира и метки. Если они стоят, встроенная мини-карта отключается.$(li)$(l)Patchouli$() — эта книга."),
+        ]),
+    ],
+    "races": [
+        ("human", "Человек", "minecraft:bread", [text("+1 ко всем характеристикам, +2 к Удаче.$(br2)$(l)Пассивно:$() +10% опыта Системы. Лучший выбор, если хочется качаться быстрее и попробовать всё.")]),
+        ("elf", "Эльф", "minecraft:bow", [text("+3 Ловкость, +3 Интеллект.$(br2)$(l)Пассивно:$() +30% к восстановлению маны, +15% урона из лука, ночное зрение ночью и в пещерах. Идеален для Мага и Следопыта.")]),
+        ("dwarf", "Дварф", "minecraft:iron_pickaxe", [text("+2 Сила, +4 Выносливость.$(br2)$(l)Пассивно:$() Спешка ниже 50 высоты, +2 здоровья, 35% сопротивления отбрасыванию. Хорош для Воина и Шахтёра.")]),
+        ("orc", "Орк", "minecraft:iron_axe", [text("+4 Сила, +3 Выносливость, −1 Интеллект.$(br2)$(l)Пассивно:$() +4 здоровья, +20% урона в ближнем бою, пока здоровье ниже половины.")]),
+        ("beastkin", "Зверолюд", "minecraft:rabbit_foot", [text("+1 Сила, +4 Ловкость, +1 Выносливость.$(br2)$(l)Пассивно:$() +8% скорости, постоянный прыжок, половина урона от падения, +4% уклонения. Отлично подходит Разбойнику.")]),
+        ("demonkin", "Демонид", "minecraft:blaze_powder", [text("+2 Сила, +1 Ловкость, +3 Интеллект, −1 Удача.$(br2)$(l)Пассивно:$() +10% урона навыков, половина урона от огня, огнестойкость, пока горишь.")]),
+    ],
+    "classes": None,  # заполняется из gen_lang.py
+    "combat": [
+        ("levels", "Уровни монстров", "minecraft:zombie_head", [
+            text("У каждого монстра есть уровень — он виден в рамке цели вверху экрана. Уровень зависит от зоны мира и времени суток: ночью монстры сильнее.$(br2)Каждый уровень даёт монстру +30% здоровья, +12% урона, броню и скорость."),
+            text("$(l)Разница уровней важна:$()$(li)Монстр выше тебя на N уровней получает на 6% меньше урона за каждый уровень (минимум 15%) и бьёт на 8% сильнее.$(li)На 10 уровней выше — почти вдвое больнее и в 2.5 раза живучее.$(li)Слабые монстры дают меньше опыта, сильные — больше.", "Разница уровней"),
+        ]),
+        ("elites", "Элиты и чемпионы", "minecraft:wither_skeleton_skull", [
+            text("$(b)★ Элитный$() — x2.2 здоровья, x1.35 урона, одно свойство. Опыт x3.$(br)$(d)✦ Чемпион$() — x4 здоровья, x1.7 урона, два свойства. Опыт x8.$(br2)Они не исчезают и дают ценную добычу: осколки души, зелья, Тома опыта, Свитки забвения."),
+            text("$(li)$(l)Вампир$() — лечится, нанося урон.$(li)$(l)Взрывной$() — взрывается при смерти.$(li)$(l)Быстрый$(), $(l)Регенерирующий$(), $(l)Каменнокожий$().$(li)$(l)Пылающий$() — поджигает.$(li)$(l)Ядовитый$() — отравляет.$(li)$(l)Шипастый$() — возвращает часть урона.", "Свойства"),
+        ]),
+        ("crits", "Криты и уклонение", "minecraft:arrow", [
+            text("$(l)Крит:$() шанс 5% + Удача и Ловкость (до 60%), множитель x1.5 + Удача (до x2.5).$(br2)$(l)Уклонение:$() Ловкость и Удача (до 30%) — полностью избегаешь удара в ближнем бою или стрелы.$(br2)Точные цифры показаны во вкладке «Статус»."),
+        ]),
+    ],
+    "professions": [
+        ("about", "О профессиях", "minecraft:crafting_table", [
+            text("Освоить можно $(l)две$() профессии из пяти (вкладка «Профессии» в окне персонажа). Опыт профессии идёт от самого занятия, максимум — 50 уровень.$(br2)Забыть профессию — Shift + клик по «Забыть». Уровень при этом теряется."),
+            text("$(li)$(l)Шахтёр$() — двойная руда, Спешка.$(li)$(l)Кузнец$() — «Мастерская работа»: прочность, острота или защита на скрафченном снаряжении.$(li)$(l)Алхимик$() — зелья действуют дольше.$(li)$(l)Охотник$() — двойная добыча с животных.$(li)$(l)Травник$() — двойной урожай."),
+        ]),
+    ],
+    "titles": [
+        ("about", "Титулы Системы", "minecraft:name_tag", [
+            text("Титулы выдаются за достижения и $(l)навсегда$() повышают характеристики. Прогресс виден во вкладке «Титулы».$(br2)Например: «Первая кровь», «Гроза гоблинов» (100 гоблинов), «Победитель гигантов» (монстр на 10+ уровней выше), «Цареубийца», «Погибель Лича»… И несколько секретных."),
+        ]),
+    ],
+    "world": [
+        ("zones", "Зоны мира", "minecraft:filled_map", [
+            text("Мир разделён на кольца вокруг точки спавна:$(li)$(2)Пристанище$() 0–48 бл. — ур. 1–2$(li)$(2)Изумрудные луга$() 48+ — ур. 2–5$(li)$(e)Дикий лес$() 160+ — ур. 5–10$(li)$(6)Пограничье$() 320+ — ур. 10–17$(li)$(c)Проклятые земли$() 550+ — ур. 17–26$(li)$(4)Земли смерти$() 850+ — ур. 26–38$(li)$(5)Бездна$() 1250+ — ур. 38–60"),
+            text("При переходе в новую зону Система показывает её название и уровень монстров.$(br2)$(5)Изнанка$() — ур. 15–30$(br)$(4)Преисподняя$() — ур. 25–40$(br)$(d)Край$() — ур. 45–60$(br2)Команда $(l)/litrpg zone$() скажет, где ты сейчас."),
+        ]),
+        ("bloodmoon", "Кровавая луна", "minecraft:redstone", [
+            text("Каждую седьмую ночь, а иногда и внезапно, восходит $(4)Кровавая луна$().$(li)Монстры на 4 уровня сильнее.$(li)Элиты и чемпионы появляются втрое чаще.$(li)Почти все монстры приходят стаями.$(br2)В опасных зонах (от Дикого леса) монстры ходят стаями и в обычные ночи."),
+        ]),
+        ("underside", "Изнанка", "litrpg:system_key", [
+            text("Измерение вечной ночи и тёмного леса. Здесь бродят Скелеты-стражи и гоблины, а в глубине можно призвать Лича-архимага.$(br2)Вход и выход — $(l)Ключ Системы$(). Он запоминает, откуда ты пришёл."),
+            crafting("litrpg:system_key"),
+        ]),
+        ("bosses", "Боссы", "litrpg:goblin_seal", [
+            text("$(l)Король гоблинов$() (ур. 15) — прыгает и бьёт по земле, на половине здоровья зовёт свиту. Призыв — Печать Короля гоблинов.$(br2)$(l)Лич-архимаг$() (ур. 30) — залпы магии, телепорты, призыв стражей. Только в Изнанке."),
+            crafting("litrpg:goblin_seal", None, "litrpg:lich_phylactery"),
+        ]),
+    ],
+    "bestiary": [
+        ("goblins", "Гоблины", "litrpg:goblin_ear", [
+            text("Мелкие и быстрые, нападают толпой ночью по всему миру. Шаманы стреляют магией и лечат сородичей — убивай их первыми.$(br2)Добыча: уши гоблинов, золотые самородки, изредка зелья маны, Томы опыта и Печать Короля."),
+        ]),
+        ("warden", "Скелет-страж", "litrpg:bone_shard", [
+            text("Огромный бронированный скелет Изнанки. Медленный, но бьёт очень больно. Жрецы наносят ему двойной урон светом.$(br2)Добыча: осколки кости для Филактерии Лича."),
+        ]),
+    ],
+    "items": [
+        ("consumables", "Расходники", "litrpg:mana_potion", [
+            crafting("litrpg:mana_potion", "Восстанавливает 60 маны."),
+            crafting("litrpg:tome_of_experience", "Даёт 25% опыта до следующего уровня."),
+            crafting("litrpg:scroll_of_oblivion", "Возвращает все вложенные очки характеристик."),
+            spotlight("litrpg:soul_shard", "Падает с элитных монстров и чемпионов. Основа для лучших предметов.", "Осколок души"),
+        ]),
+        ("weapons", "Оружие", "litrpg:shadow_dagger", [
+            crafting("litrpg:apprentice_staff", "Стреляет магией за ману. Урон от Интеллекта."),
+            crafting("litrpg:rogue_dagger", None, "litrpg:shadow_dagger"),
+            text("$(l)Тесак Короля гоблинов$() и $(l)Посох Лича$() — трофеи с боссов. Тесак замедляет и ослабляет врагов, посох стреляет мощной магией."),
+        ]),
+    ],
+    "commands": [
+        ("commands", "Команды", "minecraft:command_block", [
+            text("Нужны права оператора (в одиночной игре — «Открыть для сети» → «Читы: вкл»).$(li)/litrpg info$(li)/litrpg level set @s 30$(li)/litrpg xp @s 5000$(li)/litrpg points @s 50$(li)/litrpg stat @s strength 40"),
+            text("$(li)/litrpg race @s elf$(li)/litrpg class set @s necromancer$(li)/litrpg class offer @s$(li)/litrpg style @s magic 500$(li)/litrpg origin reset @s$(li)/litrpg prof level @s miner 30$(li)/litrpg title give @s kingslayer$(li)/litrpg mana @s$(li)/litrpg cooldowns @s"),
+            text("$(li)/litrpg spawn litrpg:goblin 25 champion$(li)/litrpg spawn minecraft:zombie 10 elite$(li)/litrpg respec @s$(li)/litrpg reset @s$(li)/litrpg codex @s$(li)/litrpg zone$(li)/litrpg bloodmoon"),
+        ]),
+    ],
+}
+
+
+def class_entries():
+    import gen_lang
+    import sys
+    sys.path.insert(0, os.path.dirname(__file__))
+    root = os.path.join(os.path.dirname(__file__), '..', 'src', 'main', 'java', 'com', 'andrey', 'litrpg', 'stats', 'PlayerClass.java')
+    src = open(root, encoding='utf-8').read()
+    import re
+    entries = [("how", "Как получить класс", "minecraft:experience_bottle", [
+        text("До 10 уровня Система копит очки стиля: $(l)ближний бой, стрельба, магия, стойкость, скрытность, поддержка, природа, охота на нежить, огонь, ремесло$(). Прогресс виден во вкладке «Навыки».$(br2)На 10 уровне откроется окно с тремя классами, которые лучше всего подходят твоему стилю."),
+        text("$(l)Скрытые классы$() предлагаются только при особых условиях:$(li)$(5)Рыцарь смерти$() — погибнуть 3 раза и упокоить 30 мертвецов.$(li)$(5)Некромант$() — упокоить 60 мертвецов.$(li)$(5)Чернокнижник$() — побывать в Изнанке.$(br2)Окно выбора можно закрыть и вернуться к нему клавишей K."),
+    ])]
+    for m in re.finditer(r'\n    ([A-Z_]+)\("([a-z_]+)", 0x[0-9A-F]+, \w+, \w+, w\([^)]*\),\s*"([a-z_]+)", "([a-z_]+)", "([a-z_]+)", "([a-z_]+)", "([a-z_]+)"\)', src):
+        key = m.group(2)
+        skills = m.groups()[2:]
+        rname, _, desc = gen_lang.CLASSES[key]
+        lv = [10, 13, 17, 22, 28]
+        items = []
+        for i, sk in enumerate(skills):
+            sname, _, sdesc = gen_lang.SKILLS[sk]
+            items.append(f"$(li)$(l){sname}$() ({lv[i]}) — {sdesc}")
+        # страница Patchouli вмещает немного текста — делим на две
+        entries.append((key, rname, "minecraft:book", [text(desc + "$(br2)" + "".join(items[:2])), text("".join(items[2:]))]))
+    return entries
+
+
+def main():
+    ENTRIES["classes"] = class_entries()
+    if os.path.isdir(ASSETS):
+        shutil.rmtree(ASSETS)
+    os.makedirs(DATA, exist_ok=True)
+    with open(os.path.join(DATA, 'book.json'), 'w', encoding='utf-8') as f:
+        json.dump(BOOK, f, ensure_ascii=False, indent=2)
+    for i, (cid, name, desc, icon) in enumerate(CATEGORIES):
+        d = os.path.join(ASSETS, 'categories')
+        os.makedirs(d, exist_ok=True)
+        with open(os.path.join(d, cid + '.json'), 'w', encoding='utf-8') as f:
+            json.dump({"name": name, "description": desc, "icon": icon, "sortnum": i}, f, ensure_ascii=False, indent=2)
+        for j, (eid, ename, eicon, pages) in enumerate(ENTRIES.get(cid, [])):
+            d = os.path.join(ASSETS, 'entries', cid)
+            os.makedirs(d, exist_ok=True)
+            entry = {"name": ename, "icon": eicon, "category": "litrpg:" + cid, "sortnum": j, "pages": pages}
+            with open(os.path.join(d, eid + '.json'), 'w', encoding='utf-8') as f:
+                json.dump(entry, f, ensure_ascii=False, indent=2)
+    print('codex generated')
+
+
+if __name__ == '__main__':
+    main()

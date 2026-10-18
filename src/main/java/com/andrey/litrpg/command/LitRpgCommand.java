@@ -1,0 +1,306 @@
+package com.andrey.litrpg.command;
+
+import com.andrey.litrpg.LitRPG;
+import com.andrey.litrpg.event.MobLevels;
+import com.andrey.litrpg.stats.PlayerClass;
+import com.andrey.litrpg.stats.PlayerStats;
+import com.andrey.litrpg.stats.Profession;
+import com.andrey.litrpg.stats.Race;
+import com.andrey.litrpg.stats.Stat;
+import com.andrey.litrpg.stats.StatsManager;
+import com.andrey.litrpg.stats.Title;
+import com.andrey.litrpg.world.Zone;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.commands.arguments.ResourceArgument;
+import net.minecraft.commands.synchronization.SuggestionProviders;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.function.BiConsumer;
+
+/**
+ * /litrpg — команды для тестов (уровень прав 2, нужны читы).
+ * Примеры: /litrpg level set @s 30, /litrpg spawn litrpg:goblin 25 champion
+ */
+@Mod.EventBusSubscriber(modid = LitRPG.MODID)
+public class LitRpgCommand {
+    private static final SimpleCommandExceptionType BAD_VALUE =
+            new SimpleCommandExceptionType(Component.literal("Неизвестное значение"));
+
+    private static final SuggestionProvider<CommandSourceStack> STATS =
+            (c, b) -> SharedSuggestionProvider.suggest(Arrays.stream(Stat.values()).map(s -> s.key), b);
+    private static final SuggestionProvider<CommandSourceStack> RACES =
+            (c, b) -> SharedSuggestionProvider.suggest(Arrays.stream(Race.values()).map(s -> s.key), b);
+    private static final SuggestionProvider<CommandSourceStack> CLASSES =
+            (c, b) -> SharedSuggestionProvider.suggest(Arrays.stream(PlayerClass.values()).map(s -> s.key), b);
+    private static final SuggestionProvider<CommandSourceStack> PROFS =
+            (c, b) -> SharedSuggestionProvider.suggest(Arrays.stream(Profession.values()).map(s -> s.key), b);
+    private static final SuggestionProvider<CommandSourceStack> TITLES =
+            (c, b) -> SharedSuggestionProvider.suggest(Arrays.stream(Title.values()).map(s -> s.key), b);
+    private static final SuggestionProvider<CommandSourceStack> RANKS =
+            (c, b) -> SharedSuggestionProvider.suggest(new String[]{"normal", "elite", "champion"}, b);
+
+    @SubscribeEvent
+    public static void register(RegisterCommandsEvent event) {
+        register(event.getDispatcher(), event.getBuildContext());
+    }
+
+    private static void register(CommandDispatcher<CommandSourceStack> d, CommandBuildContext ctx) {
+        LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal("litrpg").requires(s -> s.hasPermission(2));
+
+        root.then(Commands.literal("info")
+                .executes(c -> info(c.getSource(), c.getSource().getPlayerOrException()))
+                .then(Commands.argument("player", EntityArgument.player())
+                        .executes(c -> info(c.getSource(), EntityArgument.getPlayer(c, "player")))));
+
+        root.then(Commands.literal("level")
+                .then(Commands.literal("set").then(players().then(Commands.argument("level", IntegerArgumentType.integer(1, PlayerStats.MAX_LEVEL))
+                        .executes(c -> each(c, (p, s) -> {
+                            int before = s.getLevel();
+                            s.setLevel(IntegerArgumentType.getInteger(c, "level"));
+                            if (s.getLevel() > before) StatsManager.onLevelUp(p, before, s.getLevel());
+                        })))))
+                .then(Commands.literal("add").then(players().then(Commands.argument("levels", IntegerArgumentType.integer(1, 99))
+                        .executes(c -> each(c, (p, s) -> {
+                            int before = s.getLevel();
+                            s.setLevel(before + IntegerArgumentType.getInteger(c, "levels"));
+                            if (s.getLevel() > before) StatsManager.onLevelUp(p, before, s.getLevel());
+                        }))))));
+
+        root.then(Commands.literal("xp").then(players().then(Commands.argument("amount", IntegerArgumentType.integer(1))
+                .executes(c -> {
+                    int n = IntegerArgumentType.getInteger(c, "amount");
+                    for (ServerPlayer p : EntityArgument.getPlayers(c, "players")) StatsManager.giveXp(p, n);
+                    return 1;
+                }))));
+
+        root.then(Commands.literal("points").then(players().then(Commands.argument("amount", IntegerArgumentType.integer(0, 10000))
+                .executes(c -> each(c, (p, s) -> s.setFreePoints(IntegerArgumentType.getInteger(c, "amount")))))));
+
+        root.then(Commands.literal("stat").then(players()
+                .then(Commands.argument("stat", StringArgumentType.word()).suggests(STATS)
+                        .then(Commands.argument("value", IntegerArgumentType.integer(0, 10000))
+                                .executes(c -> {
+                                    Stat st = parse(Stat.values(), StringArgumentType.getString(c, "stat"), x -> x.key);
+                                    return each(c, (p, s) -> s.setSpent(st, IntegerArgumentType.getInteger(c, "value")));
+                                })))));
+
+        root.then(Commands.literal("race").then(players()
+                .then(Commands.argument("race", StringArgumentType.word()).suggests(RACES)
+                        .executes(c -> {
+                            Race r = parse(Race.values(), StringArgumentType.getString(c, "race"), x -> x.key);
+                            return each(c, (p, s) -> StatsManager.chooseOrigin(p, r, false));
+                        }))));
+
+        root.then(Commands.literal("class")
+                .then(Commands.literal("set").then(players()
+                        .then(Commands.argument("class", StringArgumentType.word()).suggests(CLASSES)
+                                .executes(c -> {
+                                    PlayerClass cls = parse(PlayerClass.values(), StringArgumentType.getString(c, "class"), x -> x.key);
+                                    return each(c, (p, s) -> StatsManager.chooseClass(p, cls, false));
+                                }))))
+                .then(Commands.literal("offer").then(players().executes(c -> each(c, (p, s) -> {
+                    // сбросить класс и заново подобрать три по стилю (нужен 10+ уровень)
+                    s.setPlayerClass(null);
+                    s.setOffers(java.util.List.of());
+                    if (s.getLevel() < PlayerStats.CLASS_LEVEL) s.setLevel(PlayerStats.CLASS_LEVEL);
+                    StatsManager.sync(p);
+                    StatsManager.offerClasses(p);
+                }))))
+                .then(Commands.literal("clear").then(players().executes(c -> each(c, (p, s) -> {
+                    s.setPlayerClass(null);
+                    s.setOffers(java.util.List.of());
+                })))));
+
+        root.then(Commands.literal("style").then(players()
+                .then(Commands.argument("style", StringArgumentType.word())
+                        .suggests((c, b) -> SharedSuggestionProvider.suggest(Arrays.stream(com.andrey.litrpg.stats.Style.values()).map(x -> x.key), b))
+                        .then(Commands.argument("value", IntegerArgumentType.integer(0, 1000000))
+                                .executes(c -> {
+                                    var st = parse(com.andrey.litrpg.stats.Style.values(), StringArgumentType.getString(c, "style"), x -> x.key);
+                                    return each(c, (p, s) -> s.getStyles().put(st, IntegerArgumentType.getInteger(c, "value")));
+                                })))));
+
+        root.then(Commands.literal("origin").then(Commands.literal("reset").then(players()
+                .executes(c -> each(c, (p, s) -> {
+                    s.setRace(null);
+                    StatsManager.openOriginScreen(p);
+                })))));
+
+        root.then(Commands.literal("prof")
+                .then(Commands.literal("learn").then(players().then(Commands.argument("profession", StringArgumentType.word()).suggests(PROFS)
+                        .executes(c -> {
+                            Profession pr = parse(Profession.values(), StringArgumentType.getString(c, "profession"), x -> x.key);
+                            return each(c, (p, s) -> s.learn(pr));
+                        }))))
+                .then(Commands.literal("forget").then(players().then(Commands.argument("profession", StringArgumentType.word()).suggests(PROFS)
+                        .executes(c -> {
+                            Profession pr = parse(Profession.values(), StringArgumentType.getString(c, "profession"), x -> x.key);
+                            return each(c, (p, s) -> s.forget(pr));
+                        }))))
+                .then(Commands.literal("level").then(players().then(Commands.argument("profession", StringArgumentType.word()).suggests(PROFS)
+                        .then(Commands.argument("level", IntegerArgumentType.integer(1, Profession.MAX_LEVEL))
+                                .executes(c -> {
+                                    Profession pr = parse(Profession.values(), StringArgumentType.getString(c, "profession"), x -> x.key);
+                                    return each(c, (p, s) -> {
+                                        if (!s.knows(pr)) {
+                                            s.forget(pr);
+                                            if (s.getProfessions().size() >= Profession.MAX_KNOWN) {
+                                                s.forget(s.getProfessions().iterator().next());
+                                            }
+                                            s.learn(pr);
+                                        }
+                                        s.setProfLevel(pr, IntegerArgumentType.getInteger(c, "level"));
+                                    });
+                                }))))));
+
+        root.then(Commands.literal("title")
+                .then(Commands.literal("give").then(players().then(Commands.argument("title", StringArgumentType.word()).suggests(TITLES)
+                        .executes(c -> {
+                            Title t = parse(Title.values(), StringArgumentType.getString(c, "title"), x -> x.key);
+                            for (ServerPlayer p : EntityArgument.getPlayers(c, "players")) StatsManager.grantTitle(p, t);
+                            return 1;
+                        }))))
+                .then(Commands.literal("remove").then(players().then(Commands.argument("title", StringArgumentType.word()).suggests(TITLES)
+                        .executes(c -> {
+                            Title t = parse(Title.values(), StringArgumentType.getString(c, "title"), x -> x.key);
+                            return each(c, (p, s) -> s.removeTitle(t));
+                        })))));
+
+        root.then(Commands.literal("mana").then(players().executes(c -> each(c, (p, s) -> s.setMana(s.getMaxMana())))));
+        root.then(Commands.literal("cooldowns").then(players().executes(c -> each(c, (p, s) -> s.resetCooldowns()))));
+        root.then(Commands.literal("respec").then(players().executes(c -> each(c, (p, s) -> s.respec()))));
+        root.then(Commands.literal("reset").then(players().executes(c -> each(c, (p, s) -> {
+            s.wipe();
+            StatsManager.openOriginScreen(p);
+        }))));
+        root.then(Commands.literal("codex").then(players().executes(c -> {
+            for (ServerPlayer p : EntityArgument.getPlayers(c, "players")) StatsManager.giveCodex(p);
+            return 1;
+        })));
+
+        root.then(Commands.literal("cast").then(players().then(Commands.argument("slot", IntegerArgumentType.integer(1, 5))
+                .executes(c -> {
+                    int slot = IntegerArgumentType.getInteger(c, "slot") - 1;
+                    for (ServerPlayer p : EntityArgument.getPlayers(c, "players")) {
+                        StatsManager.get(p).resetCooldowns();
+                        com.andrey.litrpg.ability.AbilityHandler.tryUse(p, slot);
+                    }
+                    return 1;
+                }))));
+
+        root.then(Commands.literal("bloodmoon").executes(c -> {
+            com.andrey.litrpg.world.BloodMoon.force(c.getSource().getLevel());
+            return 1;
+        }));
+
+        root.then(Commands.literal("zone").executes(c -> {
+            ServerPlayer p = c.getSource().getPlayerOrException();
+            Zone z = Zone.at(p.serverLevel(), p.blockPosition());
+            c.getSource().sendSuccess(() -> Component.translatable(z.nameKey()).withStyle(z.color)
+                    .append(Component.literal(" — монстры " + z.minLevel + "–" + z.maxLevel + " ур.").withStyle(ChatFormatting.GRAY)), false);
+            return 1;
+        }));
+
+        root.then(Commands.literal("spawn")
+                .then(Commands.argument("entity", ResourceArgument.resource(ctx, Registries.ENTITY_TYPE))
+                        .suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
+                        .then(Commands.argument("level", IntegerArgumentType.integer(1, 99))
+                                .executes(c -> spawn(c, "normal"))
+                                .then(Commands.argument("rank", StringArgumentType.word()).suggests(RANKS)
+                                        .executes(c -> spawn(c, StringArgumentType.getString(c, "rank")))))));
+
+        d.register(root);
+    }
+
+    private static com.mojang.brigadier.builder.RequiredArgumentBuilder<CommandSourceStack, ?> players() {
+        return Commands.argument("players", EntityArgument.players());
+    }
+
+    private static int each(CommandContext<CommandSourceStack> c, BiConsumer<ServerPlayer, PlayerStats> action)
+            throws CommandSyntaxException {
+        Collection<ServerPlayer> players = EntityArgument.getPlayers(c, "players");
+        for (ServerPlayer p : players) {
+            PlayerStats s = StatsManager.get(p);
+            action.accept(p, s);
+            StatsManager.applyAttributes(p);
+            StatsManager.sync(p);
+        }
+        c.getSource().sendSuccess(() -> Component.literal("Готово: игроков — " + players.size()).withStyle(ChatFormatting.GREEN), true);
+        return players.size();
+    }
+
+    private static <T> T parse(T[] values, String key, java.util.function.Function<T, String> keyOf) throws CommandSyntaxException {
+        for (T v : values) if (keyOf.apply(v).equalsIgnoreCase(key)) return v;
+        throw BAD_VALUE.create();
+    }
+
+    private static int spawn(CommandContext<CommandSourceStack> c, String rankKey) throws CommandSyntaxException {
+        Holder.Reference<EntityType<?>> type = ResourceArgument.getSummonableEntityType(c, "entity");
+        int lvl = IntegerArgumentType.getInteger(c, "level");
+        MobLevels.Rank rank = switch (rankKey.toLowerCase()) {
+            case "elite" -> MobLevels.Rank.ELITE;
+            case "champion" -> MobLevels.Rank.CHAMPION;
+            case "normal" -> MobLevels.Rank.NORMAL;
+            default -> throw BAD_VALUE.create();
+        };
+        ServerLevel level = c.getSource().getLevel();
+        Entity e = type.value().create(level);
+        if (!(e instanceof Mob mob)) throw BAD_VALUE.create();
+        var pos = c.getSource().getPosition();
+        mob.moveTo(pos.x, pos.y, pos.z, level.random.nextFloat() * 360, 0);
+        // уровень ставим до добавления в мир, чтобы автоматическое назначение его не перезаписало
+        mob.finalizeSpawn(level, level.getCurrentDifficultyAt(mob.blockPosition()), MobSpawnType.COMMAND, null, null);
+        MobLevels.apply(mob, lvl, rank);
+        level.addFreshEntity(mob);
+        c.getSource().sendSuccess(() -> Component.literal("Призван: ").append(mob.getDisplayName()), true);
+        return 1;
+    }
+
+    private static int info(CommandSourceStack src, ServerPlayer p) {
+        PlayerStats s = StatsManager.get(p);
+        StringBuilder sb = new StringBuilder();
+        sb.append(p.getGameProfile().getName()).append(": ур. ").append(s.getLevel())
+                .append(", опыт ").append(s.getXp()).append('/').append(s.xpForNext())
+                .append(", очки ").append(s.getFreePoints());
+        sb.append("\nРаса: ").append(s.getRace() == null ? "—" : Component.translatable(s.getRace().nameKey()).getString());
+        sb.append(", класс: ").append(s.getPlayerClass() == null ? "Новичок" : Component.translatable(s.getPlayerClass().nameKey()).getString());
+        sb.append("\nХарактеристики:");
+        for (Stat st : Stat.values()) {
+            sb.append(' ').append(Component.translatable(st.translationKey()).getString()).append('=').append(s.getStat(st));
+        }
+        sb.append("\nПрофессии:");
+        for (Profession pr : s.getProfessions()) {
+            sb.append(' ').append(Component.translatable(pr.nameKey()).getString()).append(" ").append(s.getProfLevel(pr));
+        }
+        sb.append("\nТитулы: ").append(s.getTitles().size());
+        String text = sb.toString();
+        src.sendSuccess(() -> Component.literal(text), false);
+        return 1;
+    }
+}

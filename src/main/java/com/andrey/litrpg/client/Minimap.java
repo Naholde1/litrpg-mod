@@ -18,7 +18,9 @@ public class Minimap {
     private static final int ROWS_PER_TICK = 16;  // полное обновление за 8 тиков
     private static final ResourceLocation TEX_ID = LitRPG.id("dynamic/minimap");
 
-    public static boolean enabled = true;
+    /** Своя мини-карта выключена, если стоит Xaero's Minimap или JourneyMap. */
+    public static boolean enabled = !net.minecraftforge.fml.ModList.get().isLoaded("xaerominimap")
+            && !net.minecraftforge.fml.ModList.get().isLoaded("journeymap");
 
     private static DynamicTexture texture;
     private static int scanRow = 0;

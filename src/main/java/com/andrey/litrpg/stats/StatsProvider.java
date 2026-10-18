@@ -14,11 +14,15 @@ public class StatsProvider implements ICapabilitySerializable<CompoundTag> {
     public static final Capability<PlayerStats> STATS = CapabilityManager.get(new CapabilityToken<>() {});
 
     private final PlayerStats stats = new PlayerStats();
-    private final LazyOptional<PlayerStats> optional = LazyOptional.of(() -> stats);
+    private LazyOptional<PlayerStats> optional = LazyOptional.of(() -> stats);
 
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        return cap == STATS ? optional.cast() : LazyOptional.empty();
+        if (cap != STATS) return LazyOptional.empty();
+        // после смерти Forge «оживляет» capability старого игрока, а LazyOptional
+        // однажды инвалидированный уже не вернуть — создаём новый
+        if (!optional.isPresent()) optional = LazyOptional.of(() -> stats);
+        return optional.cast();
     }
 
     @Override
