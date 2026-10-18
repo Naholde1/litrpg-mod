@@ -54,6 +54,8 @@ public class ClientForgeEvents {
                 if (what.startsWith("char")) {
                     CharacterScreen.setTab(Integer.parseInt(what.substring(4).trim()));
                     mc.setScreen(new CharacterScreen());
+                } else if (what.equals("atlas")) {
+                    mc.setScreen(new AtlasScreen());
                 } else if (what.equals("close")) {
                     mc.setScreen(null);
                 }

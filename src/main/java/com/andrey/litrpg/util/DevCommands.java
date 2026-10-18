@@ -127,6 +127,24 @@ public final class DevCommands {
                     render(server, size, x0, z0, span);
                     continue;
                 }
+                if (line.startsWith("devbreak ") || line.startsWith("devuse ")) {
+                    // от лица игрока Dev: сломать блок / нажать ПКМ по блоку (проверка закона города)
+                    String[] a = line.split(" ");
+                    var p = server.getPlayerList().getPlayerByName("Dev");
+                    if (p == null) continue;
+                    var pos = new net.minecraft.core.BlockPos(Integer.parseInt(a[1]), Integer.parseInt(a[2]), Integer.parseInt(a[3]));
+                    boolean ok;
+                    if (a[0].equals("devbreak")) {
+                        ok = p.gameMode.destroyBlock(pos);
+                    } else {
+                        var hit = new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos),
+                                net.minecraft.core.Direction.UP, pos, false);
+                        ok = p.gameMode.useItemOn(p, p.serverLevel(), p.getMainHandItem(),
+                                net.minecraft.world.InteractionHand.MAIN_HAND, hit).consumesAction();
+                    }
+                    LitRPG.LOGGER.info("[dev] {} {} -> {} (block now {})", a[0], pos, ok, p.serverLevel().getBlockState(pos));
+                    continue;
+                }
                 if (line.equals("devdump")) {
                     dump(server);
                     continue;

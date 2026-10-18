@@ -31,8 +31,42 @@ def place(build, name, ox, oy, oz, dim='overworld', tile=128):
 
 
 def painting_map(b, x, y, z, facing):
-    """Карта мира 8×8 блоков на стене (x,y,z — нижний левый блок перед стеной)."""
+    """Карта мира 8×8 блоков на стене (x,y,z — примерное место перед стеной; точный якорь подбирает fix_paintings)."""
     b.entities.append((x, y, z, 'minecraft:painting', {'variant': 'litrpg:world_map', 'facing': TByte(FACING_BYTE[facing])}))
+
+
+def map_board(b, x, z, frame='minecraft:stone_bricks', face='minecraft:smooth_stone', cap='minecraft:stone_brick_wall', r=40):
+    """Отдельно стоящая стена-доска с картой мира (смотрит на юг) — ищет свободное место рядом с (x, z)."""
+    G = b.G
+
+    def empty(x0, z0, x1, z1):
+        if not b.free(x0, z0, x1, z1) or x0 < 2 or z0 < 2 or x1 > b.size[0] - 3 or z1 > b.size[2] - 3:
+            return False
+        for px in range(x0, x1 + 1):
+            for pz in range(z0, z1 + 1):
+                for y in range(G, G + 12):
+                    v = b.blocks.get((px, y, pz))
+                    if v is not None and v[0] != 'minecraft:air':
+                        return False
+        return True
+
+    for d in range(r):
+        for px in range(x - d, x + d + 1):
+            for pz in range(z - d, z + d + 1):
+                if max(abs(px - x), abs(pz - z)) != d or not empty(px - 7, pz - 1, px + 6, pz + 3):
+                    continue
+                for bx in range(px - 6, px + 6):
+                    for y in range(G - 1, G + 11):
+                        b.set(bx, y, pz, frame if y in (G - 1, G + 10) or bx in (px - 6, px + 5) else face)
+                    b.set(bx, G + 11, pz, cap, up='true', north='none', south='none', east='low', west='low', waterlogged='false') if cap.endswith('_wall') else b.set(bx, G + 11, pz, cap)
+                    b.set(bx, G - 1, pz + 1, frame)
+                    b.set(bx, G - 1, pz + 2, frame)
+                painting_map(b, px + 3, G + 1, pz + 1, 'south')
+                b.lantern(px - 5, G + 10, pz + 1)
+                b.lantern(px + 4, G + 10, pz + 1)
+                b.reserve(px - 7, pz - 1, px + 6, pz + 3)
+                return
+    print('  ! нет места для доски с картой', x, z)
 
 
 # =====================================================================

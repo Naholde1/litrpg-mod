@@ -450,8 +450,74 @@ class City(Build):
             self.set(cx + 2, y, cz - 1, 'minecraft:iron_block' if y > b + int(6 * k) else accent)
 
 
+
+_CCW = {'south': (1, 0), 'north': (-1, 0), 'east': (0, -1), 'west': (0, 1)}
+_DIR = {'south': (0, 1), 'north': (0, -1), 'east': (1, 0), 'west': (-1, 0)}
+_SOFT = ('air', 'pane', 'torch', 'lantern', 'fence', '_wall', 'door', 'slab', 'stairs', 'sign', 'banner', 'carpet',
+         'chain', 'bars', 'button', 'lever', 'flower', 'sapling', 'vine', 'ladder', 'rail', 'water', 'lava', 'campfire',
+         'candle', 'head', 'skull', 'pot', 'fire')
+
+
+def fix_paintings(b, name=""):
+    """Картина 8×8 в Майнкрафте висит не от левого нижнего угла, а вокруг якоря (-3..+4).
+    Подбираем якорь рядом с задуманным местом так, чтобы позади была сплошная стена, а спереди — пусто."""
+    inv = {v: k for k, v in FACING_BYTE.items()}
+    out = []
+    for e in b.entities:
+        if e[3] != 'minecraft:painting':
+            out.append(e)
+            continue
+        x, y, z = e[:3]
+        x, y, z = x - 4 * _CCW[inv[int(getattr(e[4]['facing'], 'v', e[4]['facing']))]][0], y + 3, z - 4 * _CCW[inv[int(getattr(e[4]['facing'], 'v', e[4]['facing']))]][1]
+        face = inv[int(e[4]['facing'].v if hasattr(e[4]['facing'], 'v') else e[4]['facing'])]
+        cx, cz = _CCW[face]
+        dx, dz = _DIR[face]
+
+        def solid(px, py, pz):
+            v = b.blocks.get((px, py, pz))
+            return v is not None and not any(t in v[0] for t in _SOFT)
+
+        def free(px, py, pz):
+            v = b.blocks.get((px, py, pz))
+            return v is None or v[0] == 'minecraft:air'
+
+        def ok(ax, ay, az):
+            for k in range(-3, 5):
+                for l in range(-3, 5):
+                    px, py, pz = ax + cx * k, ay + l, az + cz * k
+                    if not free(px, py, pz) or not solid(px - dx, py, pz - dz):
+                        return False
+            return True
+
+        best = None
+        for d in range(0, 9):
+            for sk in range(-d, d + 1):
+                for sl in range(-d, d + 1):
+                    if max(abs(sk), abs(sl)) != d:
+                        continue
+                    ax, ay, az = x + cx * sk, y + sl, z + cz * sk
+                    if ok(ax, ay, az):
+                        best = (ax, ay, az)
+                        break
+                if best:
+                    break
+            if best:
+                break
+        if best is None:
+            print("  ! картина не помещается:", name, (x, y, z), face)
+            continue
+        # Сущность-картину из шаблона Майнкрафт создать не может (нет якоря TileX) —
+        # кладём маркер данных, а картину вешает MapTilePiece при генерации.
+        ax, ay, az = best
+        b.set(ax, ay, az, 'minecraft:structure_block', mode='data')
+        b.nbt[(ax, ay, az)] = {'id': 'minecraft:structure_block', 'mode': 'DATA',
+                               'metadata': 'painting ' + e[4]['variant'] + ' ' + face}
+    b.entities[:] = out
+
+
 def save_tiles(b, name, tile=128):
     """Сохранить постройку как набор плиток не больше tile×tile. -> список (dx, dz, имя)."""
+    fix_paintings(b, name)
     sx, sy, sz = b.size
     out = []
     for tx in range(0, sx, tile):

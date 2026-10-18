@@ -496,10 +496,9 @@ def khazad(city, gates):
     b.entities.append((hx - 6, G, hz - 2, 'litrpg:dwarf_smith', {}))
     from gen_mapbuild import painting_map
     # карта мира у трона
-    if door_side in ('north', 'south'):
-        painting_map(b, hx + 3, G + 4, hz + (11 if door_side == 'north' else -11), 'north' if door_side == 'north' else 'south')
-    else:
-        painting_map(b, hx + (15 if door_side == 'west' else -15), G + 4, hz + 3, 'west' if door_side == 'west' else 'east')
+    from gen_mapbuild import map_board
+    map_board(b, hx - ddx * 20, hz - ddz * 20, frame='minecraft:polished_deepslate', face='minecraft:smooth_basalt',
+              cap='minecraft:polished_deepslate_wall')
     # статуи королей у ворот
     for s in (-1, 1):
         sx = int(C + math.cos(gate_a) * (WR - 12) - math.sin(gate_a) * 9 * s)
@@ -529,7 +528,8 @@ def ghardum(city, gates):
     lx, lz = int(C + math.cos(ha) * 36), int(C + math.sin(ha) * 36)
     b.house(lx - 11, lz - 6, 22, 12, floors=1, door=angle_dir(gate_a), interior='guard', npc='litrpg:orc_warlord')
     from gen_mapbuild import painting_map
-    painting_map(b, lx - 4, b.G + 1, lz - 5, 'south')
+    from gen_mapbuild import map_board
+    map_board(b, lx, lz + 12, frame='minecraft:stripped_dark_oak_log', face='minecraft:spruce_planks', cap='minecraft:dark_oak_fence')
     rnd = random.Random(7)
     colors = ['brown', 'red', 'brown', 'black', 'gray']
     for k in range(26):
@@ -565,7 +565,8 @@ def wolfden(city, gates):
     lx, lz = int(C + math.cos(ha) * 28), int(C + math.sin(ha) * 28)
     b.house(lx - 10, lz - 5, 20, 10, floors=1, door=angle_dir(gate_a), interior='home', npc='litrpg:beast_alpha')
     from gen_mapbuild import painting_map
-    painting_map(b, lx - 4, b.G + 1, lz - 4, 'south')
+    from gen_mapbuild import map_board
+    map_board(b, lx, lz + 10, frame='minecraft:stripped_spruce_log', face='minecraft:spruce_planks', cap='minecraft:spruce_fence')
     for k in range(12):
         a = 2 * math.pi * k / 12 + 0.2
         x, z = int(C + math.cos(a) * 20), int(C + math.sin(a) * 20)
@@ -624,7 +625,8 @@ def fort(city, gates, seed, banner):
     kx, kz = int(C + math.cos(ha) * 18), int(C + math.sin(ha) * 18)
     b.house(kx - 9, kz - 7, 18, 14, floors=3, door=angle_dir(gate_a), roof=b.st['roofs'][0], interior='guard', npc='litrpg:human_knight')
     from gen_mapbuild import painting_map, stall
-    painting_map(b, kx - 4, b.G + 1, kz - 6, 'south')
+    from gen_mapbuild import map_board
+    map_board(b, kx, kz + 12)
     b.round_tower(C, C, 4, 22, roof_block='minecraft:spruce_planks')
     b.reserve(C - 6, C - 6, C + 6, C + 6)
     for k in range(3):

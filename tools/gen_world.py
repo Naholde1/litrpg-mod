@@ -620,6 +620,11 @@ def text_width(s, scale=1):
     return len(s) * 6 * scale
 
 
+# где писать названия земель (координаты мира), чтобы не налезали на города
+LABELS = {'deadlands': (3950, 750), 'goblins': (250, 3850), 'dwarves': (2900, -3100), 'frost': (300, -4200),
+          'kingdom': (0, -500), 'orcs': (3000, 2150)}
+
+
 def render_art(world, size=512):
     """Карта-свиток: пергамент, территории, рельеф, вода, дороги, города."""
     k = 10000 / size
@@ -727,8 +732,9 @@ def render_art(world, size=512):
         text_px(img, max(2, min(size - tw - 2, x - tw // 2)), z + r + 3, name, (50, 25, 15, 255), 1, (230, 210, 170, 255))
     # названия территорий — крупно
     for t in TERRITORIES:
-        sx, sz = t['seeds'][0][0], t['seeds'][0][1]
+        sx, sz = LABELS.get(t['id'], (t['seeds'][0][0], t['seeds'][0][1] - 430))
         x, z = to_px(sx, sz)
+        z += 22
         name = t['name']
         tw = text_width(name)
         text_px(img, max(2, min(size - tw - 2, x - tw // 2)), z - 22, name, (90, 40, 20, 255), 1, (235, 220, 185, 255))
