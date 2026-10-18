@@ -66,23 +66,15 @@ public class CombatEvents {
     }
 
     public static float critChance(PlayerStats s) {
-        float c = 0.05f + s.getStat(Stat.LUCK) * 0.006f + s.getStat(Stat.AGILITY) * 0.002f;
-        c += 0.03f * classWeight(s, Style.STEALTH);
-        c += 0.015f * classWeight(s, Style.RANGED);
-        c += s.gear().get(com.andrey.litrpg.gear.GearBonus.CRIT_CHANCE) / 100f;
-        return Math.min(0.6f, c);
+        return (float) (com.andrey.litrpg.stats.StatBreakdown.critChance(s).value() / 100.0);
     }
 
     public static float critMultiplier(PlayerStats s) {
-        return Math.min(3.5f, 1.5f + s.getStat(Stat.LUCK) * 0.01f + s.gear().get(com.andrey.litrpg.gear.GearBonus.CRIT_DAMAGE) / 100f);
+        return (float) com.andrey.litrpg.stats.StatBreakdown.critMultiplier(s).value();
     }
 
     public static float dodgeChance(PlayerStats s) {
-        float c = s.getStat(Stat.AGILITY) * 0.003f + s.getStat(Stat.LUCK) * 0.002f;
-        if (s.getRace() == Race.BEASTKIN) c += 0.04f;
-        c += 0.015f * classWeight(s, Style.STEALTH);
-        c += s.gear().get(com.andrey.litrpg.gear.GearBonus.DODGE) / 100f;
-        return Math.min(0.4f, c);
+        return (float) (com.andrey.litrpg.stats.StatBreakdown.dodge(s).value() / 100.0);
     }
 
     @SubscribeEvent

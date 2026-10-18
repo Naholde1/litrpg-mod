@@ -159,4 +159,18 @@ public class ModItems {
             () -> new net.minecraft.world.item.BlockItem(ModBlocks.BOSS_ALTAR.get(), new Item.Properties().rarity(Rarity.EPIC)));
     public static final RegistryObject<Item> DIVINE_SPARK = ITEMS.register("divine_spark",
             () -> new UpgradeStoneItem(new Item.Properties().rarity(Rarity.EPIC).fireResistant(), "item.litrpg.divine_spark.tooltip"));
+    public static final RegistryObject<Item> STONE_TROLL_SPAWN_EGG = ITEMS.register("stone_troll_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.STONE_TROLL, 0x6E7B70, 0x8DA34A, new Item.Properties()));
+    public static final RegistryObject<Item> FROST_WRAITH_SPAWN_EGG = ITEMS.register("frost_wraith_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.FROST_WRAITH, 0x9ED8F0, 0xEAF6FF, new Item.Properties()));
+    public static final RegistryObject<Item> FOREST_WISP_SPAWN_EGG = ITEMS.register("forest_wisp_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.FOREST_WISP, 0xC8F060, 0x4FBF5A, new Item.Properties()));
+    public static final RegistryObject<Item> ASH_IMP_SPAWN_EGG = ITEMS.register("ash_imp_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.ASH_IMP, 0x5A2018, 0xFF7A20, new Item.Properties()));
+    public static final RegistryObject<Item> BOG_LURKER_SPAWN_EGG = ITEMS.register("bog_lurker_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.BOG_LURKER, 0x3E5A3A, 0x90F070, new Item.Properties()));
+    public static final RegistryObject<Item> SAND_SCORPION_SPAWN_EGG = ITEMS.register("sand_scorpion_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.SAND_SCORPION, 0xC8A060, 0x6A4428, new Item.Properties()));
+    public static final RegistryObject<Item> GRAVE_KNIGHT_SPAWN_EGG = ITEMS.register("grave_knight_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.GRAVE_KNIGHT, 0x3A3A40, 0x8E44AD, new Item.Properties()));
 }

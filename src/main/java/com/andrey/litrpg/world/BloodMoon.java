@@ -93,11 +93,16 @@ public final class BloodMoon {
         if (event.getSpawnType() != MobSpawnType.NATURAL) return;
         Mob mob = event.getEntity();
         if (!(mob instanceof Enemy) || mob.getPersistentData().getBoolean(PACK_TAG) || Minions.ownerOf(mob) != null) return;
-        if (!(event.getLevel() instanceof ServerLevel level)) return;
-        Zone zone = Zone.at(level, mob.blockPosition());
+        if (event.isSpawnCancelled() || !(event.getLevel() instanceof ServerLevel level)) return;
         boolean moon = isActive(level);
-        float chance = moon ? 0.7f : zone.ordinal() >= Zone.WILDWOOD.ordinal() && zone.ordinal() <= Zone.ABYSS.ordinal()
-                ? 0.12f + 0.06f * (zone.ordinal() - Zone.WILDWOOD.ordinal()) : 0f;
+        float chance;
+        if (com.andrey.litrpg.world.map.SystemWorld.isOverworld(level)) {
+            chance = moon ? 0.7f : 0f; // в «Мире Системы» стаи создаёт SystemWorld
+        } else {
+            Zone zone = Zone.at(level, mob.blockPosition());
+            chance = moon ? 0.7f : zone.ordinal() >= Zone.WILDWOOD.ordinal() && zone.ordinal() <= Zone.ABYSS.ordinal()
+                    ? 0.12f + 0.06f * (zone.ordinal() - Zone.WILDWOOD.ordinal()) : 0f;
+        }
         if (level.random.nextFloat() >= chance) return;
         int extra = 1 + level.random.nextInt(moon ? 3 : 2);
         EntityType<?> type = mob.getType();

@@ -3,6 +3,8 @@
   "values": [
     "#minecraft:is_savanna",
     "#minecraft:is_badlands",
-    "minecraft:plains"
+    "minecraft:plains",
+    "litrpg:scorched_steppe",
+    "litrpg:dust_wastes"
   ]
 }

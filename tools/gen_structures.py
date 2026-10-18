@@ -448,12 +448,12 @@ def goblin_camp():
 
 STRUCTURES = [
     # имя, функция, биомы, разреженность (spacing, separation), соль, адаптация к рельефу
-    ('elf_grove', elf_grove, ["#minecraft:is_forest"], (30, 12), 718231, 'beard_thin'),
-    ('dwarf_hold', dwarf_hold, ["#minecraft:is_mountain", "#minecraft:is_hill", "minecraft:windswept_forest"], (32, 12), 512331, 'beard_box'),
-    ('orc_camp', orc_camp, ["#minecraft:is_savanna", "#minecraft:is_badlands", "minecraft:plains"], (32, 12), 913221, 'beard_thin'),
-    ('beast_lodge', beast_lodge, ["#minecraft:is_taiga", "#minecraft:is_jungle"], (30, 12), 431127, 'beard_thin'),
-    ('demon_shrine', demon_shrine, ["#minecraft:is_badlands", "minecraft:desert", "minecraft:savanna_plateau"], (40, 16), 666013, 'beard_box'),
-    ('goblin_camp', goblin_camp, ["minecraft:plains", "minecraft:sunflower_plains", "minecraft:meadow", "#minecraft:is_forest"], (22, 8), 224411, 'beard_thin'),
+    ('elf_grove', elf_grove, ["#minecraft:is_forest", "litrpg:sylvan_wildwood", "litrpg:moon_grove", "litrpg:silver_glade"], (30, 12), 718231, 'beard_thin'),
+    ('dwarf_hold', dwarf_hold, ["#minecraft:is_mountain", "#minecraft:is_hill", "minecraft:windswept_forest", "litrpg:dwarf_vales", "litrpg:ore_slopes"], (32, 12), 512331, 'beard_box'),
+    ('orc_camp', orc_camp, ["#minecraft:is_savanna", "#minecraft:is_badlands", "minecraft:plains", "litrpg:scorched_steppe", "litrpg:dust_wastes"], (32, 12), 913221, 'beard_thin'),
+    ('beast_lodge', beast_lodge, ["#minecraft:is_taiga", "#minecraft:is_jungle", "litrpg:fang_taiga", "litrpg:snow_hunt"], (30, 12), 431127, 'beard_thin'),
+    ('demon_shrine', demon_shrine, ["#minecraft:is_badlands", "minecraft:desert", "minecraft:savanna_plateau", "litrpg:ash_wastes", "litrpg:charred_forest"], (40, 16), 666013, 'beard_box'),
+    ('goblin_camp', goblin_camp, ["minecraft:plains", "minecraft:sunflower_plains", "minecraft:meadow", "#minecraft:is_forest", "litrpg:rot_swamp", "litrpg:goblin_mangroves", "litrpg:frontier_woods"], (22, 8), 224411, 'beard_thin'),
 ]
 
 

@@ -53,8 +53,8 @@ public class ChestLootModifier extends LootModifier {
         Vec3 origin = ctx.getParamOrNull(LootContextParams.ORIGIN);
         int level = 3;
         if (origin != null) {
-            Zone z = Zone.at(ctx.getLevel(), BlockPos.containing(origin));
-            level = z.minLevel + rnd.nextInt(Math.max(1, z.maxLevel - z.minLevel + 1));
+            int[] z = Zone.levels(ctx.getLevel(), BlockPos.containing(origin));
+            level = z[0] + rnd.nextInt(Math.max(1, z[1] - z[0] + 1));
         }
         String path = ctx.getQueriedLootTableId().getPath();
         // особые места — добыча богаче

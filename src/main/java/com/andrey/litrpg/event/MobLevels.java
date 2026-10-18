@@ -98,6 +98,16 @@ public class MobLevels {
 
     public static void assignLevel(Mob mob, ServerLevel level) {
         if (!hasLevels(mob) || mob instanceof LitBoss) return;
+        // стража городов: уровень 80 без масштабирования (она и так почти неуязвима)
+        if (mob instanceof com.andrey.litrpg.npc.RaceNpcEntity npc && npc.npcType().isGuard()) {
+            if (!mob.getPersistentData().contains(TAG)) {
+                mob.getPersistentData().putInt(TAG, 80);
+                mob.setCustomName(Component.literal("[Ур. 80] ").withStyle(ChatFormatting.DARK_RED)
+                        .append(Component.empty().append(mob.getType().getDescription()).withStyle(ChatFormatting.GOLD)));
+                mob.setCustomNameVisible(false);
+            }
+            return;
+        }
         if (mob.getPersistentData().contains(TAG)) {
             // мобы из старых версий мода показывали имя сквозь стены
             mob.setCustomNameVisible(false);
@@ -114,8 +124,9 @@ public class MobLevels {
             apply(mob, Mth.clamp(dlvl - 1 + rnd.nextInt(3), 1, 99), dr);
             return;
         }
-        Zone zone = Zone.at(level, mob.blockPosition());
-        int lvl = zone.minLevel + rnd.nextInt(Math.max(1, zone.maxLevel - zone.minLevel + 1));
+        int[] range = Zone.levels(level, mob.blockPosition());
+        int lvl = range[0] + rnd.nextInt(Math.max(1, range[1] - range[0] + 1));
+        int tier = Math.min(7, range[1] / 8);
         if (level.isNight() && level.dimension() == net.minecraft.world.level.Level.OVERWORLD) {
             lvl += rnd.nextInt(3);
         }
@@ -123,8 +134,8 @@ public class MobLevels {
         if (bloodMoon) lvl += 4;
         Rank rank = Rank.NORMAL;
         float roll = mob instanceof Enemy ? rnd.nextFloat() / (bloodMoon ? 3f : 1f) : 1f;
-        if (roll < 0.015f + zone.ordinal() * 0.004f) rank = Rank.CHAMPION;
-        else if (roll < 0.08f + zone.ordinal() * 0.012f) rank = Rank.ELITE;
+        if (roll < 0.015f + tier * 0.004f) rank = Rank.CHAMPION;
+        else if (roll < 0.08f + tier * 0.012f) rank = Rank.ELITE;
         apply(mob, Mth.clamp(lvl, 1, 99), rank);
     }
 

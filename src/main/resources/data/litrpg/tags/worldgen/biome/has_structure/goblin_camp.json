@@ -4,6 +4,9 @@
     "minecraft:plains",
     "minecraft:sunflower_plains",
     "minecraft:meadow",
-    "#minecraft:is_forest"
+    "#minecraft:is_forest",
+    "litrpg:rot_swamp",
+    "litrpg:goblin_mangroves",
+    "litrpg:frontier_woods"
   ]
 }

@@ -77,6 +77,34 @@ public class ModEntities {
             () -> EntityType.Builder.<com.andrey.litrpg.entity.BossProjectile>of(com.andrey.litrpg.entity.BossProjectile::new, MobCategory.MISC)
                     .sized(0.4f, 0.4f).clientTrackingRange(6).updateInterval(5).build("boss_projectile"));
 
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.Creatures.StoneTroll>> STONE_TROLL = ENTITY_TYPES.register("stone_troll",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.Creatures.StoneTroll>of(com.andrey.litrpg.entity.Creatures.StoneTroll::new, MobCategory.MONSTER)
+                    .sized(1.3f, 2.6f).clientTrackingRange(8).build("stone_troll"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.Creatures.FrostWraith>> FROST_WRAITH = ENTITY_TYPES.register("frost_wraith",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.Creatures.FrostWraith>of(com.andrey.litrpg.entity.Creatures.FrostWraith::new, MobCategory.MONSTER)
+                    .sized(0.7f, 2.0f).clientTrackingRange(8).build("frost_wraith"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.Creatures.ForestWisp>> FOREST_WISP = ENTITY_TYPES.register("forest_wisp",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.Creatures.ForestWisp>of(com.andrey.litrpg.entity.Creatures.ForestWisp::new, MobCategory.MONSTER)
+                    .sized(0.6f, 0.7f).clientTrackingRange(8).build("forest_wisp"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.Creatures.AshImp>> ASH_IMP = ENTITY_TYPES.register("ash_imp",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.Creatures.AshImp>of(com.andrey.litrpg.entity.Creatures.AshImp::new, MobCategory.MONSTER)
+                    .sized(0.6f, 1.2f).fireImmune().clientTrackingRange(8).build("ash_imp"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.Creatures.BogLurker>> BOG_LURKER = ENTITY_TYPES.register("bog_lurker",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.Creatures.BogLurker>of(com.andrey.litrpg.entity.Creatures.BogLurker::new, MobCategory.MONSTER)
+                    .sized(1.2f, 0.9f).clientTrackingRange(8).build("bog_lurker"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.Creatures.SandScorpion>> SAND_SCORPION = ENTITY_TYPES.register("sand_scorpion",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.Creatures.SandScorpion>of(com.andrey.litrpg.entity.Creatures.SandScorpion::new, MobCategory.MONSTER)
+                    .sized(1.5f, 0.9f).clientTrackingRange(8).build("sand_scorpion"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.Creatures.GraveKnight>> GRAVE_KNIGHT = ENTITY_TYPES.register("grave_knight",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.Creatures.GraveKnight>of(com.andrey.litrpg.entity.Creatures.GraveKnight::new, MobCategory.MONSTER)
+                    .sized(0.7f, 2.1f).clientTrackingRange(8).build("grave_knight"));
+
     static {
         com.andrey.litrpg.npc.NpcRegistry.init();
     }

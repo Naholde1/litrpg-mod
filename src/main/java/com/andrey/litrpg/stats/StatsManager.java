@@ -114,37 +114,18 @@ public class StatsManager {
 
     public static void applyAttributes(ServerPlayer player) {
         PlayerStats s = get(player);
-        int str = s.getStat(Stat.STRENGTH);
-        int agi = s.getStat(Stat.AGILITY);
-        int vit = s.getStat(Stat.VITALITY);
-        int luck = s.getStat(Stat.LUCK);
-        int lvl = s.getLevel();
         Race race = s.getRace();
-        PlayerClass cls = s.getPlayerClass();
-
-        double hp = vit * 2.0 + (lvl - 1);
-        if (race == Race.ORC) hp += 4;
-        if (race == Race.DWARF) hp += 2;
-        int tank = cls == null ? 0 : cls.styles.getOrDefault(Style.TANK, 0) + cls.styles.getOrDefault(Style.MELEE, 0) / 2;
-        hp += tank * (1 + lvl * 0.15);
-        var gear = s.gear();
-        hp += gear.get(com.andrey.litrpg.gear.GearBonus.HEALTH);
-        set(player, Attributes.MAX_HEALTH, HEALTH_ID, "litrpg_health", hp, AttributeModifier.Operation.ADDITION);
-        set(player, Attributes.ATTACK_DAMAGE, DAMAGE_ID, "litrpg_damage",
-                str * 0.4 + gear.get(com.andrey.litrpg.gear.GearBonus.DAMAGE), AttributeModifier.Operation.ADDITION);
-
-        double speed = Math.min(agi * 0.006, 0.5);
-        if (race == Race.BEASTKIN) speed += 0.08;
-        speed += gear.get(com.andrey.litrpg.gear.GearBonus.MOVE_SPEED) / 100.0;
-        set(player, Attributes.MOVEMENT_SPEED, SPEED_ID, "litrpg_speed", speed, AttributeModifier.Operation.MULTIPLY_BASE);
-        set(player, Attributes.ATTACK_SPEED, ATK_SPEED_ID, "litrpg_attack_speed",
-                Math.min(agi * 0.012, 0.8) + gear.get(com.andrey.litrpg.gear.GearBonus.ATTACK_SPEED) / 100.0, AttributeModifier.Operation.MULTIPLY_BASE);
-        double armor = Math.min(vit * 0.2, 12.0);
-        armor += tank * 0.8 + gear.get(com.andrey.litrpg.gear.GearBonus.ARMOR);
-        set(player, Attributes.ARMOR, ARMOR_ID, "litrpg_armor", armor, AttributeModifier.Operation.ADDITION);
+        // все числа — из StatBreakdown (то же видит игрок в окне «Расчёт»)
+        set(player, Attributes.MAX_HEALTH, HEALTH_ID, "litrpg_health", StatBreakdown.health(s).value() - 20, AttributeModifier.Operation.ADDITION);
+        set(player, Attributes.ATTACK_DAMAGE, DAMAGE_ID, "litrpg_damage", StatBreakdown.weaponDamage(s).value(), AttributeModifier.Operation.ADDITION);
+        set(player, Attributes.MOVEMENT_SPEED, SPEED_ID, "litrpg_speed", StatBreakdown.moveSpeed(s).value() / 100.0,
+                AttributeModifier.Operation.MULTIPLY_BASE);
+        set(player, Attributes.ATTACK_SPEED, ATK_SPEED_ID, "litrpg_attack_speed", StatBreakdown.attackSpeed(s).value() / 100.0,
+                AttributeModifier.Operation.MULTIPLY_BASE);
+        set(player, Attributes.ARMOR, ARMOR_ID, "litrpg_armor", StatBreakdown.armor(s).value(), AttributeModifier.Operation.ADDITION);
         set(player, Attributes.KNOCKBACK_RESISTANCE, KNOCKBACK_ID, "litrpg_knockback",
                 race == Race.DWARF ? 0.35 : race == Race.ORC ? 0.2 : 0, AttributeModifier.Operation.ADDITION);
-        set(player, Attributes.LUCK, LUCK_ID, "litrpg_luck", luck * 0.1, AttributeModifier.Operation.ADDITION);
+        set(player, Attributes.LUCK, LUCK_ID, "litrpg_luck", s.getStat(Stat.LUCK) * 0.1, AttributeModifier.Operation.ADDITION);
 
         if (player.getHealth() > player.getMaxHealth()) {
             player.setHealth(player.getMaxHealth());

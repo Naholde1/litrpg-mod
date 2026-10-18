@@ -3,6 +3,8 @@
   "values": [
     "#minecraft:is_badlands",
     "minecraft:desert",
-    "minecraft:savanna_plateau"
+    "minecraft:savanna_plateau",
+    "litrpg:ash_wastes",
+    "litrpg:charred_forest"
   ]
 }

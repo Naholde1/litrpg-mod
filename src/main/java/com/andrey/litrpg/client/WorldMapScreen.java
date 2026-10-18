@@ -117,7 +117,7 @@ public class WorldMapScreen extends Screen {
             g.drawString(font, c, mouseX + 10, mouseY + 4, 0xFFFFFFFF);
         }
 
-        String help = "ПКМ — метка  •  колесо — масштаб  •  красные — монстры, фиолетовые — боссы";
+        String help = "ПКМ — метка  •  колесо — масштаб  •  Tab — атлас всего мира";
         g.drawString(font, help, width / 2 - font.width(help) / 2, height - 12, 0xFF999999);
 
         super.render(g, mouseX, mouseY, partialTick);
@@ -161,6 +161,10 @@ public class WorldMapScreen extends Screen {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (ModKeys.WORLD_MAP.matches(keyCode, scanCode)) {
             onClose();
+            return true;
+        }
+        if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_TAB) {
+            minecraft.setScreen(new AtlasScreen());
             return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);

@@ -28,9 +28,12 @@ public final class NpcRegistry {
         if (!TYPES.isEmpty()) return;
         for (NpcType t : NpcType.values()) {
             float s = t.scale();
-            TYPES.put(t, ModEntities.ENTITY_TYPES.register(t.key, () -> EntityType.Builder
-                    .<RaceNpcEntity>of((type, level) -> new RaceNpcEntity(type, level, t), MobCategory.CREATURE)
-                    .sized(0.6f * Math.max(1f, s * 0.9f), 1.95f * s).clientTrackingRange(10).build(t.key)));
+            TYPES.put(t, ModEntities.ENTITY_TYPES.register(t.key, () -> {
+                var b = EntityType.Builder.<RaceNpcEntity>of((type, level) -> new RaceNpcEntity(type, level, t), MobCategory.CREATURE)
+                        .sized(0.6f * Math.max(1f, s * 0.9f), 1.95f * s).clientTrackingRange(10);
+                if (t.isGuard()) b.fireImmune();
+                return b.build(t.key);
+            }));
             int[] colors = eggColors(t);
             EGGS.put(t, ModItems.ITEMS.register(t.key + "_spawn_egg",
                     () -> new ForgeSpawnEggItem(TYPES.get(t), colors[0], colors[1], new Item.Properties())));
@@ -43,6 +46,7 @@ public final class NpcRegistry {
             case DWARF -> 0xB08A4A;
             case ORC -> 0x5A8A3A;
             case BEASTKIN -> 0xC9A36B;
+            case HUMAN -> 0x5D8AD2;
             default -> 0xA02818;
         };
         int spot = switch (t.role) {
@@ -51,6 +55,8 @@ public final class NpcRegistry {
             case MAGE -> 0x5A6AE0;
             case TRADER -> 0xF2C33A;
             case CHIEF -> 0xFFFFFF;
+            case GUARD -> 0x2A2A2A;
+            case CITIZEN -> 0xB0A080;
         };
         return new int[]{base, spot};
     }

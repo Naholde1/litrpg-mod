@@ -26,12 +26,13 @@ import java.util.List;
 
 /** Окно персонажа с вкладками: Статус, Навыки, Профессии, Титулы. */
 public class CharacterScreen extends SystemScreen {
-    private static final String[] TABS = {"Статус", "Навыки", "Профессии", "Титулы", "Репутация", "Задания"};
+    private static final String[] TABS = {"Статус", "Навыки", "Профессии", "Титулы", "Репутация", "Задания", "Расчёт"};
 
     private static int tab = 0;
     private int titleScroll = 0;
     private int repScroll = 0;
     private int questScroll = 0;
+    private int calcScroll = 0;
     private final List<Hit> hits = new ArrayList<>();
     private Component tooltip;
 
@@ -42,7 +43,7 @@ public class CharacterScreen extends SystemScreen {
     }
 
     public CharacterScreen() {
-        super(Component.literal("Персонаж"), 404, 256);
+        super(Component.literal("Персонаж"), 470, 256);
     }
 
     @Override
@@ -71,6 +72,7 @@ public class CharacterScreen extends SystemScreen {
             case 3 -> titles(g, s, cx, cy, mx, my);
             case 4 -> reputation(g, s, cx, cy, mx, my);
             case 5 -> quests(g, s, cx, cy, mx, my);
+            case 6 -> calc(g, s, cx, cy, mx, my);
         }
 
         if (tooltip != null) g.renderTooltip(font, font.split(tooltip, 220), mx, my);
@@ -303,6 +305,91 @@ public class CharacterScreen extends SystemScreen {
         }
     }
 
+    // ---------------- Расчёт ----------------
+
+    private record CalcRow(Component text, int color, int indent, Component tip) {}
+
+    private static String num(double v) {
+        if (Math.abs(v - Math.round(v)) < 1e-6) return (v >= 0 ? "+" : "") + Math.round(v);
+        return (v >= 0 ? "+" : "") + String.format("%.2f", v).replaceAll("0+$", "").replaceAll("[.,]$", "");
+    }
+
+    /** Подробный расчёт: откуда берётся каждое значение. */
+    private void calc(GuiGraphics g, PlayerStats s, int x, int y, int mx, int my) {
+        List<CalcRow> rows = new ArrayList<>();
+        int w = W - 24;
+        rows.add(new CalcRow(Component.literal("◆ Характеристики"), UiKit.GOLD, 0, null));
+        for (Stat st : Stat.values()) {
+            var v = com.andrey.litrpg.stats.StatBreakdown.stat(s, st);
+            rows.add(new CalcRow(Component.translatable(st.translationKey()).append(": " + v.text()), 0xFF000000 | st.color, 4,
+                    Component.translatable(st.descKey())));
+            addParts(rows, v, w);
+        }
+        rows.add(new CalcRow(Component.literal("◆ Итоговые показатели"), UiKit.GOLD, 0, null));
+        for (var v : com.andrey.litrpg.stats.StatBreakdown.derived(s)) {
+            String head = v.name + ": " + v.text();
+            if (v.capped()) head += "  (предел; без него было бы " + String.format(v.format, v.total) + ")";
+            rows.add(new CalcRow(Component.literal(head), 0xFFFFFFFF, 4, v.note.isEmpty() ? null : Component.literal(v.note)));
+            addParts(rows, v, w);
+        }
+        var other = com.andrey.litrpg.stats.StatBreakdown.otherGear(s.gear());
+        if (!other.isEmpty()) {
+            rows.add(new CalcRow(Component.literal("◆ Прочие бонусы экипировки"), UiKit.GOLD, 0, null));
+            StringBuilder sb = new StringBuilder();
+            for (var p : other) {
+                String label = p.label().getString();
+                boolean pct = label.startsWith("% ");
+                sb.append(sb.length() > 0 ? "  •  " : "").append(num(p.value())).append(pct ? "% " + label.substring(2) : " " + label);
+            }
+            for (var line : font.split(Component.literal(sb.toString()), w - 12)) {
+                rows.add(new CalcRow(Component.literal(net.minecraft.util.StringUtil.stripColor(toStr(line))), UiKit.MUTED, 12, null));
+            }
+        }
+        if (!s.gear().passives.isEmpty()) {
+            StringBuilder sb = new StringBuilder("Пассивки: ");
+            boolean first = true;
+            for (var p : s.gear().passives) {
+                sb.append(first ? "" : ", ").append(p.title);
+                first = false;
+            }
+            for (var line : font.split(Component.literal(sb.toString()), w - 12)) {
+                rows.add(new CalcRow(Component.literal(toStr(line)), 0xFFB8E0FF, 12, null));
+            }
+        }
+        int perPage = (top + H - 10 - y) / 10;
+        calcScroll = Math.max(0, Math.min(calcScroll, Math.max(0, rows.size() - perPage)));
+        for (int i = 0; i < perPage && i + calcScroll < rows.size(); i++) {
+            CalcRow r = rows.get(i + calcScroll);
+            int ry = y + i * 10;
+            g.drawString(font, r.text(), x + r.indent(), ry, r.color(), false);
+            if (r.tip() != null && UiKit.inside(mx, my, x, ry - 1, w, 10)) tooltip = r.tip();
+        }
+        if (rows.size() > perPage) {
+            String hint = calcScroll + perPage < rows.size() ? "▼ колесо мыши" : "▲";
+            g.drawString(font, hint, x + w - font.width(hint), top + H - 12, UiKit.MUTED, false);
+        }
+    }
+
+    private void addParts(List<CalcRow> rows, com.andrey.litrpg.stats.StatBreakdown.Value v, int w) {
+        StringBuilder sb = new StringBuilder();
+        for (var p : v.parts) {
+            sb.append(sb.length() > 0 ? "  •  " : "").append(p.label().getString()).append(" ").append(num(p.value()));
+        }
+        if (sb.length() == 0) sb.append("нет источников");
+        for (var line : font.split(Component.literal(sb.toString()), w - 16)) {
+            rows.add(new CalcRow(Component.literal(toStr(line)), UiKit.MUTED, 14, null));
+        }
+    }
+
+    private static String toStr(net.minecraft.util.FormattedCharSequence seq) {
+        StringBuilder sb = new StringBuilder();
+        seq.accept((i, style, cp) -> {
+            sb.appendCodePoint(cp);
+            return true;
+        });
+        return sb.toString();
+    }
+
     // ---------------- Задания ----------------
 
     private void quests(GuiGraphics g, PlayerStats s, int x, int y, int mx, int my) {
@@ -410,6 +497,10 @@ public class CharacterScreen extends SystemScreen {
         }
         if (tab == 5) {
             questScroll -= (int) Math.signum(delta);
+            return true;
+        }
+        if (tab == 6) {
+            calcScroll -= (int) Math.signum(delta) * 2;
             return true;
         }
         return false;

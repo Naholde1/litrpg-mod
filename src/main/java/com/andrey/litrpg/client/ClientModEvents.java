@@ -37,11 +37,18 @@ public class ClientModEvents {
         event.registerEntityRenderer(ModEntities.FLAME_LORD.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "flame_lord"));
         event.registerEntityRenderer(ModEntities.ARCHDEMON.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "archdemon"));
         event.registerEntityRenderer(ModEntities.BOSS_PROJECTILE.get(), ctx -> new ThrownItemRenderer<>(ctx, 1.0f, true));
+        event.registerEntityRenderer(ModEntities.STONE_TROLL.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "stone_troll"));
+        event.registerEntityRenderer(ModEntities.FROST_WRAITH.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "frost_wraith"));
+        event.registerEntityRenderer(ModEntities.FOREST_WISP.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "forest_wisp"));
+        event.registerEntityRenderer(ModEntities.ASH_IMP.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "ash_imp"));
+        event.registerEntityRenderer(ModEntities.BOG_LURKER.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "bog_lurker"));
+        event.registerEntityRenderer(ModEntities.SAND_SCORPION.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "sand_scorpion"));
+        event.registerEntityRenderer(ModEntities.GRAVE_KNIGHT.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "grave_knight"));
         com.andrey.litrpg.npc.NpcRegistry.TYPES.values().forEach(t ->
                 event.registerEntityRenderer(t.get(), com.andrey.litrpg.client.render.NpcRenderer::new));
     }
 
-    public static final String[] BOSS_MODELS = {"ruin_golem", "rotting_ent", "spider_queen", "swamp_hag", "minotaur", "frost_giant", "flame_lord", "archdemon"};
+    public static final String[] BOSS_MODELS = {"ruin_golem", "rotting_ent", "spider_queen", "swamp_hag", "minotaur", "frost_giant", "flame_lord", "archdemon", "stone_troll", "frost_wraith", "forest_wisp", "ash_imp", "bog_lurker", "sand_scorpion", "grave_knight"};
 
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {

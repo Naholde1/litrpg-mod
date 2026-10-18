@@ -462,6 +462,12 @@ class Dungeon(Build):
                     self.set(x, G - 1, z, 'minecraft:magma_block')
         self.arch(18, 22, 13, 5, 'minecraft:obsidian', 'minecraft:crying_obsidian')
 
+    def deco_nether_heart(self):
+        self.deco_crucible()
+
+    def top_nether_heart(self):
+        self.top_crucible()
+
     def deco_ash_citadel(self):
         for x in range(18, 40):
             for z in range(18, 40):
@@ -547,6 +553,11 @@ THEMES = [
           ['#minecraft:is_badlands', '#minecraft:is_savanna', 'minecraft:desert', '#minecraft:is_taiga', 'minecraft:plains',
            '#minecraft:is_forest', 'minecraft:snowy_plains'],
           wall_light='minecraft:pearlescent_froglight', ground=['minecraft:blackstone', 'minecraft:netherrack', 'minecraft:soul_soil']),
+    Theme('nether_heart', 50, ['minecraft:nether_bricks', 'minecraft:red_nether_bricks', 'minecraft:polished_blackstone_bricks', 'minecraft:gilded_blackstone'],
+          ['minecraft:blackstone', 'minecraft:magma_block', 'minecraft:polished_blackstone'], 'minecraft:nether_bricks',
+          'minecraft:gilded_blackstone', 'minecraft:shroomlight', 'minecraft:nether_brick_stairs',
+          ['wither_skeleton', 'blaze', 'magma_cube', 'litrpg:ash_imp'], (999, 1), 812341, [],
+          ground=['minecraft:blackstone', 'minecraft:netherrack'], wall_light='minecraft:shroomlight'),
 ]
 
 # что лежит в сундуках подземелий (кроме предметов Системы и монет — их добавляет мод)
@@ -586,6 +597,9 @@ def main():
         b.layout()
         n_blocks, n_ents = b.save(name)
         json.dump(loot_table(t.level), open(os.path.join(loot_dir, name + '.json'), 'w'), indent=1)
+        if not t.biomes:
+            print(f'{name}: {n_blocks} blocks, {n_ents} mobs (только для карты)')
+            continue
         json.dump({"replace": False, "values": t.biomes}, open(os.path.join(tags, name + '.json'), 'w'), indent=2)
         os.makedirs(os.path.join(wg, 'template_pool', name), exist_ok=True)
         json.dump({"fallback": "minecraft:empty", "elements": [{"weight": 1, "element": {

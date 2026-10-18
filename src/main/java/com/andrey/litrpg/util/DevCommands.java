@@ -23,6 +23,85 @@ public final class DevCommands {
 
     private DevCommands() {}
 
+    /** Выгрузка ванильных биомов и настроек шума в run/dump (для генераторов карты). */
+    public static void dump(MinecraftServer server) {
+        try {
+            var access = server.registryAccess();
+            var ops = net.minecraft.resources.RegistryOps.create(com.mojang.serialization.JsonOps.INSTANCE, access);
+            var gson = new com.google.gson.GsonBuilder().setPrettyPrinting().create();
+            Path root = Path.of("dump");
+            var biomes = access.registryOrThrow(net.minecraft.core.registries.Registries.BIOME);
+            for (var e : biomes.entrySet()) {
+                var json = net.minecraft.world.level.biome.Biome.DIRECT_CODEC.encodeStart(ops, e.getValue()).getOrThrow(false, s -> {});
+                Path f = root.resolve("biome/" + e.getKey().location().getNamespace() + "/" + e.getKey().location().getPath() + ".json");
+                Files.createDirectories(f.getParent());
+                Files.writeString(f, gson.toJson(json), StandardCharsets.UTF_8);
+            }
+            var noise = access.registryOrThrow(net.minecraft.core.registries.Registries.NOISE_SETTINGS);
+            for (var e : noise.entrySet()) {
+                var json = net.minecraft.world.level.levelgen.NoiseGeneratorSettings.DIRECT_CODEC.encodeStart(ops, e.getValue()).getOrThrow(false, s -> {});
+                Path f = root.resolve("noise_settings/" + e.getKey().location().getPath() + ".json");
+                Files.createDirectories(f.getParent());
+                Files.writeString(f, gson.toJson(json), StandardCharsets.UTF_8);
+            }
+            var df = access.registryOrThrow(net.minecraft.core.registries.Registries.DENSITY_FUNCTION);
+            for (var e : df.entrySet()) {
+                var json = net.minecraft.world.level.levelgen.DensityFunction.DIRECT_CODEC.encodeStart(ops, e.getValue()).getOrThrow(false, s -> {});
+                Path f = root.resolve("density_function/" + e.getKey().location().getNamespace() + "/" + e.getKey().location().getPath() + ".json");
+                Files.createDirectories(f.getParent());
+                Files.writeString(f, gson.toJson(json), StandardCharsets.UTF_8);
+            }
+            var presets = access.registryOrThrow(net.minecraft.core.registries.Registries.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST);
+            for (var e : presets.entrySet()) {
+                var json = net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterList.DIRECT_CODEC.encodeStart(ops, e.getValue()).getOrThrow(false, s -> {});
+                Path f = root.resolve("parameter_list/" + e.getKey().location().getPath() + ".json");
+                Files.createDirectories(f.getParent());
+                Files.writeString(f, gson.toJson(json), StandardCharsets.UTF_8);
+            }
+            LitRPG.LOGGER.info("[dev] dump done");
+        } catch (Exception ex) {
+            LitRPG.LOGGER.error("dump failed", ex);
+        }
+    }
+
+    /** Вид сверху по настоящему генератору: высота поверхности и биом. */
+    private static void render(MinecraftServer server, int size, int x0, int z0, int span) {
+        var level = server.overworld();
+        var gen = level.getChunkSource().getGenerator();
+        var rs = level.getChunkSource().randomState();
+        var img = new java.awt.image.BufferedImage(size, size, java.awt.image.BufferedImage.TYPE_INT_RGB);
+        int[][] h = new int[size][size];
+        long t0 = System.currentTimeMillis();
+        java.util.stream.IntStream.range(0, size).parallel().forEach(py -> {
+            for (int px = 0; px < size; px++) {
+                int x = x0 + px * span / size, z = z0 + py * span / size;
+                h[py][px] = gen.getBaseHeight(x, z, net.minecraft.world.level.levelgen.Heightmap.Types.OCEAN_FLOOR_WG, level, rs);
+            }
+        });
+        for (int py = 0; py < size; py++) {
+            for (int px = 0; px < size; px++) {
+                int x = x0 + px * span / size, z = z0 + py * span / size;
+                int y = h[py][px];
+                var biome = level.getUncachedNoiseBiome(x >> 2, Math.max(y, 63) >> 2, z >> 2);
+                int col = biome.value().getGrassColor(x, z);
+                if (y < 63) col = 0x2050A0 + Math.max(0, Math.min(60, (y - 20))) * 0x000101;
+                double shade = 1 + Math.max(-0.4, Math.min(0.4, (y - h[Math.max(0, py - 1)][Math.max(0, px - 1)]) * 0.06));
+                if (y > 160) shade *= 1.15;
+                int r = (int) Math.min(255, ((col >> 16) & 255) * shade), g = (int) Math.min(255, ((col >> 8) & 255) * shade),
+                        b = (int) Math.min(255, (col & 255) * shade);
+                if (y >= 63 && y > 175) r = g = b = Math.min(255, 200 + (y - 175));
+                img.setRGB(px, py, (r << 16) | (g << 8) | b);
+            }
+        }
+        try {
+            Files.createDirectories(Path.of("dump"));
+            javax.imageio.ImageIO.write(img, "png", Path.of("dump", "render.png").toFile());
+        } catch (Exception e) {
+            LitRPG.LOGGER.error("render failed", e);
+        }
+        LitRPG.LOGGER.info("[dev] render {}px in {} ms", size, System.currentTimeMillis() - t0);
+    }
+
     @SubscribeEvent
     public static void onTick(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END || FMLLoader.isProduction()) return;
@@ -34,6 +113,24 @@ public final class DevCommands {
             for (String line : lines) {
                 line = line.trim();
                 if (line.isEmpty() || line.startsWith("#")) continue;
+                if (line.startsWith("devmap ")) {
+                    String[] a = line.split(" ");
+                    double[] r = com.andrey.litrpg.world.map.WorldMap.get().compute(Double.parseDouble(a[1]), Double.parseDouble(a[2]));
+                    LitRPG.LOGGER.info("[dev] map {} {} -> H={} W={} T={} water={}", a[1], a[2], r[0], r[1], r[2], r[3]);
+                    continue;
+                }
+                if (line.startsWith("devrender")) {
+                    String[] a = line.split(" ");
+                    int size = a.length > 1 ? Integer.parseInt(a[1]) : 400;
+                    int x0 = a.length > 3 ? Integer.parseInt(a[2]) : -5000, z0 = a.length > 3 ? Integer.parseInt(a[3]) : -5000;
+                    int span = a.length > 4 ? Integer.parseInt(a[4]) : 10000;
+                    render(server, size, x0, z0, span);
+                    continue;
+                }
+                if (line.equals("devdump")) {
+                    dump(server);
+                    continue;
+                }
                 LitRPG.LOGGER.info("[dev] /{}", line);
                 server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), line);
             }

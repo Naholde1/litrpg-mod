@@ -320,6 +320,19 @@ MATS = {
     'skin_demon_dark': m_skin(0x5A1418, 0x3A0A0E),
     'membrane': m_membrane(0x5A1A24, 0x2A0A10),
     'fire_soul': m_fire(0xC8F8FF, 0x40C8E8, 0x2060A0),
+    # монстры регионов
+    'troll_skin': m_skin(0x7A8A70, 0x55634E, spots=0x3E4A38, spot_chance=0.2),
+    'troll_stone': m_stone(0x7A7E80, 0x50545A, 0x9AA0A4, moss=0.55),
+    'wraith_robe': m_cloth(0xBFE4F2, 0x6A9AB8, tatter=True),
+    'wraith_face': m_glow(0x1A2A3A, 0x0A1420),
+    'wisp_core': m_glow(0xE8FFB0, 0xA8E060),
+    'wisp_leaf': m_leaf(0x6ACF5A, 0x3E8A3A, dead=0x8ACF5A, holes=0.3, deadness=0.1),
+    'imp_skin': m_skin(0xB03828, 0x7A2018, spots=0x401008, spot_chance=0.15),
+    'bog_skin': m_skin(0x4E6A3A, 0x2E4224, spots=0x8A9A40, spot_chance=0.25),
+    'scorp_chitin': m_chitin(0xA87A40, 0xE8C080, band=3),
+    'scorp_dark': m_chitin(0x5A3A1A, 0xA87A40, band=2),
+    'knight_armor': m_metal(0x4A4A52, 0x8A8A9A, 0x24242A),
+    'knight_cloth': m_cloth(0x4A2A5A, 0x2A1430, tatter=True),
 }
 
 FACE_SEED = {'top': 1, 'bottom': 2, 'front': 3, 'back': 4, 'west': 5, 'east': 6}
@@ -644,7 +657,131 @@ def archdemon():
                 parts=[leg, mirror(leg, 'leg_r'), body, tail, head, arm, mirror(arm, 'arm_r'), wing, mirror(wing, 'wing_r')])
 
 
-MODELS = [ruin_golem, rotting_ent, spider_queen, swamp_hag, minotaur, frost_giant, flame_lord, archdemon]
+def stone_troll():
+    leg = Part('leg_l', 'root', (4, 12, 0), [Cube(1, 0, -3, 6, 12, 6, 'troll_skin')], anim=[A('walk', 'x', 0.7)])
+    body = Part('body', 'root', (0, 12, 0), [
+        Cube(-8, 11, -5, 16, 14, 11, 'troll_skin', decals=[('front', 6, 3, 4, 2, 0x3E4A38, False)]),
+        Cube(-9, 18, 2, 18, 9, 6, 'troll_stone'),
+        Cube(-4, 26, 3, 8, 3, 4, 'troll_stone'),
+    ], rot=(15, 0, 0), anim=[A('idle', 'x', 0.04, 0.08)])
+    head = Part('head', 'body', (0, 25, -5), [
+        Cube(-4, 22, -12, 8, 7, 7, 'troll_skin', decals=eyes(8, 2, 0xFFD040, gap=2, size=(1, 1)) + [('front', 2, 5, 4, 1, 0xE8E0C8, False)]),
+        Cube(-1, 24, -14, 2, 3, 2, 'troll_skin'),
+    ], anim=[A('look', 'y'), A('look', 'x', 0.5)])
+    arm = Part('arm_l', 'body', (9, 23, -1), [
+        Cube(8, 6, -3, 5, 17, 6, 'troll_skin'),
+        Cube(7, 2, -4, 7, 5, 7, 'troll_stone'),
+    ], anim=[A('walk', 'x', 0.6, phase=math.pi), A('attack', 'x', 1.8), A('cast', 'x', -2.6)])
+    return dict(name='stone_troll', scale=1.0, shadow=0.9, parts=[leg, mirror(leg, 'leg_r'), body, head, arm, mirror(arm, 'arm_r')])
+
+
+def frost_wraith():
+    body = Part('body', 'root', (0, 12, 0), [
+        Cube(-5, 2, -3, 10, 14, 6, 'wraith_robe'),
+        Cube(-4, 16, -3, 8, 8, 6, 'wraith_robe'),
+    ], anim=[A('bob', 'y', 1.2, 0.12), A('idle', 'x', 0.05, 0.1)])
+    head = Part('head', 'body', (0, 24, 0), [
+        Cube(-4, 24, -4, 8, 8, 8, 'wraith_robe', decals=[('front', 1, 2, 6, 5, 0x1A2A3A, False)] + eyes(8, 4, 0x8FF4FF, gap=2, size=(1, 1))),
+        Cube(-2, 32, -2, 4, 3, 4, 'ice'),
+    ], anim=[A('look', 'y'), A('look', 'x', 0.5)])
+    arm = Part('arm_l', 'body', (5, 22, 0), [Cube(5, 10, -2, 3, 12, 3, 'wraith_robe'), Cube(5, 8, -2, 3, 2, 3, 'ice')],
+               rot=(-20, 0, 0), anim=[A('idle', 'x', 0.15, 0.1), A('cast2', 'z', -1.2), A('attack', 'x', 1.5)])
+    return dict(name='frost_wraith', scale=1.0, shadow=0.5, parts=[body, head, arm, mirror(arm, 'arm_r')])
+
+
+def forest_wisp():
+    core = Part('core', 'root', (0, 6, 0), [
+        Cube(-2, 4, -2, 4, 4, 4, 'wisp_core'),
+    ], anim=[A('bob', 'y', 1.5, 0.15), A('spin', 'y', 1.0, 0.05)])
+    leaves = Part('leaves', 'core', (0, 6, 0), [
+        Cube(-4, 5, -1, 2, 2, 2, 'wisp_leaf'), Cube(2, 5, -1, 2, 2, 2, 'wisp_leaf'),
+        Cube(-1, 5, -4, 2, 2, 2, 'wisp_leaf'), Cube(-1, 5, 2, 2, 2, 2, 'wisp_leaf'),
+        Cube(-1, 9, -1, 2, 2, 2, 'wisp_leaf'),
+    ], anim=[A('spin', 'y', 1.0, -0.12)])
+    return dict(name='forest_wisp', scale=1.0, shadow=0.2, parts=[core, leaves])
+
+
+def ash_imp():
+    leg = Part('leg_l', 'root', (2, 7, 0), [Cube(1, 0, -1, 2, 7, 3, 'imp_skin')], anim=[A('walk', 'x', 0.9)])
+    body = Part('body', 'root', (0, 7, 0), [Cube(-3, 7, -2, 6, 7, 4, 'imp_skin')], anim=[A('idle', 'x', 0.05, 0.15)])
+    head = Part('head', 'body', (0, 14, 0), [
+        Cube(-3, 14, -3, 6, 6, 6, 'imp_skin', decals=eyes(6, 2, 0xFFE040, gap=2, size=(1, 1)) + [('front', 2, 4, 2, 1, 0x2A0808, False)]),
+        Cube(-3, 20, -1, 1, 3, 1, 'obsidian'), Cube(2, 20, -1, 1, 3, 1, 'obsidian'),
+    ], anim=[A('look', 'y'), A('look', 'x', 0.6)])
+    arm = Part('arm_l', 'body', (4, 13, 0), [Cube(3, 7, -1, 2, 6, 2, 'imp_skin')], anim=[A('walk', 'x', 0.7, phase=math.pi), A('cast', 'x', -2.4)])
+    wing = Part('wing_l', 'body', (2, 13, 2), [Cube(2, 8, 2, 7, 6, 1, 'membrane')], rot=(0, -30, 0), anim=[A('idle', 'y', 0.5, 0.5)])
+    tail = Part('tail', 'body', (0, 8, 2), [Cube(-1, 7, 2, 1, 1, 6, 'imp_skin'), Cube(-1, 6, 7, 2, 2, 2, 'fire')], anim=[A('idle', 'y', 0.4, 0.2)])
+    return dict(name='ash_imp', scale=1.0, shadow=0.4,
+                parts=[leg, mirror(leg, 'leg_r'), body, head, arm, mirror(arm, 'arm_r'), wing, mirror(wing, 'wing_r'), tail])
+
+
+def bog_lurker():
+    body = Part('body', 'root', (0, 6, 0), [
+        Cube(-7, 3, -6, 14, 8, 14, 'bog_skin', decals=[('top', 3, 3, 2, 2, 0x8A9A40, False), ('top', 9, 7, 2, 2, 0x8A9A40, False)]),
+    ], anim=[A('idle', 'x', 0.05, 0.12)])
+    head = Part('head', 'body', (0, 8, -6), [
+        Cube(-6, 4, -12, 12, 6, 7, 'bog_skin', decals=[('top', 1, 1, 2, 2, 0xF0E040, True), ('top', 9, 1, 2, 2, 0xF0E040, True),
+                                                      ('front', 1, 4, 10, 1, 0x1A2410, False)]),
+    ], anim=[A('look', 'y', 0.6), A('cast', 'x', -0.5)])
+    parts = [body, head]
+    for i, z in enumerate((-4, 4)):
+        leg = Part(f'leg_l{i}', 'body', (6, 5, z), [Cube(6, 0, z - 1, 4, 5, 3, 'bog_skin')], rot=(0, 0, 20),
+                   anim=[A('walk', 'x', 0.8, phase=i * math.pi)])
+        parts += [leg, mirror(leg, f'leg_r{i}')]
+    return dict(name='bog_lurker', scale=1.0, shadow=0.8, parts=parts)
+
+
+def sand_scorpion():
+    body = Part('body', 'root', (0, 6, 0), [
+        Cube(-5, 3, -8, 10, 5, 14, 'scorp_chitin'),
+    ])
+    head = Part('head', 'body', (0, 5, -8), [
+        Cube(-3, 3, -12, 6, 4, 4, 'scorp_chitin', decals=eyes(6, 1, 0x1A0A00, gap=2, size=(1, 1))),
+    ], anim=[A('look', 'y', 0.4)])
+    parts = [body, head]
+    for side in (1, -1):
+        claw = Part(f'claw_{"l" if side > 0 else "r"}', 'body', (3 * side, 5, -8), [
+            Cube(3 if side > 0 else -6, 4, -16, 3, 2, 8, 'scorp_dark'),
+            Cube(2 if side > 0 else -7, 3, -19, 5, 3, 4, 'scorp_dark'),
+        ], rot=(0, -20 * side, 0), anim=[A('idle', 'y', 0.12 * side, 0.2), A('attack', 'x', 0.8)])
+        parts.append(claw)
+    tail = Part('tail', 'body', (0, 7, 6), [
+        Cube(-1, 7, 6, 3, 3, 6, 'scorp_chitin'),
+        Cube(-1, 10, 10, 3, 6, 3, 'scorp_chitin'),
+        Cube(-1, 15, 6, 3, 3, 5, 'scorp_dark'),
+        Cube(0, 13, 4, 1, 3, 2, 'bone'),
+    ], rot=(-15, 0, 0), anim=[A('idle', 'x', 0.1, 0.15), A('cast', 'x', -0.8)])
+    parts.append(tail)
+    for i, z in enumerate((-5, -1, 3)):
+        leg = Part(f'leg_l{i}', 'body', (5, 5, z), [Cube(5, 4, z, 8, 2, 2, 'scorp_dark')], rot=(0, 0, 35),
+                   anim=[A('walk', 'y', 0.4, 1.5, i * math.pi, flip=False)])
+        parts += [leg, mirror(leg, f'leg_r{i}')]
+    return dict(name='sand_scorpion', scale=1.0, shadow=0.9, parts=parts)
+
+
+def grave_knight():
+    leg = Part('leg_l', 'root', (2, 12, 0), [Cube(0, 0, -2, 4, 12, 4, 'knight_armor')], anim=[A('walk', 'x', 0.7)])
+    body = Part('body', 'root', (0, 12, 0), [
+        Cube(-4, 12, -2, 8, 12, 4, 'knight_armor', decals=[('front', 3, 2, 2, 6, 0x8E44AD, True)]),
+        Cube(-5, 4, 2, 10, 18, 1, 'knight_cloth'),
+        Cube(-6, 21, -3, 3, 3, 6, 'knight_armor'), Cube(3, 21, -3, 3, 3, 6, 'knight_armor'),
+    ])
+    head = Part('head', 'body', (0, 24, 0), [
+        Cube(-4, 24, -4, 8, 8, 8, 'knight_armor', decals=[('front', 1, 3, 6, 1, 0x0A0A10, False)] + eyes(8, 3, 0xC070FF, gap=2, size=(1, 1))),
+        Cube(-1, 32, -3, 2, 3, 6, 'knight_cloth'),
+    ], anim=[A('look', 'y'), A('look', 'x', 0.5)])
+    arm = Part('arm_l', 'body', (5, 22, 0), [Cube(4, 12, -2, 3, 11, 4, 'knight_armor')],
+               anim=[A('walk', 'x', 0.5, phase=math.pi), A('attack', 'x', 1.8), A('cast', 'x', -2.2)])
+    arm_r = mirror(arm, 'arm_r')
+    sword = Part('sword', 'arm_r', (-6, 13, 0), [
+        Cube(-6, 12, -10, 1, 2, 10, 'axe_metal'), Cube(-7, 12, -2, 3, 2, 1, 'gold'),
+    ])
+    shield = Part('shield', 'arm_l', (7, 16, 0), [Cube(7, 12, -4, 1, 9, 8, 'knight_armor', decals=[('east', 3, 3, 2, 3, 0x8E44AD, True)])])
+    return dict(name='grave_knight', scale=1.0, shadow=0.5, parts=[leg, mirror(leg, 'leg_r'), body, head, arm, arm_r, sword, shield])
+
+
+MODELS = [ruin_golem, rotting_ent, spider_queen, swamp_hag, minotaur, frost_giant, flame_lord, archdemon,
+          stone_troll, frost_wraith, forest_wisp, ash_imp, bog_lurker, sand_scorpion, grave_knight]
 
 
 # ======================= развёртка и рисование =======================
@@ -887,6 +1024,13 @@ NAMES = {
     'frost_giant': ('Имир, Ледяной великан', 'Ymir the Frost Giant'),
     'flame_lord': ('Игнис, Владыка пламени', 'Ignis the Flame Lord'),
     'archdemon': ("Баал'Зар, Архидемон", "Baal'zar the Archdemon"),
+    'stone_troll': ('Каменный тролль', 'Stone Troll'),
+    'frost_wraith': ('Ледяной призрак', 'Frost Wraith'),
+    'forest_wisp': ('Лесной огонёк', 'Forest Wisp'),
+    'ash_imp': ('Пепельный бес', 'Ash Imp'),
+    'bog_lurker': ('Болотный ползун', 'Bog Lurker'),
+    'sand_scorpion': ('Песчаный скорпион', 'Sand Scorpion'),
+    'grave_knight': ('Могильный рыцарь', 'Grave Knight'),
 }
 
 

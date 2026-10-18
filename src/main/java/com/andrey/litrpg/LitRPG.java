@@ -7,6 +7,7 @@ import com.andrey.litrpg.entity.LichEntity;
 import com.andrey.litrpg.entity.SkeletonWardenEntity;
 import com.andrey.litrpg.network.ModNetwork;
 import com.andrey.litrpg.registry.ModBlocks;
+import com.andrey.litrpg.registry.ModWorldgen;
 import com.andrey.litrpg.registry.ModCreativeTabs;
 import com.andrey.litrpg.registry.ModEntities;
 import com.andrey.litrpg.registry.ModItems;
@@ -30,6 +31,7 @@ public class LitRPG {
 
     public LitRPG() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        ModWorldgen.register(bus);
         ModBlocks.BLOCKS.register(bus);
         ModBlocks.BLOCK_ENTITIES.register(bus);
         ModItems.ITEMS.register(bus);
@@ -76,11 +78,33 @@ public class LitRPG {
         event.put(ModEntities.FROST_GIANT.get(), com.andrey.litrpg.entity.boss.FrostGiantEntity.createAttributes().build());
         event.put(ModEntities.FLAME_LORD.get(), com.andrey.litrpg.entity.boss.FlameLordEntity.createAttributes().build());
         event.put(ModEntities.ARCHDEMON.get(), com.andrey.litrpg.entity.boss.ArchdemonEntity.createAttributes().build());
+        event.put(ModEntities.STONE_TROLL.get(), com.andrey.litrpg.entity.Creatures.StoneTroll.attributes().build());
+        event.put(ModEntities.FROST_WRAITH.get(), com.andrey.litrpg.entity.Creatures.FrostWraith.attributes().build());
+        event.put(ModEntities.FOREST_WISP.get(), com.andrey.litrpg.entity.Creatures.ForestWisp.attributes().build());
+        event.put(ModEntities.ASH_IMP.get(), com.andrey.litrpg.entity.Creatures.AshImp.attributes().build());
+        event.put(ModEntities.BOG_LURKER.get(), com.andrey.litrpg.entity.Creatures.BogLurker.attributes().build());
+        event.put(ModEntities.SAND_SCORPION.get(), com.andrey.litrpg.entity.Creatures.SandScorpion.attributes().build());
+        event.put(ModEntities.GRAVE_KNIGHT.get(), com.andrey.litrpg.entity.Creatures.GraveKnight.attributes().build());
         com.andrey.litrpg.npc.NpcRegistry.attributes(event);
     }
 
     private void registerSpawnPlacements(SpawnPlacementRegisterEvent event) {
         com.andrey.litrpg.npc.NpcRegistry.placements(event);
+        event.register(ModEntities.STONE_TROLL.get(), SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
+        event.register(ModEntities.FROST_WRAITH.get(), SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
+        event.register(ModEntities.FOREST_WISP.get(), SpawnPlacements.Type.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
+        event.register(ModEntities.ASH_IMP.get(), SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
+        event.register(ModEntities.BOG_LURKER.get(), SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
+        event.register(ModEntities.SAND_SCORPION.get(), SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
+        event.register(ModEntities.GRAVE_KNIGHT.get(), SpawnPlacements.Type.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
+
         event.register(ModEntities.GOBLIN.get(), SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules,
                 SpawnPlacementRegisterEvent.Operation.REPLACE);

@@ -88,6 +88,8 @@ def mul(rgb, f):
 
 
 RACES = {
+    'human': dict(skin=0xF0C8A0, hair=0x6A4A2A, eyes=0x4A7AC0, cloth=0x3A5AA0, cloth2=0xC8A040, leather=0x6A4422,
+                  metal=0xD8DCE0, metal2=0x3A5AA0, magic=0x3A3A8A, trim=0xF2D060, hair_style='short'),
     'elf': dict(skin=0xF2D3B5, hair=0xF0E0A0, eyes=0x3AA04A, cloth=0x4A8A4A, cloth2=0x8CC870, leather=0x8A5A2A,
                 metal=0xD8E8D0, metal2=0x8CC870, magic=0x2E7A5A, trim=0xF2E080, hair_style='long'),
     'dwarf': dict(skin=0xE0A880, hair=0xB0602A, eyes=0x3A6AC0, cloth=0x3A5A9A, cloth2=0x6A8AC0, leather=0x6A4422,
@@ -203,6 +205,51 @@ def paint(race, role, seed):
             s.face_px('jacket', 'front', 4, y, trim)
         s.fill('hat', magic, face_names=('top', 'right', 'left', 'back'))
         s.fill('hat', magic, rows=range(0, 1), face_names=('front',))
+    elif role == 'guard':
+        # полные латы, шлем с прорезью, накидка цветов народа
+        for part in ('body', 'rarm', 'larm', 'rleg', 'lleg'):
+            s.fill(part, metal)
+        s.fill('hat', metal, face_names=('top', 'right', 'left', 'back'))
+        for y in range(8):
+            for x in range(8):
+                if not (y in (3, 4) and 1 <= x <= 6):
+                    s.face_px('hat', 'front', x, y, mul(metal, 0.92))
+        for x in range(8):
+            s.face_px('hat', 'front', x, 0, trim)
+        s.fill('jacket', cloth2, face_names=('front', 'back'))
+        for y in range(12):
+            for x in (0, 7):
+                s.face_px('jacket', 'front', x, y, mul(cloth2, 0.7))
+        for y in range(3, 7):
+            for x in range(3, 5):
+                s.face_px('jacket', 'front', x, y, trim)
+        s.face_px('jacket', 'front', 2, 4, trim)
+        s.face_px('jacket', 'front', 5, 4, trim)
+        for arm, sleeve in (('rarm', 'rsleeve'), ('larm', 'lsleeve')):
+            s.fill(sleeve, metal2, rows=range(0, 3))
+            s.fill(arm, mul(metal, 0.8), rows=range(10, 12))
+        for leg, pants in (('rleg', 'rpants'), ('lleg', 'lpants')):
+            s.fill(pants, mul(metal, 0.85), rows=range(9, 12))
+        s.row('body', 9, leather)
+    elif role == 'citizen':
+        import random as _r
+        rr = _r.Random(seed)
+        tunic = rr.choice([0x8A5A3A, 0x5A7A4A, 0x7A4A6A, 0x4A6A8A, 0xA08A5A, 0x6A6A6A, cloth, cloth2])
+        pants = rr.choice([0x4A3A2A, 0x3A3A4A, 0x5A4A3A, leather])
+        s.fill('body', tunic)
+        s.fill('rarm', tunic, rows=range(0, 5))
+        s.fill('larm', tunic, rows=range(0, 5))
+        for leg in ('rleg', 'lleg'):
+            s.fill(leg, pants, rows=range(0, 10))
+            s.fill(leg, mul(leather, 0.8), rows=range(10, 12))
+        s.row('body', 8, leather)
+        if rr.random() < 0.5:
+            s.fill('hat', mul(tunic, 0.8), face_names=('top',))
+            s.fill('hat', mul(tunic, 0.8), rows=range(0, 1), face_names=('front', 'right', 'left', 'back'))
+        if rr.random() < 0.5:
+            for y in range(3, 11):
+                for x in range(2, 6):
+                    s.face_px('body', 'front', x, y, 0xD8D0C0)
     else:  # торговец
         s.fill('body', 0xE8E0D0)
         s.fill('jacket', cloth2, face_names=('right', 'left', 'back', 'top'))
@@ -228,6 +275,13 @@ ROLES = {
     'dwarf': [('dwarf_warrior', 'warrior'), ('dwarf_crossbowman', 'archer'), ('dwarf_runepriest', 'mage'), ('dwarf_smith', 'trader'), ('dwarf_thane', 'chief')],
     'orc': [('orc_raider', 'warrior'), ('orc_hunter', 'archer'), ('orc_shaman', 'mage'), ('orc_trader', 'trader'), ('orc_warlord', 'chief')],
     'beastkin': [('beast_stalker', 'archer'), ('beast_ravager', 'warrior'), ('beast_spiritcaller', 'mage'), ('beast_trader', 'trader'), ('beast_alpha', 'chief')],
+    'human': [('human_knight', 'warrior'), ('human_ranger', 'archer'), ('human_mage', 'mage'), ('human_merchant', 'trader'),
+              ('human_lord', 'chief'), ('human_guard', 'guard'), ('human_citizen', 'citizen')],
+    'elf_extra': [('elf_sentinel', 'guard'), ('elf_citizen', 'citizen')],
+    'dwarf_extra': [('dwarf_ironguard', 'guard'), ('dwarf_citizen', 'citizen')],
+    'orc_extra': [('orc_bloodguard', 'guard'), ('orc_citizen', 'citizen')],
+    'beastkin_extra': [('beast_fangguard', 'guard'), ('beast_citizen', 'citizen')],
+    'demonkin_extra': [('demon_hellguard', 'guard'), ('demon_citizen', 'citizen')],
     'demonkin': [('demon_cultist', 'mage'), ('demon_guard', 'warrior'), ('demon_hellbow', 'archer'), ('demon_trader', 'trader'), ('demon_archfiend', 'chief')],
 }
 
@@ -237,7 +291,7 @@ def main():
     out = {}
     for race, items in ROLES.items():
         for i, (key, role) in enumerate(items):
-            img = paint(race, role, key)
+            img = paint(race.replace('_extra', ''), role, key)
             write_png(os.path.join(OUT, key + '.png'), img, 64, 64)
             out[key] = img
             models = os.path.join(OUT, '..', '..', '..', 'models', 'item')

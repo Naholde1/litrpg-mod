@@ -183,6 +183,20 @@ public class ServerEvents {
     }
 
     private static void checkZone(ServerPlayer player) {
+        if (com.andrey.litrpg.world.map.SystemWorld.isOverworld(player.serverLevel())) {
+            String region = com.andrey.litrpg.command.ServerEventsRegionName.of(player);
+            String prevR = player.getPersistentData().getString(ZONE_TAG);
+            if (region.equals(prevR)) return;
+            player.getPersistentData().putString(ZONE_TAG, region);
+            if (prevR.isEmpty()) return;
+            boolean city = com.andrey.litrpg.world.map.WorldMap.get().cityAt(player.getX(), player.getZ()) != null;
+            player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 40, 20));
+            player.connection.send(new ClientboundSetTitleTextPacket(Component.literal(region)
+                    .withStyle(city ? ChatFormatting.GOLD : ChatFormatting.YELLOW)));
+            player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(city ? "Город — здесь действуют законы стражи" : "")
+                    .withStyle(ChatFormatting.GRAY)));
+            return;
+        }
         Zone zone = Zone.at(player.serverLevel(), player.blockPosition());
         String prev = player.getPersistentData().getString(ZONE_TAG);
         if (zone.key.equals(prev)) return;
@@ -190,8 +204,7 @@ public class ServerEvents {
         if (prev.isEmpty()) return;
         player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 40, 20));
         player.connection.send(new ClientboundSetTitleTextPacket(Component.translatable(zone.nameKey()).withStyle(zone.color)));
-        player.connection.send(new ClientboundSetSubtitleTextPacket(
-                Component.literal("Уровень монстров: " + zone.minLevel + "–" + zone.maxLevel).withStyle(ChatFormatting.GRAY)));
+        player.connection.send(new ClientboundSetSubtitleTextPacket(Component.empty()));
     }
 
     @SubscribeEvent

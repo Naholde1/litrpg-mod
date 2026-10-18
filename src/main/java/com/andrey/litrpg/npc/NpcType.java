@@ -38,9 +38,29 @@ public enum NpcType {
     DEMON_GUARD("demon_guard", Race.DEMONKIN, Faction.DEMONKIN, Role.WARRIOR, 40, 8, 0.29),
     DEMON_HELLBOW("demon_hellbow", Race.DEMONKIN, Faction.DEMONKIN, Role.ARCHER, 32, 5, 0.29),
     DEMON_TRADER("demon_trader", Race.DEMONKIN, Faction.DEMONKIN, Role.TRADER, 30, 3, 0.27),
-    DEMON_ARCHFIEND("demon_archfiend", Race.DEMONKIN, Faction.DEMONKIN, Role.CHIEF, 260, 14, 0.29);
+    DEMON_ARCHFIEND("demon_archfiend", Race.DEMONKIN, Faction.DEMONKIN, Role.CHIEF, 260, 14, 0.29),
+    // ---- люди Королевства ----
+    HUMAN_KNIGHT("human_knight", Race.HUMAN, Faction.KINGDOM, Role.WARRIOR, 60, 9, 0.3),
+    HUMAN_RANGER("human_ranger", Race.HUMAN, Faction.KINGDOM, Role.ARCHER, 40, 6, 0.3),
+    HUMAN_MAGE("human_mage", Race.HUMAN, Faction.KINGDOM, Role.MAGE, 34, 6, 0.28),
+    HUMAN_MERCHANT("human_merchant", Race.HUMAN, Faction.KINGDOM, Role.TRADER, 30, 2, 0.28),
+    HUMAN_LORD("human_lord", Race.HUMAN, Faction.KINGDOM, Role.CHIEF, 300, 14, 0.3),
+    // ---- стража городов: почти неуязвима ----
+    HUMAN_GUARD("human_guard", Race.HUMAN, Faction.KINGDOM, Role.GUARD, 1000, 40, 0.36),
+    ELF_SENTINEL("elf_sentinel", Race.ELF, Faction.ELVES, Role.GUARD, 1000, 38, 0.38),
+    DWARF_IRONGUARD("dwarf_ironguard", Race.DWARF, Faction.DWARVES, Role.GUARD, 1000, 44, 0.32),
+    ORC_BLOODGUARD("orc_bloodguard", Race.ORC, Faction.ORCS, Role.GUARD, 1000, 46, 0.36),
+    BEAST_FANGGUARD("beast_fangguard", Race.BEASTKIN, Faction.BEASTKIN, Role.GUARD, 1000, 40, 0.4),
+    DEMON_HELLGUARD("demon_hellguard", Race.DEMONKIN, Faction.DEMONKIN, Role.GUARD, 1000, 46, 0.36),
+    // ---- горожане ----
+    HUMAN_CITIZEN("human_citizen", Race.HUMAN, Faction.KINGDOM, Role.CITIZEN, 24, 2, 0.3),
+    ELF_CITIZEN("elf_citizen", Race.ELF, Faction.ELVES, Role.CITIZEN, 24, 2, 0.3),
+    DWARF_CITIZEN("dwarf_citizen", Race.DWARF, Faction.DWARVES, Role.CITIZEN, 30, 3, 0.26),
+    ORC_CITIZEN("orc_citizen", Race.ORC, Faction.ORCS, Role.CITIZEN, 34, 4, 0.3),
+    BEAST_CITIZEN("beast_citizen", Race.BEASTKIN, Faction.BEASTKIN, Role.CITIZEN, 26, 3, 0.33),
+    DEMON_CITIZEN("demon_citizen", Race.DEMONKIN, Faction.DEMONKIN, Role.CITIZEN, 28, 3, 0.3);
 
-    public enum Role { WARRIOR, ARCHER, MAGE, TRADER, CHIEF }
+    public enum Role { WARRIOR, ARCHER, MAGE, TRADER, CHIEF, GUARD, CITIZEN }
 
     public final String key;
     public final Race race;
@@ -60,7 +80,20 @@ public enum NpcType {
         this.speed = speed;
     }
 
-    public boolean fights() { return role != Role.TRADER; }
+    public boolean fights() { return role != Role.TRADER && role != Role.CITIZEN; }
+
+    public boolean isGuard() { return role == Role.GUARD; }
+
+    /** Стража народа (для городов). */
+    public static NpcType guardOf(Faction f) {
+        for (NpcType t : values()) if (t.role == Role.GUARD && t.faction == f) return t;
+        return HUMAN_GUARD;
+    }
+
+    public static NpcType citizenOf(Faction f) {
+        for (NpcType t : values()) if (t.role == Role.CITIZEN && t.faction == f) return t;
+        return HUMAN_CITIZEN;
+    }
 
     /** Стихия магов и вождей. */
     public ManaBoltEntity.Element element() {
@@ -82,7 +115,7 @@ public enum NpcType {
             case ELF -> 1.04f;
             default -> 1f;
         };
-        return role == Role.CHIEF ? base * 1.25f : base;
+        return role == Role.CHIEF ? base * 1.25f : role == Role.GUARD ? base * 1.15f : base;
     }
 
     public String nameKey() { return "entity.litrpg." + key; }

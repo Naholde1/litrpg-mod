@@ -28,7 +28,6 @@ public class OpenQuestsPacket {
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
-                net.minecraft.client.Minecraft.getInstance().setScreen(new com.andrey.litrpg.client.QuestBoardScreen(faction, npcName)));
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> com.andrey.litrpg.client.ClientPackets.openQuestBoard(faction, npcName));
     }
 }

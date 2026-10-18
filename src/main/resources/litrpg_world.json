@@ -1,0 +1,3071 @@
+{
+ "size": 5000,
+ "wall": [
+  4430,
+  4880
+ ],
+ "territories": [
+  {
+   "id": "kingdom",
+   "name": "Королевство Аркадия",
+   "faction": "kingdom",
+   "color": 15255398,
+   "level_bonus": 0,
+   "seeds": [
+    [
+     0,
+     0,
+     1450
+    ],
+    [
+     700,
+     -1150,
+     750
+    ],
+    [
+     -1000,
+     1150,
+     750
+    ],
+    [
+     1100,
+     650,
+     600
+    ],
+    [
+     -1100,
+     -350,
+     600
+    ]
+   ],
+   "profile": {
+    "base": 70,
+    "amp": 12,
+    "cell": 320,
+    "ridge": 0.0,
+    "tame": 0.62
+   },
+   "biomes": [
+    [
+     "litrpg:arcadia_fields",
+     3
+    ],
+    [
+     "litrpg:royal_meadow",
+     2
+    ],
+    [
+     "litrpg:oak_dales",
+     3
+    ]
+   ],
+   "cold": false
+  },
+  {
+   "id": "elves",
+   "name": "Сильвендар",
+   "faction": "elves",
+   "color": 8112234,
+   "level_bonus": 0,
+   "seeds": [
+    [
+     -2800,
+     -350,
+     1250
+    ],
+    [
+     -2300,
+     -1350,
+     800
+    ],
+    [
+     -3550,
+     650,
+     750
+    ]
+   ],
+   "profile": {
+    "base": 74,
+    "amp": 16,
+    "cell": 260,
+    "ridge": 0.0,
+    "tame": 0.55
+   },
+   "biomes": [
+    [
+     "litrpg:sylvan_wildwood",
+     4
+    ],
+    [
+     "litrpg:moon_grove",
+     3
+    ],
+    [
+     "litrpg:silver_glade",
+     2
+    ]
+   ],
+   "cold": false
+  },
+  {
+   "id": "dwarves",
+   "name": "Подгорье Кхазад",
+   "faction": "dwarves",
+   "color": 11569754,
+   "level_bonus": 0,
+   "seeds": [
+    [
+     2700,
+     -2550,
+     1250
+    ],
+    [
+     3700,
+     -1700,
+     700
+    ],
+    [
+     1700,
+     -3300,
+     700
+    ]
+   ],
+   "profile": {
+    "base": 104,
+    "amp": 40,
+    "cell": 230,
+    "ridge": 1.3,
+    "tame": 0.62
+   },
+   "biomes": [
+    [
+     "litrpg:iron_peaks",
+     4
+    ],
+    [
+     "litrpg:ore_slopes",
+     3
+    ],
+    [
+     "litrpg:dwarf_vales",
+     2
+    ]
+   ],
+   "cold": true
+  },
+  {
+   "id": "orcs",
+   "name": "Степи Орды",
+   "faction": "orcs",
+   "color": 13662778,
+   "level_bonus": 0,
+   "seeds": [
+    [
+     2900,
+     2600,
+     1250
+    ],
+    [
+     3800,
+     1500,
+     650
+    ],
+    [
+     1900,
+     3550,
+     700
+    ]
+   ],
+   "profile": {
+    "base": 73,
+    "amp": 16,
+    "cell": 210,
+    "ridge": 0.3,
+    "tame": 0.6
+   },
+   "biomes": [
+    [
+     "litrpg:scorched_steppe",
+     4
+    ],
+    [
+     "litrpg:red_canyons",
+     2
+    ],
+    [
+     "litrpg:dust_wastes",
+     2
+    ]
+   ],
+   "cold": false
+  },
+  {
+   "id": "beastkin",
+   "name": "Земли Клыка",
+   "faction": "beastkin",
+   "color": 10123856,
+   "level_bonus": 0,
+   "seeds": [
+    [
+     -2600,
+     -3050,
+     1050
+    ],
+    [
+     -1300,
+     -3500,
+     700
+    ],
+    [
+     -3600,
+     -2200,
+     700
+    ]
+   ],
+   "profile": {
+    "base": 82,
+    "amp": 24,
+    "cell": 250,
+    "ridge": 0.25,
+    "tame": 0.55
+   },
+   "biomes": [
+    [
+     "litrpg:fang_taiga",
+     4
+    ],
+    [
+     "litrpg:snow_hunt",
+     3
+    ]
+   ],
+   "cold": true
+  },
+  {
+   "id": "demonkin",
+   "name": "Пепельные Пустоши",
+   "faction": "demonkin",
+   "color": 10104896,
+   "level_bonus": 6,
+   "seeds": [
+    [
+     -2850,
+     2950,
+     1200
+    ],
+    [
+     -3700,
+     1900,
+     700
+    ],
+    [
+     -1800,
+     3800,
+     650
+    ]
+   ],
+   "profile": {
+    "base": 70,
+    "amp": 16,
+    "cell": 200,
+    "ridge": 0.12,
+    "tame": 0.6
+   },
+   "biomes": [
+    [
+     "litrpg:ash_wastes",
+     4
+    ],
+    [
+     "litrpg:charred_forest",
+     3
+    ],
+    [
+     "litrpg:smolder_craters",
+     2
+    ]
+   ],
+   "cold": false
+  },
+  {
+   "id": "goblins",
+   "name": "Гоблинские Топи",
+   "faction": "goblins",
+   "color": 6195770,
+   "level_bonus": 2,
+   "seeds": [
+    [
+     150,
+     3400,
+     900
+    ],
+    [
+     -850,
+     3750,
+     600
+    ],
+    [
+     900,
+     3800,
+     500
+    ]
+   ],
+   "profile": {
+    "base": 64.5,
+    "amp": 3,
+    "cell": 150,
+    "ridge": 0.0,
+    "tame": 0.82
+   },
+   "biomes": [
+    [
+     "litrpg:rot_swamp",
+     3
+    ],
+    [
+     "litrpg:goblin_mangroves",
+     2
+    ]
+   ],
+   "cold": false
+  },
+  {
+   "id": "frost",
+   "name": "Ледяной Предел",
+   "faction": null,
+   "color": 13625589,
+   "level_bonus": 6,
+   "seeds": [
+    [
+     200,
+     -3950,
+     1050
+    ],
+    [
+     1350,
+     -4050,
+     700
+    ],
+    [
+     -700,
+     -4100,
+     500
+    ]
+   ],
+   "profile": {
+    "base": 92,
+    "amp": 32,
+    "cell": 250,
+    "ridge": 0.6,
+    "tame": 0.55
+   },
+   "biomes": [
+    [
+     "litrpg:frozen_reach",
+     3
+    ],
+    [
+     "litrpg:glacier_spikes",
+     2
+    ],
+    [
+     "litrpg:frost_peaks",
+     2
+    ]
+   ],
+   "cold": true
+  },
+  {
+   "id": "deadlands",
+   "name": "Мёртвые Земли",
+   "faction": null,
+   "color": 8026736,
+   "level_bonus": 6,
+   "seeds": [
+    [
+     3950,
+     250,
+     720
+    ],
+    [
+     3400,
+     -750,
+     520
+    ],
+    [
+     4100,
+     900,
+     450
+    ]
+   ],
+   "profile": {
+    "base": 76,
+    "amp": 18,
+    "cell": 220,
+    "ridge": 0.2,
+    "tame": 0.55
+   },
+   "biomes": [
+    [
+     "litrpg:blight",
+     3
+    ],
+    [
+     "litrpg:bone_wastes",
+     2
+    ]
+   ],
+   "cold": false
+  }
+ ],
+ "wild": {
+  "id": "wild",
+  "name": "Пограничье",
+  "profile": {
+   "base": 76,
+   "amp": 22,
+   "cell": 280,
+   "ridge": 0.25,
+   "tame": 0.35
+  }
+ },
+ "seas": [
+  [
+   2080,
+   1380,
+   640,
+   28
+  ]
+ ],
+ "lakes": [
+  [
+   -3150,
+   -1080,
+   230,
+   44
+  ],
+  [
+   -700,
+   930,
+   150,
+   50
+  ],
+  [
+   900,
+   -3650,
+   250,
+   42
+  ],
+  [
+   -2050,
+   1250,
+   170,
+   48
+  ],
+  [
+   3150,
+   450,
+   140,
+   50
+  ],
+  [
+   -1650,
+   -2600,
+   160,
+   46
+  ]
+ ],
+ "rivers": [
+  {
+   "name": "Серебрянка",
+   "width": 16,
+   "points": [
+    [
+     -3000,
+     -900
+    ],
+    [
+     -2300,
+     -850
+    ],
+    [
+     -1500,
+     -650
+    ],
+    [
+     -900,
+     -560
+    ],
+    [
+     -300,
+     -330
+    ],
+    [
+     350,
+     -150
+    ],
+    [
+     900,
+     250
+    ],
+    [
+     1450,
+     760
+    ],
+    [
+     1700,
+     1050
+    ]
+   ],
+   "box": [
+    -3000,
+    -900,
+    1700,
+    1050
+   ]
+  },
+  {
+   "name": "Рудная",
+   "width": 14,
+   "points": [
+    [
+     2350,
+     -1850
+    ],
+    [
+     2100,
+     -1300
+    ],
+    [
+     1850,
+     -700
+    ],
+    [
+     1700,
+     -50
+    ],
+    [
+     1600,
+     520
+    ],
+    [
+     1660,
+     900
+    ]
+   ],
+   "box": [
+    1600,
+    -1850,
+    2350,
+    900
+   ]
+  },
+  {
+   "name": "Волчья",
+   "width": 12,
+   "points": [
+    [
+     -1950,
+     -2450
+    ],
+    [
+     -1600,
+     -1900
+    ],
+    [
+     -1350,
+     -1350
+    ],
+    [
+     -1150,
+     -820
+    ],
+    [
+     -1000,
+     -600
+    ]
+   ],
+   "box": [
+    -1950,
+    -2450,
+    -1000,
+    -600
+   ]
+  },
+  {
+   "name": "Топкая",
+   "width": 12,
+   "points": [
+    [
+     -650,
+     1080
+    ],
+    [
+     -450,
+     1600
+    ],
+    [
+     -150,
+     2300
+    ],
+    [
+     80,
+     2900
+    ],
+    [
+     150,
+     3300
+    ]
+   ],
+   "box": [
+    -650,
+    1080,
+    150,
+    3300
+   ]
+  }
+ ],
+ "cities": [
+  {
+   "id": "arcadia",
+   "name": "Аркадия",
+   "faction": "kingdom",
+   "x": 0,
+   "z": 0,
+   "y": 72,
+   "r": 150,
+   "flat": 150,
+   "level": 1,
+   "guard": "human_guard",
+   "desc": "Столица Королевства. Здесь начинается путь каждого Избранного.",
+   "core": 124,
+   "biome": "litrpg:city_lands"
+  },
+  {
+   "id": "haven",
+   "name": "Солнечная Гавань",
+   "faction": "kingdom",
+   "x": 1536,
+   "z": 928,
+   "y": 68,
+   "r": 100,
+   "flat": 52,
+   "level": 3,
+   "guard": "human_guard",
+   "desc": "Портовый город на берегу Изумрудного залива.",
+   "core": 60,
+   "biome": "litrpg:city_lands"
+  },
+  {
+   "id": "sylvendar",
+   "name": "Сильвендар",
+   "faction": "elves",
+   "x": -2800,
+   "z": -384,
+   "y": 76,
+   "r": 100,
+   "flat": 96,
+   "level": 7,
+   "guard": "elf_sentinel",
+   "desc": "Древний город эльфов среди исполинских деревьев.",
+   "core": 60,
+   "biome": "litrpg:city_grove"
+  },
+  {
+   "id": "khazad",
+   "name": "Кхазад-Бар",
+   "faction": "dwarves",
+   "x": 2704,
+   "z": -2560,
+   "y": 168,
+   "r": 100,
+   "flat": 96,
+   "level": 10,
+   "guard": "dwarf_ironguard",
+   "desc": "Твердыня дварфов, высеченная в сердце гор.",
+   "core": 60,
+   "biome": "litrpg:city_stone"
+  },
+  {
+   "id": "ghardum",
+   "name": "Гхар'Дум",
+   "faction": "orcs",
+   "x": 2896,
+   "z": 2624,
+   "y": 90,
+   "r": 100,
+   "flat": 92,
+   "level": 12,
+   "guard": "orc_bloodguard",
+   "desc": "Военный город Орды за стенами из брёвен и костей.",
+   "core": 60,
+   "biome": "litrpg:city_steppe"
+  },
+  {
+   "id": "wolfden",
+   "name": "Стойбище Белого Волка",
+   "faction": "beastkin",
+   "x": -2600,
+   "z": -3048,
+   "y": 86,
+   "r": 80,
+   "flat": 72,
+   "level": 9,
+   "guard": "beast_fangguard",
+   "desc": "Сердце земель зверолюдов.",
+   "core": 52,
+   "biome": "litrpg:city_snow"
+  },
+  {
+   "id": "ashgrad",
+   "name": "Пеплград",
+   "faction": "demonkin",
+   "x": -2848,
+   "z": 2944,
+   "y": 72,
+   "r": 100,
+   "flat": 96,
+   "level": 16,
+   "guard": "demon_hellguard",
+   "desc": "Город демонидов среди пепла и лавы.",
+   "core": 60,
+   "biome": "litrpg:city_ash"
+  },
+  {
+   "id": "dawnfort",
+   "name": "Форт Рассвет",
+   "faction": "kingdom",
+   "x": -72,
+   "z": 2552,
+   "y": 70,
+   "r": 70,
+   "flat": 64,
+   "level": 10,
+   "guard": "human_guard",
+   "desc": "Пограничная крепость Королевства у Гоблинских топей.",
+   "core": 52,
+   "biome": "litrpg:city_lands"
+  },
+  {
+   "id": "northwatch",
+   "name": "Северный Дозор",
+   "faction": "kingdom",
+   "x": 344,
+   "z": -3256,
+   "y": 96,
+   "r": 70,
+   "flat": 64,
+   "level": 20,
+   "guard": "human_guard",
+   "desc": "Застава у Ледяного Предела. Отсюда уходят смельчаки на север.",
+   "core": 52,
+   "biome": "litrpg:city_snow"
+  },
+  {
+   "id": "blackbastion",
+   "name": "Чёрный Бастион",
+   "faction": "kingdom",
+   "x": 3144,
+   "z": -344,
+   "y": 84,
+   "r": 70,
+   "flat": 64,
+   "level": 18,
+   "guard": "human_guard",
+   "desc": "Последний оплот живых у Мёртвых Земель.",
+   "core": 52,
+   "biome": "litrpg:city_stone"
+  }
+ ],
+ "flats": [
+  [
+   0,
+   0,
+   150,
+   72
+  ],
+  [
+   1536,
+   928,
+   52,
+   68
+  ],
+  [
+   -2800,
+   -384,
+   96,
+   76
+  ],
+  [
+   2704,
+   -2560,
+   96,
+   168
+  ],
+  [
+   2896,
+   2624,
+   92,
+   90
+  ],
+  [
+   -2600,
+   -3048,
+   72,
+   86
+  ],
+  [
+   -2848,
+   2944,
+   96,
+   72
+  ],
+  [
+   -72,
+   2552,
+   64,
+   70
+  ],
+  [
+   344,
+   -3256,
+   64,
+   96
+  ],
+  [
+   3144,
+   -344,
+   64,
+   84
+  ],
+  [
+   -3384,
+   -664,
+   50,
+   69
+  ],
+  [
+   328,
+   -312,
+   20,
+   67
+  ],
+  [
+   3336,
+   3264,
+   48,
+   88
+  ],
+  [
+   -3560,
+   3480,
+   22,
+   83
+  ],
+  [
+   244,
+   -12,
+   24,
+   68
+  ],
+  [
+   -2604,
+   -396,
+   24,
+   80
+  ],
+  [
+   -2428,
+   -3052,
+   24,
+   80
+  ],
+  [
+   84,
+   2548,
+   24,
+   78
+  ],
+  [
+   84,
+   2740,
+   24,
+   68
+  ],
+  [
+   3348,
+   2612,
+   24,
+   77
+  ],
+  [
+   3300,
+   -284,
+   24,
+   86
+  ],
+  [
+   404,
+   -3676,
+   24,
+   134
+  ],
+  [
+   -1996,
+   2932,
+   24,
+   79
+  ],
+  [
+   -1612,
+   3156,
+   24,
+   91
+  ],
+  [
+   512,
+   256,
+   30,
+   68
+  ],
+  [
+   -624,
+   -416,
+   30,
+   69
+  ],
+  [
+   -1008,
+   480,
+   30,
+   79
+  ],
+  [
+   320,
+   -880,
+   30,
+   75
+  ],
+  [
+   976,
+   -368,
+   30,
+   71
+  ],
+  [
+   -432,
+   1056,
+   30,
+   72
+  ],
+  [
+   -272,
+   -1104,
+   30,
+   77
+  ],
+  [
+   1136,
+   -992,
+   30,
+   74
+  ],
+  [
+   -1664,
+   -320,
+   30,
+   73
+  ],
+  [
+   1088,
+   1344,
+   30,
+   77
+  ],
+  [
+   -384,
+   2128,
+   30,
+   90
+  ],
+  [
+   240,
+   -2656,
+   30,
+   90
+  ],
+  [
+   -1656,
+   -760,
+   22,
+   84
+  ],
+  [
+   -1960,
+   -2152,
+   22,
+   81
+  ],
+  [
+   888,
+   -1560,
+   22,
+   72
+  ],
+  [
+   -760,
+   -1560,
+   22,
+   93
+  ],
+  [
+   2024,
+   -1336,
+   22,
+   102
+  ],
+  [
+   -2312,
+   888,
+   22,
+   79
+  ],
+  [
+   1440,
+   1136,
+   20,
+   68
+  ],
+  [
+   1840,
+   736,
+   20,
+   80
+  ],
+  [
+   2416,
+   784,
+   20,
+   70
+  ],
+  [
+   2800,
+   1136,
+   20,
+   75
+  ],
+  [
+   -2896,
+   -1088,
+   20,
+   76
+  ],
+  [
+   -528,
+   928,
+   20,
+   71
+  ],
+  [
+   1216,
+   -3696,
+   20,
+   118
+  ],
+  [
+   -1840,
+   1248,
+   20,
+   89
+  ],
+  [
+   -1724,
+   -252,
+   18,
+   72
+  ],
+  [
+   -1948,
+   -2076,
+   18,
+   81
+  ],
+  [
+   1108,
+   -1356,
+   18,
+   68
+  ],
+  [
+   804,
+   452,
+   18,
+   70
+  ],
+  [
+   1972,
+   2404,
+   18,
+   97
+  ],
+  [
+   -316,
+   1796,
+   18,
+   96
+  ],
+  [
+   -1532,
+   2212,
+   18,
+   90
+  ],
+  [
+   196,
+   -1948,
+   18,
+   76
+  ],
+  [
+   2468,
+   196,
+   18,
+   78
+  ],
+  [
+   180,
+   3220,
+   18,
+   65
+  ],
+  [
+   -1344,
+   -64,
+   14,
+   78
+  ],
+  [
+   208,
+   -528,
+   14,
+   70
+  ],
+  [
+   -352,
+   1488,
+   14,
+   89
+  ],
+  [
+   1600,
+   1808,
+   14,
+   72
+  ],
+  [
+   -1840,
+   2560,
+   14,
+   83
+  ],
+  [
+   2240,
+   400,
+   14,
+   101
+  ],
+  [
+   160,
+   -1568,
+   14,
+   72
+  ],
+  [
+   -1728,
+   -1632,
+   14,
+   77
+  ],
+  [
+   -1008,
+   -1200,
+   14,
+   84
+  ],
+  [
+   -320,
+   1984,
+   14,
+   77
+  ],
+  [
+   -272,
+   -3056,
+   14,
+   102
+  ],
+  [
+   1312,
+   -1072,
+   14,
+   71
+  ],
+  [
+   -1392,
+   736,
+   14,
+   73
+  ],
+  [
+   512,
+   2608,
+   14,
+   78
+  ],
+  [
+   1920,
+   320,
+   14,
+   97
+  ],
+  [
+   -1632,
+   -2240,
+   14,
+   94
+  ],
+  [
+   512,
+   2800,
+   14,
+   72
+  ],
+  [
+   544,
+   -1424,
+   14,
+   70
+  ],
+  [
+   1040,
+   -2928,
+   14,
+   110
+  ],
+  [
+   -1008,
+   1552,
+   14,
+   76
+  ],
+  [
+   2192,
+   -608,
+   14,
+   95
+  ],
+  [
+   1408,
+   976,
+   14,
+   73
+  ],
+  [
+   1648,
+   -2368,
+   14,
+   94
+  ],
+  [
+   1104,
+   -2976,
+   14,
+   123
+  ]
+ ],
+ "roads": [
+  {
+   "name": "Западный тракт",
+   "style": "stone",
+   "points": [
+    [
+     -130,
+     0
+    ],
+    [
+     -650,
+     -120
+    ],
+    [
+     -1350,
+     -150
+    ],
+    [
+     -2100,
+     -260
+    ],
+    [
+     -2800,
+     -384
+    ]
+   ]
+  },
+  {
+   "name": "Северная тропа",
+   "style": "dirt",
+   "points": [
+    [
+     -1350,
+     -150
+    ],
+    [
+     -1500,
+     -900
+    ],
+    [
+     -1750,
+     -1700
+    ],
+    [
+     -2200,
+     -2400
+    ],
+    [
+     -2600,
+     -3048
+    ]
+   ]
+  },
+  {
+   "name": "Горный тракт",
+   "style": "stone",
+   "points": [
+    [
+     0,
+     -130
+    ],
+    [
+     150,
+     -500
+    ],
+    [
+     700,
+     -1050
+    ],
+    [
+     1500,
+     -1700
+    ],
+    [
+     2150,
+     -2150
+    ],
+    [
+     2704,
+     -2560
+    ]
+   ]
+  },
+  {
+   "name": "Портовый тракт",
+   "style": "stone",
+   "points": [
+    [
+     130,
+     0
+    ],
+    [
+     600,
+     260
+    ],
+    [
+     1050,
+     600
+    ],
+    [
+     1536,
+     928
+    ]
+   ]
+  },
+  {
+   "name": "Степной путь",
+   "style": "dirt",
+   "points": [
+    [
+     1536,
+     928
+    ],
+    [
+     1300,
+     1700
+    ],
+    [
+     1700,
+     2250
+    ],
+    [
+     2300,
+     2500
+    ],
+    [
+     2896,
+     2624
+    ]
+   ]
+  },
+  {
+   "name": "Южный тракт",
+   "style": "stone",
+   "points": [
+    [
+     0,
+     130
+    ],
+    [
+     -200,
+     700
+    ],
+    [
+     -350,
+     1500
+    ],
+    [
+     -200,
+     2100
+    ],
+    [
+     -72,
+     2552
+    ]
+   ]
+  },
+  {
+   "name": "Пепельный путь",
+   "style": "dirt",
+   "points": [
+    [
+     -350,
+     1500
+    ],
+    [
+     -1100,
+     2000
+    ],
+    [
+     -1900,
+     2500
+    ],
+    [
+     -2848,
+     2944
+    ]
+   ]
+  },
+  {
+   "name": "Дозорная тропа",
+   "style": "dirt",
+   "points": [
+    [
+     150,
+     -500
+    ],
+    [
+     100,
+     -1500
+    ],
+    [
+     250,
+     -2400
+    ],
+    [
+     344,
+     -3256
+    ]
+   ]
+  },
+  {
+   "name": "Восточный тракт",
+   "style": "stone",
+   "points": [
+    [
+     1536,
+     928
+    ],
+    [
+     2200,
+     400
+    ],
+    [
+     2700,
+     -50
+    ],
+    [
+     3144,
+     -344
+    ]
+   ]
+  },
+  {
+   "name": "Топкая гать",
+   "style": "dirt",
+   "points": [
+    [
+     -72,
+     2552
+    ],
+    [
+     150,
+     3000
+    ],
+    [
+     300,
+     3350
+    ]
+   ]
+  }
+ ],
+ "pois": [
+  {
+   "type": "spawn",
+   "id": "spawn",
+   "name": "Площадь Обелиска",
+   "x": 0,
+   "z": 26,
+   "y": 73,
+   "r": 0
+  },
+  {
+   "type": "city",
+   "id": "arcadia",
+   "name": "Аркадия",
+   "x": 0,
+   "z": 0,
+   "y": 72,
+   "r": 0
+  },
+  {
+   "type": "city",
+   "id": "haven",
+   "name": "Солнечная Гавань",
+   "x": 1536,
+   "z": 928,
+   "y": 68,
+   "r": 0
+  },
+  {
+   "type": "city",
+   "id": "sylvendar",
+   "name": "Сильвендар",
+   "x": -2800,
+   "z": -384,
+   "y": 76,
+   "r": 0
+  },
+  {
+   "type": "city",
+   "id": "khazad",
+   "name": "Кхазад-Бар",
+   "x": 2704,
+   "z": -2560,
+   "y": 168,
+   "r": 0
+  },
+  {
+   "type": "city",
+   "id": "ghardum",
+   "name": "Гхар'Дум",
+   "x": 2896,
+   "z": 2624,
+   "y": 90,
+   "r": 0
+  },
+  {
+   "type": "city",
+   "id": "wolfden",
+   "name": "Стойбище Белого Волка",
+   "x": -2600,
+   "z": -3048,
+   "y": 86,
+   "r": 0
+  },
+  {
+   "type": "city",
+   "id": "ashgrad",
+   "name": "Пеплград",
+   "x": -2848,
+   "z": 2944,
+   "y": 72,
+   "r": 0
+  },
+  {
+   "type": "city",
+   "id": "dawnfort",
+   "name": "Форт Рассвет",
+   "x": -72,
+   "z": 2552,
+   "y": 70,
+   "r": 0
+  },
+  {
+   "type": "city",
+   "id": "northwatch",
+   "name": "Северный Дозор",
+   "x": 344,
+   "z": -3256,
+   "y": 96,
+   "r": 0
+  },
+  {
+   "type": "city",
+   "id": "blackbastion",
+   "name": "Чёрный Бастион",
+   "x": 3144,
+   "z": -344,
+   "y": 84,
+   "r": 0
+  },
+  {
+   "type": "wonder",
+   "id": "world_tree",
+   "name": "Древо Мира",
+   "x": -3384,
+   "z": -664,
+   "y": 69,
+   "r": 50,
+   "extra": ""
+  },
+  {
+   "type": "wonder",
+   "id": "colossus",
+   "name": "Колосс Аркадии",
+   "x": 328,
+   "z": -312,
+   "y": 67,
+   "r": 20,
+   "extra": ""
+  },
+  {
+   "type": "wonder",
+   "id": "titan_bones",
+   "name": "Кости Титана",
+   "x": 3336,
+   "z": 3264,
+   "y": 88,
+   "r": 48,
+   "extra": ""
+  },
+  {
+   "type": "wonder",
+   "id": "abyss_gate",
+   "name": "Врата Бездны",
+   "x": -3560,
+   "z": 3480,
+   "y": 83,
+   "r": 22,
+   "extra": ""
+  },
+  {
+   "type": "wonder",
+   "id": "sky_forge",
+   "name": "Небесная Кузня",
+   "x": 3288,
+   "z": -3256,
+   "y": 235,
+   "r": 0
+  },
+  {
+   "type": "dungeon",
+   "id": "dungeon_ruins",
+   "name": "Руины Стражей",
+   "x": 244,
+   "z": -12,
+   "y": 68,
+   "r": 24,
+   "extra": "ruins"
+  },
+  {
+   "type": "dungeon",
+   "id": "dungeon_rotgrove",
+   "name": "Гниющая Роща",
+   "x": -2604,
+   "z": -396,
+   "y": 80,
+   "r": 24,
+   "extra": "rotgrove"
+  },
+  {
+   "type": "dungeon",
+   "id": "dungeon_spider_nest",
+   "name": "Паучье Логово",
+   "x": -2428,
+   "z": -3052,
+   "y": 80,
+   "r": 24,
+   "extra": "spider_nest"
+  },
+  {
+   "type": "dungeon",
+   "id": "dungeon_goblin_fort",
+   "name": "Гоблинская Крепость",
+   "x": 84,
+   "z": 2548,
+   "y": 78,
+   "r": 24,
+   "extra": "goblin_fort"
+  },
+  {
+   "type": "dungeon",
+   "id": "dungeon_mire",
+   "name": "Проклятая Топь",
+   "x": 84,
+   "z": 2740,
+   "y": 68,
+   "r": 24,
+   "extra": "mire"
+  },
+  {
+   "type": "dungeon",
+   "id": "dungeon_labyrinth",
+   "name": "Лабиринт Астериона",
+   "x": 3348,
+   "z": 2612,
+   "y": 77,
+   "r": 24,
+   "extra": "labyrinth"
+  },
+  {
+   "type": "dungeon",
+   "id": "dungeon_crypt",
+   "name": "Склеп Лича",
+   "x": 3300,
+   "z": -284,
+   "y": 86,
+   "r": 24,
+   "extra": "crypt"
+  },
+  {
+   "type": "dungeon",
+   "id": "dungeon_frost_citadel",
+   "name": "Ледяная Цитадель",
+   "x": 404,
+   "z": -3676,
+   "y": 134,
+   "r": 24,
+   "extra": "frost_citadel"
+  },
+  {
+   "type": "dungeon",
+   "id": "dungeon_crucible",
+   "name": "Пламенное Горнило",
+   "x": -1996,
+   "z": 2932,
+   "y": 79,
+   "r": 24,
+   "extra": "crucible"
+  },
+  {
+   "type": "dungeon",
+   "id": "dungeon_ash_citadel",
+   "name": "Цитадель Пепла",
+   "x": -1612,
+   "z": 3156,
+   "y": 91,
+   "r": 24,
+   "extra": "ash_citadel"
+  },
+  {
+   "type": "village",
+   "id": "village_0",
+   "name": "Деревня Ольховка",
+   "x": 512,
+   "z": 256,
+   "y": 68,
+   "r": 30,
+   "extra": ""
+  },
+  {
+   "type": "village",
+   "id": "village_1",
+   "name": "Деревня Медовый Брод",
+   "x": -624,
+   "z": -416,
+   "y": 69,
+   "r": 30,
+   "extra": ""
+  },
+  {
+   "type": "village",
+   "id": "village_2",
+   "name": "Деревня Рябиновка",
+   "x": -1008,
+   "z": 480,
+   "y": 79,
+   "r": 30,
+   "extra": ""
+  },
+  {
+   "type": "village",
+   "id": "village_3",
+   "name": "Деревня Каменка",
+   "x": 320,
+   "z": -880,
+   "y": 75,
+   "r": 30,
+   "extra": ""
+  },
+  {
+   "type": "village",
+   "id": "village_4",
+   "name": "Деревня Тихий Луг",
+   "x": 976,
+   "z": -368,
+   "y": 71,
+   "r": 30,
+   "extra": ""
+  },
+  {
+   "type": "village",
+   "id": "village_5",
+   "name": "Деревня Заречье",
+   "x": -432,
+   "z": 1056,
+   "y": 72,
+   "r": 30,
+   "extra": ""
+  },
+  {
+   "type": "village",
+   "id": "village_6",
+   "name": "Деревня Вересково",
+   "x": -272,
+   "z": -1104,
+   "y": 77,
+   "r": 30,
+   "extra": ""
+  },
+  {
+   "type": "village",
+   "id": "village_7",
+   "name": "Деревня Липовка",
+   "x": 1136,
+   "z": -992,
+   "y": 74,
+   "r": 30,
+   "extra": ""
+  },
+  {
+   "type": "village",
+   "id": "village_8",
+   "name": "Деревня Ясная Поляна",
+   "x": -1664,
+   "z": -320,
+   "y": 73,
+   "r": 30,
+   "extra": ""
+  },
+  {
+   "type": "village",
+   "id": "village_9",
+   "name": "Деревня Сосновый Бор",
+   "x": 1088,
+   "z": 1344,
+   "y": 77,
+   "r": 30,
+   "extra": ""
+  },
+  {
+   "type": "village",
+   "id": "village_10",
+   "name": "Деревня Мельничье",
+   "x": -384,
+   "z": 2128,
+   "y": 90,
+   "r": 30,
+   "extra": ""
+  },
+  {
+   "type": "village",
+   "id": "village_11",
+   "name": "Деревня Гусиный Пруд",
+   "x": 240,
+   "z": -2656,
+   "y": 90,
+   "r": 30,
+   "extra": ""
+  },
+  {
+   "type": "lumber",
+   "id": "lumber_0",
+   "name": "Лесопилка",
+   "x": -1656,
+   "z": -760,
+   "y": 84,
+   "r": 22,
+   "extra": ""
+  },
+  {
+   "type": "lumber",
+   "id": "lumber_1",
+   "name": "Лесопилка",
+   "x": -1960,
+   "z": -2152,
+   "y": 81,
+   "r": 22,
+   "extra": ""
+  },
+  {
+   "type": "lumber",
+   "id": "lumber_2",
+   "name": "Лесопилка",
+   "x": 888,
+   "z": -1560,
+   "y": 72,
+   "r": 22,
+   "extra": ""
+  },
+  {
+   "type": "lumber",
+   "id": "lumber_3",
+   "name": "Лесопилка",
+   "x": -760,
+   "z": -1560,
+   "y": 93,
+   "r": 22,
+   "extra": ""
+  },
+  {
+   "type": "lumber",
+   "id": "lumber_4",
+   "name": "Лесопилка",
+   "x": 2024,
+   "z": -1336,
+   "y": 102,
+   "r": 22,
+   "extra": ""
+  },
+  {
+   "type": "lumber",
+   "id": "lumber_5",
+   "name": "Лесопилка",
+   "x": -2312,
+   "z": 888,
+   "y": 79,
+   "r": 22,
+   "extra": ""
+  },
+  {
+   "type": "fishing",
+   "id": "fishing_0",
+   "name": "Рыбацкий посёлок",
+   "x": 1440,
+   "z": 1136,
+   "y": 68,
+   "r": 20,
+   "extra": ""
+  },
+  {
+   "type": "fishing",
+   "id": "fishing_1",
+   "name": "Рыбацкий посёлок",
+   "x": 1840,
+   "z": 736,
+   "y": 80,
+   "r": 20,
+   "extra": ""
+  },
+  {
+   "type": "fishing",
+   "id": "fishing_2",
+   "name": "Рыбацкий посёлок",
+   "x": 2416,
+   "z": 784,
+   "y": 70,
+   "r": 20,
+   "extra": ""
+  },
+  {
+   "type": "fishing",
+   "id": "fishing_3",
+   "name": "Рыбацкий посёлок",
+   "x": 2800,
+   "z": 1136,
+   "y": 75,
+   "r": 20,
+   "extra": ""
+  },
+  {
+   "type": "fishing",
+   "id": "fishing_4",
+   "name": "Рыбацкий посёлок",
+   "x": -2896,
+   "z": -1088,
+   "y": 76,
+   "r": 20,
+   "extra": ""
+  },
+  {
+   "type": "fishing",
+   "id": "fishing_5",
+   "name": "Рыбацкий посёлок",
+   "x": -528,
+   "z": 928,
+   "y": 71,
+   "r": 20,
+   "extra": ""
+  },
+  {
+   "type": "fishing",
+   "id": "fishing_6",
+   "name": "Рыбацкий посёлок",
+   "x": 1216,
+   "z": -3696,
+   "y": 118,
+   "r": 20,
+   "extra": ""
+  },
+  {
+   "type": "fishing",
+   "id": "fishing_7",
+   "name": "Рыбацкий посёлок",
+   "x": -1840,
+   "z": 1248,
+   "y": 89,
+   "r": 20,
+   "extra": ""
+  },
+  {
+   "type": "caravan",
+   "id": "caravan_0",
+   "name": "Стоянка караванщиков",
+   "x": -1724,
+   "z": -252,
+   "y": 72,
+   "r": 18,
+   "extra": ""
+  },
+  {
+   "type": "caravan",
+   "id": "caravan_1",
+   "name": "Стоянка караванщиков",
+   "x": -1948,
+   "z": -2076,
+   "y": 81,
+   "r": 18,
+   "extra": ""
+  },
+  {
+   "type": "caravan",
+   "id": "caravan_2",
+   "name": "Стоянка караванщиков",
+   "x": 1108,
+   "z": -1356,
+   "y": 68,
+   "r": 18,
+   "extra": ""
+  },
+  {
+   "type": "caravan",
+   "id": "caravan_3",
+   "name": "Стоянка караванщиков",
+   "x": 804,
+   "z": 452,
+   "y": 70,
+   "r": 18,
+   "extra": ""
+  },
+  {
+   "type": "caravan",
+   "id": "caravan_4",
+   "name": "Стоянка караванщиков",
+   "x": 1972,
+   "z": 2404,
+   "y": 97,
+   "r": 18,
+   "extra": ""
+  },
+  {
+   "type": "caravan",
+   "id": "caravan_5",
+   "name": "Стоянка караванщиков",
+   "x": -316,
+   "z": 1796,
+   "y": 96,
+   "r": 18,
+   "extra": ""
+  },
+  {
+   "type": "caravan",
+   "id": "caravan_6",
+   "name": "Стоянка караванщиков",
+   "x": -1532,
+   "z": 2212,
+   "y": 90,
+   "r": 18,
+   "extra": ""
+  },
+  {
+   "type": "caravan",
+   "id": "caravan_7",
+   "name": "Стоянка караванщиков",
+   "x": 196,
+   "z": -1948,
+   "y": 76,
+   "r": 18,
+   "extra": ""
+  },
+  {
+   "type": "caravan",
+   "id": "caravan_8",
+   "name": "Стоянка караванщиков",
+   "x": 2468,
+   "z": 196,
+   "y": 78,
+   "r": 18,
+   "extra": ""
+  },
+  {
+   "type": "caravan",
+   "id": "caravan_9",
+   "name": "Стоянка караванщиков",
+   "x": 180,
+   "z": 3220,
+   "y": 65,
+   "r": 18,
+   "extra": ""
+  },
+  {
+   "type": "outpost",
+   "id": "tower_0",
+   "name": "Сторожевая башня",
+   "x": -1344,
+   "z": -64,
+   "y": 78,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "outpost",
+   "id": "tower_1",
+   "name": "Сторожевая башня",
+   "x": 208,
+   "z": -528,
+   "y": 70,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "outpost",
+   "id": "tower_2",
+   "name": "Сторожевая башня",
+   "x": -352,
+   "z": 1488,
+   "y": 89,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "outpost",
+   "id": "tower_3",
+   "name": "Сторожевая башня",
+   "x": 1600,
+   "z": 1808,
+   "y": 72,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "outpost",
+   "id": "tower_4",
+   "name": "Сторожевая башня",
+   "x": -1840,
+   "z": 2560,
+   "y": 83,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "outpost",
+   "id": "tower_5",
+   "name": "Сторожевая башня",
+   "x": 2240,
+   "z": 400,
+   "y": 101,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "outpost",
+   "id": "tower_6",
+   "name": "Сторожевая башня",
+   "x": 160,
+   "z": -1568,
+   "y": 72,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "outpost",
+   "id": "tower_7",
+   "name": "Сторожевая башня",
+   "x": -1728,
+   "z": -1632,
+   "y": 77,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "ruins",
+   "id": "ruins_0",
+   "name": "Древние руины",
+   "x": -1008,
+   "z": -1200,
+   "y": 84,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "ruins",
+   "id": "ruins_1",
+   "name": "Древние руины",
+   "x": -320,
+   "z": 1984,
+   "y": 77,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "ruins",
+   "id": "ruins_2",
+   "name": "Древние руины",
+   "x": -272,
+   "z": -3056,
+   "y": 102,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "ruins",
+   "id": "ruins_3",
+   "name": "Древние руины",
+   "x": 1312,
+   "z": -1072,
+   "y": 71,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "ruins",
+   "id": "ruins_4",
+   "name": "Древние руины",
+   "x": -1392,
+   "z": 736,
+   "y": 73,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "ruins",
+   "id": "ruins_5",
+   "name": "Древние руины",
+   "x": 512,
+   "z": 2608,
+   "y": 78,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "ruins",
+   "id": "ruins_6",
+   "name": "Древние руины",
+   "x": 1920,
+   "z": 320,
+   "y": 97,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "ruins",
+   "id": "ruins_7",
+   "name": "Древние руины",
+   "x": -1632,
+   "z": -2240,
+   "y": 94,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "ruins",
+   "id": "ruins_8",
+   "name": "Древние руины",
+   "x": 512,
+   "z": 2800,
+   "y": 72,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "ruins",
+   "id": "ruins_9",
+   "name": "Древние руины",
+   "x": 544,
+   "z": -1424,
+   "y": 70,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "ruins",
+   "id": "ruins_10",
+   "name": "Древние руины",
+   "x": 1040,
+   "z": -2928,
+   "y": 110,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "ruins",
+   "id": "ruins_11",
+   "name": "Древние руины",
+   "x": -1008,
+   "z": 1552,
+   "y": 76,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "ruins",
+   "id": "ruins_12",
+   "name": "Древние руины",
+   "x": 2192,
+   "z": -608,
+   "y": 95,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "ruins",
+   "id": "ruins_13",
+   "name": "Древние руины",
+   "x": 1408,
+   "z": 976,
+   "y": 73,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "ruins",
+   "id": "ruins_14",
+   "name": "Древние руины",
+   "x": 1648,
+   "z": -2368,
+   "y": 94,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "ruins",
+   "id": "ruins_15",
+   "name": "Древние руины",
+   "x": 1104,
+   "z": -2976,
+   "y": 123,
+   "r": 14,
+   "extra": ""
+  },
+  {
+   "type": "nether_city",
+   "id": "infernalis",
+   "name": "Инферналис",
+   "x": -352,
+   "z": 368,
+   "y": 40,
+   "r": 0
+  },
+  {
+   "type": "nether_wonder",
+   "id": "ash_throne",
+   "name": "Трон Пепла",
+   "x": 40,
+   "z": 456,
+   "y": 40,
+   "r": 0
+  },
+  {
+   "type": "nether_dungeon",
+   "id": "dungeon_nether_heart",
+   "name": "Сердце Преисподней",
+   "x": 308,
+   "z": -236,
+   "y": 40,
+   "r": 0,
+   "extra": "nether_heart"
+  }
+ ],
+ "tiles": [
+  {
+   "dim": "overworld",
+   "cx": -8,
+   "cz": -8,
+   "template": "litrpg:map/arcadia_0_0",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -8,
+   "cz": 0,
+   "template": "litrpg:map/arcadia_0_1",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 0,
+   "cz": -8,
+   "template": "litrpg:map/arcadia_1_0",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 0,
+   "cz": 0,
+   "template": "litrpg:map/arcadia_1_1",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 92,
+   "cz": 54,
+   "template": "litrpg:map/haven",
+   "y": 56
+  },
+  {
+   "dim": "overworld",
+   "cx": -179,
+   "cz": -28,
+   "template": "litrpg:map/sylvendar",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": 165,
+   "cz": -164,
+   "template": "litrpg:map/khazad",
+   "y": 164
+  },
+  {
+   "dim": "overworld",
+   "cx": 177,
+   "cz": 160,
+   "template": "litrpg:map/ghardum",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": -166,
+   "cz": -194,
+   "template": "litrpg:map/wolfden",
+   "y": 82
+  },
+  {
+   "dim": "overworld",
+   "cx": -182,
+   "cz": 180,
+   "template": "litrpg:map/ashgrad",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -8,
+   "cz": 156,
+   "template": "litrpg:map/dawnfort",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": 18,
+   "cz": -207,
+   "template": "litrpg:map/northwatch",
+   "y": 92
+  },
+  {
+   "dim": "overworld",
+   "cx": 193,
+   "cz": -25,
+   "template": "litrpg:map/blackbastion",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": -215,
+   "cz": -45,
+   "template": "litrpg:map/world_tree",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": 19,
+   "cz": -21,
+   "template": "litrpg:map/colossus",
+   "y": 63
+  },
+  {
+   "dim": "overworld",
+   "cx": 205,
+   "cz": 202,
+   "template": "litrpg:map/titan_bones",
+   "y": 84
+  },
+  {
+   "dim": "overworld",
+   "cx": -224,
+   "cz": 216,
+   "template": "litrpg:map/abyss_gate",
+   "y": 79
+  },
+  {
+   "dim": "overworld",
+   "cx": 204,
+   "cz": -205,
+   "template": "litrpg:map/sky_forge",
+   "y": 205
+  },
+  {
+   "dim": "overworld",
+   "cx": 14,
+   "cz": -2,
+   "template": "litrpg:dungeon_ruins",
+   "y": 51
+  },
+  {
+   "dim": "overworld",
+   "cx": -164,
+   "cz": -26,
+   "template": "litrpg:dungeon_rotgrove",
+   "y": 63
+  },
+  {
+   "dim": "overworld",
+   "cx": -153,
+   "cz": -192,
+   "template": "litrpg:dungeon_spider_nest",
+   "y": 63
+  },
+  {
+   "dim": "overworld",
+   "cx": 4,
+   "cz": 158,
+   "template": "litrpg:dungeon_goblin_fort",
+   "y": 61
+  },
+  {
+   "dim": "overworld",
+   "cx": 4,
+   "cz": 170,
+   "template": "litrpg:dungeon_mire",
+   "y": 51
+  },
+  {
+   "dim": "overworld",
+   "cx": 208,
+   "cz": 162,
+   "template": "litrpg:dungeon_labyrinth",
+   "y": 60
+  },
+  {
+   "dim": "overworld",
+   "cx": 205,
+   "cz": -19,
+   "template": "litrpg:dungeon_crypt",
+   "y": 69
+  },
+  {
+   "dim": "overworld",
+   "cx": 24,
+   "cz": -231,
+   "template": "litrpg:dungeon_frost_citadel",
+   "y": 117
+  },
+  {
+   "dim": "overworld",
+   "cx": -126,
+   "cz": 182,
+   "template": "litrpg:dungeon_crucible",
+   "y": 62
+  },
+  {
+   "dim": "overworld",
+   "cx": -102,
+   "cz": 196,
+   "template": "litrpg:dungeon_ash_citadel",
+   "y": 74
+  },
+  {
+   "dim": "overworld",
+   "cx": 30,
+   "cz": 14,
+   "template": "litrpg:map/village_0",
+   "y": 64
+  },
+  {
+   "dim": "overworld",
+   "cx": -41,
+   "cz": -28,
+   "template": "litrpg:map/village_1",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -65,
+   "cz": 28,
+   "template": "litrpg:map/village_2",
+   "y": 75
+  },
+  {
+   "dim": "overworld",
+   "cx": 18,
+   "cz": -57,
+   "template": "litrpg:map/village_3",
+   "y": 71
+  },
+  {
+   "dim": "overworld",
+   "cx": 59,
+   "cz": -25,
+   "template": "litrpg:map/village_4",
+   "y": 67
+  },
+  {
+   "dim": "overworld",
+   "cx": -29,
+   "cz": 64,
+   "template": "litrpg:map/village_5",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -19,
+   "cz": -71,
+   "template": "litrpg:map/village_6",
+   "y": 73
+  },
+  {
+   "dim": "overworld",
+   "cx": 69,
+   "cz": -64,
+   "template": "litrpg:map/village_7",
+   "y": 70
+  },
+  {
+   "dim": "overworld",
+   "cx": -106,
+   "cz": -22,
+   "template": "litrpg:map/village_8",
+   "y": 69
+  },
+  {
+   "dim": "overworld",
+   "cx": 66,
+   "cz": 82,
+   "template": "litrpg:map/village_9",
+   "y": 73
+  },
+  {
+   "dim": "overworld",
+   "cx": -26,
+   "cz": 131,
+   "template": "litrpg:map/village_10",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 13,
+   "cz": -168,
+   "template": "litrpg:map/village_11",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": -105,
+   "cz": -49,
+   "template": "litrpg:map/lumber_0",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": -124,
+   "cz": -136,
+   "template": "litrpg:map/lumber_1",
+   "y": 77
+  },
+  {
+   "dim": "overworld",
+   "cx": 54,
+   "cz": -99,
+   "template": "litrpg:map/lumber_2",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -49,
+   "cz": -99,
+   "template": "litrpg:map/lumber_3",
+   "y": 89
+  },
+  {
+   "dim": "overworld",
+   "cx": 125,
+   "cz": -85,
+   "template": "litrpg:map/lumber_4",
+   "y": 98
+  },
+  {
+   "dim": "overworld",
+   "cx": -146,
+   "cz": 54,
+   "template": "litrpg:map/lumber_5",
+   "y": 75
+  },
+  {
+   "dim": "overworld",
+   "cx": 88,
+   "cz": 69,
+   "template": "litrpg:map/fishing_0",
+   "y": 58
+  },
+  {
+   "dim": "overworld",
+   "cx": 113,
+   "cz": 44,
+   "template": "litrpg:map/fishing_1",
+   "y": 70
+  },
+  {
+   "dim": "overworld",
+   "cx": 149,
+   "cz": 47,
+   "template": "litrpg:map/fishing_2",
+   "y": 60
+  },
+  {
+   "dim": "overworld",
+   "cx": 173,
+   "cz": 69,
+   "template": "litrpg:map/fishing_3",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -183,
+   "cz": -70,
+   "template": "litrpg:map/fishing_4",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": -35,
+   "cz": 56,
+   "template": "litrpg:map/fishing_5",
+   "y": 61
+  },
+  {
+   "dim": "overworld",
+   "cx": 74,
+   "cz": -233,
+   "template": "litrpg:map/fishing_6",
+   "y": 108
+  },
+  {
+   "dim": "overworld",
+   "cx": -117,
+   "cz": 76,
+   "template": "litrpg:map/fishing_7",
+   "y": 79
+  },
+  {
+   "dim": "overworld",
+   "cx": -109,
+   "cz": -17,
+   "template": "litrpg:map/caravan_0",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -123,
+   "cz": -131,
+   "template": "litrpg:map/caravan_1",
+   "y": 77
+  },
+  {
+   "dim": "overworld",
+   "cx": 68,
+   "cz": -86,
+   "template": "litrpg:map/caravan_2",
+   "y": 64
+  },
+  {
+   "dim": "overworld",
+   "cx": 49,
+   "cz": 27,
+   "template": "litrpg:map/caravan_3",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": 122,
+   "cz": 149,
+   "template": "litrpg:map/caravan_4",
+   "y": 93
+  },
+  {
+   "dim": "overworld",
+   "cx": -21,
+   "cz": 111,
+   "template": "litrpg:map/caravan_5",
+   "y": 92
+  },
+  {
+   "dim": "overworld",
+   "cx": -97,
+   "cz": 137,
+   "template": "litrpg:map/caravan_6",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 11,
+   "cz": -123,
+   "template": "litrpg:map/caravan_7",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": 153,
+   "cz": 11,
+   "template": "litrpg:map/caravan_8",
+   "y": 74
+  },
+  {
+   "dim": "overworld",
+   "cx": 10,
+   "cz": 200,
+   "template": "litrpg:map/caravan_9",
+   "y": 61
+  },
+  {
+   "dim": "overworld",
+   "cx": -85,
+   "cz": -5,
+   "template": "litrpg:map/tower_0",
+   "y": 74
+  },
+  {
+   "dim": "overworld",
+   "cx": 12,
+   "cz": -34,
+   "template": "litrpg:map/tower_1",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": -23,
+   "cz": 92,
+   "template": "litrpg:map/tower_2",
+   "y": 85
+  },
+  {
+   "dim": "overworld",
+   "cx": 99,
+   "cz": 112,
+   "template": "litrpg:map/tower_3",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -116,
+   "cz": 159,
+   "template": "litrpg:map/tower_4",
+   "y": 79
+  },
+  {
+   "dim": "overworld",
+   "cx": 139,
+   "cz": 24,
+   "template": "litrpg:map/tower_5",
+   "y": 97
+  },
+  {
+   "dim": "overworld",
+   "cx": 9,
+   "cz": -99,
+   "template": "litrpg:map/tower_6",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -109,
+   "cz": -103,
+   "template": "litrpg:map/tower_7",
+   "y": 73
+  },
+  {
+   "dim": "overworld",
+   "cx": -64,
+   "cz": -76,
+   "template": "litrpg:map/ruins_0",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": -21,
+   "cz": 123,
+   "template": "litrpg:map/ruins_1",
+   "y": 73
+  },
+  {
+   "dim": "overworld",
+   "cx": -18,
+   "cz": -192,
+   "template": "litrpg:map/ruins_2",
+   "y": 98
+  },
+  {
+   "dim": "overworld",
+   "cx": 81,
+   "cz": -68,
+   "template": "litrpg:map/ruins_3",
+   "y": 67
+  },
+  {
+   "dim": "overworld",
+   "cx": -88,
+   "cz": 45,
+   "template": "litrpg:map/ruins_4",
+   "y": 69
+  },
+  {
+   "dim": "overworld",
+   "cx": 31,
+   "cz": 162,
+   "template": "litrpg:map/ruins_5",
+   "y": 74
+  },
+  {
+   "dim": "overworld",
+   "cx": 119,
+   "cz": 19,
+   "template": "litrpg:map/ruins_6",
+   "y": 93
+  },
+  {
+   "dim": "overworld",
+   "cx": -103,
+   "cz": -141,
+   "template": "litrpg:map/ruins_7",
+   "y": 90
+  },
+  {
+   "dim": "overworld",
+   "cx": 31,
+   "cz": 174,
+   "template": "litrpg:map/ruins_8",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 33,
+   "cz": -90,
+   "template": "litrpg:map/ruins_9",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": 64,
+   "cz": -184,
+   "template": "litrpg:map/ruins_10",
+   "y": 106
+  },
+  {
+   "dim": "overworld",
+   "cx": -64,
+   "cz": 96,
+   "template": "litrpg:map/ruins_11",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": 136,
+   "cz": -39,
+   "template": "litrpg:map/ruins_12",
+   "y": 91
+  },
+  {
+   "dim": "overworld",
+   "cx": 87,
+   "cz": 60,
+   "template": "litrpg:map/ruins_13",
+   "y": 69
+  },
+  {
+   "dim": "overworld",
+   "cx": 102,
+   "cz": -149,
+   "template": "litrpg:map/ruins_14",
+   "y": 90
+  },
+  {
+   "dim": "overworld",
+   "cx": 68,
+   "cz": -187,
+   "template": "litrpg:map/ruins_15",
+   "y": 119
+  },
+  {
+   "dim": "nether",
+   "cx": -26,
+   "cz": 19,
+   "template": "litrpg:map/infernalis",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": 1,
+   "cz": 27,
+   "template": "litrpg:map/ash_throne",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": 18,
+   "cz": -16,
+   "template": "litrpg:dungeon_nether_heart",
+   "y": 23
+  }
+ ],
+ "levels": {
+  "slope": 40,
+  "max": 60
+ },
+ "nether": {
+  "flats": [
+   [
+    -352,
+    368,
+    66,
+    40
+   ],
+   [
+    40,
+    456,
+    30,
+    40
+   ],
+   [
+    308,
+    -236,
+    30,
+    40
+   ]
+  ]
+ }
+}

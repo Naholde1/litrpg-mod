@@ -2,7 +2,7 @@ package com.andrey.litrpg.client.render;
 
 import com.andrey.litrpg.LitRPG;
 import com.andrey.litrpg.client.model.DataModel;
-import com.andrey.litrpg.entity.BossBase;
+import com.andrey.litrpg.entity.Animated;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 /** Рендер боссов с моделью из данных и светящимся слоем (глаза, руны, пламя). */
-public class DataBossRenderer<T extends BossBase> extends MobRenderer<T, DataModel<T>> {
+public class DataBossRenderer<T extends net.minecraft.world.entity.Mob> extends MobRenderer<T, DataModel<T>> {
     private final ResourceLocation texture;
 
     public DataBossRenderer(EntityRendererProvider.Context ctx, String name) {
@@ -32,7 +32,8 @@ public class DataBossRenderer<T extends BossBase> extends MobRenderer<T, DataMod
                                float partialTick, float age, float yaw, float pitch) {
                 if (entity.isInvisible()) return;
                 VertexConsumer vc = buffers.getBuffer(RenderType.eyes(glow));
-                float pulse = entity.isCasting() ? 1f : 0.85f + 0.15f * (float) Math.sin(age * 0.15f);
+                boolean casting = entity instanceof Animated a && a.isCasting();
+                float pulse = casting ? 1f : 0.85f + 0.15f * (float) Math.sin(age * 0.15f);
                 getParentModel().renderToBuffer(pose, vc, 0xF000F0, OverlayTexture.NO_OVERLAY, pulse, pulse, pulse, 1f);
             }
         });

@@ -105,6 +105,15 @@ public final class NpcTrades {
                     gear("orcish_helmet", 16, U, r, F), gear("orcish_boots", 16, U, r, F), gear("orcish_leggings", 16, U, r, H),
                     gear("orcish_chestplate", 16, U, r, H), gear("orc_club", 16, RA, r, F), gear("orc_cleaver", 18, RA, r, H),
                     gear("belt_warrior", 14, RA, r, H), gear("amulet_warlord", 22, E, r, R), gear("ring_vampire", 20, E, r, R));
+            case HUMAN -> List.of(
+                    item(Items.BREAD, 6, 3, N), item(Items.ARROW, 16, 4, N), item(Items.TORCH, 16, 3, N),
+                    item(ModItems.MANA_POTION.get(), 1, 12, N), item(Items.FILLED_MAP, 1, 20, N), item(Items.IRON_INGOT, 4, 10, F),
+                    gear("ring_iron", 4, U, r, N), gear("amulet_wooden", 2, U, r, N), gear("belt_wide", 8, U, r, N),
+                    gear("knight_helmet", 12, U, r, F), gear("knight_boots", 12, U, r, F), gear("knight_leggings", 12, U, r, F),
+                    gear("knight_chestplate", 12, U, r, H), gear("knight_sword", 12, RA, r, F), gear("hunter_dagger", 6, U, r, N),
+                    gear("cloak_guard", 12, RA, r, H), gear("amulet_light", 10, RA, r, H), gear("mage_chestplate", 10, U, r, F),
+                    item(ModItems.TOME_OF_EXPERIENCE.get(), 1, 140, H), item(ModItems.REFORGE_STONE.get(), 1, 110, H),
+                    item(ModItems.ASCENSION_STONE.get(), 1, 520, R));
             case BEASTKIN -> List.of(
                     item(Items.RABBIT_HIDE, 4, 4, N), item(Items.COOKED_CHICKEN, 6, 4, N), item(ModItems.BEAST_TOKEN.get(), 1, 30, F),
                     gear("charm_wolf_fang", 6, U, r, N), gear("charm_rabbit", 3, U, r, N), gear("amulet_trapper", 10, U, r, F),

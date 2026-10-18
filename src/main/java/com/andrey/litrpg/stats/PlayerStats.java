@@ -137,16 +137,11 @@ public class PlayerStats {
     public void setMana(double m) { mana = Math.max(0, Math.min(m, getMaxMana())); }
 
     public int getMaxMana() {
-        int base = 40 + getStat(Stat.INTELLIGENCE) * 8 + (level - 1) * 3;
-        if (playerClass != null && playerClass.primary == Stat.INTELLIGENCE) base += 30;
-        if (playerClass == PlayerClass.MAGE) base += 20;
-        return base + Math.round(gear.get(com.andrey.litrpg.gear.GearBonus.MANA));
+        return (int) Math.round(StatBreakdown.maxMana(this).value());
     }
 
     public double getManaRegenPerSecond() {
-        double r = 0.8 + getStat(Stat.INTELLIGENCE) * 0.12 + level * 0.04;
-        if (race == Race.ELF) r *= 1.3;
-        return r * (1 + gear.get(com.andrey.litrpg.gear.GearBonus.MANA_REGEN) / 100.0);
+        return StatBreakdown.manaRegen(this).value();
     }
 
     // ---------- раса, класс ----------

@@ -39,6 +39,27 @@ public enum Zone {
 
     public String nameKey() { return "zone.litrpg." + key; }
 
+    /**
+     * Уровни монстров в точке: в «Мире Системы» — от ближайшего города
+     * (чем дальше, тем опаснее), в обычном мире — по кольцам вокруг спавна.
+     */
+    public static int[] levels(ServerLevel level, BlockPos pos) {
+        if (com.andrey.litrpg.world.map.SystemWorld.isOverworld(level)) {
+            int l = com.andrey.litrpg.world.map.WorldMap.get().levelAt(pos.getX(), pos.getZ());
+            return new int[]{Math.max(1, l - 1), l + 2};
+        }
+        if (level.dimension() == Level.NETHER && com.andrey.litrpg.world.map.SystemWorld.is(level)) {
+            double best = 1e9;
+            for (double[] f : com.andrey.litrpg.world.map.WorldMap.get().netherFlats) {
+                best = Math.min(best, Math.hypot(pos.getX() - f[0], pos.getZ() - f[1]));
+            }
+            int l = (int) Math.min(60, 26 + (best > 1e8 ? 300 : best) / 18);
+            return new int[]{l - 1, l + 2};
+        }
+        Zone z = at(level, pos);
+        return new int[]{z.minLevel, z.maxLevel};
+    }
+
     public static Zone at(ServerLevel level, BlockPos pos) {
         if (level.dimension() == ModDimensions.SHADOW_REALM) return SHADOW;
         if (level.dimension() == Level.NETHER) return NETHER;

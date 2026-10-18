@@ -3,6 +3,8 @@
   "values": [
     "#minecraft:is_mountain",
     "#minecraft:is_hill",
-    "minecraft:windswept_forest"
+    "minecraft:windswept_forest",
+    "litrpg:dwarf_vales",
+    "litrpg:ore_slopes"
   ]
 }

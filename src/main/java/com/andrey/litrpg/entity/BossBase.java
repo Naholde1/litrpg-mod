@@ -42,7 +42,7 @@ import java.util.function.Predicate;
  * (босс замирает, светится и выкрикивает название — у игрока есть время
  * отбежать), привязку к алтарю подземелья и сброс боя, если все ушли.
  */
-public abstract class BossBase extends Monster implements LitBoss {
+public abstract class BossBase extends Monster implements LitBoss, Animated {
     /** Метка призванных боссом существ (UUID босса). */
     public static final String MINION_TAG = "litrpg_minion_of";
     private static final EntityDataAccessor<Integer> CAST = SynchedEntityData.defineId(BossBase.class, EntityDataSerializers.INT);
@@ -115,12 +115,19 @@ public abstract class BossBase extends Monster implements LitBoss {
         return s;
     }
 
+    @Override
     public int castPose() {
         return entityData.get(CAST);
     }
 
+    @Override
     public boolean isCasting() {
         return casting != null;
+    }
+
+    @Override
+    public float castAnim(float partialTick) {
+        return Mth.lerp(partialTick, castAnimO, castAnim);
     }
 
     /** Пороги здоровья для фаз (по убыванию), например {0.6f, 0.3f}. */

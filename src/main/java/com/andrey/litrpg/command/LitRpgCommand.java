@@ -270,9 +270,9 @@ public class LitRpgCommand {
 
         root.then(Commands.literal("zone").executes(c -> {
             ServerPlayer p = c.getSource().getPlayerOrException();
-            Zone z = Zone.at(p.serverLevel(), p.blockPosition());
-            c.getSource().sendSuccess(() -> Component.translatable(z.nameKey()).withStyle(z.color)
-                    .append(Component.literal(" — монстры " + z.minLevel + "–" + z.maxLevel + " ур.").withStyle(ChatFormatting.GRAY)), false);
+            int[] lv = Zone.levels(p.serverLevel(), p.blockPosition());
+            c.getSource().sendSuccess(() -> Component.literal(ServerEventsRegionName.of(p))
+                    .append(Component.literal(" — монстры " + lv[0] + "–" + lv[1] + " ур.").withStyle(ChatFormatting.GRAY)), false);
             return 1;
         }));
 

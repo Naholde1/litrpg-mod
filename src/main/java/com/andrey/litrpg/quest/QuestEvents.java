@@ -303,6 +303,25 @@ public final class QuestEvents {
         Dungeon d = Dungeon.byBoss(q.target);
         if (d == null) return;
         var level = p.serverLevel();
+        // в «Мире Системы» подземелья стоят на карте — координаты известны заранее
+        if (com.andrey.litrpg.world.map.SystemWorld.is(level) || level.dimension() == net.minecraft.world.level.Level.NETHER) {
+            for (var poi : com.andrey.litrpg.world.map.WorldMap.get().pois) {
+                if (!poi.extra().equals(d.key) || !poi.type().endsWith("dungeon")) continue;
+                boolean nether = poi.type().startsWith("nether");
+                int dx = poi.x() - p.getBlockX(), dz = poi.z() - p.getBlockZ();
+                int dist = (int) Math.sqrt((double) dx * dx + (double) dz * dz);
+                StatsManager.message(p, Component.literal("◆ " + d.title + " (ур. " + d.level + "): ").withStyle(s -> s.withColor(d.color))
+                        .append(Component.literal((nether ? "в Преисподней: " : "") + "X " + poi.x() + ", Z " + poi.z()
+                                + (nether == (level.dimension() == net.minecraft.world.level.Level.NETHER)
+                                ? " — " + dist + " бл. на " + direction(dx, dz) + ". Метка добавлена на карту." : ""))
+                                .withStyle(ChatFormatting.WHITE)));
+                if (nether == (level.dimension() == net.minecraft.world.level.Level.NETHER)) {
+                    com.andrey.litrpg.network.ModNetwork.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
+                            new com.andrey.litrpg.network.WaypointPacket(poi.x(), poi.z()));
+                }
+                return;
+            }
+        }
         if (level.dimension() != net.minecraft.world.level.Level.OVERWORLD) {
             StatsManager.message(p, Component.literal("Подземелья находятся в Верхнем мире.").withStyle(ChatFormatting.RED));
             return;

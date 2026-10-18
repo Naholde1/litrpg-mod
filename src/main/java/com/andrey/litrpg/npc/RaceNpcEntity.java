@@ -87,8 +87,9 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
                 .add(Attributes.ATTACK_DAMAGE, t.damage)
                 .add(Attributes.MOVEMENT_SPEED, t.speed)
                 .add(Attributes.FOLLOW_RANGE, 28.0)
-                .add(Attributes.ARMOR, t.role == NpcType.Role.CHIEF ? 10 : t.race == com.andrey.litrpg.stats.Race.DWARF ? 6 : 3)
-                .add(Attributes.KNOCKBACK_RESISTANCE, t.role == NpcType.Role.CHIEF ? 0.7 : 0.1);
+                .add(Attributes.ARMOR, t.isGuard() ? 30 : t.role == NpcType.Role.CHIEF ? 10 : t.race == com.andrey.litrpg.stats.Race.DWARF ? 6 : 3)
+                .add(Attributes.ARMOR_TOUGHNESS, t.isGuard() ? 12 : 0)
+                .add(Attributes.KNOCKBACK_RESISTANCE, t.isGuard() ? 1.0 : t.role == NpcType.Role.CHIEF ? 0.7 : 0.1);
     }
 
     @Override
@@ -101,6 +102,11 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
         goalSelector.addGoal(1, new OpenDoorGoal(this, true));
         switch (npc.role) {
             case WARRIOR, CHIEF -> goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.15, true));
+            case GUARD -> goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.35, true));
+            case CITIZEN -> {
+                goalSelector.addGoal(1, new PanicGoal(this, 1.4));
+                goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Monster.class, 12f, 1.0, 1.4));
+            }
             case ARCHER -> goalSelector.addGoal(2, new RangedAttackGoal(this, 1.0, 30, 18f));
             case MAGE -> goalSelector.addGoal(2, new RangedAttackGoal(this, 1.0, 40, 16f));
             case TRADER -> {
@@ -112,7 +118,14 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
         goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.6));
         goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8f));
         goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-        if (npc.fights()) {
+        if (npc.isGuard()) {
+            // стража: преступники, враги народа и любые монстры в городе
+            targetSelector.addGoal(1, new HurtByTargetGoal(this, RaceNpcEntity.class).setAlertOthers());
+            targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 5, false, false,
+                    e -> e instanceof Player p && (com.andrey.litrpg.city.CityLaw.isWanted(p) || hostileTo(p))));
+            targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, net.minecraft.world.entity.Mob.class, 5, false, false,
+                    e -> e instanceof Enemy && com.andrey.litrpg.ability.Minions.ownerOf(e) == null));
+        } else if (npc.fights()) {
             targetSelector.addGoal(1, new HurtByTargetGoal(this, RaceNpcEntity.class).setAlertOthers());
             targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false,
                     e -> e instanceof Player p && hostileTo(p)));
@@ -156,10 +169,24 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
                 case BEASTKIN -> ModItems.TEMPLATE_ITEMS.get(npc.role == NpcType.Role.CHIEF ? "beast_spear" : "beast_claws").get();
                 default -> ModItems.TEMPLATE_ITEMS.get("demon_blade").get();
             });
-            case TRADER -> ItemStack.EMPTY;
+            case TRADER, CITIZEN -> ItemStack.EMPTY;
+            case GUARD -> new ItemStack(switch (npc.race) {
+                case ELF -> ModItems.TEMPLATE_ITEMS.get("elven_blade").get();
+                case DWARF -> ModItems.TEMPLATE_ITEMS.get("dwarven_hammer").get();
+                case ORC -> ModItems.TEMPLATE_ITEMS.get("orc_cleaver").get();
+                case BEASTKIN -> ModItems.TEMPLATE_ITEMS.get("beast_spear").get();
+                case DEMONKIN -> ModItems.TEMPLATE_ITEMS.get("demon_blade").get();
+                default -> Items.NETHERITE_SWORD;
+            });
         };
+        if (npc.race == com.andrey.litrpg.stats.Race.HUMAN && npc.role == NpcType.Role.WARRIOR) main = new ItemStack(Items.IRON_SWORD);
+        if (npc.race == com.andrey.litrpg.stats.Race.HUMAN && npc.role == NpcType.Role.CHIEF) main = new ItemStack(Items.DIAMOND_SWORD);
+        if (npc.isGuard()) {
+            setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.SHIELD));
+            setDropChance(EquipmentSlot.OFFHAND, 0f);
+        }
         setItemSlot(EquipmentSlot.MAINHAND, main);
-        setDropChance(EquipmentSlot.MAINHAND, npc.role == NpcType.Role.CHIEF ? 0.25f : 0.02f);
+        setDropChance(EquipmentSlot.MAINHAND, npc.isGuard() ? 0f : npc.role == NpcType.Role.CHIEF ? 0.25f : 0.02f);
     }
 
     // ---------- бой ----------
@@ -191,9 +218,21 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
         playSound(SoundEvents.EVOKER_CAST_SPELL, 1f, 1.2f);
     }
 
+    /** Стража: урон по ней вчетверо слабее, не разбивается при падении, постепенно лечится. */
+    @Override
+    protected void actuallyHurt(DamageSource source, float amount) {
+        super.actuallyHurt(source, npc.isGuard() ? amount / 4f : amount);
+    }
+
+    @Override
+    public boolean causeFallDamage(float distance, float multiplier, DamageSource source) {
+        return !npc.isGuard() && super.causeFallDamage(distance, multiplier, source);
+    }
+
     @Override
     protected void customServerAiStep() {
         super.customServerAiStep();
+        if (npc.isGuard() && tickCount % 20 == 0 && getHealth() < getMaxHealth()) heal(6f);
         if (bossEvent != null) {
             bossEvent.setName(getDisplayName());
             bossEvent.setProgress(getHealth() / getMaxHealth());
@@ -232,6 +271,7 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
 
     public net.minecraft.world.item.Item token() {
         return switch (npc.race) {
+            case HUMAN -> Items.EMERALD;
             case ELF -> ModItems.ELF_TOKEN.get();
             case DWARF -> ModItems.DWARF_TOKEN.get();
             case ORC -> ModItems.ORC_TOKEN.get();
@@ -245,8 +285,13 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!isAlive() || getTarget() == player) return super.mobInteract(player, hand);
+        if (npc.role == NpcType.Role.CITIZEN) {
+            if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
+            if (!level().isClientSide) com.andrey.litrpg.city.Gossip.talk((ServerPlayer) player, this);
+            return InteractionResult.sidedSuccess(level().isClientSide);
+        }
         if (npc.role != NpcType.Role.TRADER) {
-            // воины, маги и вожди раздают поручения своего народа
+            // воины, маги, стража и вожди раздают поручения своего народа
             if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
             if (level().isClientSide) return InteractionResult.SUCCESS;
             ServerPlayer sp = (ServerPlayer) player;

@@ -44,7 +44,10 @@ public enum Dungeon {
     ASH_CITADEL("ash_citadel", "Цитадель Пепла", 55, "archdemon", 0xC0303A,
             "Твердыня Архидемона Баал'Зара. Отсюда Пепел расползается по миру. Последний рубеж.",
             Faction.KINGDOM, 120, Faction.ELVES, 120, Faction.DWARVES, 120, Faction.ORCS, 100,
-            Faction.BEASTKIN, 120, Faction.DEMONKIN, -300);
+            Faction.BEASTKIN, 120, Faction.DEMONKIN, -300),
+    NETHER_HEART("nether_heart", "Сердце Преисподней", 50, "flame_lord", 0xE04020,
+            "Раскалённое сердце Преисподней под городом демонидов. Здесь первородное пламя рождает своих владык.",
+            Faction.DWARVES, 60, Faction.PIGLINS, 40, Faction.DEMONKIN, -40);
 
     public final String key;
     public final String title;

@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
-    "#minecraft:is_forest"
+    "#minecraft:is_forest",
+    "litrpg:sylvan_wildwood",
+    "litrpg:moon_grove",
+    "litrpg:silver_glade"
   ]
 }

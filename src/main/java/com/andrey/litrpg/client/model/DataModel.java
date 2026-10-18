@@ -1,7 +1,7 @@
 package com.andrey.litrpg.client.model;
 
 import com.andrey.litrpg.LitRPG;
-import com.andrey.litrpg.entity.BossBase;
+import com.andrey.litrpg.entity.Animated;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -30,7 +30,7 @@ import java.util.Map;
  * (её вместе с текстурой создаёт tools/gen_bosses.py). Части, кубы и
  * простые анимации: взгляд, шаг, покачивание, вращение, замах, поза навыка.
  */
-public class DataModel<T extends BossBase> extends EntityModel<T> {
+public class DataModel<T extends net.minecraft.world.entity.Mob> extends EntityModel<T> {
     private record Anim(String type, int axis, float amp, float speed, float phase) {}
 
     private record Part(ModelPart part, float rx, float ry, float rz, float x, float y, float z, List<Anim> anims) {}
@@ -137,8 +137,13 @@ public class DataModel<T extends BossBase> extends EntityModel<T> {
 
     @Override
     public void prepareMobModel(T entity, float limbSwing, float limbAmount, float partialTick) {
-        this.cast = Mth.lerp(partialTick, entity.castAnimO, entity.castAnim);
-        this.pose = entity.castPose();
+        if (entity instanceof Animated a) {
+            this.cast = a.castAnim(partialTick);
+            this.pose = a.castPose();
+        } else {
+            this.cast = 0;
+            this.pose = 0;
+        }
     }
 
     @Override

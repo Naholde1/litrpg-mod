@@ -1,0 +1,552 @@
+"""
+Библиотека построек для карты «Мира Системы»: дома с интерьерами, башни,
+стены с воротами, рынки, фонтаны, деревья, фонари, статуи. Стили народов.
+Используется tools/gen_mapbuild.py.
+"""
+import math
+import os
+import random
+import sys
+
+sys.path.insert(0, os.path.dirname(__file__))
+from gen_structures import Build, TInt, TByte, TDouble, TList, write_nbt, ROOT as DATA_LITRPG  # noqa: E402,F401
+
+DIRS = {'north': (0, -1), 'south': (0, 1), 'west': (-1, 0), 'east': (1, 0)}
+OPP = {'north': 'south', 'south': 'north', 'west': 'east', 'east': 'west'}
+FACING_BYTE = {'south': 0, 'west': 1, 'north': 2, 'east': 3}
+
+STYLES = {
+    'human': dict(found=['minecraft:stone_bricks', 'minecraft:stone_bricks', 'minecraft:mossy_stone_bricks', 'minecraft:cracked_stone_bricks'],
+                  wall=['minecraft:calcite', 'minecraft:calcite', 'minecraft:polished_diorite'],
+                  frame='minecraft:dark_oak_log', floor='minecraft:spruce_planks', plank='minecraft:spruce_planks',
+                  roofs=[('minecraft:deepslate_tile_stairs', 'minecraft:deepslate_tile_slab', 'minecraft:deepslate_tiles'),
+                         ('minecraft:brick_stairs', 'minecraft:brick_slab', 'minecraft:bricks'),
+                         ('minecraft:dark_oak_stairs', 'minecraft:dark_oak_slab', 'minecraft:dark_oak_planks'),
+                         ('minecraft:dark_prismarine_stairs', 'minecraft:dark_prismarine_slab', 'minecraft:dark_prismarine')],
+                  door='minecraft:spruce_door', glass='minecraft:glass_pane', fence='minecraft:spruce_fence',
+                  light='minecraft:lantern', street=['minecraft:stone_bricks', 'minecraft:andesite', 'minecraft:polished_andesite', 'minecraft:cobblestone'],
+                  path=['minecraft:dirt_path', 'minecraft:coarse_dirt', 'minecraft:gravel'], banner='minecraft:blue_banner',
+                  carpet='minecraft:red_carpet', wool='minecraft:blue_wool', accent='minecraft:gold_block', chimney='minecraft:cobblestone'),
+    'elf': dict(found=['minecraft:calcite', 'minecraft:mossy_stone_bricks', 'minecraft:calcite'],
+                wall=['minecraft:birch_planks', 'minecraft:stripped_birch_wood'], frame='minecraft:birch_log', floor='minecraft:birch_planks',
+                plank='minecraft:birch_planks',
+                roofs=[('minecraft:birch_stairs', 'minecraft:birch_slab', 'minecraft:birch_planks'),
+                       ('minecraft:prismarine_brick_stairs', 'minecraft:prismarine_brick_slab', 'minecraft:prismarine_bricks')],
+                door='minecraft:birch_door', glass='minecraft:light_blue_stained_glass_pane', fence='minecraft:birch_fence',
+                light='minecraft:pearlescent_froglight', street=['minecraft:moss_block', 'minecraft:calcite', 'minecraft:mossy_cobblestone'],
+                path=['minecraft:moss_block', 'minecraft:grass_block'], banner='minecraft:lime_banner', carpet='minecraft:green_carpet',
+                wool='minecraft:lime_wool', accent='minecraft:emerald_block', chimney='minecraft:mossy_cobblestone'),
+    'dwarf': dict(found=['minecraft:polished_deepslate', 'minecraft:deepslate_bricks', 'minecraft:deepslate_tiles'],
+                  wall=['minecraft:deepslate_bricks', 'minecraft:polished_deepslate', 'minecraft:stone_bricks'], frame='minecraft:polished_basalt',
+                  floor='minecraft:polished_blackstone', plank='minecraft:dark_oak_planks',
+                  roofs=[('minecraft:deepslate_brick_stairs', 'minecraft:deepslate_brick_slab', 'minecraft:deepslate_bricks'),
+                         ('minecraft:polished_blackstone_brick_stairs', 'minecraft:polished_blackstone_brick_slab', 'minecraft:polished_blackstone_bricks')],
+                  door='minecraft:dark_oak_door', glass='minecraft:orange_stained_glass_pane', fence='minecraft:dark_oak_fence',
+                  light='minecraft:lantern', street=['minecraft:polished_andesite', 'minecraft:deepslate_tiles', 'minecraft:stone_bricks'],
+                  path=['minecraft:gravel', 'minecraft:cobblestone'], banner='minecraft:orange_banner', carpet='minecraft:orange_carpet',
+                  wool='minecraft:orange_wool', accent='minecraft:gold_block', chimney='minecraft:polished_blackstone_bricks'),
+    'orc': dict(found=['minecraft:mud_bricks', 'minecraft:cobblestone', 'minecraft:packed_mud'],
+                wall=['minecraft:spruce_log', 'minecraft:stripped_spruce_log'], frame='minecraft:spruce_log', floor='minecraft:coarse_dirt',
+                plank='minecraft:spruce_planks',
+                roofs=[('minecraft:spruce_stairs', 'minecraft:spruce_slab', 'minecraft:spruce_planks'),
+                       ('minecraft:mud_brick_stairs', 'minecraft:mud_brick_slab', 'minecraft:mud_bricks')],
+                door='minecraft:spruce_door', glass='minecraft:air', fence='minecraft:spruce_fence', light='minecraft:lantern',
+                street=['minecraft:coarse_dirt', 'minecraft:packed_mud', 'minecraft:dirt_path'], path=['minecraft:coarse_dirt'],
+                banner='minecraft:red_banner', carpet='minecraft:red_carpet', wool='minecraft:brown_wool', accent='minecraft:bone_block',
+                chimney='minecraft:cobblestone'),
+    'beast': dict(found=['minecraft:cobblestone', 'minecraft:mossy_cobblestone'], wall=['minecraft:spruce_log'], frame='minecraft:spruce_log',
+                  floor='minecraft:spruce_planks', plank='minecraft:spruce_planks',
+                  roofs=[('minecraft:spruce_stairs', 'minecraft:spruce_slab', 'minecraft:spruce_planks')],
+                  door='minecraft:spruce_door', glass='minecraft:air', fence='minecraft:spruce_fence', light='minecraft:lantern',
+                  street=['minecraft:podzol', 'minecraft:coarse_dirt', 'minecraft:dirt_path'], path=['minecraft:podzol'],
+                  banner='minecraft:brown_banner', carpet='minecraft:brown_carpet', wool='minecraft:brown_wool', accent='minecraft:bone_block',
+                  chimney='minecraft:cobblestone'),
+    'demon': dict(found=['minecraft:polished_blackstone_bricks', 'minecraft:cracked_polished_blackstone_bricks', 'minecraft:blackstone'],
+                  wall=['minecraft:red_nether_bricks', 'minecraft:nether_bricks', 'minecraft:polished_blackstone_bricks'],
+                  frame='minecraft:crimson_stem', floor='minecraft:crimson_planks', plank='minecraft:crimson_planks',
+                  roofs=[('minecraft:nether_brick_stairs', 'minecraft:nether_brick_slab', 'minecraft:nether_bricks'),
+                         ('minecraft:polished_blackstone_brick_stairs', 'minecraft:polished_blackstone_brick_slab', 'minecraft:polished_blackstone_bricks')],
+                  door='minecraft:crimson_door', glass='minecraft:red_stained_glass_pane', fence='minecraft:nether_brick_fence',
+                  light='minecraft:soul_lantern', street=['minecraft:blackstone', 'minecraft:polished_blackstone', 'minecraft:basalt'],
+                  path=['minecraft:soul_soil'], banner='minecraft:black_banner', carpet='minecraft:black_carpet', wool='minecraft:red_wool',
+                  accent='minecraft:crying_obsidian', chimney='minecraft:blackstone'),
+}
+
+
+class City(Build):
+    """Большая постройка с удобными помощниками. Координаты локальные, y=G — уровень земли (по нему ходят)."""
+
+    def __init__(self, sx, sy, sz, seed, style, ground=4):
+        super().__init__(sx, sy, sz, seed)
+        self.st = STYLES[style]
+        self.style = style
+        self.G = ground
+        self.rnd = random.Random(seed)
+        self.reserved = []
+
+    def bp(self, opts, x, y, z):
+        """Детерминированный выбор блока по координатам."""
+        if isinstance(opts, str):
+            return opts
+        n = (x * 73856093 ^ y * 19349663 ^ z * 83492791) & 0x7FFFFFFF
+        return opts[n % len(opts)]
+
+    def free(self, x1, z1, x2, z2):
+        for (a1, b1, a2, b2) in self.reserved:
+            if x1 <= a2 and x2 >= a1 and z1 <= b2 and z2 >= b1:
+                return False
+        return 0 <= x1 and 0 <= z1 and x2 < self.size[0] and z2 < self.size[2]
+
+    def reserve(self, x1, z1, x2, z2):
+        self.reserved.append((x1, z1, x2, z2))
+
+    # ---------- простые блоки ----------
+    def stair(self, x, y, z, block, facing, half='bottom'):
+        self.set(x, y, z, block, facing=facing, half=half, shape='straight', waterlogged='false')
+
+    def slab(self, x, y, z, block, half='bottom'):
+        self.set(x, y, z, block, type=half, waterlogged='false')
+
+    def lantern(self, x, y, z, hanging=False):
+        l = self.st['light']
+        if 'lantern' in l:
+            self.set(x, y, z, l, hanging='true' if hanging else 'false', waterlogged='false')
+        else:
+            self.set(x, y, z, l, axis='y') if 'froglight' in l else self.set(x, y, z, l)
+
+    def door(self, x, y, z, facing, block=None):
+        b = block or self.st['door']
+        self.set(x, y, z, b, facing=facing, half='lower', hinge='left', open='false', powered='false')
+        self.set(x, y + 1, z, b, facing=facing, half='upper', hinge='left', open='false', powered='false')
+
+    def bed(self, x, y, z, facing, color='red'):
+        dx, dz = DIRS[facing]
+        self.set(x, y, z, f'minecraft:{color}_bed', facing=facing, part='foot', occupied='false')
+        self.set(x + dx, y, z + dz, f'minecraft:{color}_bed', facing=facing, part='head', occupied='false')
+
+    def lamp_post(self, x, z, h=3, fence=None):
+        f = fence or self.st['fence']
+        for i in range(h):
+            self.set(x, self.G + i, z, f, waterlogged='false')
+        self.lantern(x, self.G + h, z)
+
+    def banner_wall(self, x, y, z, facing, color=None):
+        b = (color or self.st['banner']).replace('_banner', '_wall_banner')
+        self.set(x, y, z, b, facing=facing)
+
+    def tree(self, x, z, h=6, log='minecraft:oak_log', leaves='minecraft:oak_leaves', r=3.0, y=None):
+        y0 = self.G if y is None else y
+        for i in range(h):
+            self.set(x, y0 + i, z, log, axis='y')
+        cy = y0 + h
+        rr = int(r) + 1
+        for dx in range(-rr, rr + 1):
+            for dy in range(-2, rr + 1):
+                for dz in range(-rr, rr + 1):
+                    d = math.sqrt(dx * dx + (dy * 1.3) ** 2 + dz * dz)
+                    if d <= r and self.rnd.random() < 0.9 and (dx, dz) != (0, 0) or (dx == 0 and dz == 0 and dy > 0 and d <= r):
+                        if (x + dx, cy + dy, z + dz) not in self.blocks:
+                            self.set(x + dx, cy + dy, z + dz, leaves, persistent='true', distance='1', waterlogged='false')
+
+    def fountain(self, cx, cz, r=4, block=None):
+        blk = block or self.bp(self.st['found'], 0, 0, 0)
+        for x in range(cx - r, cx + r + 1):
+            for z in range(cz - r, cz + r + 1):
+                d = math.hypot(x - cx, z - cz)
+                if d <= r + 0.5:
+                    if d > r - 0.7:
+                        self.set(x, self.G, z, blk)
+                        self.slab(x, self.G + 1, z, 'minecraft:smooth_stone_slab')
+                    else:
+                        self.set(x, self.G - 1, z, blk)
+                        self.set(x, self.G, z, 'minecraft:water', level='0')
+        for y in range(self.G, self.G + 4):
+            self.set(cx, y, cz, 'minecraft:chiseled_stone_bricks' if y < self.G + 3 else 'minecraft:sea_lantern')
+        self.set(cx, self.G + 4, cz, 'minecraft:water', level='0')
+
+    def bench(self, x, z, facing):
+        self.stair(x, self.G, z, 'minecraft:spruce_stairs', OPP[facing])
+
+    def well(self, cx, cz):
+        for dx in range(-1, 2):
+            for dz in range(-1, 2):
+                if dx == 0 and dz == 0:
+                    for y in range(self.G - 6, self.G):
+                        self.set(cx, y, cz, 'minecraft:water', level='0')
+                    continue
+                self.set(cx + dx, self.G, cz + dz, 'minecraft:cobblestone_wall')
+        for dx, dz in ((-1, -1), (1, -1), (-1, 1), (1, 1)):
+            self.set(cx + dx, self.G + 1, cz + dz, self.st['fence'], waterlogged='false')
+            self.set(cx + dx, self.G + 2, cz + dz, self.st['fence'], waterlogged='false')
+        for dx in range(-1, 2):
+            for dz in range(-1, 2):
+                self.slab(cx + dx, self.G + 3, cz + dz, 'minecraft:spruce_slab')
+
+    # ---------- дом ----------
+    def house(self, x0, z0, w, d, floors=1, door='south', roof=None, interior='home', npc=None, lit=True):
+        """Дом w×d (внешние стены), дверь на стороне door. Возвращает центр."""
+        st = self.st
+        G = self.G
+        roof = roof or st['roofs'][self.rnd.randrange(len(st['roofs']))]
+        fh = 4
+        top = G + floors * fh
+        x1, z1 = x0 + w - 1, z0 + d - 1
+        self.reserve(x0 - 1, z0 - 1, x1 + 1, z1 + 1)
+        for x in range(x0, x1 + 1):
+            for z in range(z0, z1 + 1):
+                self.set(x, G - 1, z, self.bp(st['found'], x, G - 1, z))
+                edge = x in (x0, x1) or z in (z0, z1)
+                for y in range(G, top):
+                    lvl = (y - G) % fh
+                    if lvl == 0 and y > G and not edge:
+                        self.set(x, y, z, st['floor'])
+                        continue
+                    if edge:
+                        corner = x in (x0, x1) and z in (z0, z1)
+                        mid = (x - x0) % 4 == 0 if z in (z0, z1) else (z - z0) % 4 == 0
+                        if corner or (mid and lvl != 0) or lvl == 0 and y > G:
+                            self.set(x, y, z, st['frame'], axis='y') if 'log' in st['frame'] or 'stem' in st['frame'] or 'basalt' in st['frame'] \
+                                else self.set(x, y, z, st['frame'])
+                        elif y - G < 4 and self.style == 'human':
+                            self.set(x, y, z, self.bp(st['found'], x, y, z))
+                        else:
+                            self.set(x, y, z, self.bp(st['wall'], x, y, z))
+                    else:
+                        self.set(x, y, z, 'minecraft:air')
+                if not edge:
+                    self.set(x, G - 1, z, st['floor'])
+        # окна (у орков и зверолюдов — просто проёмы с решёткой из забора)
+        pane = st['glass'] if st['glass'] != 'minecraft:air' else st['fence']
+        for f in range(floors):
+            wy = G + f * fh + 1
+            for x in range(x0 + 2, x1 - 1, 3):
+                for z in (z0, z1):
+                    if (x - x0) % 4 != 0:
+                        self.set(x, wy, z, pane, waterlogged='false')
+                        if pane == st['glass']:
+                            self.set(x, wy + 1, z, pane, waterlogged='false')
+            for z in range(z0 + 2, z1 - 1, 3):
+                for x in (x0, x1):
+                    if (z - z0) % 4 != 0:
+                        self.set(x, wy, z, pane, waterlogged='false')
+        # дверь
+        cx, cz = (x0 + x1) // 2, (z0 + z1) // 2
+        if (cx - x0) % 4 == 0:
+            cx += 1
+        if (cz - z0) % 4 == 0:
+            cz += 1
+        if door == 'south':
+            dx_, dz_ = cx, z1
+        elif door == 'north':
+            dx_, dz_ = cx, z0
+        elif door == 'west':
+            dx_, dz_ = x0, cz
+        else:
+            dx_, dz_ = x1, cz
+        self.door(dx_, G, dz_, door)
+        ox, oz = DIRS[door]
+        self.set(dx_ + ox, G - 1, dz_ + oz, self.bp(st['found'], dx_, G, dz_))
+        if lit:
+            self.lantern(dx_ + ox + (1 if door in ('north', 'south') else 0), G + 2, dz_ + oz + (0 if door in ('north', 'south') else 1))
+        # лестница между этажами
+        if floors > 1:
+            for f in range(floors - 1):
+                for i in range(fh):
+                    self.set(x0 + 1, G + f * fh + i, z0 + 1, 'minecraft:ladder', facing='south', waterlogged='false')
+                self.set(x0 + 1, G + (f + 1) * fh, z0 + 1, 'minecraft:air')
+        self.furnish(x0, z0, x1, z1, floors, interior, door)
+        self.roof(x0, z0, x1, z1, top, roof)
+        if npc:
+            self.entities.append((cx, G, cz if door in ('east', 'west') else (z0 + z1) // 2, npc, {}))
+        return cx, cz
+
+    def furnish(self, x0, z0, x1, z1, floors, kind, door):
+        G = self.G
+        r = self.rnd
+        for f in range(floors):
+            y = G + f * 4
+            spots = [(x1 - 1, z0 + 1), (x1 - 1, z1 - 1), (x0 + 1, z1 - 1), (x0 + 2, z0 + 1)]
+            r.shuffle(spots)
+            if kind in ('home', 'tavern') and f == floors - 1 or kind == 'home' and floors == 1:
+                bx, bz = spots[0]
+                fac = 'north' if bz == z1 - 1 else 'south'
+                if self.blocks.get((bx, y, bz + (-1 if fac == 'north' else 1)), ('',))[0] == 'minecraft:air':
+                    self.bed(bx, y, bz, fac, r.choice(['red', 'blue', 'white', 'green', 'brown']))
+            opts = {'home': ['minecraft:crafting_table', 'minecraft:barrel', 'minecraft:bookshelf', 'minecraft:furnace', 'flowerpot', 'table'],
+                    'shop': ['minecraft:barrel', 'minecraft:barrel', 'minecraft:chest', 'table', 'minecraft:bookshelf'],
+                    'smith': ['minecraft:anvil', 'minecraft:smithing_table', 'minecraft:blast_furnace', 'minecraft:grindstone', 'minecraft:barrel'],
+                    'tavern': ['table', 'table', 'minecraft:barrel', 'minecraft:barrel', 'minecraft:smoker'],
+                    'library': ['minecraft:bookshelf', 'minecraft:bookshelf', 'minecraft:lectern', 'minecraft:enchanting_table', 'table'],
+                    'guard': ['minecraft:armor_stand_marker', 'minecraft:barrel', 'table', 'minecraft:grindstone']}[kind]
+            for (sx, sz) in spots[1:]:
+                o = r.choice(opts)
+                if self.blocks.get((sx, y, sz), ('',))[0] != 'minecraft:air':
+                    continue
+                if o == 'table':
+                    self.set(sx, y, sz, self.st['fence'], waterlogged='false')
+                    self.set(sx, y + 1, sz, 'minecraft:spruce_pressure_plate', powered='false')
+                elif o == 'flowerpot':
+                    self.set(sx, y, sz, 'minecraft:potted_' + r.choice(['red_tulip', 'oxeye_daisy', 'fern', 'azure_bluet', 'cornflower']))
+                elif o == 'minecraft:armor_stand_marker':
+                    self.entities.append((sx, y, sz, 'minecraft:armor_stand', {'ShowArms': TByte(1)}))
+                elif o in ('minecraft:furnace', 'minecraft:blast_furnace', 'minecraft:smoker'):
+                    self.set(sx, y, sz, o, facing='west' if sx == x1 - 1 else 'east', lit='false')
+                elif o == 'minecraft:anvil':
+                    self.set(sx, y, sz, o, facing='north')
+                elif o == 'minecraft:chest':
+                    self.set(sx, y, sz, o, facing='west' if sx == x1 - 1 else 'east', type='single', waterlogged='false')
+                elif o == 'minecraft:barrel':
+                    self.set(sx, y, sz, o, facing='up', open='false')
+                elif o == 'minecraft:lectern':
+                    self.set(sx, y, sz, o, facing='north', has_book='false', powered='false')
+                elif o == 'minecraft:grindstone':
+                    self.set(sx, y, sz, o, face='floor', facing='north')
+                else:
+                    self.set(sx, y, sz, o)
+            self.lantern((x0 + x1) // 2, y + 3, (z0 + z1) // 2, hanging=True)
+            if kind != 'shop':
+                self.set((x0 + x1) // 2, y, (z0 + z1) // 2, self.st['carpet'])
+
+    def roof(self, x0, z0, x1, z1, top, roof):
+        stairs, slab, full = roof
+        along_x = (x1 - x0) >= (z1 - z0)
+        if along_x:
+            half = (z1 - z0 + 2) // 2
+            for i in range(half + 1):
+                y = top + i
+                za, zb = z0 - 1 + i, z1 + 1 - i
+                if za > zb:
+                    break
+                for x in range(x0 - 1, x1 + 2):
+                    if za == zb:
+                        self.slab(x, y, za, slab)
+                    else:
+                        self.stair(x, y, za, stairs, 'south')
+                        self.stair(x, y, zb, stairs, 'north')
+                for z in range(za + 1, zb):
+                    for x in (x0, x1):
+                        self.set(x, y, z, full)
+            if (z1 - z0) % 2 == 0:
+                for x in range(x0 - 1, x1 + 2):
+                    self.slab(x, top + half, (z0 + z1) // 2, slab)
+        else:
+            half = (x1 - x0 + 2) // 2
+            for i in range(half + 1):
+                y = top + i
+                xa, xb = x0 - 1 + i, x1 + 1 - i
+                if xa > xb:
+                    break
+                for z in range(z0 - 1, z1 + 2):
+                    if xa == xb:
+                        self.slab(xa, y, z, slab)
+                    else:
+                        self.stair(xa, y, z, stairs, 'east')
+                        self.stair(xb, y, z, stairs, 'west')
+                for x in range(xa + 1, xb):
+                    for z in (z0, z1):
+                        self.set(x, y, z, full)
+        # труба с дымом
+        if self.rnd.random() < 0.6:
+            hx, hz = x1 - 1, z0 + 1
+            for y in range(top, top + (z1 - z0) // 2 + 3):
+                self.set(hx, y, hz, self.st['chimney'])
+            self.set(hx, top + (z1 - z0) // 2 + 3, hz, 'minecraft:campfire', lit='true', signal_fire='false', facing='north', waterlogged='false')
+
+    # ---------- башни и стены ----------
+    def round_tower(self, cx, cz, r, h, roof_block='minecraft:dark_prismarine', top_light=True, base=None):
+        G = self.G
+        blk = base or self.st['found']
+        self.reserve(cx - r - 1, cz - r - 1, cx + r + 1, cz + r + 1)
+        for x in range(cx - r, cx + r + 1):
+            for z in range(cz - r, cz + r + 1):
+                d = math.hypot(x - cx, z - cz)
+                if d > r + 0.45:
+                    continue
+                shell = d > r - 1.0
+                for y in range(G - 1, G + h):
+                    if shell:
+                        win = (y - G) % 6 == 3 and abs((x - cx)) <= 0 or (y - G) % 6 == 3 and abs(z - cz) <= 0
+                        self.set(x, y, z, 'minecraft:air' if win and y > G + 2 else self.bp(blk, x, y, z))
+                    elif (y - G) % 6 == 0:
+                        self.set(x, y, z, self.st['plank'])
+                    else:
+                        self.set(x, y, z, 'minecraft:air')
+                # зубцы
+                if shell:
+                    self.set(x, G + h, z, self.bp(blk, x, G + h, z))
+                    if (x + z) % 2 == 0:
+                        self.set(x, G + h + 1, z, self.bp(blk, x, G + h + 1, z))
+                else:
+                    self.set(x, G + h, z, self.st['plank'])
+        for y in range(G, G + h):
+            self.set(cx, y, cz - r + 1, 'minecraft:ladder', facing='south', waterlogged='false')
+        # конусная крыша
+        if roof_block:
+            for i in range(r + 3):
+                rr = r + 1 - i * 0.75
+                if rr < 0.3:
+                    self.set(cx, G + h + 2 + i, cz, roof_block)
+                    break
+                for x in range(cx - r - 1, cx + r + 2):
+                    for z in range(cz - r - 1, cz + r + 2):
+                        d = math.hypot(x - cx, z - cz)
+                        if rr - 1 < d <= rr:
+                            self.set(x, G + h + 2 + i, z, roof_block)
+            self.set(cx, G + h + 2 + r + 3, cz, 'minecraft:lightning_rod', facing='up', powered='false', waterlogged='false')
+        if top_light:
+            self.lantern(cx, G + h + 1, cz)
+
+    def wall_line(self, ax, az, bx, bz, h=10, thick=3, gates=()):
+        """Крепостная стена с дозорным ходом и зубцами по отрезку."""
+        n = int(max(abs(bx - ax), abs(bz - az)))
+        G = self.G
+        for s in range(n + 1):
+            x = round(ax + (bx - ax) * s / max(1, n))
+            z = round(az + (bz - az) * s / max(1, n))
+            gate = any(math.hypot(x - gx, z - gz) < gr for gx, gz, gr in gates)
+            for t in range(-(thick // 2), thick // 2 + 1):
+                px, pz = (x + t, z) if abs(bz - az) > abs(bx - ax) else (x, z + t)
+                for y in range(G - 1, G + h):
+                    if gate and y < G + 7:
+                        self.set(px, y, pz, 'minecraft:air') if y >= G else self.set(px, y, pz, self.bp(self.st['street'], px, y, pz))
+                    else:
+                        self.set(px, y, pz, self.bp(self.st['found'], px, y, pz))
+                edge = t in (-(thick // 2), thick // 2)
+                if edge and (s % 2 == 0):
+                    self.set(px, G + h, pz, self.bp(self.st['found'], px, G + h, pz))
+                if gate:
+                    for y in range(G + 7, G + h):
+                        self.set(px, y, pz, self.bp(self.st['found'], px, y, pz))
+                    self.set(px, G + 6, pz, 'minecraft:iron_bars') if t == 0 else None
+
+    def statue(self, cx, cz, h=12, block='minecraft:smooth_stone', accent='minecraft:gold_block'):
+        """Простая статуя воина с мечом на постаменте."""
+        G = self.G
+        for x in range(cx - 2, cx + 3):
+            for z in range(cz - 2, cz + 3):
+                for y in range(G, G + 2):
+                    self.set(x, y, z, 'minecraft:chiseled_stone_bricks' if y == G + 1 and (x + z) % 2 else 'minecraft:stone_bricks')
+        b = G + 2
+        k = h / 12
+        # ноги
+        for y in range(b, b + int(4 * k)):
+            self.set(cx - 1, y, cz, block)
+            self.set(cx + 1, y, cz, block)
+        # тело
+        for y in range(b + int(4 * k), b + int(8 * k)):
+            for x in range(cx - 1, cx + 2):
+                self.set(x, y, cz, block)
+                self.set(x, y, cz - 1, block) if y > b + int(6 * k) else None
+        # руки
+        for y in range(b + int(5 * k), b + int(8 * k)):
+            self.set(cx - 2, y, cz, block)
+            self.set(cx + 2, y, cz, block)
+        # голова
+        for y in range(b + int(8 * k), b + int(10 * k)):
+            self.set(cx, y, cz, block)
+        self.set(cx, b + int(10 * k), cz, accent)
+        # меч
+        for y in range(b + int(4 * k), b + int(12 * k)):
+            self.set(cx + 2, y, cz - 1, 'minecraft:iron_block' if y > b + int(6 * k) else accent)
+
+
+def save_tiles(b, name, tile=128):
+    """Сохранить постройку как набор плиток не больше tile×tile. -> список (dx, dz, имя)."""
+    sx, sy, sz = b.size
+    out = []
+    for tx in range(0, sx, tile):
+        for tz in range(0, sz, tile):
+            sub = Build(min(tile, sx - tx), sy, min(tile, sz - tz), name)
+            for (x, y, z), v in b.blocks.items():
+                if tx <= x < tx + tile and tz <= z < tz + tile:
+                    sub.blocks[(x - tx, y, z - tz)] = v
+                    if (x, y, z) in b.nbt:
+                        sub.nbt[(x - tx, y, z - tz)] = b.nbt[(x, y, z)]
+            for e in b.entities:
+                x, y, z = e[0], e[1], e[2]
+                if tx <= x < tx + tile and tz <= z < tz + tile:
+                    sub.entities.append((x - tx, y, z - tz) + tuple(e[3:]))
+            if not sub.blocks and not sub.entities:
+                continue
+            tname = f'{name}_{tx // tile}_{tz // tile}' if (sx > tile or sz > tile) else name
+            save_map(sub, tname)
+            out.append((tx, tz, tname))
+    return out
+
+
+def save_map(b, name):
+    """Как Build.save, но в structures/map/ и с NBT сущностей (картины)."""
+    palette, index = [], {}
+    blocks = TList(10)
+    for (x, y, z), (bl, props) in sorted(b.blocks.items(), key=lambda kv: (kv[0][1], kv[0][0], kv[0][2])):
+        key = (bl, props)
+        if key not in index:
+            index[key] = len(palette)
+            entry = {'Name': bl}
+            if props:
+                entry['Properties'] = {k: str(v) for k, v in props}
+            palette.append(entry)
+        e = {'pos': TList(3, [TInt(x), TInt(y), TInt(z)]), 'state': TInt(index[key])}
+        if (x, y, z) in b.nbt:
+            e['nbt'] = b.nbt[(x, y, z)]
+        blocks.append(e)
+    ents = TList(10)
+    for e in b.entities:
+        x, y, z, eid = e[:4]
+        extra = e[4] if len(e) > 4 else {}
+        nbt = {'id': eid, 'PersistenceRequired': TByte(1)}
+        nbt.update(extra)
+        pos = TList(6, [TDouble(x + 0.5), TDouble(y), TDouble(z + 0.5)])
+        if eid == 'minecraft:painting':
+            pos = TList(6, [TDouble(x + 0.5), TDouble(y + 0.5), TDouble(z + 0.5)])
+            nbt.pop('PersistenceRequired', None)
+        ents.append({'pos': pos, 'blockPos': TList(3, [TInt(x), TInt(y), TInt(z)]), 'nbt': nbt})
+    root = {'DataVersion': TInt(3465), 'size': TList(3, [TInt(v) for v in b.size]),
+            'palette': TList(10, palette), 'blocks': blocks, 'entities': ents}
+    d = os.path.join(DATA_LITRPG, 'structures', 'map')
+    os.makedirs(d, exist_ok=True)
+    write_nbt(os.path.join(d, name + '.nbt'), root)
+
+
+# ---------------- превью сверху ----------------
+
+_COL = [('water', (60, 110, 200)), ('lava', (230, 100, 20)), ('leaves', (60, 130, 50)), ('grass', (90, 150, 70)), ('moss', (80, 130, 60)),
+        ('farmland', (120, 80, 40)), ('wheat', (200, 180, 60)), ('carrots', (120, 160, 60)), ('potatoes', (120, 160, 60)),
+        ('wool', (200, 60, 60)), ('glass', (170, 210, 230)), ('terracotta', (210, 190, 170)), ('quartz', (235, 230, 225)),
+        ('amethyst', (160, 100, 220)), ('gold', (240, 200, 60)), ('beacon', (120, 240, 240)), ('prismarine', (60, 140, 140)),
+        ('deepslate', (70, 70, 80)), ('blackstone', (40, 35, 45)), ('nether', (100, 30, 35)), ('crimson', (140, 40, 60)),
+        ('brick', (160, 80, 60)), ('dark_oak', (70, 50, 30)), ('spruce', (110, 80, 50)), ('birch', (215, 205, 160)),
+        ('oak', (160, 130, 80)), ('mangrove', (120, 50, 40)), ('stone', (130, 130, 130)), ('andesite', (140, 140, 140)),
+        ('diorite', (200, 200, 200)), ('cobble', (120, 120, 120)), ('sand', (220, 210, 160)), ('dirt', (130, 100, 70)),
+        ('mud', (90, 80, 70)), ('basalt', (80, 80, 90)), ('bone', (225, 220, 200)), ('lantern', (255, 220, 120)), ('snow', (245, 250, 255)),
+        ('ice', (160, 200, 250)), ('calcite', (225, 225, 220)), ('froglight', (250, 240, 200))]
+
+
+def preview_top(b, path, scale=2):
+    from png import write_png
+    sx, sy, sz = b.size
+    top = {}
+    for (x, y, z), (bl, _) in b.blocks.items():
+        if bl == 'minecraft:air':
+            continue
+        if (x, z) not in top or top[(x, z)][0] < y:
+            top[(x, z)] = (y, bl)
+    img = [[(25, 28, 34, 255)] * (sx * scale) for _ in range(sz * scale)]
+    for (x, z), (y, bl) in top.items():
+        col = (150, 150, 150)
+        for k, c in _COL:
+            if k in bl:
+                col = c
+                break
+        sh = 0.7 + 0.6 * min(1.0, y / max(1, sy * 0.6))
+        col = tuple(min(255, int(c * sh)) for c in col)
+        for dy in range(scale):
+            for dx in range(scale):
+                img[z * scale + dy][x * scale + dx] = col + (255,)
+    for e in b.entities:
+        x, z = e[0], e[2]
+        for dy in range(scale):
+            for dx in range(scale):
+                if 0 <= z * scale + dy < len(img) and 0 <= x * scale + dx < len(img[0]):
+                    img[z * scale + dy][x * scale + dx] = (255, 0, 255, 255)
+    write_png(path, img, sx * scale, sz * scale)

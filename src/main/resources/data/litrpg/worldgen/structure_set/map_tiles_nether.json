@@ -1,0 +1,12 @@
+{
+ "structures": [
+  {
+   "structure": "litrpg:map_tiles_nether",
+   "weight": 1
+  }
+ ],
+ "placement": {
+  "type": "litrpg:map_tiles",
+  "layer": "nether"
+ }
+}
