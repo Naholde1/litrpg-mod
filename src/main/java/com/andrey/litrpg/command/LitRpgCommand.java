@@ -216,7 +216,7 @@ public class LitRpgCommand {
                             var f = com.andrey.litrpg.rep.Faction.byKey(StringArgumentType.getString(c, "faction"));
                             if (f == null) return;
                             com.andrey.litrpg.quest.QuestEvents.ensureFactionOffers(p, f);
-                            StatsManager.sync(p);
+                            StatsManager.syncNow(p);
                             com.andrey.litrpg.network.ModNetwork.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
                                     new com.andrey.litrpg.network.OpenQuestsPacket(f.key, "Вождь"));
                         }))))));

@@ -256,7 +256,7 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
                 return InteractionResult.CONSUME;
             }
             com.andrey.litrpg.quest.QuestEvents.ensureFactionOffers(sp, npc.faction);
-            StatsManager.sync(sp);
+            StatsManager.syncNow(sp);
             com.andrey.litrpg.network.ModNetwork.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> sp),
                     new com.andrey.litrpg.network.OpenQuestsPacket(npc.faction.key, getName().getString()));
             return InteractionResult.CONSUME;

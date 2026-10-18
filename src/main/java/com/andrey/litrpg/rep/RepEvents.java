@@ -306,6 +306,7 @@ public final class RepEvents {
                 && !target.getPersistentData().getBoolean(PROVOKED_TAG)) {
             change(sp, f, -10); // нападение на жителя
         }
+        if (target.getPersistentData().getBoolean(PROVOKED_TAG)) return; // соседи уже предупреждены
         target.getPersistentData().putBoolean(PROVOKED_TAG, true);
         for (LivingEntity e : target.level().getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(12),
                 e -> factionOf(e) == f)) {

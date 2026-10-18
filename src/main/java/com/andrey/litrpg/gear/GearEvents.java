@@ -71,7 +71,15 @@ public final class GearEvents {
         if (event.phase != TickEvent.Phase.END || !(event.player instanceof ServerPlayer p) || p.tickCount % 10 != 0) return;
         List<ItemStack> eq = equipped(p);
         int sig = StatsManager.get(p).getLevel();
-        for (ItemStack st : eq) sig = sig * 31 + (st.isEmpty() ? 0 : st.getItem().hashCode() * 7 + (st.hasTag() ? st.getTag().hashCode() : 0));
+        // подпись снаряжения: предмет и его свойства Системы (износ и прочий NBT не вызывают пересчёта)
+        for (ItemStack st : eq) {
+            if (st.isEmpty()) {
+                sig *= 31;
+                continue;
+            }
+            var gear = st.getTagElement(GearData.TAG);
+            sig = sig * 31 + st.getItem().hashCode() * 7 + (gear != null ? gear.hashCode() : 0);
+        }
         if (p.getPersistentData().getInt(SIG_TAG) != sig || !p.getPersistentData().contains(SIG_TAG)) {
             p.getPersistentData().putInt(SIG_TAG, sig);
             recompute(p, eq);

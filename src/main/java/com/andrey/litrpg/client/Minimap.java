@@ -26,6 +26,7 @@ public class Minimap {
     private static int scanRow = 0;
     private static int centerX, centerZ;
     private static boolean dirty = false;
+    private static boolean idle = false;
     private static int uploadCooldown = 0;
 
     private static void ensureTexture(Minecraft mc) {
@@ -44,12 +45,18 @@ public class Minimap {
         if (img == null) return;
 
         if (scanRow == 0) {
-            centerX = Mth.floor(mc.player.getX());
-            centerZ = Mth.floor(mc.player.getZ());
+            int nx = Mth.floor(mc.player.getX()), nz = Mth.floor(mc.player.getZ());
+            // игрок почти стоит на месте — карта обновляется втрое реже
+            idle = Math.abs(nx - centerX) <= 2 && Math.abs(nz - centerZ) <= 2;
+            centerX = nx;
+            centerZ = nz;
         }
         int py = Mth.floor(mc.player.getY());
         int half = SIZE / 2;
-        for (int r = 0; r < ROWS_PER_TICK; r++) {
+        // в мирах с потолком (Незер) столбец просматривается вглубь — это дороже
+        int rows = mc.level.dimensionType().hasCeiling() ? ROWS_PER_TICK / 2 : ROWS_PER_TICK;
+        if (idle) rows = Math.max(1, rows / 3);
+        for (int r = 0; r < rows; r++) {
             int row = scanRow + r;
             if (row >= SIZE) break;
             int z = centerZ - half + row;
@@ -58,7 +65,7 @@ public class Minimap {
                 img.setPixelRGBA(col, row, MapColors.columnColor(mc.level, x, z, py));
             }
         }
-        scanRow += ROWS_PER_TICK;
+        scanRow += rows;
         if (scanRow >= SIZE) scanRow = 0;
         dirty = true;
     }

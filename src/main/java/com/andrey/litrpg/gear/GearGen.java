@@ -17,8 +17,13 @@ import java.util.List;
 public final class GearGen {
     private GearGen() {}
 
-    /** Веса редкостей от обычной до легендарной. Божественные выпадают отдельным, крошечным броском. */
-    private static final int[] BASE_WEIGHTS = {600, 260, 100, 32, 7};
+    /**
+     * Веса редкостей от обычной до легендарной (без бонусов: 70% / 22% / 6% / 1.4% / 0.2%).
+     * Божественные выпадают отдельным, крошечным броском.
+     */
+    private static final int[] BASE_WEIGHTS = {700, 220, 60, 14, 2};
+    /** Насколько сильно бонус (элита, босс, удача) сдвигает редкость вверх. */
+    private static final float BOOST_POWER = 0.6f;
     /** Шанс, что легендарный предмет окажется божественным (у босса, при boost 2.5). */
     private static final float DIVINE_FROM_LEGENDARY = 0.01f;
 
@@ -32,7 +37,7 @@ public final class GearGen {
         double[] w = new double[BASE_WEIGHTS.length];
         double sum = 0;
         for (int i = 0; i < w.length; i++) {
-            w[i] = BASE_WEIGHTS[i] * Math.pow(1 + boost, i);
+            w[i] = BASE_WEIGHTS[i] * Math.pow(1 + boost * BOOST_POWER, i);
             sum += w[i];
         }
         double r = rnd.nextDouble() * sum;
@@ -40,7 +45,7 @@ public final class GearGen {
             r -= w[i];
             if (r <= 0) {
                 Rarity res = Rarity.values()[i];
-                if (divine && res == Rarity.LEGENDARY && rnd.nextFloat() < DIVINE_FROM_LEGENDARY * (1 + boost) / 3.5f) {
+                if (divine && res == Rarity.LEGENDARY && rnd.nextFloat() < DIVINE_FROM_LEGENDARY * (1 + boost * BOOST_POWER) / 2.5f) {
                     return Rarity.DIVINE;
                 }
                 return res;

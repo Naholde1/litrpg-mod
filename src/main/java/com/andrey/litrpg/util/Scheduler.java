@@ -54,12 +54,14 @@ public final class Scheduler {
             if (!keep || t.done >= t.times) it.remove();
             else t.wait = t.period;
         }
+        com.andrey.litrpg.stats.StatsManager.flushSync();
     }
 
     @SubscribeEvent
     public static void onStop(ServerStoppingEvent event) {
         TASKS.clear();
         PENDING.clear();
+        com.andrey.litrpg.stats.StatsManager.clearSync();
     }
 
     private static final class Task {

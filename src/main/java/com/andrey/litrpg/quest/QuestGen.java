@@ -139,7 +139,7 @@ public final class QuestGen {
         q.xp = d.level * 50;
         q.coins = d.level * 10;
         q.rep = 60 + rnd.nextInt(30);
-        q.gearRarity = Rarity.EPIC.ordinal();
+        q.gearRarity = Rarity.RARE.ordinal();
         q.gearLevel = d.level;
         return q;
     }
@@ -149,7 +149,7 @@ public final class QuestGen {
         q.coins = Math.round((10 + level * 4) * mult);
         if (q.source == Quest.Source.FACTION) q.rep = 15 + rnd.nextInt(16);
         if (rnd.nextFloat() < 0.5f) {
-            Rarity r = GearGen.rollRarity(rnd, 0.6f + level * 0.01f, false);
+            Rarity r = GearGen.rollRarity(rnd, 0.4f + level * 0.006f, false);
             if (r == Rarity.COMMON) r = Rarity.UNCOMMON;
             q.gearRarity = r.ordinal();
             q.gearLevel = Math.max(1, level);

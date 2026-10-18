@@ -43,9 +43,9 @@ public final class Story {
             boss(Dungeon.CRYPT, "Склеп Лича", "Лич копит армию мёртвых в усыпальнице королей (ур. 30). Останови его.",
                     Rarity.EPIC.ordinal(), "litrpg:tome_of_experience", 2),
             boss(Dungeon.FROST_CITADEL, "Вечная мерзлота", "Ледяной великан Имир пробуждается в своей цитадели (ур. 38). Зима не должна прийти.",
-                    Rarity.LEGENDARY.ordinal(), "", 0),
+                    Rarity.EPIC.ordinal(), "", 0),
             boss(Dungeon.CRUCIBLE, "Горнило", "Владыка Игнис раздувает первородный огонь (ур. 45). Погаси его пламя.",
-                    Rarity.LEGENDARY.ordinal(), "litrpg:ascension_stone", 2),
+                    Rarity.EPIC.ordinal(), "litrpg:ascension_stone", 2),
             boss(Dungeon.ASH_CITADEL, "Повелитель Пепла", "Последний рубеж. Архидемон Баал'Зар ждёт в Цитадели Пепла (ур. 55). Судьба мира — в твоих руках.",
                     Rarity.LEGENDARY.ordinal(), "litrpg:divine_spark", 1),
     };

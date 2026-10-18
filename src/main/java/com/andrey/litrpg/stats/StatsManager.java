@@ -51,10 +51,34 @@ public class StatsManager {
         player.sendSystemMessage(system().append(Component.empty().append(text).withStyle(ChatFormatting.WHITE)));
     }
 
+    /** Игроки, чьи данные изменились за этот тик: отправляются один раз в конце тика. */
+    private static final java.util.Set<ServerPlayer> DIRTY = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+
+    /**
+     * Синхронизация с клиентом. За один тик данные могут меняться много раз
+     * (опыт, репутация, задания за одно убийство) — пакет уходит только один.
+     */
     public static void sync(ServerPlayer player) {
+        DIRTY.add(player);
+    }
+
+    /** Немедленная отправка (например, перед открытием окна, которому нужны свежие данные). */
+    public static void syncNow(ServerPlayer player) {
+        DIRTY.remove(player);
         PlayerStats s = get(player);
-        long now = player.level().getGameTime();
-        ModNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new SyncStatsPacket(s, now));
+        ModNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new SyncStatsPacket(s, player.level().getGameTime()));
+    }
+
+    /** Вызывается в конце каждого серверного тика. */
+    public static void flushSync() {
+        if (DIRTY.isEmpty()) return;
+        ServerPlayer[] list = DIRTY.toArray(new ServerPlayer[0]);
+        DIRTY.clear();
+        for (ServerPlayer p : list) if (!p.hasDisconnected()) syncNow(p);
+    }
+
+    public static void clearSync() {
+        DIRTY.clear();
     }
 
     /** Лёгкая синхронизация: только мана (раз в секунду при восстановлении). */

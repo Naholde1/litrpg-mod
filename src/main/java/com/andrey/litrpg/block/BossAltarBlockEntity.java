@@ -65,7 +65,11 @@ public class BossAltarBlockEntity extends BlockEntity {
         long now = level.getGameTime();
         Vec3 c = Vec3.atBottomCenterOf(pos);
 
-        // приветствие у входа в арену
+        // приветствие у входа в арену (снова — после того, как игрок ушёл)
+        if (now % 600 == 0) be.greeted.removeIf(id -> {
+            var pl = sl.getPlayerByUUID(id);
+            return pl == null || pl.distanceToSqr(c) > 60 * 60;
+        });
         if (now % 40 == 0) {
             for (ServerPlayer p : sl.getEntitiesOfClass(ServerPlayer.class, new AABB(pos).inflate(30, 16, 30))) {
                 if (be.greeted.add(p.getUUID())) {
