@@ -1,0 +1,17 @@
+{
+  "name": "Монеты",
+  "icon": "litrpg:silver_coin",
+  "category": "litrpg:economy",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(l)9 медных$() = 1 серебряная, $(l)9 серебряных$() = 1 золотая (обмен на верстаке).$(br2)Монеты падают с монстров (бонус «монет с монстров» увеличивает их число) и с жителей рас."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "litrpg:silver_coin",
+      "recipe2": "litrpg:gold_coin"
+    }
+  ]
+}

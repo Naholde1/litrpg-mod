@@ -17,10 +17,17 @@ public enum Title {
     LICHBANE("lichbane", Counter.LICH, 1, 0, 0, 2, 4, 2),
     REALM_WALKER("realm_walker", Counter.REALM_VISITS, 1, 0, 1, 0, 1, 0),
     UNLUCKY("unlucky", Counter.DEATHS, 10, 0, 0, 1, 0, 3),
-    DEEP_DELVER("deep_delver", Counter.ORES, 500, 1, 0, 2, 0, 1);
+    DEEP_DELVER("deep_delver", Counter.ORES, 500, 1, 0, 2, 0, 1),
+    // за Почтение у народов (выдаются вручную при достижении ступени)
+    ELF_FRIEND("elf_friend", Counter.REPUTATION, Integer.MAX_VALUE, 0, 2, 0, 1, 1),
+    DWARF_FRIEND("dwarf_friend", Counter.REPUTATION, Integer.MAX_VALUE, 1, 0, 2, 0, 1),
+    ORC_FRIEND("orc_friend", Counter.REPUTATION, Integer.MAX_VALUE, 2, 0, 1, 0, 1),
+    BEAST_FRIEND("beast_friend", Counter.REPUTATION, Integer.MAX_VALUE, 0, 2, 0, 0, 2),
+    DEMON_FRIEND("demon_friend", Counter.REPUTATION, Integer.MAX_VALUE, 1, 0, 0, 2, 1),
+    KINGDOM_FRIEND("kingdom_friend", Counter.REPUTATION, Integer.MAX_VALUE, 1, 1, 1, 1, 1);
 
     public enum Counter {
-        KILLS, GOBLINS, UNDEAD, ELITES, GIANT_KILLS, GOBLIN_KING, LICH, REALM_VISITS, DEATHS, ORES;
+        KILLS, GOBLINS, UNDEAD, ELITES, GIANT_KILLS, GOBLIN_KING, LICH, REALM_VISITS, DEATHS, ORES, REPUTATION;
 
         public String key() { return name().toLowerCase(); }
     }

@@ -61,6 +61,18 @@ public final class RepEvents {
         if (before != after) {
             StatsManager.message(p, Component.literal("Отношение народа «" + f.title + "»: ")
                     .append(Component.literal(after.title).withStyle(after.color)));
+            if (after == Faction.Tier.REVERED) {
+                com.andrey.litrpg.stats.Title t = switch (f) {
+                    case ELVES -> com.andrey.litrpg.stats.Title.ELF_FRIEND;
+                    case DWARVES -> com.andrey.litrpg.stats.Title.DWARF_FRIEND;
+                    case ORCS -> com.andrey.litrpg.stats.Title.ORC_FRIEND;
+                    case BEASTKIN -> com.andrey.litrpg.stats.Title.BEAST_FRIEND;
+                    case DEMONKIN -> com.andrey.litrpg.stats.Title.DEMON_FRIEND;
+                    case KINGDOM -> com.andrey.litrpg.stats.Title.KINGDOM_FRIEND;
+                    default -> null;
+                };
+                if (t != null) StatsManager.grantTitle(p, t);
+            }
             p.level().playSound(null, p.getX(), p.getY(), p.getZ(),
                     after.ordinal() > before.ordinal() ? SoundEvents.VILLAGER_CELEBRATE : SoundEvents.VILLAGER_NO, SoundSource.PLAYERS, 0.8f, 1f);
         }

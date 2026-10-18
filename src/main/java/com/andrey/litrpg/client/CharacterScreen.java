@@ -30,6 +30,7 @@ public class CharacterScreen extends SystemScreen {
 
     private static int tab = 0;
     private int titleScroll = 0;
+    private int repScroll = 0;
     private final List<Hit> hits = new ArrayList<>();
     private Component tooltip;
 
@@ -260,7 +261,7 @@ public class CharacterScreen extends SystemScreen {
                     b.append('+').append(v).append(' ').append(Component.translatable(st.translationKey()).getString());
                 }
             }
-            String right = has ? b.toString() : s.getCounter(t.counter) + " / " + t.threshold;
+            String right = has ? b.toString() : t.threshold == Integer.MAX_VALUE ? "по репутации" : s.getCounter(t.counter) + " / " + t.threshold;
             g.drawString(font, right, x + W - 26 - font.width(right), ry + 6, has ? 0xFF9CFF9C : 0xFF888888, false);
             if (UiKit.inside(mx, my, x, ry, W - 20, 20)) {
                 tooltip = Component.translatable(t.descKey()).copy()
@@ -273,8 +274,12 @@ public class CharacterScreen extends SystemScreen {
 
     private void reputation(GuiGraphics g, PlayerStats s, int x, int y, int mx, int my) {
         var factions = com.andrey.litrpg.rep.Faction.values();
-        for (int i = 0; i < factions.length; i++) {
-            var f = factions[i];
+        int rows = 6;
+        repScroll = Math.max(0, Math.min(repScroll, factions.length - rows));
+        g.drawString(font, "Народов: " + factions.length + "   (колесо — прокрутка)", x, y - 1, UiKit.MUTED, false);
+        y += 10;
+        for (int i = 0; i < rows && i + repScroll < factions.length; i++) {
+            var f = factions[i + repScroll];
             int ry = y + i * 31;
             int rep = s.getRep(f);
             var tier = com.andrey.litrpg.rep.Faction.Tier.of(rep);
@@ -314,6 +319,10 @@ public class CharacterScreen extends SystemScreen {
     protected boolean scrollContent(double mx, double my, double delta) {
         if (tab == 3) {
             titleScroll -= (int) Math.signum(delta);
+            return true;
+        }
+        if (tab == 4) {
+            repScroll -= (int) Math.signum(delta);
             return true;
         }
         return false;
