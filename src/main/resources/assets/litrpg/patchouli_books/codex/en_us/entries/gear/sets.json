@@ -1,0 +1,21 @@
+{
+  "name": "Наборы брони",
+  "icon": "litrpg:bonewarden_chestplate",
+  "category": "litrpg:gear",
+  "sortnum": 4,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(l)Гоблинский$() (ур. ~10): 2 — +10% скорости; 4 — +3 Ловкость и Удача, гоблины не нападают.$(br2)$(l)Костяной$() (ур. ~20): 2 — +4 брони; 4 — +4 Выносливость, нежить бьёт на 25% слабее.$(br2)$(l)Теневой$() (ур. ~32): 2 — +5% уклонения; 4 — +10% крита, удар из скрытности x2."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "litrpg:goblin_chestplate",
+      "recipe2": "litrpg:bonewarden_chestplate"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "litrpg:shadow_chestplate"
+    }
+  ]
+}

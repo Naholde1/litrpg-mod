@@ -35,6 +35,10 @@ public class CharacterScreen extends SystemScreen {
 
     private record Hit(int x, int y, int w, int h, Runnable action) {}
 
+    public static void setTab(int t) {
+        tab = Math.max(0, Math.min(TABS.length - 1, t));
+    }
+
     public CharacterScreen() {
         super(Component.literal("Персонаж"), 380, 250);
     }

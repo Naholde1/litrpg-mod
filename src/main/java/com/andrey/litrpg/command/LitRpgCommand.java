@@ -214,6 +214,34 @@ public class LitRpgCommand {
                     return 1;
                 }))));
 
+        root.then(Commands.literal("gear").then(players()
+                .then(Commands.argument("level", IntegerArgumentType.integer(1, 99))
+                        .then(Commands.argument("rarity", StringArgumentType.word())
+                                .suggests((c, b) -> SharedSuggestionProvider.suggest(Arrays.stream(com.andrey.litrpg.gear.Rarity.values()).map(x -> x.key), b))
+                                .executes(c -> giveGear(c, 1))
+                                .then(Commands.argument("count", IntegerArgumentType.integer(1, 36)).executes(c -> giveGear(c, IntegerArgumentType.getInteger(c, "count"))))))));
+
+        root.then(Commands.literal("unique").then(players()
+                .then(Commands.argument("item", StringArgumentType.word())
+                        .suggests((c, b) -> SharedSuggestionProvider.suggest(com.andrey.litrpg.gear.GearGen.UNIQUES, b))
+                        .executes(c -> {
+                            String key = StringArgumentType.getString(c, "item");
+                            for (ServerPlayer p : EntityArgument.getPlayers(c, "players")) {
+                                var st = com.andrey.litrpg.gear.GearGen.unique(key);
+                                if (!p.getInventory().add(st)) p.drop(st, false);
+                            }
+                            return 1;
+                        }))));
+
+        root.then(Commands.literal("rep").then(players()
+                .then(Commands.argument("faction", StringArgumentType.word())
+                        .suggests((c, b) -> SharedSuggestionProvider.suggest(Arrays.stream(com.andrey.litrpg.rep.Faction.values()).map(x -> x.key), b))
+                        .then(Commands.argument("value", IntegerArgumentType.integer(-1000, 1000))
+                                .executes(c -> {
+                                    var f = parse(com.andrey.litrpg.rep.Faction.values(), StringArgumentType.getString(c, "faction"), x -> x.key);
+                                    return each(c, (p, s) -> s.setRep(f, IntegerArgumentType.getInteger(c, "value")));
+                                })))));
+
         root.then(Commands.literal("bloodmoon").executes(c -> {
             com.andrey.litrpg.world.BloodMoon.force(c.getSource().getLevel());
             return 1;
@@ -282,6 +310,18 @@ public class LitRpgCommand {
         return 1;
     }
 
+    private static int giveGear(CommandContext<CommandSourceStack> c, int count) throws CommandSyntaxException {
+        var rarity = parse(com.andrey.litrpg.gear.Rarity.values(), StringArgumentType.getString(c, "rarity"), x -> x.key);
+        int lvl = IntegerArgumentType.getInteger(c, "level");
+        for (ServerPlayer p : EntityArgument.getPlayers(c, "players")) {
+            for (int i = 0; i < count; i++) {
+                var st = com.andrey.litrpg.gear.GearGen.random(p.getRandom(), lvl, rarity);
+                if (!p.getInventory().add(st)) p.drop(st, false);
+            }
+        }
+        return count;
+    }
+
     private static int info(CommandSourceStack src, ServerPlayer p) {
         PlayerStats s = StatsManager.get(p);
         StringBuilder sb = new StringBuilder();
@@ -299,6 +339,16 @@ public class LitRpgCommand {
             sb.append(' ').append(Component.translatable(pr.nameKey()).getString()).append(" ").append(s.getProfLevel(pr));
         }
         sb.append("\nТитулы: ").append(s.getTitles().size());
+        var g = s.gear();
+        sb.append("\nЭкипировка: сила+").append(g.stats[0]).append(" ловк+").append(g.stats[1]).append(" вын+").append(g.stats[2])
+                .append(" инт+").append(g.stats[3]).append(" удача+").append(g.stats[4]).append(", бонусы ").append(g.bonus)
+                .append(", пассивки ").append(g.passives).append(", наборы ").append(g.setPieces);
+        sb.append("\nРепутация:");
+        for (var f : com.andrey.litrpg.rep.Faction.values()) sb.append(' ').append(f.key).append('=').append(s.getRep(f));
+        sb.append("\nСтиль:");
+        for (var e : com.andrey.litrpg.stats.ClassOffers.topStyles(s, 10)) {
+            sb.append(' ').append(Component.translatable(e.getKey().nameKey()).getString()).append(' ').append(e.getValue()).append('%');
+        }
         String text = sb.toString();
         src.sendSuccess(() -> Component.literal(text), false);
         return 1;

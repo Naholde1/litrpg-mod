@@ -58,7 +58,7 @@ public final class GearGen {
         };
         for (int i = 0; i < rarity.stats; i++) {
             int s = pick(rnd, weights);
-            d.stats[s] += Math.max(1, Math.round((1 + level * 0.3f) * m * (0.7f + rnd.nextFloat() * 0.6f)));
+            d.stats[s] += Math.max(1, Math.round((1 + level * 0.1f) * m * (0.7f + rnd.nextFloat() * 0.6f)));
         }
         List<GearBonus> pool = new ArrayList<>();
         for (GearBonus b : GearBonus.values()) if (b.fits(cat)) pool.add(b);

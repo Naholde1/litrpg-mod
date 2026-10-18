@@ -332,6 +332,8 @@ def main():
         except AssertionError as e:
             sys.exit(f"{name}: {e}")
         write_png(os.path.join(root, name + '.png'), rendered[name], 16, 16)
+    import gen_extra_textures
+    gen_extra_textures.generate(PALETTE, rendered, render)
     if '--preview' in sys.argv:
         out = sys.argv[sys.argv.index('--preview') + 1]
         names = list(rendered)

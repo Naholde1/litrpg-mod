@@ -46,6 +46,20 @@ public class ClientForgeEvents {
         if (net.minecraftforge.fml.loading.FMLLoader.isProduction()) return;
         if (mc.screen instanceof net.minecraft.client.gui.screens.DeathScreen) mc.player.respawn();
         if (mc.player.tickCount % 10 != 0) return;
+        java.nio.file.Path open = java.nio.file.Path.of("dev_open.txt");
+        if (java.nio.file.Files.exists(open)) {
+            try {
+                String what = java.nio.file.Files.readString(open).trim();
+                java.nio.file.Files.delete(open);
+                if (what.startsWith("char")) {
+                    CharacterScreen.setTab(Integer.parseInt(what.substring(4).trim()));
+                    mc.setScreen(new CharacterScreen());
+                } else if (what.equals("close")) {
+                    mc.setScreen(null);
+                }
+            } catch (Exception ignored) {
+            }
+        }
         java.nio.file.Path trigger = java.nio.file.Path.of("dev_screenshot.txt");
         if (!java.nio.file.Files.exists(trigger)) return;
         try {
