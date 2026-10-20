@@ -171,7 +171,7 @@ public final class CityQuests {
                 o.add(() -> collect(c, "minecraft:red_mushroom", 8, "Красные грибы", "Красные грибы ядовиты — но в малых дозах лечат."));
                 o.add(() -> deliver(c, Craft.HEALER, "Травы для лечебницы", "Отнеси этот сбор лекарю — раненых снова много."));
                 o.add(() -> deliver(c, Craft.ALCHEMIST, "Корешки для алхимика", "Алхимик заказывал корень мандрагоры. Неси, только не нюхай."));
-                o.add(() -> visit(c, new String[]{"village", "lumber"}, "Мази для деревни", "В %s хворает скот. Отнеси туда мази — путь неблизкий."));
+                o.add(() -> visit(c, new String[]{"village", "farm", "lumber"}, "Мази для деревни", "В %s хворает скот. Отнеси туда мази — путь неблизкий."));
                 if (L >= 5) o.add(() -> collect(c, "minecraft:glow_berries", 8, "Светящиеся ягоды", "Светоягоды растут в пещерах. Говорят, от них видишь в темноте."));
             }
             case ALCHEMIST -> {
@@ -274,7 +274,7 @@ public final class CityQuests {
                 o.add(() -> breed(c, "minecraft:horse", 2, "Жеребята", "Нужны молодые кони для стражи. Разведи лошадей — золотые морковки помогут."));
                 o.add(() -> collect(c, "minecraft:hay_block", 8, "Сено", "Сено на исходе, а зима близко."));
                 o.add(() -> collect(c, "minecraft:apple", 8, "Яблоки для коней", "Кони обожают яблоки. Набери в садах."));
-                o.add(() -> visit(c, new String[]{"village", "ruins", "lumber"}, "Сбежавшая кобыла", "Моя лучшая кобыла сбежала. Говорят, её видели у %s."));
+                o.add(() -> visit(c, new String[]{"farm", "village", "ruins"}, "Сбежавшая кобыла", "Моя лучшая кобыла сбежала. Говорят, её видели у %s."));
                 o.add(() -> hunt(c, QuestTarget.WOLF, 5, "Волки у пастбища", "Волки пугают табун. Отгони их."));
             }
             case MINER -> {

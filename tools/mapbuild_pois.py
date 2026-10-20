@@ -478,3 +478,128 @@ def ash_throne():
             b.set(x, y, z, 'minecraft:chain', axis='y', waterlogged='false') if y > G + 4 else b.set(x, y, z, 'minecraft:blackstone')
     b.chest(C, G + 6, C - 4, 'minecraft:chests/bastion_treasure')
     return b
+
+
+# ---------------- хутора у городов ----------------
+
+FARM_NAMES = ['Хутор Колосок', 'Хутор у Мельницы', 'Хутор Ясный', 'Хутор Медовый', 'Хутор Дубки', 'Хутор Ржаной', 'Хутор Луговой',
+              'Хутор Гусиный', 'Хутор Тихий', 'Хутор Яблоневый', 'Хутор Три Стога', 'Хутор Ключи']
+
+
+def windmill(b, cx, cz, h=11):
+    """Мельница: каменное основание, деревянный верх и крылья из заборов и шерсти."""
+    G = b.G
+    for x in range(cx - 2, cx + 3):
+        for z in range(cz - 2, cz + 3):
+            edge = abs(x - cx) == 2 or abs(z - cz) == 2
+            for y in range(G, G + h):
+                if edge:
+                    blk = b.bp(['minecraft:cobblestone', 'minecraft:mossy_cobblestone', 'minecraft:stone_bricks'], x, y, z) if y < G + 6 \
+                        else 'minecraft:spruce_planks'
+                    b.set(x, y, z, blk)
+                else:
+                    b.set(x, y, z, 'minecraft:air')
+    b.door(cx, G, cz + 2, 'south', 'minecraft:spruce_door')
+    for y in range(G + 1, G + h):
+        b.set(cx - 1, y, cz - 1, 'minecraft:ladder', facing='south', waterlogged='false')
+    b.roof(cx - 2, cz - 2, cx + 2, cz + 2, G + h, ('minecraft:spruce_stairs', 'minecraft:spruce_slab', 'minecraft:spruce_planks'))
+    hy, hz = G + h - 2, cz + 3
+    b.set(cx, hy, hz, 'minecraft:stripped_spruce_log', axis='z')
+    for k in range(1, 7):
+        for (dx, dy) in ((k, 0), (-k, 0), (0, k), (0, -k)):
+            b.set(cx + dx, hy + dy, hz, 'minecraft:spruce_fence', waterlogged='false')
+            # парус крыла
+            sx, sy = (dx, dy + (1 if dx else 0)) if dx else (dx + 1, dy)
+            if k > 1:
+                b.set(cx + sx, hy + sy, hz, 'minecraft:white_wool')
+    b.reserve(cx - 3, cz - 3, cx + 3, cz + 4)
+
+
+def farmstead(seed, style='human'):
+    """Хутор: дом, амбар с фермером, поля с каналами, пастбище, сад, мельница, пугало."""
+    rnd = random.Random(seed * 7 + 3)
+    S = 64
+    b = City(S, 48, S, 'farm%d' % seed, style, ground=4)
+    G = b.G
+    C = S // 2
+    st = b.st
+    for x in range(S):
+        for z in range(S):
+            r = math.hypot(x - C, z - C)
+            if r < C - 1:
+                path = abs(x - C) <= 1 and z > C - 6
+                b.set(x, G - 1, z, b.bp(st['path'], x, 0, z) if path else 'minecraft:grass_block', **({} if path else {'snowy': 'false'}))
+    from mapbuild_crafts import workshop
+    # дом и амбар-мастерская фермера
+    b.house(C - 13, C - 12, 9, 7, floors=2, door='south', interior='home', npc=f'litrpg:{style}_citizen')
+    workshop(b, C + 3, C - 13, 'farmer', 'south', floors=1, w=12, d=9)
+    b.well(C, C)
+    b.reserve(C - 2, C - 2, C + 2, C + 2)
+    if style in ('human', 'dwarf', 'elf'):
+        windmill(b, C - 18, C + 10)
+    crops = ['minecraft:wheat', 'minecraft:carrots', 'minecraft:potatoes', 'minecraft:beetroots', 'minecraft:wheat']
+    if style == 'demon':
+        crops = ['minecraft:nether_wart']
+    placed = 0
+    for attempt in range(40):
+        w, d = rnd.randint(9, 13), rnd.randint(6, 9)
+        x0, z0 = rnd.randint(4, S - w - 4), rnd.randint(4, S - d - 4)
+        if any(math.hypot(px - C, pz - C) > C - 3 for px, pz in ((x0, z0), (x0 + w, z0), (x0, z0 + d), (x0 + w, z0 + d))):
+            continue
+        if not b.free(x0 - 1, z0 - 1, x0 + w + 1, z0 + d + 1):
+            continue
+        kind = 'pasture' if placed == 1 else 'orchard' if placed == 3 else 'field'
+        if kind == 'field':
+            crop = rnd.choice(crops)
+            for x in range(x0, x0 + w):
+                for z in range(z0, z0 + d):
+                    if crop.endswith('nether_wart'):
+                        b.set(x, G - 1, z, 'minecraft:soul_sand')
+                        b.set(x, G, z, crop, age='3')
+                    elif (z - z0) % 4 == 2:
+                        b.set(x, G - 1, z, 'minecraft:water', level='0')
+                    else:
+                        b.set(x, G - 1, z, 'minecraft:farmland', moisture='7')
+                        b.set(x, G, z, crop, age='3' if crop.endswith('beetroots') else '7')
+            for x in range(x0 - 1, x0 + w + 1):
+                for z in (z0 - 1, z0 + d):
+                    b.set(x, G, z, st['fence'], waterlogged='false')
+            for z in range(z0, z0 + d):
+                for x in (x0 - 1, x0 + w):
+                    b.set(x, G, z, st['fence'], waterlogged='false')
+            b.set(x0 + w // 2, G, z0 - 1, 'minecraft:air')  # проход
+            if rnd.random() < 0.7:
+                sx, sz = x0 + rnd.randint(1, w - 2), z0 + 1 + (1 if (1 - z0) % 4 == 2 else 0)
+                b.set(sx, G, sz, st['fence'], waterlogged='false')
+                b.set(sx, G + 1, sz, 'minecraft:hay_block', axis='y')
+                b.set(sx, G + 2, sz, 'minecraft:carved_pumpkin', facing='south')
+                b.set(sx - 1, G + 1, sz, 'minecraft:spruce_fence', waterlogged='false')
+                b.set(sx + 1, G + 1, sz, 'minecraft:spruce_fence', waterlogged='false')
+        elif kind == 'pasture':
+            for x in range(x0, x0 + w):
+                for z in range(z0, z0 + d):
+                    if x in (x0, x0 + w - 1) or z in (z0, z0 + d - 1):
+                        b.set(x, G, z, st['fence'], waterlogged='false')
+            for i in range(4):
+                b.entities.append((rnd.randint(x0 + 1, x0 + w - 2), G, rnd.randint(z0 + 1, z0 + d - 2),
+                                   rnd.choice(['minecraft:cow', 'minecraft:sheep', 'minecraft:sheep']), {}))
+            b.set(x0 + 1, G - 1, z0 + 1, 'minecraft:water', level='0')
+        else:
+            for x in range(x0 + 1, x0 + w - 1, 4):
+                for z in range(z0 + 1, z0 + d - 1, 4):
+                    b.tree(x, z, rnd.randint(4, 5), 'minecraft:oak_log', 'minecraft:oak_leaves', 2.0)
+        b.reserve(x0 - 1, z0 - 1, x0 + w + 1, z0 + d + 1)
+        placed += 1
+        if placed >= 5:
+            break
+    # стога, телега, куры
+    for i in range(6):
+        x, z = rnd.randint(8, S - 8), rnd.randint(8, S - 8)
+        if b.free(x - 1, z - 1, x + 1, z + 1) and math.hypot(x - C, z - C) < C - 4:
+            b.set(x, G, z, 'minecraft:hay_block', axis='y')
+            b.set(x + 1, G, z, 'minecraft:hay_block', axis='x')
+            b.set(x, G + 1, z, 'minecraft:hay_block', axis='z')
+            b.reserve(x - 1, z - 1, x + 1, z + 1)
+    for i in range(4):
+        b.entities.append((C + rnd.randint(-6, 6), G, C + rnd.randint(3, 8), 'minecraft:chicken', {}))
+    return b

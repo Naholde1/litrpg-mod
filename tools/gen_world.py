@@ -12,6 +12,7 @@
 import copy
 import json
 import math
+import random
 import os
 import sys
 
@@ -80,12 +81,17 @@ SEAS = [[2080, 1380, 640, 28]]                     # Изумрудный зал
 LAKES = [[-3150, -1080, 230, 44], [-700, 930, 150, 50], [900, -3650, 250, 42],
          [-2050, 1250, 170, 48], [3150, 450, 140, 50], [-1650, -2600, 160, 46]]
 RIVERS = [
-    dict(name='Серебрянка', width=16, points=[[-3000, -900], [-2300, -850], [-1500, -650], [-900, -560], [-300, -330],
-                                              [350, -150], [900, 250], [1450, 760], [1700, 1050]]),
-    dict(name='Рудная', width=14, points=[[2350, -1850], [2100, -1300], [1850, -700], [1700, -50], [1600, 520], [1660, 900]]),
-    dict(name='Волчья', width=12, points=[[-1950, -2450], [-1600, -1900], [-1350, -1350], [-1150, -820], [-1000, -600]]),
-    dict(name='Топкая', width=12, points=[[-650, 1080], [-450, 1600], [-150, 2300], [80, 2900], [150, 3300]]),
+    # Великая Серебрянка: от озера Сильвендара мимо севера Аркадии в Изумрудный залив
+    dict(name='Серебрянка', width=48, meander=110, points=[[-3060, -1000], [-2500, -900], [-1800, -760], [-1150, -640],
+                                                            [-500, -470], [100, -420], [700, -150], [1150, 330], [1550, 760], [1820, 1080]]),
+    dict(name='Рудная', width=30, meander=70, points=[[2350, -1900], [2150, -1350], [1950, -800], [1780, -200], [1650, 400], [1700, 900]]),
+    dict(name='Волчья', width=26, meander=80, points=[[-1640, -2470], [-1500, -1900], [-1320, -1350], [-1180, -900], [-1150, -650]]),
+    dict(name='Ледяная', width=26, meander=70, points=[[860, -3420], [800, -2800], [720, -2100], [640, -1400], [560, -800], [450, -430]]),
+    dict(name='Топкая', width=34, meander=90, points=[[-700, 1080], [-520, 1600], [-260, 2150], [-120, 2900], [100, 3500], [260, 4250]]),
+    dict(name='Кровавая', width=30, meander=90, points=[[3220, 600], [3420, 1300], [3560, 2100], [3600, 2900], [3520, 3700], [3420, 4300]]),
+    dict(name='Пепельная', width=22, meander=60, points=[[-2050, 1420], [-2350, 1900], [-2200, 2400], [-2420, 3300], [-2300, 4300]]),
 ]
+
 
 # ---- города: x, z, высота площадки, радиус охраны, базовый уровень округи ----
 CITIES = [
@@ -220,13 +226,39 @@ NEW_CREATURES = {'stone_troll', 'frost_wraith', 'forest_wisp', 'ash_imp', 'bog_l
 CREATURES_READY = True
 
 
+def meander(points, amp, seed):
+    """Извилистое русло: делим ломаную на шаги ~40 бл. и сдвигаем поперёк синусами разной длины."""
+    if amp <= 0:
+        return points
+    rnd = random.Random(seed)
+    ph1, ph2 = rnd.random() * 6.28, rnd.random() * 6.28
+    out = []
+    dist = 0.0
+    total = sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(points, points[1:]))
+    for (ax, az), (bx, bz) in zip(points, points[1:]):
+        L = math.hypot(bx - ax, bz - az)
+        n = max(1, int(L / 40))
+        nx, nz = -(bz - az) / L, (bx - ax) / L
+        for k in range(n):
+            t = k / n
+            x, z = ax + (bx - ax) * t, az + (bz - az) * t
+            d = dist + L * t
+            fade = min(1.0, d / 300.0, (total - d) / 300.0)  # исток и устье — без смещения
+            off = amp * fade * (0.7 * math.sin(d / 420.0 + ph1) + 0.3 * math.sin(d / 170.0 + ph2))
+            out.append([int(round(x + nx * off)), int(round(z + nz * off))])
+        dist += L
+    out.append(list(points[-1]))
+    return out
+
+
 def make_data():
     d = dict(size=5000, wall=[4430, 4880], territories=TERRITORIES, wild=WILD, seas=SEAS, lakes=LAKES,
              rivers=[], cities=[], flats=[], roads=[], pois=[], tiles=[], levels=LEVELS)
     for rv in RIVERS:
-        xs = [p[0] for p in rv['points']]
-        zs = [p[1] for p in rv['points']]
-        d['rivers'].append(dict(rv, box=[min(xs), min(zs), max(xs), max(zs)]))
+        pts = meander(rv['points'], rv.get('meander', 0), rv['name'])
+        xs = [p[0] for p in pts]
+        zs = [p[1] for p in pts]
+        d['rivers'].append(dict(name=rv['name'], width=rv['width'], points=pts, box=[min(xs), min(zs), max(xs), max(zs)]))
     sizes = {'arcadia': 256, 'wolfden': 112, 'dawnfort': 112, 'northwatch': 112, 'blackbastion': 112}
     for c in CITIES:
         # центр города — так, чтобы шаблон начинался на границе чанка
@@ -704,7 +736,7 @@ def render_art(world, size=512):
                     if 0 <= x < size and 0 <= z < size:
                         img[z][x] = (120, 60, 30, 255)
     # поселения и подземелья — значки
-    icons = {'village': ((120, 80, 40), 1), 'dungeon': ((150, 20, 20), 2), 'wonder': ((150, 40, 160), 2),
+    icons = {'village': ((120, 80, 40), 1), 'farm': ((150, 120, 40), 1), 'dungeon': ((150, 20, 20), 2), 'wonder': ((150, 40, 160), 2),
              'camp': ((90, 60, 30), 1), 'fishing': ((40, 80, 130), 1), 'lumber': ((60, 100, 40), 1), 'caravan': ((170, 120, 30), 1),
              'outpost': ((80, 80, 80), 1), 'settlement': ((90, 60, 30), 1)}
     for poi in world.d['pois']:

@@ -142,13 +142,14 @@ def _sign(b, x, y, z, facing, text):
                         'back_text': {'messages': empty, 'color': 'black', 'has_glowing_text': TByte(0)}}
 
 
-def workshop(b, x0, z0, craft, door, floors=None, roof=None):
+def workshop(b, x0, z0, craft, door, floors=None, roof=None, w=None, d=None, check=True):
     """Мастерская ремесла craft с левым-верхним углом (x0, z0). Возвращает False, если не влезла."""
-    w, d, fl = SIZES.get(craft, (b.rnd.randint(9, 11), b.rnd.randint(8, 9), b.rnd.choice((1, 2))))
+    sw, sd, fl = SIZES.get(craft, (b.rnd.randint(9, 11), b.rnd.randint(8, 9), b.rnd.choice((1, 2))))
+    w, d = w or sw, d or sd
     if floors:
         fl = floors
     x1, z1 = x0 + w - 1, z0 + d - 1
-    if not b.free(x0 - 1, z0 - 1, x1 + 1, z1 + 1):
+    if check and not b.free(x0 - 1, z0 - 1, x1 + 1, z1 + 1):
         return False
     G = b.G
     b.house(x0, z0, w, d, floors=fl, door=door, roof=roof, interior='workshop', npc=None)
@@ -431,3 +432,110 @@ def fill_life(b, C, R, seed, citizen=None, density=1.0):
         x, z = int(C + math.cos(a) * r), int(C + math.sin(a) * r)
         if b.blocks.get((x, G, z), ('minecraft:air',))[0] == 'minecraft:air':
             b.entities.append((x, G, z, 'minecraft:cat' if i % 3 else 'minecraft:wolf', {} if i % 3 else {}))
+
+
+def craft_stall_compact(b, x, z, craft, color, facing, merchant):
+    """Лавка 5×3 для тесного рынка: столбы, тент с напуском, прилавок, товар; продавец за прилавком."""
+    G = b.G
+    front = 1 if facing == 'south' else -1
+    for dx in range(-2, 3):
+        for dz in range(-1, 2):
+            if abs(dx) == 2 and abs(dz) == 1:
+                for y in range(G, G + 3):
+                    b.set(x + dx, y, z + dz, b.st['fence'], waterlogged='false')
+            b.set(x + dx, G + 3, z + dz, f'minecraft:{color}_wool')
+        # напуск тента над прилавком
+        b.set(x + dx, G + 3, z + front * 2, f'minecraft:{color}_carpet')
+    for dx in range(-1, 2):
+        b.set(x + dx, G, z + front, 'minecraft:spruce_stairs', facing=facing, half='top', shape='straight', waterlogged='false')
+    goods = {'baker': ['minecraft:hay_block', 'minecraft:smoker'], 'butcher': ['minecraft:smoker', 'minecraft:barrel'],
+             'fishmonger': ['minecraft:barrel', 'minecraft:packed_ice'], 'farmer': ['minecraft:pumpkin', 'minecraft:melon'],
+             'herbalist': ['minecraft:moss_block', 'minecraft:composter'], 'tailor': ['minecraft:loom', 'minecraft:red_wool'],
+             'jeweler': ['minecraft:amethyst_block', 'minecraft:gold_block'], 'alchemist': ['minecraft:cauldron', 'minecraft:barrel'],
+             'fletcher': ['minecraft:fletching_table', 'minecraft:target'], 'leatherworker': ['minecraft:barrel', 'minecraft:cauldron']}
+    g = goods.get(craft, ['minecraft:barrel', 'minecraft:chest'])
+    for blk, dx in zip(g, (-1, 1)):
+        props = {}
+        if blk.endswith('smoker'):
+            props = {'facing': facing, 'lit': 'true'}
+        elif blk.endswith('loom'):
+            props = {'facing': facing}
+        elif blk.endswith('chest'):
+            props = {'facing': facing, 'type': 'single', 'waterlogged': 'false'}
+        elif blk.endswith('barrel'):
+            props = {'facing': 'up', 'open': 'false'}
+        elif blk.endswith('hay_block'):
+            props = {'axis': 'y'}
+        elif blk.endswith('composter'):
+            props = {'level': '6'}
+        b.set(x + dx, G, z - front, blk, **props)
+    # товар на прилавке (на ступенях-перевёртышах)
+    deco = {'baker': ('minecraft:cake', {'bites': '0'}), 'jeweler': ('minecraft:amethyst_cluster', {'facing': 'up', 'waterlogged': 'false'}),
+            'herbalist': ('minecraft:potted_fern', {}), 'alchemist': ('minecraft:brewing_stand', {'has_bottle_0': 'true', 'has_bottle_1': 'true',
+                                                                                                    'has_bottle_2': 'false'}),
+            'farmer': ('minecraft:carved_pumpkin', {'facing': facing}), 'fishmonger': ('minecraft:sea_pickle', {'pickles': '3', 'waterlogged': 'false'}),
+            'butcher': ('minecraft:candle', {'candles': '2', 'lit': 'true', 'waterlogged': 'false'})}.get(craft)
+    if deco:
+        b.set(x - 1, G + 1, z + front, deco[0], **deco[1])
+    b.set(x + 1, G + 1, z + front, 'minecraft:candle', candles='1', lit='true', waterlogged='false') if b.rnd.random() < 0.4 else None
+    if craft:
+        npc = RACE_NPC[b.style]
+        b.entities.append((x, G, z, npc, {'Craft': craft}))
+        b.workshops.append((craft, npc, x, G, z))
+    else:
+        b.entities.append((x, G, z, merchant, {}))
+    b.reserve(x - 2, z - 1, x + 2, z + 1)
+
+
+def fill_city(b, org, crafts, citizen, kinds=('home', 'home', 'home', 'shop', 'library'), floors=(1, 2, 2, 3), npc_chance=0.3,
+              sizes=((6, 10), (7, 10))):
+    """Застройка кварталов: сначала мастерские поближе к центру, потом жилые дома вдоль улиц."""
+    rnd = random.Random(len(crafts) * 31 + org.R)
+    queue = list(crafts)
+    fails = {'n': 0}
+
+    def ws_size():
+        if not queue:
+            return (1000, 1000)
+        fails['n'] += 1
+        if fails['n'] > 80 and len(queue) > 1:
+            queue.append(queue.pop(0))
+            fails['n'] = 0
+        w, d, _ = SIZES.get(queue[0], (rnd.randint(9, 11), rnd.randint(8, 9), 1))
+        return (w, d)
+
+    def ws_place(rect, side, h):
+        if not queue:
+            return False
+        x0, z0, x1, z1 = rect
+        if workshop(b, x0, z0, queue[0], side, w=x1 - x0 + 1, d=z1 - z0 + 1, check=False):
+            queue.pop(0)
+            fails['n'] = 0
+            return True
+        return False
+
+    org.lots(ws_place, ws_size, max_lots=len(crafts), prefer_center=True)
+    if queue:
+        org.lots(ws_place, ws_size, max_lots=len(queue))
+
+    def h_size():
+        return (rnd.randint(*sizes[0]), rnd.randint(*sizes[1]))
+
+    def h_place(rect, side, h):
+        x0, z0, x1, z1 = rect
+        fl = rnd.choice(floors)
+        kind = rnd.choice(kinds) if fl > 1 else 'home'
+        b.house(x0, z0, x1 - x0 + 1, z1 - z0 + 1, floors=fl, door=side, interior=kind,
+                npc=citizen if rnd.random() < npc_chance else None)
+        return True
+
+    n = org.lots(h_place, h_size)
+    # второй проход: домики поменьше в оставшиеся щели
+    small = ((5, 7), (6, 8))
+
+    def s_size():
+        return (rnd.randint(*small[0]), rnd.randint(*small[1]))
+
+    n += org.lots(h_place, s_size)
+    n += org.lots(h_place, s_size)
+    return len(crafts) - len(queue), n

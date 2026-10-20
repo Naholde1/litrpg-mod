@@ -55,6 +55,7 @@ public class AtlasScreen extends Screen {
                     case "dungeon" -> "подземелье";
                     case "wonder" -> "чудо света";
                     case "village" -> "деревня";
+                    case "farm" -> "хутор";
                     case "fishing" -> "рыбацкий посёлок";
                     case "lumber" -> "лесопилка";
                     case "caravan" -> "стоянка караванщиков";

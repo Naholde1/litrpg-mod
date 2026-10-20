@@ -46,6 +46,8 @@ public class CityRepairs extends SavedData {
     private record Task(long pos, BlockPos home, long since) {}
 
     private final Map<Long, Entry> entries = new LinkedHashMap<>();
+    /** Места, которые строители уже восстановили: ломать их снова — без добычи (против бесконечной кражи). */
+    private final java.util.Set<Long> restored = new java.util.HashSet<>();
     private final Map<RaceNpcEntity, Task> tasks = new WeakHashMap<>();
 
     public static CityRepairs get(ServerLevel level) {
@@ -79,6 +81,10 @@ public class CityRepairs extends SavedData {
     public BlockState original(BlockPos pos) {
         Entry e = entries.get(pos.asLong());
         return e == null ? null : e.state;
+    }
+
+    public boolean wasRestored(BlockPos pos) {
+        return restored.contains(pos.asLong());
     }
 
     public void forget(BlockPos pos) {
@@ -167,6 +173,7 @@ public class CityRepairs extends SavedData {
         entries.remove(e.pos.asLong());
         setDirty();
         if (now.equals(e.state)) return;
+        if (!e.state.isAir() && restored.size() < 200000) restored.add(e.pos.asLong());
         if (e.state.isAir()) {
             // постройка игрока в городе — разобрать, вернув материалы
             level.destroyBlock(e.pos, true);
@@ -196,6 +203,7 @@ public class CityRepairs extends SavedData {
             l.add(t);
         }
         tag.put("entries", l);
+        tag.putLongArray("restored", restored.stream().mapToLong(Long::longValue).toArray());
         return tag;
     }
 
@@ -208,6 +216,7 @@ public class CityRepairs extends SavedData {
             BlockState st = NbtUtils.readBlockState(blocks, t.getCompound("s"));
             r.entries.put(pos.asLong(), new Entry(pos, st, t.getLong("t"), t.getString("c")));
         }
+        for (long v : tag.getLongArray("restored")) r.restored.add(v);
         return r;
     }
 }

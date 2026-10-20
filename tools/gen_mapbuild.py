@@ -279,49 +279,34 @@ def arcadia(city):
     b.set(ax, G + 20, tz0 - 1, 'minecraft:bell', attachment='ceiling', facing='north', powered='false')
     b.entities.append((ax, G, tz0 + td - 7, 'litrpg:human_mage', {}))
 
-    # --- рынок (восток) ---
-    mx0, mz0, mx1, mz1 = C + 34, C - 24, C + 82, C + 24
-    b.reserve(mx0, mz0, mx1, mz1)
-    for x in range(mx0, mx1 + 1):
-        for z in range(mz0, mz1 + 1):
-            b.set(x, G - 1, z, 'minecraft:smooth_stone' if (x // 3 + z // 3) % 2 else 'minecraft:polished_andesite')
-    b.well((mx0 + mx1) // 2, (mz0 + mz1) // 2)
-    colors = ['red', 'yellow', 'blue', 'green', 'orange', 'purple', 'white', 'cyan', 'lime', 'magenta']
+    # --- рынок (восток): тесные ряды лавок вдоль проспекта ---
     import mapbuild_crafts as MCR
-    k = 0
-    market = ['baker', None, 'butcher', 'fishmonger', None, 'farmer', 'herbalist', None, 'tailor', 'jeweler']
-    for z in (mz0 + 6, mz1 - 6):
-        for x in range(mx0 + 4, mx1 - 4, 9):
-            craft = market[k % len(market)]
-            if craft:
-                MCR.craft_stall(b, x, z, craft, colors[k % len(colors)], 'south' if z < C else 'north')
-            else:
-                stall(b, x, z, colors[k % len(colors)], 'south' if z < C else 'north')
-            k += 1
-    # таверна «Золотой Обелиск» и кузница у рынка
-    MCR.workshop(b, mx0 + 2, mz1 + 12, 'innkeeper', 'north')
-    MCR.workshop(b, mx0 + 24, mz1 + 12, 'blacksmith', 'north', floors=1)
+    import mapbuild_layout as ML
+    mx0, mz0, mx1, mz1 = C + 28, C - 30, C + 78, C - 7
+    ML.market(b, mx0, mz0, mx1, mz1, ['baker', 'butcher', 'fishmonger', 'farmer', 'herbalist', 'tailor', 'jeweler', 'alchemist',
+                                      'fletcher', 'leatherworker'], 'litrpg:human_merchant', 'litrpg:human_citizen', 'arcadia')
+    # казармы стражи и башня магов
     b.house(C + 30, C + 60, 20, 10, floors=2, door='west', interior='guard', npc='litrpg:human_knight')
-    # башня магов (северо-восток)
     b.round_tower(C + 64, C - 64, 6, 28, roof_block='minecraft:purple_terracotta')
     b.entities.append((C + 64, G, C - 64, 'litrpg:human_mage', {}))
 
-    # --- жилые кварталы (проспекты и замок не застраивать) ---
-    b.reserve(C - 5, 0, C + 5, S - 1)
-    b.reserve(0, C - 5, S - 1, C + 5)
+    # --- жилые кварталы: кривые улочки, террасы, дома вдоль улиц ---
+    b.reserve(C - 4, 0, C + 4, S - 1)
+    b.reserve(0, C - 4, S - 1, C + 4)
     b.reserve(cx0, cz0, cx1, cz1)
-    crafts = list(MCR.CITY_CRAFTS['arcadia'])
-    crafts.remove('innkeeper')
-    crafts.remove('blacksmith')
-    placed = MCR.place_workshops(b, C, 30, WR - 18, crafts, 'arcadia')
-    print('  мастерские Аркадии:', len(placed), '/', len(crafts))
-    houses(b, C, WR - 14, seed=1, npc_chance=0.35)
-    MCR.fill_life(b, C, WR - 8, 'arcadia', density=1.6)
+    org = ML.Organic(b, C, WR - 10, 'arcadia', plaza_r=0, terrace=2)
+    org.paint_ground()
+    crafts = [c for c in MCR.CITY_CRAFTS['arcadia']]
+    placed, homes = MCR.fill_city(b, org, crafts, 'litrpg:human_citizen', npc_chance=0.3)
+    print('  мастерские Аркадии:', placed, '/', len(crafts), ' домов:', homes)
+    org.street_life()
+    org.courtyards('litrpg:human_citizen', density=1.2, stashes=8)
     # фонари вдоль проспектов
-    for t in range(PR + 4, WR - 4, 10):
-        for (x, z) in ((C + 5, C - t), (C - 5, C + t), (C - t, C - 5), (C + t, C + 5)):
-            if b.free(x, z, x, z):
+    for t in range(PR + 4, WR - 4, 9):
+        for (x, z) in ((C + 4, C - t), (C - 4, C + t), (C - t, C - 4), (C + t, C + 4)):
+            if b.free(x, z, x, z) and ML._air(b, x, G, z):
                 b.lamp_post(x, z, 4)
+    ML.outskirts(b, C, WR + 4, 'arcadia', 'litrpg:human_citizen')
     return b
 
 
@@ -492,6 +477,25 @@ def main():
         print(f"{c['name']}: {len(b.blocks)} blocks, {len(b.entities)} entities")
     for c in data['cities']:
         POIS.append(dict(type='city', id=c['id'], name=c['name'], x=c['x'], z=c['z'], y=c['y'], r=0))
+
+    # ---------------- хутора вокруг городов ----------------
+    styles = {'arcadia': 'human', 'haven': 'human', 'sylvendar': 'elf', 'khazad': 'dwarf', 'ghardum': 'orc', 'wolfden': 'beast',
+              'ashgrad': 'demon', 'dawnfort': 'human', 'northwatch': 'human', 'blackbastion': 'human'}
+    fk = 0
+    frnd = random.Random(77)
+    for c in data['cities']:
+        n = 5 if c['id'] == 'arcadia' else 3
+        base_a = frnd.random() * 2 * math.pi
+        for i in range(n):
+            a = base_a + 2 * math.pi * i / n + frnd.uniform(-0.3, 0.3)
+            dist = c.get('flat', c['r']) + frnd.uniform(80, 150)
+            spot = plan.find(c['x'] + math.cos(a) * dist, c['z'] + math.sin(a) * dist, 30, search=140)
+            if not spot:
+                continue
+            b = MP.farmstead(fk, styles.get(c['id'], 'human'))
+            put_poi(plan, b, f'farm_{fk}', 'farm', MP.FARM_NAMES[fk % len(MP.FARM_NAMES)], *spot, 30)
+            fk += 1
+    print('хуторов:', fk)
 
     # ---------------- чудеса света ----------------
     for name, title, (x, z), fn, r, terr in [

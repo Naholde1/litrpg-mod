@@ -359,7 +359,40 @@ def houses_ring(b, C, R, seed, npc, min_size=7, max_size=10, floors=(1, 2), kind
         b.house(x0, z0, w, d, floors=fl, door=door, interior=rnd.choice(kinds), npc=npc if rnd.random() < npc_chance else None)
 
 
-def reserve_avenues(b, C, angles, half=4):
+def living(b, C, R, seed, crafts, citizen, merchant, terrace=1, market=(22, 15), market_crafts=(), kinds=('home', 'home', 'shop', 'library'),
+           floors=(1, 2, 2, 3), npc_chance=0.3, sizes=((6, 10), (7, 10)), outskirts_r=None, stashes=4):
+    """Живой город: кварталы с кривыми улочками и террасами, тесный рынок, мастерские, дома, дворы, поля за стенами."""
+    import mapbuild_crafts as MCR
+    import mapbuild_layout as ML
+    org = ML.Organic(b, C, R, seed, plaza_r=0, terrace=terrace)
+    mk = None
+    if market:
+        mw, md = market
+        rnd = random.Random(str(seed) + 'mk')
+        for attempt in range(400):
+            a = rnd.random() * 2 * math.pi
+            r = rnd.uniform(8, R * 0.55)
+            x0, z0 = int(C + math.cos(a) * r - mw / 2), int(C + math.sin(a) * r - md / 2)
+            cells = [(x, z) for x in range(x0, x0 + mw) for z in range(z0, z0 + md)]
+            if all(c in org.cell or c in org.street for c in cells) and b.free(x0, z0, x0 + mw - 1, z0 + md - 1):
+                for c in cells:
+                    org.cell.pop(c, None)
+                    org.street.add(c)
+                mk = (x0, z0, x0 + mw - 1, z0 + md - 1)
+                break
+    org.paint_ground()
+    if mk:
+        ML.market(b, *mk, list(market_crafts) or ['baker', 'butcher', 'farmer', 'herbalist', 'tailor'], merchant, citizen, seed)
+    placed, homes = MCR.fill_city(b, org, crafts, citizen, kinds=kinds, floors=floors, npc_chance=npc_chance, sizes=sizes)
+    print(f'  {seed}: мастерских {placed}/{len(crafts)}, домов {homes}, рынок {"есть" if mk else "нет"}')
+    org.street_life()
+    org.courtyards(citizen, density=1.2, stashes=stashes)
+    if outskirts_r:
+        ML.outskirts(b, C, outskirts_r, seed, citizen)
+    return org
+
+
+def reserve_avenues(b, C, angles, half=3):
     for a in angles:
         for t in range(0, C):
             x, z = C + math.cos(a) * t, C + math.sin(a) * t
@@ -382,16 +415,10 @@ def haven(city, gates, sea_a):
     lighthouse(b, max(4, min(123, lx)), max(4, min(123, lz)), 0, deck + 22)
     b.fountain(C, C, 3)
     b.reserve(C - 5, C - 5, C + 5, C + 5)
-    from gen_mapbuild import stall
-    for k in range(6):
-        a = sea_a + math.pi + (k - 2.5) * 0.45
-        stall(b, int(C + math.cos(a) * 16), int(C + math.sin(a) * 16), ['blue', 'cyan', 'white', 'yellow', 'lime', 'orange'][k], 'south')
-    b.house(int(C + math.cos(sea_a) * 30) - 8, int(C + math.sin(sea_a) * 30) - 5, 16, 10, floors=2, door='north', interior='tavern',
-            npc='litrpg:human_merchant')
     import mapbuild_crafts as MCR
-    MCR.place_workshops(b, C, 14, WR - 8, MCR.CITY_CRAFTS['haven'], 'haven')
-    houses_ring(b, C, WR - 6, 'haven', 'litrpg:human_citizen', kinds=('home', 'shop', 'home'), npc_chance=0.35)
-    MCR.fill_life(b, C, WR - 6, 'haven' + str(C))
+    living(b, C, WR - 5, 'haven', MCR.CITY_CRAFTS['haven'], 'litrpg:human_citizen', 'litrpg:human_merchant', terrace=2, market=(20, 13),
+           market_crafts=['fishmonger', 'baker', 'farmer', 'tailor', 'herbalist'],
+           outskirts_r=WR + 4)
     return b
 
 
@@ -437,9 +464,9 @@ def sylvendar(city, gates):
         a = gate_a + (k - 1.5) * 0.5
         stall_elf(b, int(C + math.cos(a) * 44), int(C + math.sin(a) * 44))
     import mapbuild_crafts as MCR
-    MCR.place_workshops(b, C, 20, WR - 4, MCR.CITY_CRAFTS['sylvendar'], 'sylvendar')
-    houses_ring(b, C, WR, 'sylv', 'litrpg:elf_citizen', min_size=6, max_size=9, floors=(1,), kinds=('home', 'library'), npc_chance=0.35)
-    MCR.fill_life(b, C, WR - 6, 'sylv' + str(C))
+    living(b, C, WR - 2, 'sylvendar', MCR.CITY_CRAFTS['sylvendar'], 'litrpg:elf_citizen', 'litrpg:elf_trader', terrace=1, market=(18, 13),
+           market_crafts=['herbalist', 'tailor', 'jeweler', 'alchemist', 'fletcher'], kinds=('home', 'library'), floors=(1, 2),
+           sizes=((6, 9), (6, 9)), outskirts_r=WR + 4)
     for k in range(40):
         rnd = random.Random(k)
         x, z = rnd.randint(8, 120), rnd.randint(8, 120)
@@ -523,9 +550,9 @@ def khazad(city, gates):
                 b.set(x, y, z, 'minecraft:chiseled_deepslate' if y % 2 else 'minecraft:polished_deepslate')
             b.set(x, G + 4, z, 'minecraft:lantern', hanging='false', waterlogged='false')
     import mapbuild_crafts as MCR
-    MCR.place_workshops(b, C, 14, WR - 6, MCR.CITY_CRAFTS['khazad'], 'khazad')
-    houses_ring(b, C, WR - 4, 'khazad', 'litrpg:dwarf_citizen', kinds=('home', 'smith', 'shop'), floors=(1, 2), npc_chance=0.35)
-    MCR.fill_life(b, C, WR - 6, 'khazad' + str(C))
+    living(b, C, WR - 5, 'khazad', MCR.CITY_CRAFTS['khazad'], 'litrpg:dwarf_citizen', 'litrpg:dwarf_smith', terrace=3, market=(20, 13),
+           market_crafts=['jeweler', 'butcher', 'baker', 'alchemist', 'leatherworker'], kinds=('home', 'smith', 'shop'), floors=(1, 2, 2),
+           outskirts_r=WR + 4)
     return b
 
 
@@ -543,7 +570,9 @@ def ghardum(city, gates):
     from gen_mapbuild import map_board
     map_board(b, lx, lz + 12, frame='minecraft:stripped_dark_oak_log', face='minecraft:spruce_planks', cap='minecraft:dark_oak_fence')
     import mapbuild_crafts as MCR
-    MCR.place_workshops(b, C, 22, WR - 8, MCR.CITY_CRAFTS['ghardum'], 'ghardum')
+    living(b, C, WR - 5, 'ghardum', MCR.CITY_CRAFTS['ghardum'], 'litrpg:orc_citizen', 'litrpg:orc_trader', terrace=1, market=(18, 12),
+           market_crafts=['butcher', 'leatherworker', 'herbalist', 'fletcher'], floors=(1, 1, 2), sizes=((6, 9), (6, 8)), npc_chance=0.35,
+           outskirts_r=WR + 4)
     rnd = random.Random(7)
     colors = ['brown', 'red', 'brown', 'black', 'gray']
     for k in range(26):
@@ -582,7 +611,9 @@ def wolfden(city, gates):
     from gen_mapbuild import map_board
     map_board(b, lx, lz + 10, frame='minecraft:stripped_spruce_log', face='minecraft:spruce_planks', cap='minecraft:spruce_fence')
     import mapbuild_crafts as MCR
-    MCR.place_workshops(b, C, 16, WR - 6, MCR.CITY_CRAFTS['wolfden'], 'wolfden')
+    living(b, C, WR - 4, 'wolfden', MCR.CITY_CRAFTS['wolfden'], 'litrpg:beast_citizen', 'litrpg:beast_trader', terrace=1, market=(14, 10),
+           market_crafts=['leatherworker', 'herbalist', 'butcher'], floors=(1, 1, 2), sizes=((5, 8), (6, 8)), npc_chance=0.35,
+           outskirts_r=WR + 4)
     for k in range(12):
         a = 2 * math.pi * k / 12 + 0.2
         x, z = int(C + math.cos(a) * 20), int(C + math.sin(a) * 20)
@@ -628,9 +659,8 @@ def ashgrad(city, gates):
         if b.free(x - 1, z - 1, x + 1, z + 1):
             b.tree(x, z, 6, 'minecraft:crimson_stem', 'minecraft:nether_wart_block', 2.6)
     import mapbuild_crafts as MCR
-    MCR.place_workshops(b, C, 20, WR - 6, MCR.CITY_CRAFTS['ashgrad'], 'ashgrad')
-    houses_ring(b, C, WR - 4, 'ashgrad', 'litrpg:demon_citizen', kinds=('home', 'library', 'shop'), floors=(1, 2), npc_chance=0.35)
-    MCR.fill_life(b, C, WR - 6, 'ashgrad' + str(C))
+    living(b, C, WR - 5, 'ashgrad', MCR.CITY_CRAFTS['ashgrad'], 'litrpg:demon_citizen', 'litrpg:demon_trader', terrace=2, market=(18, 13),
+           market_crafts=['alchemist', 'jeweler', 'tailor', 'butcher'], kinds=('home', 'library', 'shop'), outskirts_r=None)
     return b
 
 
@@ -652,7 +682,6 @@ def fort(city, gates, seed, banner):
         a = gate_a + (k - 1) * 0.7
         stall(b, int(C + math.cos(a) * 16), int(C + math.sin(a) * 16), ['red', 'blue', 'yellow'][k], 'south')
     import mapbuild_crafts as MCR
-    MCR.place_workshops(b, C, 10, WR - 6, MCR.CITY_CRAFTS['fort'], seed)
-    houses_ring(b, C, WR - 4, seed, 'litrpg:human_citizen', floors=(1, 2), kinds=('home', 'guard', 'smith'), npc_chance=0.35)
-    MCR.fill_life(b, C, WR - 6, 'fort' + str(C))
+    living(b, C, WR - 5, seed, MCR.CITY_CRAFTS['fort'], 'litrpg:human_citizen', 'litrpg:human_merchant', terrace=1, market=(14, 10),
+           market_crafts=['baker', 'butcher', 'farmer'], kinds=('home', 'guard', 'smith'), floors=(1, 2), outskirts_r=WR + 4)
     return b

@@ -230,6 +230,16 @@ class City(Build):
                 for x in (x0, x1):
                     if (z - z0) % 4 != 0:
                         self.set(x, wy, z, pane, waterlogged='false')
+        # ящики с цветами под окнами первого этажа (ступенька-перевёртыш + горшок)
+        if pane == st['glass']:
+            wy = G + 1
+            for x in range(x0 + 2, x1 - 1, 3):
+                for z, oz in ((z0, -1), (z1, 1)):
+                    if (x - x0) % 4 != 0 and self.rnd.random() < 0.45 and (x, wy, z + oz) not in self.blocks:
+                        self.set(x, wy - 1, z + oz, self.st['plank'].replace('_planks', '_stairs') if '_planks' in self.st['plank'] else 'minecraft:spruce_stairs',
+                                 facing='north' if oz > 0 else 'south', half='top', shape='straight', waterlogged='false')
+                        self.set(x, wy, z + oz, 'minecraft:potted_' + self.rnd.choice(['red_tulip', 'poppy', 'dandelion', 'cornflower',
+                                                                                         'azure_bluet', 'allium', 'fern']))
         # дверь
         cx, cz = (x0 + x1) // 2, (z0 + z1) // 2
         if (cx - x0) % 4 == 0:
@@ -263,6 +273,10 @@ class City(Build):
         return cx, cz
 
     def furnish(self, x0, z0, x1, z1, floors, kind, door):
+        import mapbuild_furniture as MF
+        return MF.furnish(self, x0, z0, x1, z1, floors, kind, door)
+
+    def furnish_old(self, x0, z0, x1, z1, floors, kind, door):
         G = self.G
         r = self.rnd
         base_kind = kind
@@ -475,6 +489,16 @@ def fix_paintings(b, name=""):
     for e in b.entities:
         if e[3] != 'minecraft:painting':
             out.append(e)
+            continue
+        if e[4].get('small'):
+            x, y, z = e[:3]
+            face = e[4]['facing']
+            dx, dz = _DIR[face]
+            behind = b.blocks.get((x - dx, y, z - dz))
+            here = b.blocks.get((x, y, z))
+            if behind and not any(t in behind[0] for t in _SOFT) and (here is None or here[0] == 'minecraft:air'):
+                b.set(x, y, z, 'minecraft:structure_block', mode='data')
+                b.nbt[(x, y, z)] = {'id': 'minecraft:structure_block', 'mode': 'DATA', 'metadata': 'painting ' + e[4]['variant'] + ' ' + face}
             continue
         x, y, z = e[:3]
         x, y, z = x - 4 * _CCW[inv[int(getattr(e[4]['facing'], 'v', e[4]['facing']))]][0], y + 3, z - 4 * _CCW[inv[int(getattr(e[4]['facing'], 'v', e[4]['facing']))]][1]

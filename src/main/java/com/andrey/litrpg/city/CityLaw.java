@@ -39,12 +39,11 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 /**
- * Закон городов «Мира Системы». Город можно разрушить — но за каждый сломанный
- * блок падает репутация народа, а за упорство приходит розыск: стража (очень
- * сильная) нападает, пока срок не истечёт или нарушитель не покинет город.
- * Городское имущество при разрушении не достаётся вору; строители потом всё
- * восстанавливают (CityRepairs). Чужие сундуки, огонь и разлитые жидкости —
- * преступление. Стража, горожане и мастера мастерских пополняются.
+ * Закон городов «Мира Системы». Город можно разрушать и обворовывать — добыча
+ * достаётся вору, а строители потом всё восстанавливают (CityRepairs). Но если
+ * кто-то видел (стража — издалека, жители — то, что перед глазами), наказание
+ * жёсткое и растёт: потеря репутации, долгий розыск, конфискация монет, стража.
+ * Огонь и разлитые жидкости запрещены. Стража, горожане и мастера пополняются.
  */
 @Mod.EventBusSubscriber(modid = LitRPG.MODID)
 public final class CityLaw {
@@ -112,10 +111,88 @@ public final class CityLaw {
 
     public static final String DAMAGE = "litrpg_city_damage";
     public static final String DAMAGE_TIME = "litrpg_city_damage_time";
+    public static final String THEFTS = "litrpg_thefts";
+    public static final String THEFT_TIME = "litrpg_theft_time";
 
     /**
-     * Разрушение: блок ломается, но без добычи (городское имущество), а город
-     * запоминает его — строители вернут. Свои же постройки игрок разбирает спокойно.
+     * Кто видит игрока: стража замечает издалека, горожане и мастера — вблизи и только то,
+     * что перед глазами. Красться (Shift), темнота и невидимость помогают остаться незамеченным.
+     */
+    public static RaceNpcEntity witness(ServerPlayer p) {
+        if (p.hasEffect(net.minecraft.world.effect.MobEffects.INVISIBILITY)) return null;
+        ServerLevel sl = p.serverLevel();
+        double k = p.isShiftKeyDown() ? 0.5 : 1.0;
+        if (sl.getMaxLocalRawBrightness(p.blockPosition()) < 7) k *= 0.6;
+        RaceNpcEntity best = null;
+        double bestD = 1e9;
+        for (RaceNpcEntity n : sl.getEntitiesOfClass(RaceNpcEntity.class, p.getBoundingBox().inflate(26))) {
+            if (!n.isAlive() || n.npcType().role == com.andrey.litrpg.npc.NpcType.Role.CHIEF && n.distanceTo(p) > 10) continue;
+            double range = (n.npcType().isGuard() ? 24 : 13) * k;
+            double d = n.distanceTo(p);
+            if (d > range || !n.hasLineOfSight(p)) continue;
+            if (!n.npcType().isGuard() && d > 3) {
+                // горожане смотрят перед собой: угол обзора ~140°
+                var look = n.getViewVector(1f);
+                var to = p.getEyePosition().subtract(n.getEyePosition()).normalize();
+                if (look.dot(to) < -0.35) continue;
+            }
+            if (d < bestD) {
+                bestD = d;
+                best = n;
+            }
+        }
+        return best;
+    }
+
+    /** Попался на краже или порче: жёсткое наказание, растущее с каждым разом. */
+    public static void caught(ServerPlayer p, WorldMap.City city, RaceNpcEntity who, String what) {
+        long now = p.level().getGameTime();
+        var data = p.getPersistentData();
+        int n = now - data.getLong(THEFT_TIME) > 20 * 60 * 15 ? 0 : data.getInt(THEFTS);
+        n++;
+        data.putInt(THEFTS, n);
+        data.putLong(THEFT_TIME, now);
+        Faction f = city.faction() == null ? Faction.KINGDOM : Faction.byKey(city.faction());
+        int rep = n == 1 ? 20 : n == 2 ? 45 : 90;
+        if (f != null) RepEvents.change(p, f, -rep);
+        int seconds = n == 1 ? 180 : n == 2 ? 360 : 600;
+        data.putLong(WANTED, Math.max(data.getLong(WANTED), now + seconds * 20L));
+        data.putInt(OFFENSES, Math.max(4, data.getInt(OFFENSES)));
+        data.putLong(LAST_OFFENSE, now);
+        // штраф: стража изымает часть монет
+        int fine = 0;
+        if (n >= 2) {
+            float part = n == 2 ? 0.25f : 0.5f;
+            var inv = p.getInventory();
+            for (int i = 0; i < inv.getContainerSize(); i++) {
+                var st = inv.getItem(i);
+                if (st.is(com.andrey.litrpg.registry.ModItems.COPPER_COIN.get()) || st.is(com.andrey.litrpg.registry.ModItems.SILVER_COIN.get())
+                        || st.is(com.andrey.litrpg.registry.ModItems.GOLD_COIN.get())) {
+                    int take = (int) Math.ceil(st.getCount() * part);
+                    fine += take;
+                    st.shrink(take);
+                }
+            }
+        }
+        String shout = who.npcType().isGuard() ? "Стоять! Именем закона!" : p.getRandom().nextBoolean() ? "Вор! Держи вора!" : "Стража! Здесь вор!";
+        Speech.say(who, shout, 80);
+        who.playSound(net.minecraft.sounds.SoundEvents.VILLAGER_NO, 1.5f, 0.8f);
+        p.sendSystemMessage(Component.literal("[" + city.name() + "] ").withStyle(ChatFormatting.RED)
+                .append(Component.literal(what + " Тебя заметил " + who.getName().getString() + "! Репутация −" + rep
+                        + ", розыск на " + seconds / 60 + " мин." + (fine > 0 ? " Стража изъяла монет: " + fine + "." : ""))
+                        .withStyle(ChatFormatting.RED, ChatFormatting.BOLD)));
+        p.level().playSound(null, p.blockPosition(), net.minecraft.sounds.SoundEvents.BELL_BLOCK, net.minecraft.sounds.SoundSource.NEUTRAL, 2f, 0.7f);
+        alertGuards(p, city);
+    }
+
+    private static boolean isStash(ServerLevel sl, BlockPos pos) {
+        return sl.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.BaseContainerBlockEntity be
+                && be.hasCustomName() && be.getCustomName().getString().contains("Тайник");
+    }
+
+    /**
+     * Кража и порча: блок ломается с добычей (кроме уже восстановленного строителями),
+     * город запоминает место — строители вернут. Если кто-то видел — жёсткое наказание.
      */
     @SubscribeEvent
     public static void onBreak(BlockEvent.BreakEvent event) {
@@ -130,30 +207,29 @@ public final class CityLaw {
             return;
         }
         if (exempt(p)) return;
+        if (isStash(sl, event.getPos())) return;
         BlockState st = event.getState();
         rep.record(sl, event.getPos(), st, c.id());
-        event.setCanceled(true);
-        if (sl.getBlockEntity(event.getPos()) instanceof Container box) box.clearContent();
-        sl.destroyBlock(event.getPos(), false, p);
-        Faction f = c.faction() == null ? Faction.KINGDOM : Faction.byKey(c.faction());
-        if (f != null) RepEvents.change(p, f, -2);
-        // упорный разрушитель получает предупреждение, а потом розыск
+        if (rep.wasRestored(event.getPos())) {
+            // восстановленное строителями второй раз не обогащает
+            event.setCanceled(true);
+            if (sl.getBlockEntity(event.getPos()) instanceof Container box) box.clearContent();
+            sl.destroyBlock(event.getPos(), false, p);
+        }
+        RaceNpcEntity who = witness(p);
+        if (who != null) {
+            caught(p, c, who, "Ты разрушаешь и обворовываешь город!");
+            return;
+        }
         var data = p.getPersistentData();
         long now = sl.getGameTime();
-        int dmg = now - data.getLong(DAMAGE_TIME) > 20 * 60 * 5 ? 0 : data.getInt(DAMAGE);
-        dmg++;
-        data.putInt(DAMAGE, dmg);
-        data.putLong(DAMAGE_TIME, now);
-        if (dmg == 1) {
-            p.sendSystemMessage(Component.literal("[" + c.name() + "] ").withStyle(ChatFormatting.GOLD)
-                    .append(Component.literal("Ты портишь городское имущество — народ это запомнит. Строители всё восстановят, а вот репутацию — нет.")
-                            .withStyle(ChatFormatting.YELLOW)));
-        } else if (dmg % 4 == 0) {
-            offense(p, c, "Ты разрушаешь город!", 1);
+        if (now - data.getLong(DAMAGE_TIME) > 20 * 60 * 3) {
+            p.displayClientMessage(Component.literal("Никто не видел… пока.").withStyle(ChatFormatting.DARK_GRAY), true);
         }
+        data.putLong(DAMAGE_TIME, now);
     }
 
-    /** Постройки в городе разрешены, но строители со временем разберут чужое. */
+    /** Самовольная стройка в городе роняет репутацию; строители со временем разберут чужое. */
     @SubscribeEvent
     public static void onPlace(BlockEvent.EntityPlaceEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer p) || exempt(p)) return;
@@ -161,10 +237,13 @@ public final class CityLaw {
         WorldMap.City c = cityAt(sl, event.getPos());
         if (c == null) return;
         CityRepairs.get(sl).record(sl, event.getPos(), event.getBlockSnapshot().getReplacedBlock(), c.id());
+        Faction f = c.faction() == null ? Faction.KINGDOM : Faction.byKey(c.faction());
+        if (f != null) RepEvents.change(p, f, -1);
         long now = sl.getGameTime();
         if (now - p.getPersistentData().getLong("litrpg_place_note") > 20 * 120) {
             p.getPersistentData().putLong("litrpg_place_note", now);
-            p.displayClientMessage(Component.literal("Строители города со временем уберут чужие постройки.").withStyle(ChatFormatting.GRAY), true);
+            p.displayClientMessage(Component.literal("Самовольная стройка в городе: −репутация. Строители уберут чужие постройки.")
+                    .withStyle(ChatFormatting.GRAY), true);
         }
     }
 
@@ -182,12 +261,14 @@ public final class CityLaw {
         }
         var be = sl.getBlockEntity(event.getPos());
         if (be instanceof Container && !(sl.getBlockState(event.getPos()).getBlock() instanceof EnderChestBlock)) {
-            // свой сундук (поставленный игроком) открывать можно
+            // свой сундук и ничьи тайники открывать можно
             BlockState orig = CityRepairs.get(sl).original(event.getPos());
-            if (orig != null && orig.isAir()) return;
-            Faction f = c.faction() == null ? Faction.KINGDOM : Faction.byKey(c.faction());
-            if (f != null) RepEvents.change(p, f, -3);
-            offense(p, c, "Это чужое имущество — ты лезешь в чужой сундук!", 1);
+            if (orig != null && orig.isAir() || isStash(sl, event.getPos())) return;
+            RaceNpcEntity who = witness(p);
+            if (who != null) {
+                event.setCanceled(true);
+                caught(p, c, who, "Ты лезешь в чужой сундук!");
+            }
         }
     }
 
