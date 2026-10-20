@@ -218,7 +218,7 @@ public class LitRpgCommand {
                             com.andrey.litrpg.quest.QuestEvents.ensureFactionOffers(p, f);
                             StatsManager.syncNow(p);
                             com.andrey.litrpg.network.ModNetwork.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
-                                    new com.andrey.litrpg.network.OpenQuestsPacket(f.key, "Вождь"));
+                                    new com.andrey.litrpg.network.OpenQuestsPacket(f.key, f.key, "Вождь", "", -1));
                         }))))));
         root.then(Commands.literal("codex").then(players().executes(c -> {
             for (ServerPlayer p : EntityArgument.getPlayers(c, "players")) StatsManager.giveCodex(p);

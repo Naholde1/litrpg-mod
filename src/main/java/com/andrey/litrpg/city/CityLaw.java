@@ -26,6 +26,8 @@ import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.FireChargeItem;
 import net.minecraft.world.item.FlintAndSteelItem;
 import net.minecraft.world.level.block.EnderChestBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import com.andrey.litrpg.npc.Craft;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.TickEvent;
@@ -37,11 +39,12 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 /**
- * Закон городов «Мира Системы». В городе нельзя ломать и ставить блоки,
- * вскрывать чужие сундуки, поджигать и разливать жидкости. Нарушителю —
- * предупреждение, потеря репутации и розыск: стража (очень сильная)
- * нападает на него, пока срок розыска не истечёт или он не покинет город.
- * Взрывы в городе не разрушают постройки. Стража и горожане пополняются.
+ * Закон городов «Мира Системы». Город можно разрушить — но за каждый сломанный
+ * блок падает репутация народа, а за упорство приходит розыск: стража (очень
+ * сильная) нападает, пока срок не истечёт или нарушитель не покинет город.
+ * Городское имущество при разрушении не достаётся вору; строители потом всё
+ * восстанавливают (CityRepairs). Чужие сундуки, огонь и разлитые жидкости —
+ * преступление. Стража, горожане и мастера мастерских пополняются.
  */
 @Mod.EventBusSubscriber(modid = LitRPG.MODID)
 public final class CityLaw {
@@ -107,25 +110,62 @@ public final class CityLaw {
 
     // ================= нарушения =================
 
+    public static final String DAMAGE = "litrpg_city_damage";
+    public static final String DAMAGE_TIME = "litrpg_city_damage_time";
+
+    /**
+     * Разрушение: блок ломается, но без добычи (городское имущество), а город
+     * запоминает его — строители вернут. Свои же постройки игрок разбирает спокойно.
+     */
     @SubscribeEvent
     public static void onBreak(BlockEvent.BreakEvent event) {
-        if (!(event.getPlayer() instanceof ServerPlayer p) || exempt(p)) return;
+        if (!(event.getPlayer() instanceof ServerPlayer p)) return;
         if (!(event.getLevel() instanceof ServerLevel sl)) return;
         WorldMap.City c = cityAt(sl, event.getPos());
         if (c == null) return;
+        CityRepairs rep = CityRepairs.get(sl);
+        BlockState orig = rep.original(event.getPos());
+        if (orig != null && orig.isAir()) {
+            rep.forget(event.getPos()); // это блок самого игрока
+            return;
+        }
+        if (exempt(p)) return;
+        BlockState st = event.getState();
+        rep.record(sl, event.getPos(), st, c.id());
         event.setCanceled(true);
-        offense(p, c, "Ломать городские постройки запрещено!", 1);
+        if (sl.getBlockEntity(event.getPos()) instanceof Container box) box.clearContent();
+        sl.destroyBlock(event.getPos(), false, p);
+        Faction f = c.faction() == null ? Faction.KINGDOM : Faction.byKey(c.faction());
+        if (f != null) RepEvents.change(p, f, -2);
+        // упорный разрушитель получает предупреждение, а потом розыск
+        var data = p.getPersistentData();
+        long now = sl.getGameTime();
+        int dmg = now - data.getLong(DAMAGE_TIME) > 20 * 60 * 5 ? 0 : data.getInt(DAMAGE);
+        dmg++;
+        data.putInt(DAMAGE, dmg);
+        data.putLong(DAMAGE_TIME, now);
+        if (dmg == 1) {
+            p.sendSystemMessage(Component.literal("[" + c.name() + "] ").withStyle(ChatFormatting.GOLD)
+                    .append(Component.literal("Ты портишь городское имущество — народ это запомнит. Строители всё восстановят, а вот репутацию — нет.")
+                            .withStyle(ChatFormatting.YELLOW)));
+        } else if (dmg % 4 == 0) {
+            offense(p, c, "Ты разрушаешь город!", 1);
+        }
     }
 
+    /** Постройки в городе разрешены, но строители со временем разберут чужое. */
     @SubscribeEvent
     public static void onPlace(BlockEvent.EntityPlaceEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer p) || exempt(p)) return;
         if (!(event.getLevel() instanceof ServerLevel sl)) return;
         WorldMap.City c = cityAt(sl, event.getPos());
         if (c == null) return;
-        event.setCanceled(true);
-        p.containerMenu.sendAllDataToRemote();
-        offense(p, c, "Строить в городе без разрешения нельзя!", 1);
+        CityRepairs.get(sl).record(sl, event.getPos(), event.getBlockSnapshot().getReplacedBlock(), c.id());
+        long now = sl.getGameTime();
+        if (now - p.getPersistentData().getLong("litrpg_place_note") > 20 * 120) {
+            p.getPersistentData().putLong("litrpg_place_note", now);
+            p.displayClientMessage(Component.literal("Строители города со временем уберут чужие постройки.").withStyle(ChatFormatting.GRAY), true);
+        }
     }
 
     @SubscribeEvent
@@ -142,8 +182,12 @@ public final class CityLaw {
         }
         var be = sl.getBlockEntity(event.getPos());
         if (be instanceof Container && !(sl.getBlockState(event.getPos()).getBlock() instanceof EnderChestBlock)) {
-            event.setCanceled(true);
-            offense(p, c, "Это чужое имущество!", 1);
+            // свой сундук (поставленный игроком) открывать можно
+            BlockState orig = CityRepairs.get(sl).original(event.getPos());
+            if (orig != null && orig.isAir()) return;
+            Faction f = c.faction() == null ? Faction.KINGDOM : Faction.byKey(c.faction());
+            if (f != null) RepEvents.change(p, f, -3);
+            offense(p, c, "Это чужое имущество — ты лезешь в чужой сундук!", 1);
         }
     }
 
@@ -161,31 +205,73 @@ public final class CityLaw {
         offense(p, c, "Нападение на жителей города!", 2);
     }
 
-    /** Взрывы не разрушают городские постройки. */
+    /** Взрывы рушат город, но без добычи — и строители потом всё отстроят. */
     @SubscribeEvent
     public static void onExplode(ExplosionEvent.Detonate event) {
         if (!(event.getLevel() instanceof ServerLevel sl) || !SystemWorld.isOverworld(sl)) return;
-        event.getAffectedBlocks().removeIf(pos -> WorldMap.get().cityAt(pos.getX(), pos.getZ()) != null);
+        CityRepairs rep = CityRepairs.get(sl);
+        event.getAffectedBlocks().removeIf(pos -> {
+            WorldMap.City c = WorldMap.get().cityAt(pos.getX(), pos.getZ());
+            if (c == null) return false;
+            BlockState st = sl.getBlockState(pos);
+            if (st.isAir()) return true;
+            BlockState orig = rep.original(pos);
+            if (orig != null && orig.isAir()) return false; // постройки игроков рушатся как обычно
+            rep.record(sl, pos, st, c.id());
+            if (sl.getBlockEntity(pos) instanceof Container box) box.clearContent();
+            sl.setBlock(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
+            return true;
+        });
     }
 
     // ================= население =================
 
-    /** Раз в 30 с: в городах, где есть игроки, пополняется стража и горожане. */
+    /** Раз в 2 с — ремонт; раз в 30 с: в городах с игроками пополняются стража, горожане и мастера. */
     @SubscribeEvent
     public static void onTick(TickEvent.LevelTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || !(event.level instanceof ServerLevel sl) || sl.getGameTime() % 600 != 0) return;
+        if (event.phase != TickEvent.Phase.END || !(event.level instanceof ServerLevel sl)) return;
         if (!SystemWorld.isOverworld(sl)) return;
+        if (sl.getGameTime() % 40 == 0) CityRepairs.get(sl).tick(sl);
+        if (sl.getGameTime() % 600 != 0) return;
         for (WorldMap.City c : WorldMap.get().cities) {
             AABB box = new AABB(c.x() - c.r(), c.y() - 30, c.z() - c.r(), c.x() + c.r(), c.y() + 60, c.z() + c.r());
             if (sl.getEntitiesOfClass(ServerPlayer.class, box.inflate(64)).isEmpty()) continue;
             Faction f = c.faction() == null ? Faction.KINGDOM : Faction.byKey(c.faction());
             int wantGuards = c.r() >= 140 ? 10 : 6;
-            int wantCitizens = c.r() >= 140 ? 14 : 8;
+            int wantCitizens = c.r() >= 140 ? 22 : 12;
             var npcs = sl.getEntitiesOfClass(RaceNpcEntity.class, box);
             long guards = npcs.stream().filter(n -> n.npcType().isGuard()).count();
             long citizens = npcs.stream().filter(n -> n.npcType().role == NpcType.Role.CITIZEN).count();
             if (guards < wantGuards) spawn(sl, c, NpcType.guardOf(f), (int) Math.min(3, wantGuards - guards));
             if (citizens < wantCitizens) spawn(sl, c, NpcType.citizenOf(f), (int) Math.min(3, wantCitizens - citizens));
+            restaff(sl, c, npcs);
+        }
+    }
+
+    /** Мастерская без мастера получает нового (ученик занимает место). */
+    private static void restaff(ServerLevel sl, WorldMap.City c, java.util.List<RaceNpcEntity> npcs) {
+        for (WorldMap.Workshop w : WorldMap.get().workshopsOf(c.id())) {
+            BlockPos pos = new BlockPos(w.x(), w.y(), w.z());
+            if (!sl.isLoaded(pos)) continue;
+            Craft craft = Craft.byKey(w.craft());
+            if (craft == null) continue;
+            boolean staffed = false;
+            for (RaceNpcEntity n : npcs) {
+                if (n.craft() == craft && n.distanceToSqr(pos.getCenter()) < (craft == Craft.BUILDER ? 80 * 80 : 14 * 14)) {
+                    staffed = true;
+                    break;
+                }
+            }
+            if (staffed) continue;
+            var type = NpcRegistry.TYPES.entrySet().stream().filter(e -> e.getKey().key.equals(w.npc().replace("litrpg:", "")))
+                    .map(e -> e.getValue().get()).findFirst().orElse(null);
+            if (type == null) continue;
+            RaceNpcEntity e = type.create(sl);
+            if (e == null) continue;
+            e.setCraft(craft);
+            e.moveTo(w.x() + 0.5, w.y(), w.z() + 0.5, sl.random.nextFloat() * 360, 0);
+            e.finalizeSpawn(sl, sl.getCurrentDifficultyAt(pos), MobSpawnType.EVENT, null, null);
+            sl.addFreshEntity(e);
         }
     }
 

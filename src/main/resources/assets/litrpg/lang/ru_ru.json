@@ -910,5 +910,22 @@
   "entity.litrpg.sand_scorpion": "Песчаный скорпион",
   "item.litrpg.sand_scorpion_spawn_egg": "Яйцо призыва: Песчаный скорпион",
   "entity.litrpg.grave_knight": "Могильный рыцарь",
-  "item.litrpg.grave_knight_spawn_egg": "Яйцо призыва: Могильный рыцарь"
+  "item.litrpg.grave_knight_spawn_egg": "Яйцо призыва: Могильный рыцарь",
+  "entity.litrpg.rat": "Крыса",
+  "item.litrpg.rat_spawn_egg": "Яйцо призыва: Крыса",
+  "entity.litrpg.rat_king": "Крысиный король",
+  "item.litrpg.rat_king_spawn_egg": "Яйцо призыва: Крысиный король",
+  "entity.litrpg.human_artisan": "Мастер Королевства",
+  "item.litrpg.human_artisan_spawn_egg": "Яйцо призыва: Мастер Королевства",
+  "entity.litrpg.elf_artisan": "Эльф-мастер",
+  "item.litrpg.elf_artisan_spawn_egg": "Яйцо призыва: Эльф-мастер",
+  "entity.litrpg.dwarf_artisan": "Дварф-мастер",
+  "item.litrpg.dwarf_artisan_spawn_egg": "Яйцо призыва: Дварф-мастер",
+  "entity.litrpg.orc_artisan": "Орк-мастер",
+  "item.litrpg.orc_artisan_spawn_egg": "Яйцо призыва: Орк-мастер",
+  "entity.litrpg.beast_artisan": "Мастер-зверолюд",
+  "item.litrpg.beast_artisan_spawn_egg": "Яйцо призыва: Мастер-зверолюд",
+  "entity.litrpg.demon_artisan": "Демонид-мастер",
+  "item.litrpg.demon_artisan_spawn_egg": "Яйцо призыва: Демонид-мастер",
+  "item.litrpg.parcel": "Посылка"
 }

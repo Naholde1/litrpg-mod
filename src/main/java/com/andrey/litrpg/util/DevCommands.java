@@ -102,6 +102,8 @@ public final class DevCommands {
         LitRPG.LOGGER.info("[dev] render {}px in {} ms", size, System.currentTimeMillis() - t0);
     }
 
+    private static String lastBoard = "";
+
     @SubscribeEvent
     public static void onTick(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END || FMLLoader.isProduction()) return;
@@ -125,6 +127,45 @@ public final class DevCommands {
                     int x0 = a.length > 3 ? Integer.parseInt(a[2]) : -5000, z0 = a.length > 3 ? Integer.parseInt(a[3]) : -5000;
                     int span = a.length > 4 ? Integer.parseInt(a[4]) : 10000;
                     render(server, size, x0, z0, span);
+                    continue;
+                }
+                if (line.equals("devsay")) {
+                    var p = server.getPlayerList().getPlayerByName("Dev");
+                    if (p == null) continue;
+                    var list = p.serverLevel().getEntitiesOfClass(com.andrey.litrpg.npc.RaceNpcEntity.class, p.getBoundingBox().inflate(16));
+                    for (var n : list) com.andrey.litrpg.city.Speech.say(n, com.andrey.litrpg.city.Speech.line(n, p.getRandom()), 200);
+                    LitRPG.LOGGER.info("[dev] say x{} -> displays {}", list.size(), p.serverLevel().getEntitiesOfClass(
+                            net.minecraft.world.entity.Display.TextDisplay.class, p.getBoundingBox().inflate(20)).size());
+                    continue;
+                }
+                if (line.startsWith("devtalk ") || line.startsWith("devaccept ")) {
+                    // devtalk <ремесло> — ПКМ по ближайшему мастеру; devaccept <n> — принять n-е поручение с его доски
+                    String[] a = line.split(" ");
+                    var p = server.getPlayerList().getPlayerByName("Dev");
+                    if (p == null) continue;
+                    if (a[0].equals("devtalk")) {
+                        var list = p.serverLevel().getEntitiesOfClass(com.andrey.litrpg.npc.RaceNpcEntity.class, p.getBoundingBox().inflate(96),
+                                n -> n.craft() != null && n.craft().key.equals(a[1]));
+                        list.sort(java.util.Comparator.comparingDouble(n -> n.distanceToSqr(p)));
+                        if (list.isEmpty()) {
+                            LitRPG.LOGGER.info("[dev] no {} nearby", a[1]);
+                            continue;
+                        }
+                        var npc = list.get(0);
+                        lastBoard = com.andrey.litrpg.quest.CityQuests.boardKey(npc);
+                        p.teleportTo(npc.getX() + 1.5, npc.getY(), npc.getZ() + 1.5);
+                        if (a.length > 2 && a[2].equals("trade")) npc.openTrade(p);
+                        else p.interactOn(npc, net.minecraft.world.InteractionHand.MAIN_HAND);
+                        LitRPG.LOGGER.info("[dev] talked to {} at {}", npc.getName().getString(), npc.blockPosition());
+                    } else {
+                        var offers = com.andrey.litrpg.stats.StatsManager.get(p).quests().offers(lastBoard);
+                        int i = Integer.parseInt(a[1]);
+                        if (i < offers.size()) {
+                            var q = offers.get(i);
+                            LitRPG.LOGGER.info("[dev] accept {} ({} {} {})", q.title, q.type, q.target, q.need);
+                            com.andrey.litrpg.quest.QuestEvents.accept(p, lastBoard, q.id);
+                        }
+                    }
                     continue;
                 }
                 if (line.startsWith("devbreak ") || line.startsWith("devuse ")) {

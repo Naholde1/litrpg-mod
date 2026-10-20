@@ -58,9 +58,16 @@ public enum NpcType {
     DWARF_CITIZEN("dwarf_citizen", Race.DWARF, Faction.DWARVES, Role.CITIZEN, 30, 3, 0.26),
     ORC_CITIZEN("orc_citizen", Race.ORC, Faction.ORCS, Role.CITIZEN, 34, 4, 0.3),
     BEAST_CITIZEN("beast_citizen", Race.BEASTKIN, Faction.BEASTKIN, Role.CITIZEN, 26, 3, 0.33),
-    DEMON_CITIZEN("demon_citizen", Race.DEMONKIN, Faction.DEMONKIN, Role.CITIZEN, 28, 3, 0.3);
+    DEMON_CITIZEN("demon_citizen", Race.DEMONKIN, Faction.DEMONKIN, Role.CITIZEN, 28, 3, 0.3),
+    // ---- мастера-ремесленники (ремесло хранится в самой сущности, см. Craft) ----
+    HUMAN_ARTISAN("human_artisan", Race.HUMAN, Faction.KINGDOM, Role.ARTISAN, 30, 3, 0.28),
+    ELF_ARTISAN("elf_artisan", Race.ELF, Faction.ELVES, Role.ARTISAN, 28, 3, 0.28),
+    DWARF_ARTISAN("dwarf_artisan", Race.DWARF, Faction.DWARVES, Role.ARTISAN, 36, 4, 0.25),
+    ORC_ARTISAN("orc_artisan", Race.ORC, Faction.ORCS, Role.ARTISAN, 38, 4, 0.28),
+    BEAST_ARTISAN("beast_artisan", Race.BEASTKIN, Faction.BEASTKIN, Role.ARTISAN, 30, 3, 0.31),
+    DEMON_ARTISAN("demon_artisan", Race.DEMONKIN, Faction.DEMONKIN, Role.ARTISAN, 32, 3, 0.28);
 
-    public enum Role { WARRIOR, ARCHER, MAGE, TRADER, CHIEF, GUARD, CITIZEN }
+    public enum Role { WARRIOR, ARCHER, MAGE, TRADER, CHIEF, GUARD, CITIZEN, ARTISAN }
 
     public final String key;
     public final Race race;
@@ -80,7 +87,14 @@ public enum NpcType {
         this.speed = speed;
     }
 
-    public boolean fights() { return role != Role.TRADER && role != Role.CITIZEN; }
+    public boolean fights() { return role != Role.TRADER && role != Role.CITIZEN && role != Role.ARTISAN; }
+
+    public boolean isArtisan() { return role == Role.ARTISAN; }
+
+    public static NpcType artisanOf(Faction f) {
+        for (NpcType t : values()) if (t.role == Role.ARTISAN && t.faction == f) return t;
+        return HUMAN_ARTISAN;
+    }
 
     public boolean isGuard() { return role == Role.GUARD; }
 

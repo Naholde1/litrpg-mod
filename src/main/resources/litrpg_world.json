@@ -3067,5 +3067,951 @@
     40
    ]
   ]
- }
+ },
+ "workshops": [
+  {
+   "city": "arcadia",
+   "craft": "baker",
+   "npc": "litrpg:human_artisan",
+   "x": 38,
+   "y": 72,
+   "z": -18
+  },
+  {
+   "city": "arcadia",
+   "craft": "butcher",
+   "npc": "litrpg:human_artisan",
+   "x": 56,
+   "y": 72,
+   "z": -18
+  },
+  {
+   "city": "arcadia",
+   "craft": "fishmonger",
+   "npc": "litrpg:human_artisan",
+   "x": 65,
+   "y": 72,
+   "z": -18
+  },
+  {
+   "city": "arcadia",
+   "craft": "farmer",
+   "npc": "litrpg:human_artisan",
+   "x": 38,
+   "y": 72,
+   "z": 18
+  },
+  {
+   "city": "arcadia",
+   "craft": "herbalist",
+   "npc": "litrpg:human_artisan",
+   "x": 47,
+   "y": 72,
+   "z": 18
+  },
+  {
+   "city": "arcadia",
+   "craft": "tailor",
+   "npc": "litrpg:human_artisan",
+   "x": 65,
+   "y": 72,
+   "z": 18
+  },
+  {
+   "city": "arcadia",
+   "craft": "jeweler",
+   "npc": "litrpg:human_artisan",
+   "x": 74,
+   "y": 72,
+   "z": 18
+  },
+  {
+   "city": "arcadia",
+   "craft": "innkeeper",
+   "npc": "litrpg:human_artisan",
+   "x": 42,
+   "y": 72,
+   "z": 42
+  },
+  {
+   "city": "arcadia",
+   "craft": "blacksmith",
+   "npc": "litrpg:human_artisan",
+   "x": 63,
+   "y": 72,
+   "z": 42
+  },
+  {
+   "city": "arcadia",
+   "craft": "banker",
+   "npc": "litrpg:human_artisan",
+   "x": -37,
+   "y": 72,
+   "z": 13
+  },
+  {
+   "city": "arcadia",
+   "craft": "armorer",
+   "npc": "litrpg:human_artisan",
+   "x": -55,
+   "y": 72,
+   "z": -12
+  },
+  {
+   "city": "arcadia",
+   "craft": "weaponsmith",
+   "npc": "litrpg:human_artisan",
+   "x": -56,
+   "y": 72,
+   "z": 26
+  },
+  {
+   "city": "arcadia",
+   "craft": "jeweler",
+   "npc": "litrpg:human_artisan",
+   "x": 16,
+   "y": 72,
+   "z": 32
+  },
+  {
+   "city": "arcadia",
+   "craft": "tailor",
+   "npc": "litrpg:human_artisan",
+   "x": -26,
+   "y": 72,
+   "z": 50
+  },
+  {
+   "city": "arcadia",
+   "craft": "herbalist",
+   "npc": "litrpg:human_artisan",
+   "x": -51,
+   "y": 72,
+   "z": -24
+  },
+  {
+   "city": "arcadia",
+   "craft": "alchemist",
+   "npc": "litrpg:human_artisan",
+   "x": 87,
+   "y": 72,
+   "z": -37
+  },
+  {
+   "city": "arcadia",
+   "craft": "healer",
+   "npc": "litrpg:human_artisan",
+   "x": 45,
+   "y": 72,
+   "z": -72
+  },
+  {
+   "city": "arcadia",
+   "craft": "scribe",
+   "npc": "litrpg:human_artisan",
+   "x": 33,
+   "y": 72,
+   "z": 88
+  },
+  {
+   "city": "arcadia",
+   "craft": "builder",
+   "npc": "litrpg:human_artisan",
+   "x": 20,
+   "y": 72,
+   "z": 56
+  },
+  {
+   "city": "arcadia",
+   "craft": "builder",
+   "npc": "litrpg:human_artisan",
+   "x": -27,
+   "y": 72,
+   "z": 30
+  },
+  {
+   "city": "arcadia",
+   "craft": "leatherworker",
+   "npc": "litrpg:human_artisan",
+   "x": -45,
+   "y": 72,
+   "z": -86
+  },
+  {
+   "city": "arcadia",
+   "craft": "fletcher",
+   "npc": "litrpg:human_artisan",
+   "x": -14,
+   "y": 72,
+   "z": 87
+  },
+  {
+   "city": "arcadia",
+   "craft": "stablemaster",
+   "npc": "litrpg:human_artisan",
+   "x": -71,
+   "y": 72,
+   "z": -50
+  },
+  {
+   "city": "arcadia",
+   "craft": "miner",
+   "npc": "litrpg:human_artisan",
+   "x": -51,
+   "y": 72,
+   "z": -45
+  },
+  {
+   "city": "arcadia",
+   "craft": "innkeeper",
+   "npc": "litrpg:human_artisan",
+   "x": -18,
+   "y": 72,
+   "z": 69
+  },
+  {
+   "city": "arcadia",
+   "craft": "baker",
+   "npc": "litrpg:human_artisan",
+   "x": -89,
+   "y": 72,
+   "z": -36
+  },
+  {
+   "city": "haven",
+   "craft": "innkeeper",
+   "npc": "litrpg:human_artisan",
+   "x": 1509,
+   "y": 68,
+   "z": 954
+  },
+  {
+   "city": "haven",
+   "craft": "fishmonger",
+   "npc": "litrpg:human_artisan",
+   "x": 1565,
+   "y": 68,
+   "z": 928
+  },
+  {
+   "city": "haven",
+   "craft": "blacksmith",
+   "npc": "litrpg:human_artisan",
+   "x": 1548,
+   "y": 68,
+   "z": 966
+  },
+  {
+   "city": "haven",
+   "craft": "tailor",
+   "npc": "litrpg:human_artisan",
+   "x": 1534,
+   "y": 68,
+   "z": 898
+  },
+  {
+   "city": "haven",
+   "craft": "herbalist",
+   "npc": "litrpg:human_artisan",
+   "x": 1493,
+   "y": 68,
+   "z": 925
+  },
+  {
+   "city": "haven",
+   "craft": "scribe",
+   "npc": "litrpg:human_artisan",
+   "x": 1563,
+   "y": 68,
+   "z": 961
+  },
+  {
+   "city": "haven",
+   "craft": "banker",
+   "npc": "litrpg:human_artisan",
+   "x": 1553,
+   "y": 68,
+   "z": 889
+  },
+  {
+   "city": "haven",
+   "craft": "builder",
+   "npc": "litrpg:human_artisan",
+   "x": 1579,
+   "y": 68,
+   "z": 943
+  },
+  {
+   "city": "haven",
+   "craft": "healer",
+   "npc": "litrpg:human_artisan",
+   "x": 1580,
+   "y": 68,
+   "z": 916
+  },
+  {
+   "city": "haven",
+   "craft": "baker",
+   "npc": "litrpg:human_artisan",
+   "x": 1519,
+   "y": 68,
+   "z": 891
+  },
+  {
+   "city": "haven",
+   "craft": "leatherworker",
+   "npc": "litrpg:human_artisan",
+   "x": 1496,
+   "y": 68,
+   "z": 937
+  },
+  {
+   "city": "sylvendar",
+   "craft": "herbalist",
+   "npc": "litrpg:elf_artisan",
+   "x": -2831,
+   "y": 76,
+   "z": -386
+  },
+  {
+   "city": "sylvendar",
+   "craft": "alchemist",
+   "npc": "litrpg:elf_artisan",
+   "x": -2848,
+   "y": 76,
+   "z": -366
+  },
+  {
+   "city": "sylvendar",
+   "craft": "tailor",
+   "npc": "litrpg:elf_artisan",
+   "x": -2787,
+   "y": 76,
+   "z": -438
+  },
+  {
+   "city": "sylvendar",
+   "craft": "fletcher",
+   "npc": "litrpg:elf_artisan",
+   "x": -2826,
+   "y": 76,
+   "z": -346
+  },
+  {
+   "city": "sylvendar",
+   "craft": "jeweler",
+   "npc": "litrpg:elf_artisan",
+   "x": -2784,
+   "y": 76,
+   "z": -338
+  },
+  {
+   "city": "sylvendar",
+   "craft": "scribe",
+   "npc": "litrpg:elf_artisan",
+   "x": -2797,
+   "y": 76,
+   "z": -423
+  },
+  {
+   "city": "sylvendar",
+   "craft": "healer",
+   "npc": "litrpg:elf_artisan",
+   "x": -2802,
+   "y": 76,
+   "z": -355
+  },
+  {
+   "city": "sylvendar",
+   "craft": "innkeeper",
+   "npc": "litrpg:elf_artisan",
+   "x": -2846,
+   "y": 76,
+   "z": -413
+  },
+  {
+   "city": "sylvendar",
+   "craft": "builder",
+   "npc": "litrpg:elf_artisan",
+   "x": -2795,
+   "y": 76,
+   "z": -414
+  },
+  {
+   "city": "sylvendar",
+   "craft": "baker",
+   "npc": "litrpg:elf_artisan",
+   "x": -2849,
+   "y": 76,
+   "z": -399
+  },
+  {
+   "city": "sylvendar",
+   "craft": "leatherworker",
+   "npc": "litrpg:elf_artisan",
+   "x": -2762,
+   "y": 76,
+   "z": -420
+  },
+  {
+   "city": "khazad",
+   "craft": "blacksmith",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2729,
+   "y": 168,
+   "z": -2527
+  },
+  {
+   "city": "khazad",
+   "craft": "armorer",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2702,
+   "y": 168,
+   "z": -2515
+  },
+  {
+   "city": "khazad",
+   "craft": "weaponsmith",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2750,
+   "y": 168,
+   "z": -2556
+  },
+  {
+   "city": "khazad",
+   "craft": "jeweler",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2668,
+   "y": 168,
+   "z": -2568
+  },
+  {
+   "city": "khazad",
+   "craft": "miner",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2679,
+   "y": 168,
+   "z": -2581
+  },
+  {
+   "city": "khazad",
+   "craft": "builder",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2736,
+   "y": 168,
+   "z": -2540
+  },
+  {
+   "city": "khazad",
+   "craft": "innkeeper",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2673,
+   "y": 168,
+   "z": -2595
+  },
+  {
+   "city": "khazad",
+   "craft": "banker",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2711,
+   "y": 168,
+   "z": -2603
+  },
+  {
+   "city": "khazad",
+   "craft": "alchemist",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2720,
+   "y": 168,
+   "z": -2555
+  },
+  {
+   "city": "khazad",
+   "craft": "baker",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2696,
+   "y": 168,
+   "z": -2534
+  },
+  {
+   "city": "khazad",
+   "craft": "butcher",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2697,
+   "y": 168,
+   "z": -2585
+  },
+  {
+   "city": "khazad",
+   "craft": "leatherworker",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2715,
+   "y": 168,
+   "z": -2529
+  },
+  {
+   "city": "khazad",
+   "craft": "builder",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2649,
+   "y": 168,
+   "z": -2558
+  },
+  {
+   "city": "ghardum",
+   "craft": "butcher",
+   "npc": "litrpg:orc_artisan",
+   "x": 2901,
+   "y": 90,
+   "z": 2589
+  },
+  {
+   "city": "ghardum",
+   "craft": "leatherworker",
+   "npc": "litrpg:orc_artisan",
+   "x": 2885,
+   "y": 90,
+   "z": 2662
+  },
+  {
+   "city": "ghardum",
+   "craft": "weaponsmith",
+   "npc": "litrpg:orc_artisan",
+   "x": 2924,
+   "y": 90,
+   "z": 2616
+  },
+  {
+   "city": "ghardum",
+   "craft": "blacksmith",
+   "npc": "litrpg:orc_artisan",
+   "x": 2907,
+   "y": 90,
+   "z": 2655
+  },
+  {
+   "city": "ghardum",
+   "craft": "innkeeper",
+   "npc": "litrpg:orc_artisan",
+   "x": 2918,
+   "y": 90,
+   "z": 2583
+  },
+  {
+   "city": "ghardum",
+   "craft": "herbalist",
+   "npc": "litrpg:orc_artisan",
+   "x": 2866,
+   "y": 90,
+   "z": 2596
+  },
+  {
+   "city": "ghardum",
+   "craft": "builder",
+   "npc": "litrpg:orc_artisan",
+   "x": 2875,
+   "y": 90,
+   "z": 2582
+  },
+  {
+   "city": "ghardum",
+   "craft": "fletcher",
+   "npc": "litrpg:orc_artisan",
+   "x": 2923,
+   "y": 90,
+   "z": 2660
+  },
+  {
+   "city": "ghardum",
+   "craft": "armorer",
+   "npc": "litrpg:orc_artisan",
+   "x": 2850,
+   "y": 90,
+   "z": 2633
+  },
+  {
+   "city": "wolfden",
+   "craft": "leatherworker",
+   "npc": "litrpg:beast_artisan",
+   "x": -2594,
+   "y": 86,
+   "z": -3084
+  },
+  {
+   "city": "wolfden",
+   "craft": "fletcher",
+   "npc": "litrpg:beast_artisan",
+   "x": -2625,
+   "y": 86,
+   "z": -3034
+  },
+  {
+   "city": "wolfden",
+   "craft": "herbalist",
+   "npc": "litrpg:beast_artisan",
+   "x": -2620,
+   "y": 86,
+   "z": -3013
+  },
+  {
+   "city": "wolfden",
+   "craft": "butcher",
+   "npc": "litrpg:beast_artisan",
+   "x": -2571,
+   "y": 86,
+   "z": -3056
+  },
+  {
+   "city": "wolfden",
+   "craft": "healer",
+   "npc": "litrpg:beast_artisan",
+   "x": -2593,
+   "y": 86,
+   "z": -3068
+  },
+  {
+   "city": "wolfden",
+   "craft": "builder",
+   "npc": "litrpg:beast_artisan",
+   "x": -2574,
+   "y": 86,
+   "z": -3068
+  },
+  {
+   "city": "wolfden",
+   "craft": "tailor",
+   "npc": "litrpg:beast_artisan",
+   "x": -2599,
+   "y": 86,
+   "z": -3012
+  },
+  {
+   "city": "wolfden",
+   "craft": "innkeeper",
+   "npc": "litrpg:beast_artisan",
+   "x": -2563,
+   "y": 86,
+   "z": -3038
+  },
+  {
+   "city": "ashgrad",
+   "craft": "alchemist",
+   "npc": "litrpg:demon_artisan",
+   "x": -2822,
+   "y": 72,
+   "z": 2952
+  },
+  {
+   "city": "ashgrad",
+   "craft": "jeweler",
+   "npc": "litrpg:demon_artisan",
+   "x": -2887,
+   "y": 72,
+   "z": 2955
+  },
+  {
+   "city": "ashgrad",
+   "craft": "blacksmith",
+   "npc": "litrpg:demon_artisan",
+   "x": -2839,
+   "y": 72,
+   "z": 2970
+  },
+  {
+   "city": "ashgrad",
+   "craft": "weaponsmith",
+   "npc": "litrpg:demon_artisan",
+   "x": -2838,
+   "y": 72,
+   "z": 2915
+  },
+  {
+   "city": "ashgrad",
+   "craft": "scribe",
+   "npc": "litrpg:demon_artisan",
+   "x": -2888,
+   "y": 72,
+   "z": 2924
+  },
+  {
+   "city": "ashgrad",
+   "craft": "banker",
+   "npc": "litrpg:demon_artisan",
+   "x": -2816,
+   "y": 72,
+   "z": 2972
+  },
+  {
+   "city": "ashgrad",
+   "craft": "healer",
+   "npc": "litrpg:demon_artisan",
+   "x": -2822,
+   "y": 72,
+   "z": 2908
+  },
+  {
+   "city": "ashgrad",
+   "craft": "builder",
+   "npc": "litrpg:demon_artisan",
+   "x": -2892,
+   "y": 72,
+   "z": 2937
+  },
+  {
+   "city": "ashgrad",
+   "craft": "innkeeper",
+   "npc": "litrpg:demon_artisan",
+   "x": -2855,
+   "y": 72,
+   "z": 2895
+  },
+  {
+   "city": "ashgrad",
+   "craft": "tailor",
+   "npc": "litrpg:demon_artisan",
+   "x": -2858,
+   "y": 72,
+   "z": 2973
+  },
+  {
+   "city": "ashgrad",
+   "craft": "armorer",
+   "npc": "litrpg:demon_artisan",
+   "x": -2854,
+   "y": 72,
+   "z": 2914
+  },
+  {
+   "city": "dawnfort",
+   "craft": "blacksmith",
+   "npc": "litrpg:human_artisan",
+   "x": -50,
+   "y": 70,
+   "z": 2524
+  },
+  {
+   "city": "dawnfort",
+   "craft": "armorer",
+   "npc": "litrpg:human_artisan",
+   "x": -44,
+   "y": 70,
+   "z": 2537
+  },
+  {
+   "city": "dawnfort",
+   "craft": "weaponsmith",
+   "npc": "litrpg:human_artisan",
+   "x": -92,
+   "y": 70,
+   "z": 2578
+  },
+  {
+   "city": "dawnfort",
+   "craft": "innkeeper",
+   "npc": "litrpg:human_artisan",
+   "x": -99,
+   "y": 70,
+   "z": 2557
+  },
+  {
+   "city": "dawnfort",
+   "craft": "healer",
+   "npc": "litrpg:human_artisan",
+   "x": -45,
+   "y": 70,
+   "z": 2549
+  },
+  {
+   "city": "dawnfort",
+   "craft": "builder",
+   "npc": "litrpg:human_artisan",
+   "x": -104,
+   "y": 70,
+   "z": 2523
+  },
+  {
+   "city": "dawnfort",
+   "craft": "fletcher",
+   "npc": "litrpg:human_artisan",
+   "x": -102,
+   "y": 70,
+   "z": 2539
+  },
+  {
+   "city": "dawnfort",
+   "craft": "stablemaster",
+   "npc": "litrpg:human_artisan",
+   "x": -46,
+   "y": 70,
+   "z": 2562
+  },
+  {
+   "city": "dawnfort",
+   "craft": "herbalist",
+   "npc": "litrpg:human_artisan",
+   "x": -65,
+   "y": 70,
+   "z": 2521
+  },
+  {
+   "city": "northwatch",
+   "craft": "blacksmith",
+   "npc": "litrpg:human_artisan",
+   "x": 364,
+   "y": 96,
+   "z": -3267
+  },
+  {
+   "city": "northwatch",
+   "craft": "armorer",
+   "npc": "litrpg:human_artisan",
+   "x": 314,
+   "y": 96,
+   "z": -3241
+  },
+  {
+   "city": "northwatch",
+   "craft": "weaponsmith",
+   "npc": "litrpg:human_artisan",
+   "x": 368,
+   "y": 96,
+   "z": -3238
+  },
+  {
+   "city": "northwatch",
+   "craft": "innkeeper",
+   "npc": "litrpg:human_artisan",
+   "x": 363,
+   "y": 96,
+   "z": -3254
+  },
+  {
+   "city": "northwatch",
+   "craft": "healer",
+   "npc": "litrpg:human_artisan",
+   "x": 374,
+   "y": 96,
+   "z": -3279
+  },
+  {
+   "city": "northwatch",
+   "craft": "builder",
+   "npc": "litrpg:human_artisan",
+   "x": 318,
+   "y": 96,
+   "z": -3266
+  },
+  {
+   "city": "northwatch",
+   "craft": "fletcher",
+   "npc": "litrpg:human_artisan",
+   "x": 312,
+   "y": 96,
+   "z": -3254
+  },
+  {
+   "city": "northwatch",
+   "craft": "stablemaster",
+   "npc": "litrpg:human_artisan",
+   "x": 325,
+   "y": 96,
+   "z": -3280
+  },
+  {
+   "city": "northwatch",
+   "craft": "baker",
+   "npc": "litrpg:human_artisan",
+   "x": 325,
+   "y": 96,
+   "z": -3227
+  },
+  {
+   "city": "northwatch",
+   "craft": "herbalist",
+   "npc": "litrpg:human_artisan",
+   "x": 341,
+   "y": 96,
+   "z": -3296
+  },
+  {
+   "city": "blackbastion",
+   "craft": "blacksmith",
+   "npc": "litrpg:human_artisan",
+   "x": 3125,
+   "y": 84,
+   "z": -313
+  },
+  {
+   "city": "blackbastion",
+   "craft": "armorer",
+   "npc": "litrpg:human_artisan",
+   "x": 3126,
+   "y": 84,
+   "z": -357
+  },
+  {
+   "city": "blackbastion",
+   "craft": "weaponsmith",
+   "npc": "litrpg:human_artisan",
+   "x": 3174,
+   "y": 84,
+   "z": -322
+  },
+  {
+   "city": "blackbastion",
+   "craft": "innkeeper",
+   "npc": "litrpg:human_artisan",
+   "x": 3154,
+   "y": 84,
+   "z": -328
+  },
+  {
+   "city": "blackbastion",
+   "craft": "healer",
+   "npc": "litrpg:human_artisan",
+   "x": 3144,
+   "y": 84,
+   "z": -373
+  },
+  {
+   "city": "blackbastion",
+   "craft": "builder",
+   "npc": "litrpg:human_artisan",
+   "x": 3182,
+   "y": 84,
+   "z": -345
+  },
+  {
+   "city": "blackbastion",
+   "craft": "fletcher",
+   "npc": "litrpg:human_artisan",
+   "x": 3105,
+   "y": 84,
+   "z": -349
+  },
+  {
+   "city": "blackbastion",
+   "craft": "stablemaster",
+   "npc": "litrpg:human_artisan",
+   "x": 3167,
+   "y": 84,
+   "z": -374
+  },
+  {
+   "city": "blackbastion",
+   "craft": "baker",
+   "npc": "litrpg:human_artisan",
+   "x": 3117,
+   "y": 84,
+   "z": -372
+  },
+  {
+   "city": "blackbastion",
+   "craft": "herbalist",
+   "npc": "litrpg:human_artisan",
+   "x": 3145,
+   "y": 84,
+   "z": -303
+  }
+ ]
 }

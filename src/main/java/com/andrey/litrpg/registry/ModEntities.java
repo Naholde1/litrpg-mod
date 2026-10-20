@@ -105,6 +105,14 @@ public class ModEntities {
             () -> EntityType.Builder.<com.andrey.litrpg.entity.Creatures.GraveKnight>of(com.andrey.litrpg.entity.Creatures.GraveKnight::new, MobCategory.MONSTER)
                     .sized(0.7f, 2.1f).clientTrackingRange(8).build("grave_knight"));
 
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.RatEntity>> RAT = ENTITY_TYPES.register("rat",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.RatEntity>of((t, l) -> new com.andrey.litrpg.entity.RatEntity(t, l, false), MobCategory.CREATURE)
+                    .sized(0.5f, 0.4f).clientTrackingRange(8).build("rat"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.RatEntity>> RAT_KING = ENTITY_TYPES.register("rat_king",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.RatEntity>of((t, l) -> new com.andrey.litrpg.entity.RatEntity(t, l, true), MobCategory.CREATURE)
+                    .sized(1.0f, 0.8f).clientTrackingRange(8).build("rat_king"));
+
     static {
         com.andrey.litrpg.npc.NpcRegistry.init();
     }

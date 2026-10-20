@@ -36,7 +36,10 @@ public enum QuestTarget {
     SLIME("slimes", "слизней", e -> e instanceof Slime && !(e instanceof MagmaCube)),
     ENDER("endermen", "эндерменов", e -> e instanceof EnderMan),
     NETHER("nether", "тварей Преисподней", e -> e instanceof Blaze || e instanceof Ghast || e instanceof MagmaCube || e instanceof WitherSkeleton),
-    ELITE("elites", "элитных монстров и чемпионов", e -> e instanceof Enemy && MobLevels.getRank(e) != MobLevels.Rank.NORMAL);
+    ELITE("elites", "элитных монстров и чемпионов", e -> e instanceof Enemy && MobLevels.getRank(e) != MobLevels.Rank.NORMAL),
+    RAT("rats", "крыс", e -> e instanceof com.andrey.litrpg.entity.RatEntity),
+    WOLF("wolves", "волков", e -> e instanceof net.minecraft.world.entity.animal.Wolf w && !w.isTame()),
+    BANDIT("bandits", "разбойников", e -> e instanceof net.minecraft.world.entity.monster.Pillager || e instanceof net.minecraft.world.entity.monster.Vindicator);
 
     public final String key;
     /** Название в родительном падеже множественного числа: «Убейте 10 …». */

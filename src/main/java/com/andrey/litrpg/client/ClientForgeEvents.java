@@ -13,14 +13,40 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = LitRPG.MODID, value = Dist.CLIENT)
 public class ClientForgeEvents {
 
+    /**
+     * Мир Системы использует свой генератор, и Майнкрафт помечает такие миры как
+     * «экспериментальные»: при создании и при входе висит окно-предупреждение.
+     * Подтверждаем его сами — это ожидаемо для мира мода.
+     */
+    @SubscribeEvent
+    public static void onScreenOpen(net.minecraftforge.client.event.ScreenEvent.Opening event) {
+        if (!(event.getNewScreen() instanceof net.minecraft.client.gui.screens.ConfirmScreen screen)) return;
+        if (!(screen.getTitle().getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents tc)) return;
+        if (!tc.getKey().contains("experimental")) return;
+        for (Class<?> c = screen.getClass(); c != null; c = c.getSuperclass()) {
+            for (java.lang.reflect.Field f : c.getDeclaredFields()) {
+                if (!it.unimi.dsi.fastutil.booleans.BooleanConsumer.class.isAssignableFrom(f.getType())) continue;
+                try {
+                    f.setAccessible(true);
+                    var cb = (it.unimi.dsi.fastutil.booleans.BooleanConsumer) f.get(screen);
+                    if (cb == null) return;
+                    event.setCanceled(true);
+                    Minecraft.getInstance().tell(() -> cb.accept(true));
+                } catch (Exception ignored) {
+                }
+                return;
+            }
+        }
+    }
+
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         Minecraft mc = Minecraft.getInstance();
+        devScreenshot(mc);
         if (mc.player == null || mc.level == null) return;
 
         ClientData.tick();
-        devScreenshot(mc);
         Minimap.tick(mc);
 
         while (ModKeys.CHARACTER.consumeClick()) {
@@ -42,10 +68,12 @@ public class ClientForgeEvents {
     }
 
     /** Только в среде разработки: файл dev_screenshot.txt → снимок экрана в screenshots/. */
+    private static int devTicks;
+
     private static void devScreenshot(Minecraft mc) {
         if (net.minecraftforge.fml.loading.FMLLoader.isProduction()) return;
-        if (mc.screen instanceof net.minecraft.client.gui.screens.DeathScreen) mc.player.respawn();
-        if (mc.player.tickCount % 10 != 0) return;
+        if (mc.player != null && mc.screen instanceof net.minecraft.client.gui.screens.DeathScreen) mc.player.respawn();
+        if (++devTicks % 10 != 0) return;
         java.nio.file.Path open = java.nio.file.Path.of("dev_open.txt");
         if (java.nio.file.Files.exists(open)) {
             try {

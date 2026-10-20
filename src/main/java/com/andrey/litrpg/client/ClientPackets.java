@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft;
 public final class ClientPackets {
     private ClientPackets() {}
 
-    public static void openQuestBoard(String faction, String npcName) {
-        Minecraft.getInstance().setScreen(new QuestBoardScreen(faction, npcName));
+    public static void openQuestBoard(String board, String faction, String npcName, String workshop, int entityId) {
+        Minecraft.getInstance().setScreen(new QuestBoardScreen(board, faction, npcName, workshop, entityId));
     }
 }

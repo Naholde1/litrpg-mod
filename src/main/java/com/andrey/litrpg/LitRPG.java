@@ -85,6 +85,8 @@ public class LitRPG {
         event.put(ModEntities.BOG_LURKER.get(), com.andrey.litrpg.entity.Creatures.BogLurker.attributes().build());
         event.put(ModEntities.SAND_SCORPION.get(), com.andrey.litrpg.entity.Creatures.SandScorpion.attributes().build());
         event.put(ModEntities.GRAVE_KNIGHT.get(), com.andrey.litrpg.entity.Creatures.GraveKnight.attributes().build());
+        event.put(ModEntities.RAT.get(), com.andrey.litrpg.entity.RatEntity.attributes(false).build());
+        event.put(ModEntities.RAT_KING.get(), com.andrey.litrpg.entity.RatEntity.attributes(true).build());
         com.andrey.litrpg.npc.NpcRegistry.attributes(event);
     }
 

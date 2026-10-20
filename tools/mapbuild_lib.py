@@ -83,6 +83,7 @@ class City(Build):
         self.G = ground
         self.rnd = random.Random(seed)
         self.reserved = []
+        self.workshops = []  # (ремесло, житель, x, y, z) — мастерские для заданий и найма
 
     def bp(self, opts, x, y, z):
         """Детерминированный выбор блока по координатам."""
@@ -244,6 +245,7 @@ class City(Build):
         else:
             dx_, dz_ = x1, cz
         self.door(dx_, G, dz_, door)
+        self.last_door = (dx_, dz_, door)
         ox, oz = DIRS[door]
         self.set(dx_ + ox, G - 1, dz_ + oz, self.bp(st['found'], dx_, G, dz_))
         if lit:
@@ -263,8 +265,15 @@ class City(Build):
     def furnish(self, x0, z0, x1, z1, floors, kind, door):
         G = self.G
         r = self.rnd
+        base_kind = kind
         for f in range(floors):
             y = G + f * 4
+            if base_kind == 'workshop':
+                # мастерская: первый этаж обставляет mapbuild_crafts, наверху — жильё мастера
+                if f == 0:
+                    self.lantern((x0 + x1) // 2, y + 3, (z0 + z1) // 2, hanging=True)
+                    continue
+                kind = 'home'
             spots = [(x1 - 1, z0 + 1), (x1 - 1, z1 - 1), (x0 + 1, z1 - 1), (x0 + 2, z0 + 1)]
             r.shuffle(spots)
             if kind in ('home', 'tavern') and f == floors - 1 or kind == 'home' and floors == 1:
@@ -515,9 +524,59 @@ def fix_paintings(b, name=""):
     b.entities[:] = out
 
 
+
+
+_SIDES = {'north': (0, -1), 'south': (0, 1), 'west': (-1, 0), 'east': (1, 0)}
+
+
+def _kind(name):
+    if name.endswith('_fence_gate'):
+        return 'gate'
+    if name.endswith('_fence'):
+        return 'fence'
+    if name.endswith('_pane') or name == 'minecraft:iron_bars':
+        return 'pane'
+    if name.endswith('_wall') and 'sign' not in name and 'banner' not in name and 'torch' not in name:
+        return 'wall'
+    return None
+
+
+def connect_blocks(b):
+    """Заборы, стеклянные панели, решётки и стенки соединяются с соседями
+    (без этого в шаблоне они стоят отдельными столбиками, а животные проходят насквозь)."""
+    blocks = b.blocks
+    changes = {}
+    for (x, y, z), (name, props) in blocks.items():
+        k = _kind(name)
+        if not k or k == 'gate':
+            continue
+        pd = dict(props)
+        for side, (dx, dz) in _SIDES.items():
+            nb = blocks.get((x + dx, y, z + dz))
+            ok = False
+            if nb is not None and nb[0] != 'minecraft:air':
+                nk = _kind(nb[0])
+                if nk == k or (k in ('pane', 'wall') and nk in ('pane', 'wall')):
+                    ok = not (k == 'fence' and ('nether' in name) != ('nether' in nb[0]))
+                elif nk == 'gate':
+                    gfacing = dict(nb[1]).get('facing', 'north')
+                    ok = k in ('fence', 'wall') and (gfacing in ('north', 'south')) == (side in ('east', 'west'))
+                elif nk is None:
+                    ok = not any(t in nb[0] for t in _SOFT) and 'leaves' not in nb[0]
+            if k == 'wall':
+                pd[side] = 'low' if ok else 'none'
+            else:
+                pd[side] = 'true' if ok else 'false'
+        if k == 'wall':
+            pd.setdefault('up', 'true')
+        pd.setdefault('waterlogged', 'false')
+        changes[(x, y, z)] = (name, tuple(sorted(pd.items())))
+    blocks.update(changes)
+
 def save_tiles(b, name, tile=128):
     """Сохранить постройку как набор плиток не больше tile×tile. -> список (dx, dz, имя)."""
     fix_paintings(b, name)
+    connect_blocks(b)
     sx, sy, sz = b.size
     out = []
     for tx in range(0, sx, tile):

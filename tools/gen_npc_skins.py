@@ -103,7 +103,169 @@ RACES = {
 }
 
 
-def paint(race, role, seed):
+# одежда мастеров: туника, штаны, фартук, головной убор, детали
+CRAFTS = {
+    'blacksmith': dict(tunic=0x5A4A3A, pants=0x3A3028, apron=0x3A2A1A, bare=True, soot=True, gloves=0x2A2A2A),
+    'armorer': dict(tunic=0x8A8A94, mail=True, pants=0x3A3A44, apron=0x4A3020, gloves=0x5A5A64),
+    'weaponsmith': dict(tunic=0x7A2A2A, pants=0x3A3028, apron=0x4A3020, hat=('band', 0x7A2A2A), soot=True),
+    'jeweler': dict(tunic=0x5A2A7A, pants=0x2A2A3A, trim=0xF2D060, hat=('cap', 0x3A1A4A), monocle=True),
+    'tailor': dict(tunic=0xC84A6A, pants=0x3A3A6A, sash=0xE8D040, hat=('cap', 0xC84A6A), sleeves=True),
+    'herbalist': dict(robe=0x5A8A3A, hat=('hood', 0x4A7A30), flower=0xE04040),
+    'alchemist': dict(robe=0x4A2A6A, goggles=0xC8A040, stains=0x60E060, trim=0x9A6AD0),
+    'baker': dict(tunic=0xE8E0D0, pants=0x8A7A60, apron=0xF4F0E8, hat=('chef', 0xF8F8F4), flour=True, sleeves=True),
+    'butcher': dict(tunic=0xC8C0B0, pants=0x4A3A2A, apron=0xE8E0D8, stains=0xA02020, bare=True),
+    'fishmonger': dict(tunic=0x3A6A8A, pants=0x2A3A4A, apron=0xD8C040, hat=('brim', 0xD8C040), sleeves=True),
+    'innkeeper': dict(tunic=0xE8E0D0, vest=0x7A3A2A, pants=0x3A2A1A, apron=0xF0ECE0, sleeves=True),
+    'builder': dict(tunic=0xC87A2A, pants=0x5A4A3A, belt_tools=True, hat=('cap', 0xE8A030), sleeves=True),
+    'leatherworker': dict(tunic=0x8A5A2A, pants=0x4A3020, apron=0x5A3A1A, sleeves=True),
+    'fletcher': dict(tunic=0x3A6A3A, pants=0x5A4A2A, hat=('brim', 0x2E5A2E), feather=0xE04020, sleeves=True),
+    'scribe': dict(robe=0x2A3A6A, stains=0x101018, hat=('cap', 0x1A2A4A), trim=0xC8B070),
+    'farmer': dict(tunic=0xC8A060, overalls=0x3A5A8A, hat=('straw', 0xE0C060), sleeves=False),
+    'healer': dict(robe=0xF0F0EC, cross=0xD02020, hat=('hood', 0xF4F4F0)),
+    'banker': dict(tunic=0x2A1A4A, pants=0x1A1A2A, trim=0xF2D060, hat=('cap', 0x14141C), sleeves=True, rich=True),
+    'stablemaster': dict(tunic=0x6A5A3A, pants=0x3A3A2A, boots=0x4A2A14, hat=('brim', 0x5A3A1A), sleeves=True),
+    'miner': dict(tunic=0x5A5A5A, pants=0x3A3A3A, hat=('helmet', 0xD0A040), soot=True, sleeves=True),
+}
+
+
+def artisan_outfit(s, p, craft):
+    o = CRAFTS[craft]
+    leather = p['leather']
+    if 'robe' in o:
+        robe = o['robe']
+        s.fill('body', robe)
+        s.fill('jacket', robe, rows=range(0, 12))
+        for arm, sleeve in (('rarm', 'rsleeve'), ('larm', 'lsleeve')):
+            s.fill(arm, robe, rows=range(0, 10))
+            s.fill(sleeve, mul(robe, 0.9), rows=range(7, 10))
+        for leg, pants in (('rleg', 'rpants'), ('lleg', 'lpants')):
+            s.fill(leg, robe, rows=range(0, 10))
+            s.fill(pants, robe, rows=range(0, 9))
+            s.fill(leg, mul(leather, 0.8), rows=range(10, 12))
+        s.row('body', 8, mul(robe, 0.6))
+    else:
+        tunic = o['tunic']
+        s.fill('body', tunic)
+        arm_rows = range(0, 10) if o.get('sleeves') else range(0, 4) if not o.get('bare') else range(0, 2)
+        s.fill('rarm', tunic, rows=arm_rows)
+        s.fill('larm', tunic, rows=arm_rows)
+        pants = o.get('pants', 0x4A3A2A)
+        for leg in ('rleg', 'lleg'):
+            s.fill(leg, pants, rows=range(0, 10))
+            s.fill(leg, o.get('boots', mul(leather, 0.8)), rows=range(9 if 'boots' in o else 10, 12))
+        s.row('body', 8, leather)
+        if o.get('mail'):
+            for y in range(12):
+                for x in range(8):
+                    if (x + y) % 2 == 0:
+                        s.face_px('body', 'front', x, y, mul(tunic, 0.75))
+                        s.face_px('body', 'back', x, y, mul(tunic, 0.75))
+    if 'overalls' in o:
+        ov = o['overalls']
+        for y in range(4, 12):
+            for x in range(1, 7):
+                s.face_px('body', 'front', x, y, ov)
+        for x in (1, 6):
+            for y in range(0, 4):
+                s.face_px('body', 'front', x, y, ov)
+        for leg in ('rleg', 'lleg'):
+            s.fill(leg, ov, rows=range(0, 10))
+    if 'apron' in o:
+        ap = o['apron']
+        for y in range(2, 12):
+            for x in range(1, 7):
+                s.face_px('body', 'front', x, y, ap)
+        for x in (1, 6):
+            s.face_px('body', 'front', x, 1, mul(ap, 0.8))
+        for leg in ('rleg', 'lleg'):
+            for y in range(0, 6):
+                for x in range(4):
+                    if not (leg == 'rleg' and x == 0 or leg == 'lleg' and x == 3):
+                        s.face_px(leg, 'front', x, y, ap)
+    if 'vest' in o:
+        for y in range(0, 9):
+            for x in (0, 1, 6, 7):
+                s.face_px('jacket', 'front', x, y, o['vest'])
+        s.fill('jacket', o['vest'], rows=range(0, 9), face_names=('right', 'left', 'back'))
+    if 'sash' in o:
+        for i in range(8):
+            s.face_px('body', 'front', i, min(11, i + 2), o['sash'])
+    if 'trim' in o:
+        for y in range(12):
+            s.face_px('body', 'front', 3, y, o['trim']) if o.get('rich') or 'robe' in o else None
+        s.row('body', 8, o['trim'])
+    if 'cross' in o:
+        for y in range(3, 8):
+            s.face_px('body', 'front', 3, y, o['cross'])
+            s.face_px('body', 'front', 4, y, o['cross'])
+        for x in range(2, 6):
+            s.face_px('body', 'front', x, 4, o['cross'])
+            s.face_px('body', 'front', x, 5, o['cross'])
+    if o.get('belt_tools'):
+        s.row('body', 8, 0x4A3018)
+        for x in (1, 3, 6):
+            s.face_px('body', 'front', x, 9, 0x9A9AA4)
+    if 'gloves' in o:
+        for arm in ('rarm', 'larm'):
+            s.fill(arm, o['gloves'], rows=range(9, 12))
+    if 'stains' in o:
+        for _ in range(7):
+            s.face_px('body', 'front', s.rnd.randrange(1, 7), s.rnd.randrange(3, 12), o['stains'])
+    if o.get('soot'):
+        for _ in range(6):
+            part = s.rnd.choice(['rarm', 'larm', 'body'])
+            s.face_px(part, 'front', s.rnd.randrange(0, 4), s.rnd.randrange(2, 12), 0x2A2420)
+        s.face_px('head', 'front', 1, 6, mul(p['skin'], 0.55))
+    if o.get('flour'):
+        for _ in range(8):
+            s.face_px(s.rnd.choice(['rarm', 'larm']), 'front', s.rnd.randrange(0, 4), s.rnd.randrange(4, 12), 0xF4F0E8)
+    # головной убор (слой hat)
+    hat = o.get('hat')
+    if hat:
+        kind, col = hat
+        if kind in ('cap', 'band'):
+            s.fill('hat', col, face_names=('top',)) if kind == 'cap' else None
+            s.fill('hat', col, rows=range(0, 2 if kind == 'cap' else 1), face_names=('front', 'right', 'left', 'back'))
+            if kind == 'band':
+                s.fill('hat', col, rows=range(1, 2), face_names=('front', 'right', 'left', 'back'))
+        elif kind == 'chef':
+            s.fill('hat', col, face_names=('top',))
+            s.fill('hat', col, rows=range(0, 3), face_names=('front', 'right', 'left', 'back'))
+        elif kind in ('brim', 'straw'):
+            s.fill('hat', col, face_names=('top',))
+            s.fill('hat', col, rows=range(0, 2), face_names=('front', 'right', 'left', 'back'))
+            s.row('hat', 2, mul(col, 0.75))
+            if kind == 'straw':
+                for x in range(0, 8, 2):
+                    s.face_px('hat', 'front', x, 1, mul(col, 0.8))
+        elif kind == 'hood':
+            s.fill('hat', col, face_names=('top', 'right', 'left', 'back'))
+            s.fill('hat', col, rows=range(0, 2), face_names=('front',))
+            for y in range(2, 8):
+                s.face_px('hat', 'front', 0, y, col)
+                s.face_px('hat', 'front', 7, y, col)
+        elif kind == 'helmet':
+            s.fill('hat', col, face_names=('top',))
+            s.fill('hat', col, rows=range(0, 2), face_names=('front', 'right', 'left', 'back'))
+            s.face_px('hat', 'front', 3, 0, 0xFFF0A0)
+            s.face_px('hat', 'front', 4, 0, 0xFFE070)
+    if 'feather' in o:
+        s.face_px('hat', 'right', 1, 0, o['feather'])
+        s.face_px('hat', 'right', 2, 0, o['feather'])
+    if 'flower' in o:
+        s.face_px('hat', 'left', 5, 2, o['flower'])
+        s.face_px('hat', 'left', 6, 2, 0xF0E040)
+    if o.get('monocle'):
+        s.face_px('head', 'front', 5, 4, 0xF2D060)
+        s.face_px('head', 'front', 6, 5, 0xF2D060)
+    if 'goggles' in o:
+        for x in range(1, 7):
+            s.face_px('hat', 'front', x, 1, o['goggles'])
+        s.face_px('hat', 'front', 2, 1, 0x80E0FF)
+        s.face_px('hat', 'front', 5, 1, 0x80E0FF)
+
+
+def paint(race, role, seed, craft=None):
     p = RACES[race]
     s = Skin(seed)
     # кожа
@@ -231,6 +393,8 @@ def paint(race, role, seed):
         for leg, pants in (('rleg', 'rpants'), ('lleg', 'lpants')):
             s.fill(pants, mul(metal, 0.85), rows=range(9, 12))
         s.row('body', 9, leather)
+    elif role == 'artisan':
+        artisan_outfit(s, p, craft)
     elif role == 'citizen':
         import random as _r
         rr = _r.Random(seed)
@@ -297,6 +461,38 @@ def main():
             models = os.path.join(OUT, '..', '..', '..', 'models', 'item')
             with open(os.path.join(models, key + '_spawn_egg.json'), 'w') as f:
                 f.write('{"parent": "minecraft:item/template_spawn_egg"}')
+    art_dir = os.path.join(OUT, 'artisan')
+    os.makedirs(art_dir, exist_ok=True)
+    races = {'human': 'human', 'elf': 'elf', 'dwarf': 'dwarf', 'orc': 'orc', 'beast': 'beastkin', 'demon': 'demonkin'}
+    for short, race in races.items():
+        for craft in CRAFTS:
+            img = paint(race, 'artisan', short + craft, craft)
+            write_png(os.path.join(art_dir, short + '_' + craft + '.png'), img, 64, 64)
+            if short == 'human':
+                out['art_' + craft] = img
+        models = os.path.join(OUT, '..', '..', '..', 'models', 'item')
+        with open(os.path.join(models, short + '_artisan_spawn_egg.json'), 'w') as f:
+            f.write('{"parent": "minecraft:item/template_spawn_egg"}')
+    # посылка из городских поручений
+    tex = blank(16, 16)
+    paper, dark, string, seal = (0xB8, 0x8A, 0x52), (0x7A, 0x56, 0x30), (0xE8, 0xDC, 0xB0), (0xC0, 0x20, 0x20)
+    for y in range(3, 14):
+        for x in range(2, 14):
+            edge = x in (2, 13) or y in (3, 13)
+            c = dark if edge else paper
+            k = 1 + ((x * 7 + y * 13) % 5 - 2) * 0.03
+            tex[y][x] = (min(255, int(c[0] * k)), min(255, int(c[1] * k)), min(255, int(c[2] * k)), 255)
+    for x in range(2, 14):
+        tex[8][x] = string + (255,)
+    for y in range(3, 14):
+        tex[y][7] = string + (255,)
+    for (x, y) in ((6, 7), (8, 7), (6, 9), (8, 9), (7, 8), (6, 8), (8, 8), (7, 7), (7, 9)):
+        tex[y][x] = seal + (255,)
+    tex[2][6], tex[2][8], tex[1][5], tex[1][9] = (string + (255,),) * 4
+    item_tex = os.path.join(OUT, '..', '..', 'item')
+    write_png(os.path.join(item_tex, 'parcel.png'), tex, 16, 16)
+    with open(os.path.join(OUT, '..', '..', '..', 'models', 'item', 'parcel.json'), 'w') as f:
+        f.write('{"parent": "minecraft:item/generated", "textures": {"layer0": "litrpg:item/parcel"}}')
     print(f'{len(out)} skins')
     if '--preview' in sys.argv:
         path = sys.argv[sys.argv.index('--preview') + 1]

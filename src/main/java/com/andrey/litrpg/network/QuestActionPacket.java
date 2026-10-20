@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 /** Действие игрока в окне заданий: принять, отказаться, сдать, найти подземелье. */
 public class QuestActionPacket {
-    public enum Action { ACCEPT, ABANDON, TURN_IN, LOCATE }
+    public enum Action { ACCEPT, ABANDON, TURN_IN, LOCATE, TRADE }
 
     private final Action action;
     private final String source;
@@ -41,6 +41,12 @@ public class QuestActionPacket {
             case ABANDON -> QuestEvents.abandon(p, id);
             case TURN_IN -> QuestEvents.turnIn(p, id);
             case LOCATE -> QuestEvents.locate(p, id);
+            case TRADE -> {
+                try {
+                    if (p.level().getEntity(Integer.parseInt(id)) instanceof com.andrey.litrpg.npc.RaceNpcEntity npc) npc.openTrade(p);
+                } catch (NumberFormatException ignored) {
+                }
+            }
         }
     }
 }

@@ -21,10 +21,16 @@ public final class Quest {
         /** Достичь уровня need. */
         LEVEL,
         /** Поговорить с жителем любого народа. */
-        MEET
+        MEET,
+        /** Отнести посылку мастеру ремесла target в город place. */
+        DELIVER,
+        /** Дойти до места (px, pz). */
+        VISIT,
+        /** Развести N животных target (id сущности). */
+        BREED
     }
 
-    public enum Source { STORY, SYSTEM, FACTION }
+    public enum Source { STORY, SYSTEM, FACTION, CITY }
 
     public String id = "";
     public Source source = Source.SYSTEM;
@@ -46,6 +52,19 @@ public final class Quest {
     /** Дополнительный предмет-награда (id) и количество. */
     public String bonusItem = "";
     public int bonusCount = 0;
+    /** Городские задания: город (id), кто дал, куда идти и сколько тварей уже выпущено. */
+    public String place = "";
+    public String placeName = "";
+    public String giver = "";
+    public String where = "";
+    public int px, py, pz;
+    public boolean hasPos;
+    public int spawned;
+
+    /** Есть ли у задания точка на карте. */
+    public boolean locatable() {
+        return hasPos || type == Type.BOSS;
+    }
 
     public boolean isComplete() {
         return have >= need;
@@ -69,6 +88,23 @@ public final class Quest {
             }
             case LEVEL -> "Достигните " + need + " уровня";
             case MEET -> "Поговорите с жителем любого народа";
+            case DELIVER -> (have >= need ? "Доставлено" : "Отнесите посылку: " + where);
+            case VISIT -> (have >= need ? "Место найдено" : "Доберитесь: " + where);
+            case BREED -> "Разведено " + breedName() + ": " + Math.min(have, need) + "/" + need;
+        };
+    }
+
+    public String breedName() {
+        return switch (target) {
+            case "minecraft:pig" -> "свиней";
+            case "minecraft:cow" -> "коров";
+            case "minecraft:sheep" -> "овец";
+            case "minecraft:chicken" -> "кур";
+            case "minecraft:horse" -> "лошадей";
+            case "minecraft:rabbit" -> "кроликов";
+            case "minecraft:goat" -> "коз";
+            case "minecraft:bee" -> "пчёл";
+            default -> "животных";
         };
     }
 
@@ -92,6 +128,12 @@ public final class Quest {
             t.putString("bonus", bonusItem);
             t.putInt("bonusN", bonusCount);
         }
+        if (!place.isEmpty()) t.putString("place", place);
+        if (!placeName.isEmpty()) t.putString("placeN", placeName);
+        if (!giver.isEmpty()) t.putString("giver", giver);
+        if (!where.isEmpty()) t.putString("where", where);
+        if (hasPos) t.putIntArray("pos", new int[]{px, py, pz});
+        if (spawned > 0) t.putInt("spawned", spawned);
         return t;
     }
 
@@ -113,6 +155,18 @@ public final class Quest {
         q.gearLevel = t.getInt("glvl");
         q.bonusItem = t.getString("bonus");
         q.bonusCount = t.getInt("bonusN");
+        q.place = t.getString("place");
+        q.placeName = t.getString("placeN");
+        q.giver = t.getString("giver");
+        q.where = t.getString("where");
+        int[] pos = t.getIntArray("pos");
+        if (pos.length == 3) {
+            q.hasPos = true;
+            q.px = pos[0];
+            q.py = pos[1];
+            q.pz = pos[2];
+        }
+        q.spawned = t.getInt("spawned");
         return q;
     }
 }

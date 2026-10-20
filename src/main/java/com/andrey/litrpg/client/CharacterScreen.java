@@ -434,7 +434,7 @@ public class CharacterScreen extends SystemScreen {
                     questButton(g, mx, my, bx, cy[0] + 14, 48, 12, "Сдать", ok ? 0x66DD44 : 0x555555,
                             () -> QuestUi.send(com.andrey.litrpg.network.QuestActionPacket.Action.TURN_IN, "", q.id));
                 }
-                if (q.type == com.andrey.litrpg.quest.Quest.Type.BOSS) {
+                if (q.locatable()) {
                     questButton(g, mx, my, bx, cy[0] + 14, 48, 12, "Где?", 0x4FC3F7,
                             () -> QuestUi.send(com.andrey.litrpg.network.QuestActionPacket.Action.LOCATE, "", q.id));
                 }

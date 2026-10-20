@@ -2,7 +2,7 @@
   "name": "Чудеса света",
   "icon": "minecraft:beacon",
   "category": "litrpg:mapworld",
-  "sortnum": 5,
+  "sortnum": 6,
   "pages": [
     {
       "type": "patchouli:text",

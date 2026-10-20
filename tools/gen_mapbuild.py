@@ -21,11 +21,14 @@ ASSETS = os.path.join(RES, 'assets', 'litrpg')
 
 POIS = []
 TILES = []
+WORKSHOPS = []
 
 
 def place(build, name, ox, oy, oz, dim='overworld', tile=128):
     """Сохранить постройку плитками и записать их места (ox, oz — кратны 16)."""
     assert ox % 16 == 0 and oz % 16 == 0, (name, ox, oz)
+    for craft, npc, x, y, z in getattr(build, 'workshops', []):
+        WORKSHOPS.append(dict(city=name, craft=craft, npc=npc, x=ox + x, y=oy + y, z=oz + z))
     for dx, dz, tname in save_tiles(build, name, tile):
         TILES.append(dict(dim=dim, cx=(ox + dx) // 16, cz=(oz + dz) // 16, template='litrpg:map/' + tname, y=oy))
 
@@ -284,14 +287,20 @@ def arcadia(city):
             b.set(x, G - 1, z, 'minecraft:smooth_stone' if (x // 3 + z // 3) % 2 else 'minecraft:polished_andesite')
     b.well((mx0 + mx1) // 2, (mz0 + mz1) // 2)
     colors = ['red', 'yellow', 'blue', 'green', 'orange', 'purple', 'white', 'cyan', 'lime', 'magenta']
+    import mapbuild_crafts as MCR
     k = 0
+    market = ['baker', None, 'butcher', 'fishmonger', None, 'farmer', 'herbalist', None, 'tailor', 'jeweler']
     for z in (mz0 + 6, mz1 - 6):
         for x in range(mx0 + 4, mx1 - 4, 9):
-            stall(b, x, z, colors[k % len(colors)], 'south' if z < C else 'north')
+            craft = market[k % len(market)]
+            if craft:
+                MCR.craft_stall(b, x, z, craft, colors[k % len(colors)], 'south' if z < C else 'north')
+            else:
+                stall(b, x, z, colors[k % len(colors)], 'south' if z < C else 'north')
             k += 1
-    # таверна, кузница, казармы
-    b.house(mx0 + 2, mz1 + 12, 16, 11, floors=2, door='north', interior='tavern', npc='litrpg:human_merchant')
-    b.house(mx0 + 24, mz1 + 12, 11, 9, floors=1, door='north', interior='smith', npc='litrpg:human_merchant')
+    # таверна «Золотой Обелиск» и кузница у рынка
+    MCR.workshop(b, mx0 + 2, mz1 + 12, 'innkeeper', 'north')
+    MCR.workshop(b, mx0 + 24, mz1 + 12, 'blacksmith', 'north', floors=1)
     b.house(C + 30, C + 60, 20, 10, floors=2, door='west', interior='guard', npc='litrpg:human_knight')
     # башня магов (северо-восток)
     b.round_tower(C + 64, C - 64, 6, 28, roof_block='minecraft:purple_terracotta')
@@ -301,7 +310,13 @@ def arcadia(city):
     b.reserve(C - 5, 0, C + 5, S - 1)
     b.reserve(0, C - 5, S - 1, C + 5)
     b.reserve(cx0, cz0, cx1, cz1)
-    houses(b, C, WR - 14, seed=1)
+    crafts = list(MCR.CITY_CRAFTS['arcadia'])
+    crafts.remove('innkeeper')
+    crafts.remove('blacksmith')
+    placed = MCR.place_workshops(b, C, 30, WR - 18, crafts, 'arcadia')
+    print('  мастерские Аркадии:', len(placed), '/', len(crafts))
+    houses(b, C, WR - 14, seed=1, npc_chance=0.35)
+    MCR.fill_life(b, C, WR - 8, 'arcadia', density=1.6)
     # фонари вдоль проспектов
     for t in range(PR + 4, WR - 4, 10):
         for (x, z) in ((C + 5, C - t), (C - 5, C + t), (C - t, C - 5), (C + t, C + 5)):
@@ -331,13 +346,14 @@ def houses(b, C, R, seed, door_to_center=True, min_size=7, max_size=11, floors=(
     """Заполнить свободные участки внутри круга радиуса R домами."""
     rnd = random.Random(seed)
     cells = []
-    for gx in range(C - R, C + R, 11):
-        for gz in range(C - R, C + R, 11):
-            cells.append((gx, gz))
-    rnd.shuffle(cells)
-    for gx, gz in cells:
-        w = rnd.randint(min_size, max_size)
-        d = rnd.randint(min_size - 1, max_size - 2)
+    # два прохода: крупные дома, потом домики поменьше в оставшихся промежутках
+    for step, lo, hi in ((11, min_size, max_size), (7, 6, 8)):
+        pass_cells = [(gx, gz, lo, hi) for gx in range(C - R, C + R, step) for gz in range(C - R, C + R, step)]
+        rnd.shuffle(pass_cells)
+        cells += pass_cells
+    for gx, gz, lo, hi in cells:
+        w = rnd.randint(lo, hi)
+        d = rnd.randint(lo - 1, max(lo - 1, hi - 2))
         x0 = gx + rnd.randint(0, 4)
         z0 = gz + rnd.randint(0, 4)
         x1, z1 = x0 + w - 1, z0 + d - 1
@@ -602,6 +618,8 @@ def main():
 
     data['pois'] = POIS
     data['tiles'] = TILES
+    data['workshops'] = WORKSHOPS
+    print('мастерских:', len(WORKSHOPS))
     json.dump(data, open(MAP_JSON, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     from collections import Counter
     print(Counter(p['type'] for p in POIS), f'{len(TILES)} tiles')

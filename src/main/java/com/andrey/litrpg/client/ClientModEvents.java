@@ -44,11 +44,13 @@ public class ClientModEvents {
         event.registerEntityRenderer(ModEntities.BOG_LURKER.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "bog_lurker"));
         event.registerEntityRenderer(ModEntities.SAND_SCORPION.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "sand_scorpion"));
         event.registerEntityRenderer(ModEntities.GRAVE_KNIGHT.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "grave_knight"));
+        event.registerEntityRenderer(ModEntities.RAT.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "rat"));
+        event.registerEntityRenderer(ModEntities.RAT_KING.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "rat_king"));
         com.andrey.litrpg.npc.NpcRegistry.TYPES.values().forEach(t ->
                 event.registerEntityRenderer(t.get(), com.andrey.litrpg.client.render.NpcRenderer::new));
     }
 
-    public static final String[] BOSS_MODELS = {"ruin_golem", "rotting_ent", "spider_queen", "swamp_hag", "minotaur", "frost_giant", "flame_lord", "archdemon", "stone_troll", "frost_wraith", "forest_wisp", "ash_imp", "bog_lurker", "sand_scorpion", "grave_knight"};
+    public static final String[] BOSS_MODELS = {"ruin_golem", "rotting_ent", "spider_queen", "swamp_hag", "minotaur", "frost_giant", "flame_lord", "archdemon", "stone_troll", "frost_wraith", "forest_wisp", "ash_imp", "bog_lurker", "sand_scorpion", "grave_knight", "rat", "rat_king"};
 
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {

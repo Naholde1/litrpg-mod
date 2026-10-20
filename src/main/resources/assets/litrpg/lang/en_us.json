@@ -903,5 +903,22 @@
   "entity.litrpg.sand_scorpion": "Sand Scorpion",
   "item.litrpg.sand_scorpion_spawn_egg": "Sand Scorpion Spawn Egg",
   "entity.litrpg.grave_knight": "Grave Knight",
-  "item.litrpg.grave_knight_spawn_egg": "Grave Knight Spawn Egg"
+  "item.litrpg.grave_knight_spawn_egg": "Grave Knight Spawn Egg",
+  "entity.litrpg.rat": "Rat",
+  "item.litrpg.rat_spawn_egg": "Rat Spawn Egg",
+  "entity.litrpg.rat_king": "Rat King",
+  "item.litrpg.rat_king_spawn_egg": "Rat King Spawn Egg",
+  "entity.litrpg.human_artisan": "Kingdom Artisan",
+  "item.litrpg.human_artisan_spawn_egg": "Kingdom Artisan Spawn Egg",
+  "entity.litrpg.elf_artisan": "Elven Artisan",
+  "item.litrpg.elf_artisan_spawn_egg": "Elven Artisan Spawn Egg",
+  "entity.litrpg.dwarf_artisan": "Dwarven Artisan",
+  "item.litrpg.dwarf_artisan_spawn_egg": "Dwarven Artisan Spawn Egg",
+  "entity.litrpg.orc_artisan": "Orc Artisan",
+  "item.litrpg.orc_artisan_spawn_egg": "Orc Artisan Spawn Egg",
+  "entity.litrpg.beast_artisan": "Beastkin Artisan",
+  "item.litrpg.beast_artisan_spawn_egg": "Beastkin Artisan Spawn Egg",
+  "entity.litrpg.demon_artisan": "Demonkin Artisan",
+  "item.litrpg.demon_artisan_spawn_egg": "Demonkin Artisan Spawn Egg",
+  "item.litrpg.parcel": "Parcel"
 }

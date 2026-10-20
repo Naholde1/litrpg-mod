@@ -2,7 +2,7 @@
   "name": "Поселения",
   "icon": "minecraft:hay_block",
   "category": "litrpg:mapworld",
-  "sortnum": 4,
+  "sortnum": 5,
   "pages": [
     {
       "type": "patchouli:text",

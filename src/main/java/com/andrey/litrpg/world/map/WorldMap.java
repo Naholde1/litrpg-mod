@@ -50,6 +50,9 @@ public final class WorldMap {
 
     public record Tile(String dim, int cx, int cz, String template, int y) {}
 
+    /** Мастерская в городе: ремесло, кто там работает и где стоит мастер. */
+    public record Workshop(String city, String craft, String npc, int x, int y, int z) {}
+
     private static WorldMap instance;
 
     public final List<Territory> territories = new ArrayList<>();
@@ -60,6 +63,7 @@ public final class WorldMap {
     public final List<City> cities = new ArrayList<>();
     public final List<Road> roads = new ArrayList<>();
     public final List<Poi> pois = new ArrayList<>();
+    public final List<Workshop> workshops = new ArrayList<>();
     public final Map<Long, Tile> overworldTiles = new HashMap<>(), netherTiles = new HashMap<>();
     public double levelSlope = 40;
     public int levelMax = 60;
@@ -325,6 +329,17 @@ public final class WorldMap {
         return null;
     }
 
+    public City city(String id) {
+        for (City c : cities) if (c.id.equals(id)) return c;
+        return null;
+    }
+
+    public List<Workshop> workshopsOf(String cityId) {
+        List<Workshop> out = new ArrayList<>();
+        for (Workshop w : workshops) if (w.city.equals(cityId)) out.add(w);
+        return out;
+    }
+
     /** Уровень монстров: от ближайшего города, плюс опасность земель. */
     public int levelAt(double x, double z) {
         double best = 1e9;
@@ -433,6 +448,13 @@ public final class WorldMap {
                 pois.add(new Poi(o.get("type").getAsString(), str(o, "name", ""), str(o, "id", ""), o.get("x").getAsInt(),
                         o.get("z").getAsInt(), o.has("y") ? o.get("y").getAsInt() : 0, o.has("r") ? o.get("r").getAsInt() : 0,
                         str(o, "extra", "")));
+            }
+            if (root.has("workshops")) {
+                for (JsonElement el : root.getAsJsonArray("workshops")) {
+                    JsonObject o = el.getAsJsonObject();
+                    workshops.add(new Workshop(o.get("city").getAsString(), o.get("craft").getAsString(), o.get("npc").getAsString(),
+                            o.get("x").getAsInt(), o.get("y").getAsInt(), o.get("z").getAsInt()));
+                }
             }
             for (JsonElement el : root.getAsJsonArray("tiles")) {
                 JsonObject o = el.getAsJsonObject();

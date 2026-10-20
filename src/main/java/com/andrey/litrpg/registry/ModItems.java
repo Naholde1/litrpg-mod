@@ -171,6 +171,13 @@ public class ModItems {
             () -> new ForgeSpawnEggItem(ModEntities.BOG_LURKER, 0x3E5A3A, 0x90F070, new Item.Properties()));
     public static final RegistryObject<Item> SAND_SCORPION_SPAWN_EGG = ITEMS.register("sand_scorpion_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.SAND_SCORPION, 0xC8A060, 0x6A4428, new Item.Properties()));
+    public static final RegistryObject<Item> RAT_SPAWN_EGG = ITEMS.register("rat_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.RAT, 0x5A4A40, 0xD89A9A, new Item.Properties()));
+    public static final RegistryObject<Item> RAT_KING_SPAWN_EGG = ITEMS.register("rat_king_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.RAT_KING, 0x3A2E28, 0xFFD040, new Item.Properties()));
+    /** Посылка из городского поручения: отнести мастеру. */
+    public static final RegistryObject<Item> PARCEL = ITEMS.register("parcel",
+            () -> new Item(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> GRAVE_KNIGHT_SPAWN_EGG = ITEMS.register("grave_knight_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.GRAVE_KNIGHT, 0x3A3A40, 0x8E44AD, new Item.Properties()));
 }

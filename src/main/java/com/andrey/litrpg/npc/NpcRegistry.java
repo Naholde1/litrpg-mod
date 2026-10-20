@@ -57,6 +57,7 @@ public final class NpcRegistry {
             case CHIEF -> 0xFFFFFF;
             case GUARD -> 0x2A2A2A;
             case CITIZEN -> 0xB0A080;
+            case ARTISAN -> 0xE08A3A;
         };
         return new int[]{base, spot};
     }

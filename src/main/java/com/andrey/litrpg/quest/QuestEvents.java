@@ -250,12 +250,15 @@ public final class QuestEvents {
         list.remove(q);
         log.active.add(q);
         StatsManager.message(p, Component.literal("Принято задание: ").append(Component.literal(q.title).withStyle(ChatFormatting.GOLD)));
+        CityQuests.onAccept(p, q);
         p.level().playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 1f, 1f);
         StatsManager.sync(p);
     }
 
     public static void abandon(ServerPlayer p, String id) {
         QuestLog log = StatsManager.get(p).quests();
+        Quest gone = log.find(id);
+        if (gone != null && gone != log.story) CityQuests.onAbandon(p, gone);
         if (log.active.removeIf(q -> q.id.equals(id))) {
             StatsManager.message(p, Component.literal("Задание отменено.").withStyle(ChatFormatting.GRAY));
             StatsManager.sync(p);
@@ -299,6 +302,10 @@ public final class QuestEvents {
     /** Указать путь к подземелью, где живёт босс из задания. */
     public static void locate(ServerPlayer p, String id) {
         Quest q = StatsManager.get(p).quests().find(id);
+        if (q != null && q.hasPos) {
+            CityQuests.waypoint(p, q);
+            return;
+        }
         if (q == null || q.type != Quest.Type.BOSS) return;
         Dungeon d = Dungeon.byBoss(q.target);
         if (d == null) return;

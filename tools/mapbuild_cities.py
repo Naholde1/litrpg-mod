@@ -338,11 +338,14 @@ def town(city, style, size, seed, wall='stone', wall_r=None, gate_angles=(), tow
 
 def houses_ring(b, C, R, seed, npc, min_size=7, max_size=10, floors=(1, 2), kinds=('home', 'home', 'shop'), step=11, npc_chance=0.25):
     rnd = random.Random(seed)
-    cells = [(gx, gz) for gx in range(C - R, C + R, step) for gz in range(C - R, C + R, step)]
-    rnd.shuffle(cells)
-    for gx, gz in cells:
-        w = rnd.randint(min_size, max_size)
-        d = rnd.randint(min_size - 1, max_size - 1)
+    cells = []
+    for st, lo, hi in ((step, min_size, max_size), (7, max(5, min_size - 1), max(6, min_size + 1))):
+        pc = [(gx, gz, lo, hi) for gx in range(C - R, C + R, st) for gz in range(C - R, C + R, st)]
+        rnd.shuffle(pc)
+        cells += pc
+    for gx, gz, lo, hi in cells:
+        w = rnd.randint(lo, hi)
+        d = rnd.randint(lo - 1, hi - 1)
         x0, z0 = gx + rnd.randint(0, 3), gz + rnd.randint(0, 3)
         x1, z1 = x0 + w - 1, z0 + d - 1
         cx, cz = (x0 + x1) / 2, (z0 + z1) / 2
@@ -385,7 +388,10 @@ def haven(city, gates, sea_a):
         stall(b, int(C + math.cos(a) * 16), int(C + math.sin(a) * 16), ['blue', 'cyan', 'white', 'yellow', 'lime', 'orange'][k], 'south')
     b.house(int(C + math.cos(sea_a) * 30) - 8, int(C + math.sin(sea_a) * 30) - 5, 16, 10, floors=2, door='north', interior='tavern',
             npc='litrpg:human_merchant')
-    houses_ring(b, C, WR - 6, 'haven', 'litrpg:human_citizen', kinds=('home', 'shop', 'home'))
+    import mapbuild_crafts as MCR
+    MCR.place_workshops(b, C, 14, WR - 8, MCR.CITY_CRAFTS['haven'], 'haven')
+    houses_ring(b, C, WR - 6, 'haven', 'litrpg:human_citizen', kinds=('home', 'shop', 'home'), npc_chance=0.35)
+    MCR.fill_life(b, C, WR - 6, 'haven' + str(C))
     return b
 
 
@@ -430,7 +436,10 @@ def sylvendar(city, gates):
     for k in range(4):
         a = gate_a + (k - 1.5) * 0.5
         stall_elf(b, int(C + math.cos(a) * 44), int(C + math.sin(a) * 44))
-    houses_ring(b, C, WR, 'sylv', 'litrpg:elf_citizen', min_size=6, max_size=9, floors=(1,), kinds=('home', 'library'))
+    import mapbuild_crafts as MCR
+    MCR.place_workshops(b, C, 20, WR - 4, MCR.CITY_CRAFTS['sylvendar'], 'sylvendar')
+    houses_ring(b, C, WR, 'sylv', 'litrpg:elf_citizen', min_size=6, max_size=9, floors=(1,), kinds=('home', 'library'), npc_chance=0.35)
+    MCR.fill_life(b, C, WR - 6, 'sylv' + str(C))
     for k in range(40):
         rnd = random.Random(k)
         x, z = rnd.randint(8, 120), rnd.randint(8, 120)
@@ -513,7 +522,10 @@ def khazad(city, gates):
             for y in range(G, G + 4):
                 b.set(x, y, z, 'minecraft:chiseled_deepslate' if y % 2 else 'minecraft:polished_deepslate')
             b.set(x, G + 4, z, 'minecraft:lantern', hanging='false', waterlogged='false')
-    houses_ring(b, C, WR - 4, 'khazad', 'litrpg:dwarf_citizen', kinds=('home', 'smith', 'shop'), floors=(1, 2))
+    import mapbuild_crafts as MCR
+    MCR.place_workshops(b, C, 14, WR - 6, MCR.CITY_CRAFTS['khazad'], 'khazad')
+    houses_ring(b, C, WR - 4, 'khazad', 'litrpg:dwarf_citizen', kinds=('home', 'smith', 'shop'), floors=(1, 2), npc_chance=0.35)
+    MCR.fill_life(b, C, WR - 6, 'khazad' + str(C))
     return b
 
 
@@ -530,6 +542,8 @@ def ghardum(city, gates):
     from gen_mapbuild import painting_map
     from gen_mapbuild import map_board
     map_board(b, lx, lz + 12, frame='minecraft:stripped_dark_oak_log', face='minecraft:spruce_planks', cap='minecraft:dark_oak_fence')
+    import mapbuild_crafts as MCR
+    MCR.place_workshops(b, C, 22, WR - 8, MCR.CITY_CRAFTS['ghardum'], 'ghardum')
     rnd = random.Random(7)
     colors = ['brown', 'red', 'brown', 'black', 'gray']
     for k in range(26):
@@ -567,6 +581,8 @@ def wolfden(city, gates):
     from gen_mapbuild import painting_map
     from gen_mapbuild import map_board
     map_board(b, lx, lz + 10, frame='minecraft:stripped_spruce_log', face='minecraft:spruce_planks', cap='minecraft:spruce_fence')
+    import mapbuild_crafts as MCR
+    MCR.place_workshops(b, C, 16, WR - 6, MCR.CITY_CRAFTS['wolfden'], 'wolfden')
     for k in range(12):
         a = 2 * math.pi * k / 12 + 0.2
         x, z = int(C + math.cos(a) * 20), int(C + math.sin(a) * 20)
@@ -611,7 +627,10 @@ def ashgrad(city, gates):
         x, z = int(C + math.cos(a) * 24), int(C + math.sin(a) * 24)
         if b.free(x - 1, z - 1, x + 1, z + 1):
             b.tree(x, z, 6, 'minecraft:crimson_stem', 'minecraft:nether_wart_block', 2.6)
-    houses_ring(b, C, WR - 4, 'ashgrad', 'litrpg:demon_citizen', kinds=('home', 'library', 'shop'), floors=(1, 2))
+    import mapbuild_crafts as MCR
+    MCR.place_workshops(b, C, 20, WR - 6, MCR.CITY_CRAFTS['ashgrad'], 'ashgrad')
+    houses_ring(b, C, WR - 4, 'ashgrad', 'litrpg:demon_citizen', kinds=('home', 'library', 'shop'), floors=(1, 2), npc_chance=0.35)
+    MCR.fill_life(b, C, WR - 6, 'ashgrad' + str(C))
     return b
 
 
@@ -632,5 +651,8 @@ def fort(city, gates, seed, banner):
     for k in range(3):
         a = gate_a + (k - 1) * 0.7
         stall(b, int(C + math.cos(a) * 16), int(C + math.sin(a) * 16), ['red', 'blue', 'yellow'][k], 'south')
-    houses_ring(b, C, WR - 4, seed, 'litrpg:human_citizen', floors=(1, 2), kinds=('home', 'guard', 'smith'))
+    import mapbuild_crafts as MCR
+    MCR.place_workshops(b, C, 10, WR - 6, MCR.CITY_CRAFTS['fort'], seed)
+    houses_ring(b, C, WR - 4, seed, 'litrpg:human_citizen', floors=(1, 2), kinds=('home', 'guard', 'smith'), npc_chance=0.35)
+    MCR.fill_life(b, C, WR - 6, 'fort' + str(C))
     return b

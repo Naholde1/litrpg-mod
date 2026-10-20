@@ -2,7 +2,7 @@
   "name": "Преисподняя",
   "icon": "minecraft:netherrack",
   "category": "litrpg:mapworld",
-  "sortnum": 7,
+  "sortnum": 8,
   "pages": [
     {
       "type": "patchouli:text",

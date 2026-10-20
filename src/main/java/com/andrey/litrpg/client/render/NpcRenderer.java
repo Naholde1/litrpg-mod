@@ -32,6 +32,10 @@ public class NpcRenderer extends HumanoidMobRenderer<RaceNpcEntity, HumanoidMode
 
     @Override
     public ResourceLocation getTextureLocation(RaceNpcEntity e) {
+        var craft = e.craft();
+        if (e.npcType().isArtisan() && craft != null) {
+            return LitRPG.id("textures/entity/npc/artisan/" + e.npcType().key.substring(0, e.npcType().key.indexOf('_')) + "_" + craft.key + ".png");
+        }
         return LitRPG.id("textures/entity/npc/" + e.npcType().key + ".png");
     }
 

@@ -333,6 +333,10 @@ MATS = {
     'scorp_dark': m_chitin(0x5A3A1A, 0xA87A40, band=2),
     'knight_armor': m_metal(0x4A4A52, 0x8A8A9A, 0x24242A),
     'knight_cloth': m_cloth(0x4A2A5A, 0x2A1430, tatter=True),
+    # крысы из городских поручений
+    'rat_fur': m_fur(0x6E6058, 0x463C36, 0x8E8078),
+    'rat_king_fur': m_fur(0x3A302A, 0x1E1814, 0x5A4C44),
+    'rat_skin': m_skin(0xD8A0A0, 0xB07A7A),
 }
 
 FACE_SEED = {'top': 1, 'bottom': 2, 'front': 3, 'back': 4, 'west': 5, 'east': 6}
@@ -780,8 +784,38 @@ def grave_knight():
     return dict(name='grave_knight', scale=1.0, shadow=0.5, parts=[leg, mirror(leg, 'leg_r'), body, head, arm, arm_r, sword, shield])
 
 
+def _rat(name, fur, eye, scale, crown=False):
+    body = Part('body', 'root', (0, 3, 0), [
+        Cube(-2, 1, -4, 4, 3, 8, fur, decals=[('top', 1, 2, 2, 4, 0x2A2220, False)]),
+    ], anim=[A('idle', 'x', 0.04, 0.3)])
+    head_cubes = [
+        Cube(-2, 1, -8, 4, 3, 4, fur, decals=eyes(4, 0, eye, gap=2, size=(1, 1), glow=crown)),
+        Cube(-1, 1, -10, 2, 2, 2, fur, decals=[('front', 0, 0, 2, 1, 0xE08A9A, False)]),
+        Cube(-3, 4, -6, 2, 2, 1, 'rat_skin'), Cube(1, 4, -6, 2, 2, 1, 'rat_skin'),
+    ]
+    if crown:
+        head_cubes += [Cube(-2, 4, -8, 4, 1, 3, 'gold'), Cube(-2, 5, -8, 1, 1, 1, 'gold'), Cube(1, 5, -8, 1, 1, 1, 'gold'),
+                       Cube(-1, 5, -6, 2, 1, 1, 'gold')]
+    head = Part('head', 'body', (0, 3, -4), head_cubes, anim=[A('look', 'y'), A('look', 'x', 0.5), A('attack', 'x', 0.6)])
+    tail = Part('tail', 'body', (0, 3, 4), [Cube(0, 2, 4, 1, 1, 9, 'rat_skin')], rot=(-10, 0, 0),
+                anim=[A('idle', 'y', 0.5, 0.25), A('walk', 'y', 0.4, 1.2)])
+    parts = [body, head, tail]
+    for i, z in enumerate((-3, 2)):
+        leg = Part(f'leg_l{i}', 'body', (2, 1, z), [Cube(1, 0, z, 1, 1, 2, 'rat_skin')], anim=[A('walk', 'x', 1.0, phase=i * math.pi)])
+        parts += [leg, mirror(leg, f'leg_r{i}')]
+    return dict(name=name, scale=scale, shadow=0.3 * scale, parts=parts)
+
+
+def rat():
+    return _rat('rat', 'rat_fur', 0x1A0A0A, 1.0)
+
+
+def rat_king():
+    return _rat('rat_king', 'rat_king_fur', 0xFF3020, 2.1, crown=True)
+
+
 MODELS = [ruin_golem, rotting_ent, spider_queen, swamp_hag, minotaur, frost_giant, flame_lord, archdemon,
-          stone_troll, frost_wraith, forest_wisp, ash_imp, bog_lurker, sand_scorpion, grave_knight]
+          stone_troll, frost_wraith, forest_wisp, ash_imp, bog_lurker, sand_scorpion, grave_knight, rat, rat_king]
 
 
 # ======================= развёртка и рисование =======================
@@ -1031,6 +1065,8 @@ NAMES = {
     'bog_lurker': ('Болотный ползун', 'Bog Lurker'),
     'sand_scorpion': ('Песчаный скорпион', 'Sand Scorpion'),
     'grave_knight': ('Могильный рыцарь', 'Grave Knight'),
+    'rat': ('Крыса', 'Rat'),
+    'rat_king': ('Крысиный король', 'Rat King'),
 }
 
 

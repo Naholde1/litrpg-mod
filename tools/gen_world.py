@@ -533,6 +533,9 @@ NPC_NAMES = {
     'human_citizen': ('Горожанин', 'Citizen'), 'elf_citizen': ('Эльф-горожанин', 'Elven Citizen'),
     'dwarf_citizen': ('Дварф-горожанин', 'Dwarven Citizen'), 'orc_citizen': ('Орк-работяга', 'Orc Worker'),
     'beast_citizen': ('Зверолюд из племени', 'Beastkin Tribesman'), 'demon_citizen': ('Демонид-горожанин', 'Demonkin Citizen'),
+    'human_artisan': ('Мастер Королевства', 'Kingdom Artisan'), 'elf_artisan': ('Эльф-мастер', 'Elven Artisan'),
+    'dwarf_artisan': ('Дварф-мастер', 'Dwarven Artisan'), 'orc_artisan': ('Орк-мастер', 'Orc Artisan'),
+    'beast_artisan': ('Мастер-зверолюд', 'Beastkin Artisan'), 'demon_artisan': ('Демонид-мастер', 'Demonkin Artisan'),
 }
 
 
@@ -547,6 +550,8 @@ def write_lang():
         en['entity.litrpg.' + key] = e
         ru['item.litrpg.' + key + '_spawn_egg'] = 'Яйцо призыва: ' + r
         en['item.litrpg.' + key + '_spawn_egg'] = e + ' Spawn Egg'
+    ru['item.litrpg.parcel'] = 'Посылка'
+    en['item.litrpg.parcel'] = 'Parcel'
     ru['generator.litrpg.system_world'] = 'Мир Системы'
     en['generator.litrpg.system_world'] = 'World of the System'
     ru['generator.litrpg.system_world.info'] = 'Карта 10000×10000: земли народов, города, дороги и подземелья.'
@@ -762,6 +767,7 @@ def main():
         data['pois'] = old.get('pois', [])
         data['tiles'] = old.get('tiles', [])
         data['nether'] = old.get('nether', {})
+        data['workshops'] = old.get('workshops', [])
     # площадки поселений (их радиус и высоту выбрал gen_mapbuild.py)
     for p in data['pois']:
         if p.get('r'):

@@ -2,7 +2,7 @@
   "name": "Подземелья на карте",
   "icon": "litrpg:boss_altar",
   "category": "litrpg:mapworld",
-  "sortnum": 6,
+  "sortnum": 7,
   "pages": [
     {
       "type": "patchouli:text",

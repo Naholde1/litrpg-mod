@@ -20,6 +20,7 @@ public final class QuestUi {
             case STORY -> 0xFFFFD54F;
             case SYSTEM -> 0xFF8FE3FF;
             case FACTION -> q.faction == null ? 0xFFFFFFFF : 0xFF000000 | q.faction.color;
+            case CITY -> 0xFFE8B070;
         };
     }
 
@@ -71,6 +72,7 @@ public final class QuestUi {
             case STORY -> "Сюжет";
             case SYSTEM -> "Система";
             case FACTION -> q.faction == null ? "" : q.faction.title;
+            case CITY -> q.giver + (q.placeName.isEmpty() ? "" : " • " + q.placeName);
         };
         g.drawString(font, q.title, x + 7, ty, sourceColor(q), false);
         g.drawString(font, tag, x + w - 6 - font.width(tag), ty, UiKit.MUTED, false);
@@ -82,7 +84,9 @@ public final class QuestUi {
                 ty += 10;
             }
         }
-        g.drawString(font, goal(q), x + 7, ty, UiKit.TEXT, false);
+        String goal = goal(q);
+        if (font.width(goal) > w - 100) goal = font.plainSubstrByWidth(goal, w - 106) + "…";
+        g.drawString(font, goal, x + 7, ty, UiKit.TEXT, false);
         UiKit.bar(g, x + w - 86, ty + 2, 78, 4, progress(q), 0xFF1A2632, progress(q) >= 1f ? 0xFF66DD44 : 0xFF4FC3F7);
         ty += 11;
         String reward = rewardText(q);
