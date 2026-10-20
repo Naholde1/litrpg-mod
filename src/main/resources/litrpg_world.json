@@ -5135,372 +5135,2927 @@
   {
    "dim": "overworld",
    "cx": -12,
-   "cz": -12,
-   "template": "litrpg:map/arcadia_0_0",
+   "cz": -6,
+   "template": "litrpg:map/arcadia_0_3",
    "y": 68
   },
   {
    "dim": "overworld",
    "cx": -12,
    "cz": -4,
-   "template": "litrpg:map/arcadia_0_1",
+   "template": "litrpg:map/arcadia_0_4",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -12,
+   "cz": -2,
+   "template": "litrpg:map/arcadia_0_5",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -12,
+   "cz": 0,
+   "template": "litrpg:map/arcadia_0_6",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -12,
+   "cz": 2,
+   "template": "litrpg:map/arcadia_0_7",
    "y": 68
   },
   {
    "dim": "overworld",
    "cx": -12,
    "cz": 4,
-   "template": "litrpg:map/arcadia_0_2",
+   "template": "litrpg:map/arcadia_0_8",
    "y": 68
   },
   {
    "dim": "overworld",
-   "cx": -4,
-   "cz": -12,
-   "template": "litrpg:map/arcadia_1_0",
-   "y": 68
-  },
-  {
-   "dim": "overworld",
-   "cx": -4,
-   "cz": -4,
-   "template": "litrpg:map/arcadia_1_1",
-   "y": 68
-  },
-  {
-   "dim": "overworld",
-   "cx": -4,
-   "cz": 4,
+   "cx": -10,
+   "cz": -8,
    "template": "litrpg:map/arcadia_1_2",
    "y": 68
   },
   {
    "dim": "overworld",
+   "cx": -10,
+   "cz": -6,
+   "template": "litrpg:map/arcadia_1_3",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -10,
+   "cz": -4,
+   "template": "litrpg:map/arcadia_1_4",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -10,
+   "cz": -2,
+   "template": "litrpg:map/arcadia_1_5",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -10,
+   "cz": 0,
+   "template": "litrpg:map/arcadia_1_6",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -10,
+   "cz": 2,
+   "template": "litrpg:map/arcadia_1_7",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -10,
+   "cz": 4,
+   "template": "litrpg:map/arcadia_1_8",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -10,
+   "cz": 6,
+   "template": "litrpg:map/arcadia_1_9",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -10,
+   "cz": 8,
+   "template": "litrpg:map/arcadia_1_10",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -8,
+   "cz": -10,
+   "template": "litrpg:map/arcadia_2_1",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -8,
+   "cz": -8,
+   "template": "litrpg:map/arcadia_2_2",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -8,
+   "cz": -6,
+   "template": "litrpg:map/arcadia_2_3",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -8,
+   "cz": -4,
+   "template": "litrpg:map/arcadia_2_4",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -8,
+   "cz": -2,
+   "template": "litrpg:map/arcadia_2_5",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -8,
+   "cz": 0,
+   "template": "litrpg:map/arcadia_2_6",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -8,
+   "cz": 2,
+   "template": "litrpg:map/arcadia_2_7",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -8,
+   "cz": 4,
+   "template": "litrpg:map/arcadia_2_8",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -8,
+   "cz": 6,
+   "template": "litrpg:map/arcadia_2_9",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -8,
+   "cz": 8,
+   "template": "litrpg:map/arcadia_2_10",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -6,
+   "cz": -12,
+   "template": "litrpg:map/arcadia_3_0",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -6,
+   "cz": -10,
+   "template": "litrpg:map/arcadia_3_1",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -6,
+   "cz": -8,
+   "template": "litrpg:map/arcadia_3_2",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -6,
+   "cz": -6,
+   "template": "litrpg:map/arcadia_3_3",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -6,
+   "cz": -4,
+   "template": "litrpg:map/arcadia_3_4",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -6,
+   "cz": -2,
+   "template": "litrpg:map/arcadia_3_5",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -6,
+   "cz": 0,
+   "template": "litrpg:map/arcadia_3_6",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -6,
+   "cz": 2,
+   "template": "litrpg:map/arcadia_3_7",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -6,
+   "cz": 4,
+   "template": "litrpg:map/arcadia_3_8",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -6,
+   "cz": 6,
+   "template": "litrpg:map/arcadia_3_9",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -6,
+   "cz": 8,
+   "template": "litrpg:map/arcadia_3_10",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -6,
+   "cz": 10,
+   "template": "litrpg:map/arcadia_3_11",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -4,
+   "cz": -12,
+   "template": "litrpg:map/arcadia_4_0",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -4,
+   "cz": -10,
+   "template": "litrpg:map/arcadia_4_1",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -4,
+   "cz": -8,
+   "template": "litrpg:map/arcadia_4_2",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -4,
+   "cz": -6,
+   "template": "litrpg:map/arcadia_4_3",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -4,
+   "cz": -4,
+   "template": "litrpg:map/arcadia_4_4",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -4,
+   "cz": -2,
+   "template": "litrpg:map/arcadia_4_5",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -4,
+   "cz": 0,
+   "template": "litrpg:map/arcadia_4_6",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -4,
+   "cz": 2,
+   "template": "litrpg:map/arcadia_4_7",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -4,
+   "cz": 4,
+   "template": "litrpg:map/arcadia_4_8",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -4,
+   "cz": 6,
+   "template": "litrpg:map/arcadia_4_9",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -4,
+   "cz": 8,
+   "template": "litrpg:map/arcadia_4_10",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -4,
+   "cz": 10,
+   "template": "litrpg:map/arcadia_4_11",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -2,
+   "cz": -12,
+   "template": "litrpg:map/arcadia_5_0",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -2,
+   "cz": -10,
+   "template": "litrpg:map/arcadia_5_1",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -2,
+   "cz": -8,
+   "template": "litrpg:map/arcadia_5_2",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -2,
+   "cz": -6,
+   "template": "litrpg:map/arcadia_5_3",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -2,
+   "cz": -4,
+   "template": "litrpg:map/arcadia_5_4",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -2,
+   "cz": -2,
+   "template": "litrpg:map/arcadia_5_5",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -2,
+   "cz": 0,
+   "template": "litrpg:map/arcadia_5_6",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -2,
+   "cz": 2,
+   "template": "litrpg:map/arcadia_5_7",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -2,
+   "cz": 4,
+   "template": "litrpg:map/arcadia_5_8",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -2,
+   "cz": 6,
+   "template": "litrpg:map/arcadia_5_9",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -2,
+   "cz": 8,
+   "template": "litrpg:map/arcadia_5_10",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -2,
+   "cz": 10,
+   "template": "litrpg:map/arcadia_5_11",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 0,
+   "cz": -12,
+   "template": "litrpg:map/arcadia_6_0",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 0,
+   "cz": -10,
+   "template": "litrpg:map/arcadia_6_1",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 0,
+   "cz": -8,
+   "template": "litrpg:map/arcadia_6_2",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 0,
+   "cz": -6,
+   "template": "litrpg:map/arcadia_6_3",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 0,
+   "cz": -4,
+   "template": "litrpg:map/arcadia_6_4",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 0,
+   "cz": -2,
+   "template": "litrpg:map/arcadia_6_5",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 0,
+   "cz": 0,
+   "template": "litrpg:map/arcadia_6_6",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 0,
+   "cz": 2,
+   "template": "litrpg:map/arcadia_6_7",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 0,
+   "cz": 4,
+   "template": "litrpg:map/arcadia_6_8",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 0,
+   "cz": 6,
+   "template": "litrpg:map/arcadia_6_9",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 0,
+   "cz": 8,
+   "template": "litrpg:map/arcadia_6_10",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 0,
+   "cz": 10,
+   "template": "litrpg:map/arcadia_6_11",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 2,
+   "cz": -12,
+   "template": "litrpg:map/arcadia_7_0",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 2,
+   "cz": -10,
+   "template": "litrpg:map/arcadia_7_1",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 2,
+   "cz": -8,
+   "template": "litrpg:map/arcadia_7_2",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 2,
+   "cz": -6,
+   "template": "litrpg:map/arcadia_7_3",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 2,
+   "cz": -4,
+   "template": "litrpg:map/arcadia_7_4",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 2,
+   "cz": -2,
+   "template": "litrpg:map/arcadia_7_5",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 2,
+   "cz": 0,
+   "template": "litrpg:map/arcadia_7_6",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 2,
+   "cz": 2,
+   "template": "litrpg:map/arcadia_7_7",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 2,
+   "cz": 4,
+   "template": "litrpg:map/arcadia_7_8",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 2,
+   "cz": 6,
+   "template": "litrpg:map/arcadia_7_9",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 2,
+   "cz": 8,
+   "template": "litrpg:map/arcadia_7_10",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 2,
+   "cz": 10,
+   "template": "litrpg:map/arcadia_7_11",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
    "cx": 4,
    "cz": -12,
-   "template": "litrpg:map/arcadia_2_0",
+   "template": "litrpg:map/arcadia_8_0",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 4,
+   "cz": -10,
+   "template": "litrpg:map/arcadia_8_1",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 4,
+   "cz": -8,
+   "template": "litrpg:map/arcadia_8_2",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 4,
+   "cz": -6,
+   "template": "litrpg:map/arcadia_8_3",
    "y": 68
   },
   {
    "dim": "overworld",
    "cx": 4,
    "cz": -4,
-   "template": "litrpg:map/arcadia_2_1",
+   "template": "litrpg:map/arcadia_8_4",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 4,
+   "cz": -2,
+   "template": "litrpg:map/arcadia_8_5",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 4,
+   "cz": 0,
+   "template": "litrpg:map/arcadia_8_6",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 4,
+   "cz": 2,
+   "template": "litrpg:map/arcadia_8_7",
    "y": 68
   },
   {
    "dim": "overworld",
    "cx": 4,
    "cz": 4,
-   "template": "litrpg:map/arcadia_2_2",
+   "template": "litrpg:map/arcadia_8_8",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 4,
+   "cz": 6,
+   "template": "litrpg:map/arcadia_8_9",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 4,
+   "cz": 8,
+   "template": "litrpg:map/arcadia_8_10",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 4,
+   "cz": 10,
+   "template": "litrpg:map/arcadia_8_11",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 6,
+   "cz": -10,
+   "template": "litrpg:map/arcadia_9_1",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 6,
+   "cz": -8,
+   "template": "litrpg:map/arcadia_9_2",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 6,
+   "cz": -6,
+   "template": "litrpg:map/arcadia_9_3",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 6,
+   "cz": -4,
+   "template": "litrpg:map/arcadia_9_4",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 6,
+   "cz": -2,
+   "template": "litrpg:map/arcadia_9_5",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 6,
+   "cz": 0,
+   "template": "litrpg:map/arcadia_9_6",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 6,
+   "cz": 2,
+   "template": "litrpg:map/arcadia_9_7",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 6,
+   "cz": 4,
+   "template": "litrpg:map/arcadia_9_8",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 6,
+   "cz": 6,
+   "template": "litrpg:map/arcadia_9_9",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 6,
+   "cz": 8,
+   "template": "litrpg:map/arcadia_9_10",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 8,
+   "cz": -10,
+   "template": "litrpg:map/arcadia_10_1",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 8,
+   "cz": -8,
+   "template": "litrpg:map/arcadia_10_2",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 8,
+   "cz": -6,
+   "template": "litrpg:map/arcadia_10_3",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 8,
+   "cz": -4,
+   "template": "litrpg:map/arcadia_10_4",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 8,
+   "cz": -2,
+   "template": "litrpg:map/arcadia_10_5",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 8,
+   "cz": 0,
+   "template": "litrpg:map/arcadia_10_6",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 8,
+   "cz": 2,
+   "template": "litrpg:map/arcadia_10_7",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 8,
+   "cz": 4,
+   "template": "litrpg:map/arcadia_10_8",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 8,
+   "cz": 6,
+   "template": "litrpg:map/arcadia_10_9",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 8,
+   "cz": 8,
+   "template": "litrpg:map/arcadia_10_10",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 10,
+   "cz": -6,
+   "template": "litrpg:map/arcadia_11_3",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 10,
+   "cz": -4,
+   "template": "litrpg:map/arcadia_11_4",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 10,
+   "cz": -2,
+   "template": "litrpg:map/arcadia_11_5",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 10,
+   "cz": 0,
+   "template": "litrpg:map/arcadia_11_6",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 10,
+   "cz": 2,
+   "template": "litrpg:map/arcadia_11_7",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 10,
+   "cz": 4,
+   "template": "litrpg:map/arcadia_11_8",
    "y": 68
   },
   {
    "dim": "overworld",
    "cx": 92,
    "cz": 54,
-   "template": "litrpg:map/haven",
+   "template": "litrpg:map/haven_0_0",
+   "y": 56
+  },
+  {
+   "dim": "overworld",
+   "cx": 92,
+   "cz": 56,
+   "template": "litrpg:map/haven_0_1",
+   "y": 56
+  },
+  {
+   "dim": "overworld",
+   "cx": 92,
+   "cz": 58,
+   "template": "litrpg:map/haven_0_2",
+   "y": 56
+  },
+  {
+   "dim": "overworld",
+   "cx": 92,
+   "cz": 60,
+   "template": "litrpg:map/haven_0_3",
+   "y": 56
+  },
+  {
+   "dim": "overworld",
+   "cx": 94,
+   "cz": 54,
+   "template": "litrpg:map/haven_1_0",
+   "y": 56
+  },
+  {
+   "dim": "overworld",
+   "cx": 94,
+   "cz": 56,
+   "template": "litrpg:map/haven_1_1",
+   "y": 56
+  },
+  {
+   "dim": "overworld",
+   "cx": 94,
+   "cz": 58,
+   "template": "litrpg:map/haven_1_2",
+   "y": 56
+  },
+  {
+   "dim": "overworld",
+   "cx": 94,
+   "cz": 60,
+   "template": "litrpg:map/haven_1_3",
+   "y": 56
+  },
+  {
+   "dim": "overworld",
+   "cx": 96,
+   "cz": 54,
+   "template": "litrpg:map/haven_2_0",
+   "y": 56
+  },
+  {
+   "dim": "overworld",
+   "cx": 96,
+   "cz": 56,
+   "template": "litrpg:map/haven_2_1",
+   "y": 56
+  },
+  {
+   "dim": "overworld",
+   "cx": 96,
+   "cz": 58,
+   "template": "litrpg:map/haven_2_2",
+   "y": 56
+  },
+  {
+   "dim": "overworld",
+   "cx": 96,
+   "cz": 60,
+   "template": "litrpg:map/haven_2_3",
+   "y": 56
+  },
+  {
+   "dim": "overworld",
+   "cx": 98,
+   "cz": 54,
+   "template": "litrpg:map/haven_3_0",
+   "y": 56
+  },
+  {
+   "dim": "overworld",
+   "cx": 98,
+   "cz": 56,
+   "template": "litrpg:map/haven_3_1",
+   "y": 56
+  },
+  {
+   "dim": "overworld",
+   "cx": 98,
+   "cz": 58,
+   "template": "litrpg:map/haven_3_2",
+   "y": 56
+  },
+  {
+   "dim": "overworld",
+   "cx": 98,
+   "cz": 60,
+   "template": "litrpg:map/haven_3_3",
    "y": 56
   },
   {
    "dim": "overworld",
    "cx": -179,
    "cz": -28,
-   "template": "litrpg:map/sylvendar",
+   "template": "litrpg:map/sylvendar_0_0",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": -179,
+   "cz": -26,
+   "template": "litrpg:map/sylvendar_0_1",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": -179,
+   "cz": -24,
+   "template": "litrpg:map/sylvendar_0_2",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": -179,
+   "cz": -22,
+   "template": "litrpg:map/sylvendar_0_3",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": -177,
+   "cz": -28,
+   "template": "litrpg:map/sylvendar_1_0",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": -177,
+   "cz": -26,
+   "template": "litrpg:map/sylvendar_1_1",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": -177,
+   "cz": -24,
+   "template": "litrpg:map/sylvendar_1_2",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": -177,
+   "cz": -22,
+   "template": "litrpg:map/sylvendar_1_3",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": -175,
+   "cz": -28,
+   "template": "litrpg:map/sylvendar_2_0",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": -175,
+   "cz": -26,
+   "template": "litrpg:map/sylvendar_2_1",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": -175,
+   "cz": -24,
+   "template": "litrpg:map/sylvendar_2_2",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": -175,
+   "cz": -22,
+   "template": "litrpg:map/sylvendar_2_3",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": -173,
+   "cz": -28,
+   "template": "litrpg:map/sylvendar_3_0",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": -173,
+   "cz": -26,
+   "template": "litrpg:map/sylvendar_3_1",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": -173,
+   "cz": -24,
+   "template": "litrpg:map/sylvendar_3_2",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": -173,
+   "cz": -22,
+   "template": "litrpg:map/sylvendar_3_3",
    "y": 72
   },
   {
    "dim": "overworld",
    "cx": 165,
    "cz": -164,
-   "template": "litrpg:map/khazad",
+   "template": "litrpg:map/khazad_0_0",
+   "y": 164
+  },
+  {
+   "dim": "overworld",
+   "cx": 165,
+   "cz": -162,
+   "template": "litrpg:map/khazad_0_1",
+   "y": 164
+  },
+  {
+   "dim": "overworld",
+   "cx": 165,
+   "cz": -160,
+   "template": "litrpg:map/khazad_0_2",
+   "y": 164
+  },
+  {
+   "dim": "overworld",
+   "cx": 165,
+   "cz": -158,
+   "template": "litrpg:map/khazad_0_3",
+   "y": 164
+  },
+  {
+   "dim": "overworld",
+   "cx": 167,
+   "cz": -164,
+   "template": "litrpg:map/khazad_1_0",
+   "y": 164
+  },
+  {
+   "dim": "overworld",
+   "cx": 167,
+   "cz": -162,
+   "template": "litrpg:map/khazad_1_1",
+   "y": 164
+  },
+  {
+   "dim": "overworld",
+   "cx": 167,
+   "cz": -160,
+   "template": "litrpg:map/khazad_1_2",
+   "y": 164
+  },
+  {
+   "dim": "overworld",
+   "cx": 167,
+   "cz": -158,
+   "template": "litrpg:map/khazad_1_3",
+   "y": 164
+  },
+  {
+   "dim": "overworld",
+   "cx": 169,
+   "cz": -164,
+   "template": "litrpg:map/khazad_2_0",
+   "y": 164
+  },
+  {
+   "dim": "overworld",
+   "cx": 169,
+   "cz": -162,
+   "template": "litrpg:map/khazad_2_1",
+   "y": 164
+  },
+  {
+   "dim": "overworld",
+   "cx": 169,
+   "cz": -160,
+   "template": "litrpg:map/khazad_2_2",
+   "y": 164
+  },
+  {
+   "dim": "overworld",
+   "cx": 169,
+   "cz": -158,
+   "template": "litrpg:map/khazad_2_3",
+   "y": 164
+  },
+  {
+   "dim": "overworld",
+   "cx": 171,
+   "cz": -164,
+   "template": "litrpg:map/khazad_3_0",
+   "y": 164
+  },
+  {
+   "dim": "overworld",
+   "cx": 171,
+   "cz": -162,
+   "template": "litrpg:map/khazad_3_1",
+   "y": 164
+  },
+  {
+   "dim": "overworld",
+   "cx": 171,
+   "cz": -160,
+   "template": "litrpg:map/khazad_3_2",
+   "y": 164
+  },
+  {
+   "dim": "overworld",
+   "cx": 171,
+   "cz": -158,
+   "template": "litrpg:map/khazad_3_3",
    "y": 164
   },
   {
    "dim": "overworld",
    "cx": 177,
    "cz": 160,
-   "template": "litrpg:map/ghardum",
+   "template": "litrpg:map/ghardum_0_0",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 177,
+   "cz": 162,
+   "template": "litrpg:map/ghardum_0_1",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 177,
+   "cz": 164,
+   "template": "litrpg:map/ghardum_0_2",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 177,
+   "cz": 166,
+   "template": "litrpg:map/ghardum_0_3",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 179,
+   "cz": 160,
+   "template": "litrpg:map/ghardum_1_0",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 179,
+   "cz": 162,
+   "template": "litrpg:map/ghardum_1_1",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 179,
+   "cz": 164,
+   "template": "litrpg:map/ghardum_1_2",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 179,
+   "cz": 166,
+   "template": "litrpg:map/ghardum_1_3",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 181,
+   "cz": 160,
+   "template": "litrpg:map/ghardum_2_0",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 181,
+   "cz": 162,
+   "template": "litrpg:map/ghardum_2_1",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 181,
+   "cz": 164,
+   "template": "litrpg:map/ghardum_2_2",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 181,
+   "cz": 166,
+   "template": "litrpg:map/ghardum_2_3",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 183,
+   "cz": 160,
+   "template": "litrpg:map/ghardum_3_0",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 183,
+   "cz": 162,
+   "template": "litrpg:map/ghardum_3_1",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 183,
+   "cz": 164,
+   "template": "litrpg:map/ghardum_3_2",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 183,
+   "cz": 166,
+   "template": "litrpg:map/ghardum_3_3",
    "y": 86
   },
   {
    "dim": "overworld",
    "cx": -166,
    "cz": -194,
-   "template": "litrpg:map/wolfden",
+   "template": "litrpg:map/wolfden_0_0",
+   "y": 82
+  },
+  {
+   "dim": "overworld",
+   "cx": -166,
+   "cz": -192,
+   "template": "litrpg:map/wolfden_0_1",
+   "y": 82
+  },
+  {
+   "dim": "overworld",
+   "cx": -166,
+   "cz": -190,
+   "template": "litrpg:map/wolfden_0_2",
+   "y": 82
+  },
+  {
+   "dim": "overworld",
+   "cx": -166,
+   "cz": -188,
+   "template": "litrpg:map/wolfden_0_3",
+   "y": 82
+  },
+  {
+   "dim": "overworld",
+   "cx": -164,
+   "cz": -194,
+   "template": "litrpg:map/wolfden_1_0",
+   "y": 82
+  },
+  {
+   "dim": "overworld",
+   "cx": -164,
+   "cz": -192,
+   "template": "litrpg:map/wolfden_1_1",
+   "y": 82
+  },
+  {
+   "dim": "overworld",
+   "cx": -164,
+   "cz": -190,
+   "template": "litrpg:map/wolfden_1_2",
+   "y": 82
+  },
+  {
+   "dim": "overworld",
+   "cx": -164,
+   "cz": -188,
+   "template": "litrpg:map/wolfden_1_3",
+   "y": 82
+  },
+  {
+   "dim": "overworld",
+   "cx": -162,
+   "cz": -194,
+   "template": "litrpg:map/wolfden_2_0",
+   "y": 82
+  },
+  {
+   "dim": "overworld",
+   "cx": -162,
+   "cz": -192,
+   "template": "litrpg:map/wolfden_2_1",
+   "y": 82
+  },
+  {
+   "dim": "overworld",
+   "cx": -162,
+   "cz": -190,
+   "template": "litrpg:map/wolfden_2_2",
+   "y": 82
+  },
+  {
+   "dim": "overworld",
+   "cx": -162,
+   "cz": -188,
+   "template": "litrpg:map/wolfden_2_3",
+   "y": 82
+  },
+  {
+   "dim": "overworld",
+   "cx": -160,
+   "cz": -194,
+   "template": "litrpg:map/wolfden_3_0",
+   "y": 82
+  },
+  {
+   "dim": "overworld",
+   "cx": -160,
+   "cz": -192,
+   "template": "litrpg:map/wolfden_3_1",
+   "y": 82
+  },
+  {
+   "dim": "overworld",
+   "cx": -160,
+   "cz": -190,
+   "template": "litrpg:map/wolfden_3_2",
    "y": 82
   },
   {
    "dim": "overworld",
    "cx": -182,
    "cz": 180,
-   "template": "litrpg:map/ashgrad",
+   "template": "litrpg:map/ashgrad_0_0",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -182,
+   "cz": 182,
+   "template": "litrpg:map/ashgrad_0_1",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -182,
+   "cz": 184,
+   "template": "litrpg:map/ashgrad_0_2",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -182,
+   "cz": 186,
+   "template": "litrpg:map/ashgrad_0_3",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -180,
+   "cz": 180,
+   "template": "litrpg:map/ashgrad_1_0",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -180,
+   "cz": 182,
+   "template": "litrpg:map/ashgrad_1_1",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -180,
+   "cz": 184,
+   "template": "litrpg:map/ashgrad_1_2",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -180,
+   "cz": 186,
+   "template": "litrpg:map/ashgrad_1_3",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -178,
+   "cz": 180,
+   "template": "litrpg:map/ashgrad_2_0",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -178,
+   "cz": 182,
+   "template": "litrpg:map/ashgrad_2_1",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -178,
+   "cz": 184,
+   "template": "litrpg:map/ashgrad_2_2",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -178,
+   "cz": 186,
+   "template": "litrpg:map/ashgrad_2_3",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -176,
+   "cz": 180,
+   "template": "litrpg:map/ashgrad_3_0",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -176,
+   "cz": 182,
+   "template": "litrpg:map/ashgrad_3_1",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -176,
+   "cz": 184,
+   "template": "litrpg:map/ashgrad_3_2",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -176,
+   "cz": 186,
+   "template": "litrpg:map/ashgrad_3_3",
    "y": 68
   },
   {
    "dim": "overworld",
    "cx": -8,
    "cz": 156,
-   "template": "litrpg:map/dawnfort",
+   "template": "litrpg:map/dawnfort_0_0",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": -8,
+   "cz": 158,
+   "template": "litrpg:map/dawnfort_0_1",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": -8,
+   "cz": 160,
+   "template": "litrpg:map/dawnfort_0_2",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": -8,
+   "cz": 162,
+   "template": "litrpg:map/dawnfort_0_3",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": -6,
+   "cz": 156,
+   "template": "litrpg:map/dawnfort_1_0",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": -6,
+   "cz": 158,
+   "template": "litrpg:map/dawnfort_1_1",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": -6,
+   "cz": 160,
+   "template": "litrpg:map/dawnfort_1_2",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": -6,
+   "cz": 162,
+   "template": "litrpg:map/dawnfort_1_3",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": -4,
+   "cz": 156,
+   "template": "litrpg:map/dawnfort_2_0",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": -4,
+   "cz": 158,
+   "template": "litrpg:map/dawnfort_2_1",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": -4,
+   "cz": 160,
+   "template": "litrpg:map/dawnfort_2_2",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": -4,
+   "cz": 162,
+   "template": "litrpg:map/dawnfort_2_3",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": -2,
+   "cz": 156,
+   "template": "litrpg:map/dawnfort_3_0",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": -2,
+   "cz": 158,
+   "template": "litrpg:map/dawnfort_3_1",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": -2,
+   "cz": 160,
+   "template": "litrpg:map/dawnfort_3_2",
    "y": 66
   },
   {
    "dim": "overworld",
    "cx": 18,
    "cz": -207,
-   "template": "litrpg:map/northwatch",
+   "template": "litrpg:map/northwatch_0_0",
+   "y": 92
+  },
+  {
+   "dim": "overworld",
+   "cx": 18,
+   "cz": -205,
+   "template": "litrpg:map/northwatch_0_1",
+   "y": 92
+  },
+  {
+   "dim": "overworld",
+   "cx": 18,
+   "cz": -203,
+   "template": "litrpg:map/northwatch_0_2",
+   "y": 92
+  },
+  {
+   "dim": "overworld",
+   "cx": 18,
+   "cz": -201,
+   "template": "litrpg:map/northwatch_0_3",
+   "y": 92
+  },
+  {
+   "dim": "overworld",
+   "cx": 20,
+   "cz": -207,
+   "template": "litrpg:map/northwatch_1_0",
+   "y": 92
+  },
+  {
+   "dim": "overworld",
+   "cx": 20,
+   "cz": -205,
+   "template": "litrpg:map/northwatch_1_1",
+   "y": 92
+  },
+  {
+   "dim": "overworld",
+   "cx": 20,
+   "cz": -203,
+   "template": "litrpg:map/northwatch_1_2",
+   "y": 92
+  },
+  {
+   "dim": "overworld",
+   "cx": 20,
+   "cz": -201,
+   "template": "litrpg:map/northwatch_1_3",
+   "y": 92
+  },
+  {
+   "dim": "overworld",
+   "cx": 22,
+   "cz": -207,
+   "template": "litrpg:map/northwatch_2_0",
+   "y": 92
+  },
+  {
+   "dim": "overworld",
+   "cx": 22,
+   "cz": -205,
+   "template": "litrpg:map/northwatch_2_1",
+   "y": 92
+  },
+  {
+   "dim": "overworld",
+   "cx": 22,
+   "cz": -203,
+   "template": "litrpg:map/northwatch_2_2",
+   "y": 92
+  },
+  {
+   "dim": "overworld",
+   "cx": 22,
+   "cz": -201,
+   "template": "litrpg:map/northwatch_2_3",
+   "y": 92
+  },
+  {
+   "dim": "overworld",
+   "cx": 24,
+   "cz": -207,
+   "template": "litrpg:map/northwatch_3_0",
+   "y": 92
+  },
+  {
+   "dim": "overworld",
+   "cx": 24,
+   "cz": -205,
+   "template": "litrpg:map/northwatch_3_1",
+   "y": 92
+  },
+  {
+   "dim": "overworld",
+   "cx": 24,
+   "cz": -203,
+   "template": "litrpg:map/northwatch_3_2",
    "y": 92
   },
   {
    "dim": "overworld",
    "cx": 193,
    "cz": -25,
-   "template": "litrpg:map/blackbastion",
+   "template": "litrpg:map/blackbastion_0_0",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": 193,
+   "cz": -23,
+   "template": "litrpg:map/blackbastion_0_1",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": 193,
+   "cz": -21,
+   "template": "litrpg:map/blackbastion_0_2",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": 193,
+   "cz": -19,
+   "template": "litrpg:map/blackbastion_0_3",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": 195,
+   "cz": -25,
+   "template": "litrpg:map/blackbastion_1_0",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": 195,
+   "cz": -23,
+   "template": "litrpg:map/blackbastion_1_1",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": 195,
+   "cz": -21,
+   "template": "litrpg:map/blackbastion_1_2",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": 195,
+   "cz": -19,
+   "template": "litrpg:map/blackbastion_1_3",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": 197,
+   "cz": -25,
+   "template": "litrpg:map/blackbastion_2_0",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": 197,
+   "cz": -23,
+   "template": "litrpg:map/blackbastion_2_1",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": 197,
+   "cz": -21,
+   "template": "litrpg:map/blackbastion_2_2",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": 197,
+   "cz": -19,
+   "template": "litrpg:map/blackbastion_2_3",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": 199,
+   "cz": -25,
+   "template": "litrpg:map/blackbastion_3_0",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": 199,
+   "cz": -23,
+   "template": "litrpg:map/blackbastion_3_1",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": 199,
+   "cz": -21,
+   "template": "litrpg:map/blackbastion_3_2",
    "y": 80
   },
   {
    "dim": "overworld",
    "cx": 2,
    "cz": -20,
-   "template": "litrpg:map/farm_0",
+   "template": "litrpg:map/farm_0_0_0",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": 2,
+   "cz": -18,
+   "template": "litrpg:map/farm_0_0_1",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": 4,
+   "cz": -20,
+   "template": "litrpg:map/farm_0_1_0",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": 4,
+   "cz": -18,
+   "template": "litrpg:map/farm_0_1_1",
    "y": 65
   },
   {
    "dim": "overworld",
    "cx": 15,
    "cz": 1,
-   "template": "litrpg:map/farm_1",
+   "template": "litrpg:map/farm_1_0_0",
+   "y": 64
+  },
+  {
+   "dim": "overworld",
+   "cx": 15,
+   "cz": 3,
+   "template": "litrpg:map/farm_1_0_1",
+   "y": 64
+  },
+  {
+   "dim": "overworld",
+   "cx": 17,
+   "cz": 1,
+   "template": "litrpg:map/farm_1_1_0",
+   "y": 64
+  },
+  {
+   "dim": "overworld",
+   "cx": 17,
+   "cz": 3,
+   "template": "litrpg:map/farm_1_1_1",
    "y": 64
   },
   {
    "dim": "overworld",
    "cx": 4,
    "cz": 15,
-   "template": "litrpg:map/farm_2",
+   "template": "litrpg:map/farm_2_0_0",
+   "y": 69
+  },
+  {
+   "dim": "overworld",
+   "cx": 4,
+   "cz": 17,
+   "template": "litrpg:map/farm_2_0_1",
+   "y": 69
+  },
+  {
+   "dim": "overworld",
+   "cx": 6,
+   "cz": 15,
+   "template": "litrpg:map/farm_2_1_0",
+   "y": 69
+  },
+  {
+   "dim": "overworld",
+   "cx": 6,
+   "cz": 17,
+   "template": "litrpg:map/farm_2_1_1",
    "y": 69
   },
   {
    "dim": "overworld",
    "cx": -18,
    "cz": 7,
-   "template": "litrpg:map/farm_3",
+   "template": "litrpg:map/farm_3_0_0",
+   "y": 70
+  },
+  {
+   "dim": "overworld",
+   "cx": -18,
+   "cz": 9,
+   "template": "litrpg:map/farm_3_0_1",
+   "y": 70
+  },
+  {
+   "dim": "overworld",
+   "cx": -16,
+   "cz": 7,
+   "template": "litrpg:map/farm_3_1_0",
+   "y": 70
+  },
+  {
+   "dim": "overworld",
+   "cx": -16,
+   "cz": 9,
+   "template": "litrpg:map/farm_3_1_1",
    "y": 70
   },
   {
    "dim": "overworld",
    "cx": -17,
    "cz": -15,
-   "template": "litrpg:map/farm_4",
+   "template": "litrpg:map/farm_4_0_0",
+   "y": 70
+  },
+  {
+   "dim": "overworld",
+   "cx": -17,
+   "cz": -13,
+   "template": "litrpg:map/farm_4_0_1",
+   "y": 70
+  },
+  {
+   "dim": "overworld",
+   "cx": -15,
+   "cz": -15,
+   "template": "litrpg:map/farm_4_1_0",
+   "y": 70
+  },
+  {
+   "dim": "overworld",
+   "cx": -15,
+   "cz": -13,
+   "template": "litrpg:map/farm_4_1_1",
    "y": 70
   },
   {
    "dim": "overworld",
    "cx": 96,
    "cz": 45,
-   "template": "litrpg:map/farm_5",
+   "template": "litrpg:map/farm_5_0_0",
+   "y": 67
+  },
+  {
+   "dim": "overworld",
+   "cx": 96,
+   "cz": 47,
+   "template": "litrpg:map/farm_5_0_1",
+   "y": 67
+  },
+  {
+   "dim": "overworld",
+   "cx": 98,
+   "cz": 45,
+   "template": "litrpg:map/farm_5_1_0",
+   "y": 67
+  },
+  {
+   "dim": "overworld",
+   "cx": 98,
+   "cz": 47,
+   "template": "litrpg:map/farm_5_1_1",
    "y": 67
   },
   {
    "dim": "overworld",
    "cx": 82,
    "cz": 54,
-   "template": "litrpg:map/farm_6",
+   "template": "litrpg:map/farm_6_0_0",
+   "y": 69
+  },
+  {
+   "dim": "overworld",
+   "cx": 82,
+   "cz": 56,
+   "template": "litrpg:map/farm_6_0_1",
+   "y": 69
+  },
+  {
+   "dim": "overworld",
+   "cx": 84,
+   "cz": 54,
+   "template": "litrpg:map/farm_6_1_0",
+   "y": 69
+  },
+  {
+   "dim": "overworld",
+   "cx": 84,
+   "cz": 56,
+   "template": "litrpg:map/farm_6_1_1",
    "y": 69
   },
   {
    "dim": "overworld",
    "cx": -172,
    "cz": -16,
-   "template": "litrpg:map/farm_7",
+   "template": "litrpg:map/farm_7_0_0",
+   "y": 75
+  },
+  {
+   "dim": "overworld",
+   "cx": -172,
+   "cz": -14,
+   "template": "litrpg:map/farm_7_0_1",
+   "y": 75
+  },
+  {
+   "dim": "overworld",
+   "cx": -170,
+   "cz": -16,
+   "template": "litrpg:map/farm_7_1_0",
+   "y": 75
+  },
+  {
+   "dim": "overworld",
+   "cx": -170,
+   "cz": -14,
+   "template": "litrpg:map/farm_7_1_1",
    "y": 75
   },
   {
    "dim": "overworld",
    "cx": -190,
    "cz": -30,
-   "template": "litrpg:map/farm_8",
+   "template": "litrpg:map/farm_8_0_0",
+   "y": 67
+  },
+  {
+   "dim": "overworld",
+   "cx": -190,
+   "cz": -28,
+   "template": "litrpg:map/farm_8_0_1",
+   "y": 67
+  },
+  {
+   "dim": "overworld",
+   "cx": -188,
+   "cz": -30,
+   "template": "litrpg:map/farm_8_1_0",
+   "y": 67
+  },
+  {
+   "dim": "overworld",
+   "cx": -188,
+   "cz": -28,
+   "template": "litrpg:map/farm_8_1_1",
    "y": 67
   },
   {
    "dim": "overworld",
    "cx": -171,
    "cz": -37,
-   "template": "litrpg:map/farm_9",
+   "template": "litrpg:map/farm_9_0_0",
+   "y": 73
+  },
+  {
+   "dim": "overworld",
+   "cx": -171,
+   "cz": -35,
+   "template": "litrpg:map/farm_9_0_1",
+   "y": 73
+  },
+  {
+   "dim": "overworld",
+   "cx": -169,
+   "cz": -37,
+   "template": "litrpg:map/farm_9_1_0",
+   "y": 73
+  },
+  {
+   "dim": "overworld",
+   "cx": -169,
+   "cz": -35,
+   "template": "litrpg:map/farm_9_1_1",
    "y": 73
   },
   {
    "dim": "overworld",
    "cx": 181,
    "cz": -160,
-   "template": "litrpg:map/farm_10",
+   "template": "litrpg:map/farm_10_0_0",
+   "y": 119
+  },
+  {
+   "dim": "overworld",
+   "cx": 181,
+   "cz": -158,
+   "template": "litrpg:map/farm_10_0_1",
+   "y": 119
+  },
+  {
+   "dim": "overworld",
+   "cx": 183,
+   "cz": -160,
+   "template": "litrpg:map/farm_10_1_0",
+   "y": 119
+  },
+  {
+   "dim": "overworld",
+   "cx": 183,
+   "cz": -158,
+   "template": "litrpg:map/farm_10_1_1",
    "y": 119
   },
   {
    "dim": "overworld",
    "cx": 159,
    "cz": -174,
-   "template": "litrpg:map/farm_11",
+   "template": "litrpg:map/farm_11_0_0",
+   "y": 126
+  },
+  {
+   "dim": "overworld",
+   "cx": 159,
+   "cz": -172,
+   "template": "litrpg:map/farm_11_0_1",
+   "y": 126
+  },
+  {
+   "dim": "overworld",
+   "cx": 161,
+   "cz": -174,
+   "template": "litrpg:map/farm_11_1_0",
+   "y": 126
+  },
+  {
+   "dim": "overworld",
+   "cx": 161,
+   "cz": -172,
+   "template": "litrpg:map/farm_11_1_1",
    "y": 126
   },
   {
    "dim": "overworld",
    "cx": 192,
    "cz": 162,
-   "template": "litrpg:map/farm_12",
+   "template": "litrpg:map/farm_12_0_0",
+   "y": 94
+  },
+  {
+   "dim": "overworld",
+   "cx": 192,
+   "cz": 164,
+   "template": "litrpg:map/farm_12_0_1",
+   "y": 94
+  },
+  {
+   "dim": "overworld",
+   "cx": 194,
+   "cz": 162,
+   "template": "litrpg:map/farm_12_1_0",
+   "y": 94
+  },
+  {
+   "dim": "overworld",
+   "cx": 194,
+   "cz": 164,
+   "template": "litrpg:map/farm_12_1_1",
    "y": 94
   },
   {
    "dim": "overworld",
    "cx": 172,
    "cz": 173,
-   "template": "litrpg:map/farm_13",
+   "template": "litrpg:map/farm_13_0_0",
+   "y": 79
+  },
+  {
+   "dim": "overworld",
+   "cx": 172,
+   "cz": 175,
+   "template": "litrpg:map/farm_13_0_1",
+   "y": 79
+  },
+  {
+   "dim": "overworld",
+   "cx": 174,
+   "cz": 173,
+   "template": "litrpg:map/farm_13_1_0",
+   "y": 79
+  },
+  {
+   "dim": "overworld",
+   "cx": 174,
+   "cz": 175,
+   "template": "litrpg:map/farm_13_1_1",
    "y": 79
   },
   {
    "dim": "overworld",
    "cx": 168,
    "cz": 156,
-   "template": "litrpg:map/farm_14",
+   "template": "litrpg:map/farm_14_0_0",
+   "y": 74
+  },
+  {
+   "dim": "overworld",
+   "cx": 168,
+   "cz": 158,
+   "template": "litrpg:map/farm_14_0_1",
+   "y": 74
+  },
+  {
+   "dim": "overworld",
+   "cx": 170,
+   "cz": 156,
+   "template": "litrpg:map/farm_14_1_0",
+   "y": 74
+  },
+  {
+   "dim": "overworld",
+   "cx": 170,
+   "cz": 158,
+   "template": "litrpg:map/farm_14_1_1",
    "y": 74
   },
   {
    "dim": "overworld",
    "cx": -163,
    "cz": -204,
-   "template": "litrpg:map/farm_15",
+   "template": "litrpg:map/farm_15_0_0",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": -163,
+   "cz": -202,
+   "template": "litrpg:map/farm_15_0_1",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": -161,
+   "cz": -204,
+   "template": "litrpg:map/farm_15_1_0",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": -161,
+   "cz": -202,
+   "template": "litrpg:map/farm_15_1_1",
    "y": 86
   },
   {
    "dim": "overworld",
    "cx": -155,
    "cz": -185,
-   "template": "litrpg:map/farm_16",
+   "template": "litrpg:map/farm_16_0_0",
+   "y": 84
+  },
+  {
+   "dim": "overworld",
+   "cx": -155,
+   "cz": -183,
+   "template": "litrpg:map/farm_16_0_1",
+   "y": 84
+  },
+  {
+   "dim": "overworld",
+   "cx": -153,
+   "cz": -185,
+   "template": "litrpg:map/farm_16_1_0",
+   "y": 84
+  },
+  {
+   "dim": "overworld",
+   "cx": -153,
+   "cz": -183,
+   "template": "litrpg:map/farm_16_1_1",
    "y": 84
   },
   {
    "dim": "overworld",
    "cx": -176,
    "cz": -190,
-   "template": "litrpg:map/farm_17",
+   "template": "litrpg:map/farm_17_0_0",
+   "y": 89
+  },
+  {
+   "dim": "overworld",
+   "cx": -176,
+   "cz": -188,
+   "template": "litrpg:map/farm_17_0_1",
+   "y": 89
+  },
+  {
+   "dim": "overworld",
+   "cx": -174,
+   "cz": -190,
+   "template": "litrpg:map/farm_17_1_0",
+   "y": 89
+  },
+  {
+   "dim": "overworld",
+   "cx": -174,
+   "cz": -188,
+   "template": "litrpg:map/farm_17_1_1",
    "y": 89
   },
   {
    "dim": "overworld",
    "cx": -169,
    "cz": 172,
-   "template": "litrpg:map/farm_18",
+   "template": "litrpg:map/farm_18_0_0",
+   "y": 76
+  },
+  {
+   "dim": "overworld",
+   "cx": -169,
+   "cz": 174,
+   "template": "litrpg:map/farm_18_0_1",
+   "y": 76
+  },
+  {
+   "dim": "overworld",
+   "cx": -167,
+   "cz": 172,
+   "template": "litrpg:map/farm_18_1_0",
+   "y": 76
+  },
+  {
+   "dim": "overworld",
+   "cx": -167,
+   "cz": 174,
+   "template": "litrpg:map/farm_18_1_1",
    "y": 76
   },
   {
    "dim": "overworld",
    "cx": -186,
    "cz": 195,
-   "template": "litrpg:map/farm_19",
+   "template": "litrpg:map/farm_19_0_0",
+   "y": 74
+  },
+  {
+   "dim": "overworld",
+   "cx": -186,
+   "cz": 197,
+   "template": "litrpg:map/farm_19_0_1",
+   "y": 74
+  },
+  {
+   "dim": "overworld",
+   "cx": -184,
+   "cz": 195,
+   "template": "litrpg:map/farm_19_1_0",
+   "y": 74
+  },
+  {
+   "dim": "overworld",
+   "cx": -184,
+   "cz": 197,
+   "template": "litrpg:map/farm_19_1_1",
    "y": 74
   },
   {
    "dim": "overworld",
    "cx": -189,
    "cz": 171,
-   "template": "litrpg:map/farm_20",
+   "template": "litrpg:map/farm_20_0_0",
+   "y": 77
+  },
+  {
+   "dim": "overworld",
+   "cx": -189,
+   "cz": 173,
+   "template": "litrpg:map/farm_20_0_1",
+   "y": 77
+  },
+  {
+   "dim": "overworld",
+   "cx": -187,
+   "cz": 171,
+   "template": "litrpg:map/farm_20_1_0",
+   "y": 77
+  },
+  {
+   "dim": "overworld",
+   "cx": -187,
+   "cz": 173,
+   "template": "litrpg:map/farm_20_1_1",
    "y": 77
   },
   {
    "dim": "overworld",
    "cx": -4,
    "cz": 169,
-   "template": "litrpg:map/farm_21",
+   "template": "litrpg:map/farm_21_0_0",
+   "y": 64
+  },
+  {
+   "dim": "overworld",
+   "cx": -4,
+   "cz": 171,
+   "template": "litrpg:map/farm_21_0_1",
+   "y": 64
+  },
+  {
+   "dim": "overworld",
+   "cx": -2,
+   "cz": 169,
+   "template": "litrpg:map/farm_21_1_0",
+   "y": 64
+  },
+  {
+   "dim": "overworld",
+   "cx": -2,
+   "cz": 171,
+   "template": "litrpg:map/farm_21_1_1",
    "y": 64
   },
   {
    "dim": "overworld",
    "cx": -18,
    "cz": 153,
-   "template": "litrpg:map/farm_22",
+   "template": "litrpg:map/farm_22_0_0",
+   "y": 67
+  },
+  {
+   "dim": "overworld",
+   "cx": -18,
+   "cz": 155,
+   "template": "litrpg:map/farm_22_0_1",
+   "y": 67
+  },
+  {
+   "dim": "overworld",
+   "cx": -16,
+   "cz": 153,
+   "template": "litrpg:map/farm_22_1_0",
+   "y": 67
+  },
+  {
+   "dim": "overworld",
+   "cx": -16,
+   "cz": 155,
+   "template": "litrpg:map/farm_22_1_1",
    "y": 67
   },
   {
    "dim": "overworld",
    "cx": 3,
    "cz": 153,
-   "template": "litrpg:map/farm_23",
+   "template": "litrpg:map/farm_23_0_0",
+   "y": 75
+  },
+  {
+   "dim": "overworld",
+   "cx": 3,
+   "cz": 155,
+   "template": "litrpg:map/farm_23_0_1",
+   "y": 75
+  },
+  {
+   "dim": "overworld",
+   "cx": 5,
+   "cz": 153,
+   "template": "litrpg:map/farm_23_1_0",
+   "y": 75
+  },
+  {
+   "dim": "overworld",
+   "cx": 5,
+   "cz": 155,
+   "template": "litrpg:map/farm_23_1_1",
    "y": 75
   },
   {
    "dim": "overworld",
    "cx": 9,
    "cz": -203,
-   "template": "litrpg:map/farm_24",
+   "template": "litrpg:map/farm_24_0_0",
+   "y": 117
+  },
+  {
+   "dim": "overworld",
+   "cx": 9,
+   "cz": -201,
+   "template": "litrpg:map/farm_24_0_1",
+   "y": 117
+  },
+  {
+   "dim": "overworld",
+   "cx": 11,
+   "cz": -203,
+   "template": "litrpg:map/farm_24_1_0",
+   "y": 117
+  },
+  {
+   "dim": "overworld",
+   "cx": 11,
+   "cz": -201,
+   "template": "litrpg:map/farm_24_1_1",
    "y": 117
   },
   {
    "dim": "overworld",
    "cx": 24,
    "cz": -215,
-   "template": "litrpg:map/farm_25",
+   "template": "litrpg:map/farm_25_0_0",
+   "y": 112
+  },
+  {
+   "dim": "overworld",
+   "cx": 24,
+   "cz": -213,
+   "template": "litrpg:map/farm_25_0_1",
+   "y": 112
+  },
+  {
+   "dim": "overworld",
+   "cx": 26,
+   "cz": -215,
+   "template": "litrpg:map/farm_25_1_0",
+   "y": 112
+  },
+  {
+   "dim": "overworld",
+   "cx": 26,
+   "cz": -213,
+   "template": "litrpg:map/farm_25_1_1",
    "y": 112
   },
   {
    "dim": "overworld",
    "cx": 22,
    "cz": -193,
-   "template": "litrpg:map/farm_26",
+   "template": "litrpg:map/farm_26_0_0",
+   "y": 95
+  },
+  {
+   "dim": "overworld",
+   "cx": 22,
+   "cz": -191,
+   "template": "litrpg:map/farm_26_0_1",
+   "y": 95
+  },
+  {
+   "dim": "overworld",
+   "cx": 24,
+   "cz": -193,
+   "template": "litrpg:map/farm_26_1_0",
+   "y": 95
+  },
+  {
+   "dim": "overworld",
+   "cx": 24,
+   "cz": -191,
+   "template": "litrpg:map/farm_26_1_1",
    "y": 95
   },
   {
    "dim": "overworld",
    "cx": 187,
    "cz": -33,
-   "template": "litrpg:map/farm_27",
+   "template": "litrpg:map/farm_27_0_0",
+   "y": 76
+  },
+  {
+   "dim": "overworld",
+   "cx": 187,
+   "cz": -31,
+   "template": "litrpg:map/farm_27_0_1",
+   "y": 76
+  },
+  {
+   "dim": "overworld",
+   "cx": 189,
+   "cz": -33,
+   "template": "litrpg:map/farm_27_1_0",
+   "y": 76
+  },
+  {
+   "dim": "overworld",
+   "cx": 189,
+   "cz": -31,
+   "template": "litrpg:map/farm_27_1_1",
    "y": 76
   },
   {
    "dim": "overworld",
    "cx": 204,
    "cz": -22,
-   "template": "litrpg:map/farm_28",
+   "template": "litrpg:map/farm_28_0_0",
+   "y": 83
+  },
+  {
+   "dim": "overworld",
+   "cx": 204,
+   "cz": -20,
+   "template": "litrpg:map/farm_28_0_1",
+   "y": 83
+  },
+  {
+   "dim": "overworld",
+   "cx": 206,
+   "cz": -22,
+   "template": "litrpg:map/farm_28_1_0",
+   "y": 83
+  },
+  {
+   "dim": "overworld",
+   "cx": 206,
+   "cz": -20,
+   "template": "litrpg:map/farm_28_1_1",
    "y": 83
   },
   {
    "dim": "overworld",
    "cx": 187,
    "cz": -16,
-   "template": "litrpg:map/farm_29",
+   "template": "litrpg:map/farm_29_0_0",
+   "y": 93
+  },
+  {
+   "dim": "overworld",
+   "cx": 187,
+   "cz": -14,
+   "template": "litrpg:map/farm_29_0_1",
+   "y": 93
+  },
+  {
+   "dim": "overworld",
+   "cx": 189,
+   "cz": -16,
+   "template": "litrpg:map/farm_29_1_0",
+   "y": 93
+  },
+  {
+   "dim": "overworld",
+   "cx": 189,
+   "cz": -14,
+   "template": "litrpg:map/farm_29_1_1",
    "y": 93
   },
   {
    "dim": "overworld",
    "cx": -215,
    "cz": -45,
-   "template": "litrpg:map/world_tree",
+   "template": "litrpg:map/world_tree_0_0",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -215,
+   "cz": -43,
+   "template": "litrpg:map/world_tree_0_1",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -215,
+   "cz": -41,
+   "template": "litrpg:map/world_tree_0_2",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -215,
+   "cz": -39,
+   "template": "litrpg:map/world_tree_0_3",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -213,
+   "cz": -45,
+   "template": "litrpg:map/world_tree_1_0",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -213,
+   "cz": -43,
+   "template": "litrpg:map/world_tree_1_1",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -213,
+   "cz": -41,
+   "template": "litrpg:map/world_tree_1_2",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -213,
+   "cz": -39,
+   "template": "litrpg:map/world_tree_1_3",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -211,
+   "cz": -45,
+   "template": "litrpg:map/world_tree_2_0",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -211,
+   "cz": -43,
+   "template": "litrpg:map/world_tree_2_1",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -211,
+   "cz": -41,
+   "template": "litrpg:map/world_tree_2_2",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -211,
+   "cz": -39,
+   "template": "litrpg:map/world_tree_2_3",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -209,
+   "cz": -45,
+   "template": "litrpg:map/world_tree_3_0",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -209,
+   "cz": -43,
+   "template": "litrpg:map/world_tree_3_1",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -209,
+   "cz": -41,
+   "template": "litrpg:map/world_tree_3_2",
    "y": 65
   },
   {
    "dim": "overworld",
    "cx": 20,
    "cz": -23,
-   "template": "litrpg:map/colossus",
+   "template": "litrpg:map/colossus_0_0",
+   "y": 63
+  },
+  {
+   "dim": "overworld",
+   "cx": 20,
+   "cz": -21,
+   "template": "litrpg:map/colossus_0_1",
+   "y": 63
+  },
+  {
+   "dim": "overworld",
+   "cx": 22,
+   "cz": -23,
+   "template": "litrpg:map/colossus_1_0",
+   "y": 63
+  },
+  {
+   "dim": "overworld",
+   "cx": 22,
+   "cz": -21,
+   "template": "litrpg:map/colossus_1_1",
    "y": 63
   },
   {
    "dim": "overworld",
    "cx": 205,
    "cz": 202,
-   "template": "litrpg:map/titan_bones",
+   "template": "litrpg:map/titan_bones_0_0",
+   "y": 84
+  },
+  {
+   "dim": "overworld",
+   "cx": 205,
+   "cz": 204,
+   "template": "litrpg:map/titan_bones_0_1",
+   "y": 84
+  },
+  {
+   "dim": "overworld",
+   "cx": 207,
+   "cz": 202,
+   "template": "litrpg:map/titan_bones_1_0",
+   "y": 84
+  },
+  {
+   "dim": "overworld",
+   "cx": 207,
+   "cz": 204,
+   "template": "litrpg:map/titan_bones_1_1",
+   "y": 84
+  },
+  {
+   "dim": "overworld",
+   "cx": 209,
+   "cz": 202,
+   "template": "litrpg:map/titan_bones_2_0",
+   "y": 84
+  },
+  {
+   "dim": "overworld",
+   "cx": 209,
+   "cz": 204,
+   "template": "litrpg:map/titan_bones_2_1",
+   "y": 84
+  },
+  {
+   "dim": "overworld",
+   "cx": 211,
+   "cz": 202,
+   "template": "litrpg:map/titan_bones_3_0",
+   "y": 84
+  },
+  {
+   "dim": "overworld",
+   "cx": 211,
+   "cz": 204,
+   "template": "litrpg:map/titan_bones_3_1",
    "y": 84
   },
   {
    "dim": "overworld",
    "cx": -224,
    "cz": 216,
-   "template": "litrpg:map/abyss_gate",
+   "template": "litrpg:map/abyss_gate_0_0",
+   "y": 79
+  },
+  {
+   "dim": "overworld",
+   "cx": -224,
+   "cz": 218,
+   "template": "litrpg:map/abyss_gate_0_1",
+   "y": 79
+  },
+  {
+   "dim": "overworld",
+   "cx": -222,
+   "cz": 216,
+   "template": "litrpg:map/abyss_gate_1_0",
+   "y": 79
+  },
+  {
+   "dim": "overworld",
+   "cx": -222,
+   "cz": 218,
+   "template": "litrpg:map/abyss_gate_1_1",
    "y": 79
   },
   {
    "dim": "overworld",
    "cx": 204,
    "cz": -205,
-   "template": "litrpg:map/sky_forge",
+   "template": "litrpg:map/sky_forge_0_0",
+   "y": 205
+  },
+  {
+   "dim": "overworld",
+   "cx": 204,
+   "cz": -203,
+   "template": "litrpg:map/sky_forge_0_1",
+   "y": 205
+  },
+  {
+   "dim": "overworld",
+   "cx": 206,
+   "cz": -205,
+   "template": "litrpg:map/sky_forge_1_0",
+   "y": 205
+  },
+  {
+   "dim": "overworld",
+   "cx": 206,
+   "cz": -203,
+   "template": "litrpg:map/sky_forge_1_1",
    "y": 205
   },
   {
@@ -5577,252 +8132,1008 @@
    "dim": "overworld",
    "cx": 30,
    "cz": 14,
-   "template": "litrpg:map/village_0",
+   "template": "litrpg:map/village_0_0_0",
+   "y": 64
+  },
+  {
+   "dim": "overworld",
+   "cx": 30,
+   "cz": 16,
+   "template": "litrpg:map/village_0_0_1",
+   "y": 64
+  },
+  {
+   "dim": "overworld",
+   "cx": 32,
+   "cz": 14,
+   "template": "litrpg:map/village_0_1_0",
+   "y": 64
+  },
+  {
+   "dim": "overworld",
+   "cx": 32,
+   "cz": 16,
+   "template": "litrpg:map/village_0_1_1",
    "y": 64
   },
   {
    "dim": "overworld",
    "cx": -41,
    "cz": -29,
-   "template": "litrpg:map/village_1",
+   "template": "litrpg:map/village_1_0_0",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": -41,
+   "cz": -27,
+   "template": "litrpg:map/village_1_0_1",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": -39,
+   "cz": -29,
+   "template": "litrpg:map/village_1_1_0",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": -39,
+   "cz": -27,
+   "template": "litrpg:map/village_1_1_1",
    "y": 66
   },
   {
    "dim": "overworld",
    "cx": -65,
    "cz": 28,
-   "template": "litrpg:map/village_2",
+   "template": "litrpg:map/village_2_0_0",
+   "y": 75
+  },
+  {
+   "dim": "overworld",
+   "cx": -65,
+   "cz": 30,
+   "template": "litrpg:map/village_2_0_1",
+   "y": 75
+  },
+  {
+   "dim": "overworld",
+   "cx": -63,
+   "cz": 28,
+   "template": "litrpg:map/village_2_1_0",
+   "y": 75
+  },
+  {
+   "dim": "overworld",
+   "cx": -63,
+   "cz": 30,
+   "template": "litrpg:map/village_2_1_1",
    "y": 75
   },
   {
    "dim": "overworld",
    "cx": 18,
    "cz": -57,
-   "template": "litrpg:map/village_3",
+   "template": "litrpg:map/village_3_0_0",
+   "y": 71
+  },
+  {
+   "dim": "overworld",
+   "cx": 18,
+   "cz": -55,
+   "template": "litrpg:map/village_3_0_1",
+   "y": 71
+  },
+  {
+   "dim": "overworld",
+   "cx": 20,
+   "cz": -57,
+   "template": "litrpg:map/village_3_1_0",
+   "y": 71
+  },
+  {
+   "dim": "overworld",
+   "cx": 20,
+   "cz": -55,
+   "template": "litrpg:map/village_3_1_1",
    "y": 71
   },
   {
    "dim": "overworld",
    "cx": 59,
    "cz": -25,
-   "template": "litrpg:map/village_4",
+   "template": "litrpg:map/village_4_0_0",
+   "y": 67
+  },
+  {
+   "dim": "overworld",
+   "cx": 59,
+   "cz": -23,
+   "template": "litrpg:map/village_4_0_1",
+   "y": 67
+  },
+  {
+   "dim": "overworld",
+   "cx": 61,
+   "cz": -25,
+   "template": "litrpg:map/village_4_1_0",
+   "y": 67
+  },
+  {
+   "dim": "overworld",
+   "cx": 61,
+   "cz": -23,
+   "template": "litrpg:map/village_4_1_1",
    "y": 67
   },
   {
    "dim": "overworld",
    "cx": -29,
    "cz": 64,
-   "template": "litrpg:map/village_5",
+   "template": "litrpg:map/village_5_0_0",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -29,
+   "cz": 66,
+   "template": "litrpg:map/village_5_0_1",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -27,
+   "cz": 64,
+   "template": "litrpg:map/village_5_1_0",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -27,
+   "cz": 66,
+   "template": "litrpg:map/village_5_1_1",
    "y": 68
   },
   {
    "dim": "overworld",
    "cx": -19,
    "cz": -71,
-   "template": "litrpg:map/village_6",
+   "template": "litrpg:map/village_6_0_0",
+   "y": 73
+  },
+  {
+   "dim": "overworld",
+   "cx": -19,
+   "cz": -69,
+   "template": "litrpg:map/village_6_0_1",
+   "y": 73
+  },
+  {
+   "dim": "overworld",
+   "cx": -17,
+   "cz": -71,
+   "template": "litrpg:map/village_6_1_0",
+   "y": 73
+  },
+  {
+   "dim": "overworld",
+   "cx": -17,
+   "cz": -69,
+   "template": "litrpg:map/village_6_1_1",
    "y": 73
   },
   {
    "dim": "overworld",
    "cx": 69,
    "cz": -64,
-   "template": "litrpg:map/village_7",
+   "template": "litrpg:map/village_7_0_0",
+   "y": 70
+  },
+  {
+   "dim": "overworld",
+   "cx": 69,
+   "cz": -62,
+   "template": "litrpg:map/village_7_0_1",
+   "y": 70
+  },
+  {
+   "dim": "overworld",
+   "cx": 71,
+   "cz": -64,
+   "template": "litrpg:map/village_7_1_0",
+   "y": 70
+  },
+  {
+   "dim": "overworld",
+   "cx": 71,
+   "cz": -62,
+   "template": "litrpg:map/village_7_1_1",
    "y": 70
   },
   {
    "dim": "overworld",
    "cx": -106,
    "cz": -22,
-   "template": "litrpg:map/village_8",
+   "template": "litrpg:map/village_8_0_0",
+   "y": 69
+  },
+  {
+   "dim": "overworld",
+   "cx": -106,
+   "cz": -20,
+   "template": "litrpg:map/village_8_0_1",
+   "y": 69
+  },
+  {
+   "dim": "overworld",
+   "cx": -104,
+   "cz": -22,
+   "template": "litrpg:map/village_8_1_0",
+   "y": 69
+  },
+  {
+   "dim": "overworld",
+   "cx": -104,
+   "cz": -20,
+   "template": "litrpg:map/village_8_1_1",
    "y": 69
   },
   {
    "dim": "overworld",
    "cx": 66,
    "cz": 82,
-   "template": "litrpg:map/village_9",
+   "template": "litrpg:map/village_9_0_0",
+   "y": 73
+  },
+  {
+   "dim": "overworld",
+   "cx": 66,
+   "cz": 84,
+   "template": "litrpg:map/village_9_0_1",
+   "y": 73
+  },
+  {
+   "dim": "overworld",
+   "cx": 68,
+   "cz": 82,
+   "template": "litrpg:map/village_9_1_0",
+   "y": 73
+  },
+  {
+   "dim": "overworld",
+   "cx": 68,
+   "cz": 84,
+   "template": "litrpg:map/village_9_1_1",
    "y": 73
   },
   {
    "dim": "overworld",
    "cx": -26,
    "cz": 131,
-   "template": "litrpg:map/village_10",
+   "template": "litrpg:map/village_10_0_0",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": -26,
+   "cz": 133,
+   "template": "litrpg:map/village_10_0_1",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": -24,
+   "cz": 131,
+   "template": "litrpg:map/village_10_1_0",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": -24,
+   "cz": 133,
+   "template": "litrpg:map/village_10_1_1",
    "y": 86
   },
   {
    "dim": "overworld",
    "cx": 13,
    "cz": -168,
-   "template": "litrpg:map/village_11",
+   "template": "litrpg:map/village_11_0_0",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 13,
+   "cz": -166,
+   "template": "litrpg:map/village_11_0_1",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 15,
+   "cz": -168,
+   "template": "litrpg:map/village_11_1_0",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 15,
+   "cz": -166,
+   "template": "litrpg:map/village_11_1_1",
    "y": 86
   },
   {
    "dim": "overworld",
    "cx": -105,
    "cz": -49,
-   "template": "litrpg:map/lumber_0",
+   "template": "litrpg:map/lumber_0_0_0",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": -105,
+   "cz": -47,
+   "template": "litrpg:map/lumber_0_0_1",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": -103,
+   "cz": -49,
+   "template": "litrpg:map/lumber_0_1_0",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": -103,
+   "cz": -47,
+   "template": "litrpg:map/lumber_0_1_1",
    "y": 80
   },
   {
    "dim": "overworld",
    "cx": -124,
    "cz": -136,
-   "template": "litrpg:map/lumber_1",
+   "template": "litrpg:map/lumber_1_0_0",
+   "y": 77
+  },
+  {
+   "dim": "overworld",
+   "cx": -124,
+   "cz": -134,
+   "template": "litrpg:map/lumber_1_0_1",
+   "y": 77
+  },
+  {
+   "dim": "overworld",
+   "cx": -122,
+   "cz": -136,
+   "template": "litrpg:map/lumber_1_1_0",
+   "y": 77
+  },
+  {
+   "dim": "overworld",
+   "cx": -122,
+   "cz": -134,
+   "template": "litrpg:map/lumber_1_1_1",
    "y": 77
   },
   {
    "dim": "overworld",
    "cx": 54,
    "cz": -99,
-   "template": "litrpg:map/lumber_2",
+   "template": "litrpg:map/lumber_2_0_0",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 54,
+   "cz": -97,
+   "template": "litrpg:map/lumber_2_0_1",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 56,
+   "cz": -99,
+   "template": "litrpg:map/lumber_2_1_0",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 56,
+   "cz": -97,
+   "template": "litrpg:map/lumber_2_1_1",
    "y": 68
   },
   {
    "dim": "overworld",
    "cx": -49,
    "cz": -99,
-   "template": "litrpg:map/lumber_3",
+   "template": "litrpg:map/lumber_3_0_0",
+   "y": 89
+  },
+  {
+   "dim": "overworld",
+   "cx": -49,
+   "cz": -97,
+   "template": "litrpg:map/lumber_3_0_1",
+   "y": 89
+  },
+  {
+   "dim": "overworld",
+   "cx": -47,
+   "cz": -99,
+   "template": "litrpg:map/lumber_3_1_0",
+   "y": 89
+  },
+  {
+   "dim": "overworld",
+   "cx": -47,
+   "cz": -97,
+   "template": "litrpg:map/lumber_3_1_1",
    "y": 89
   },
   {
    "dim": "overworld",
    "cx": 128,
    "cz": -85,
-   "template": "litrpg:map/lumber_4",
+   "template": "litrpg:map/lumber_4_0_0",
+   "y": 98
+  },
+  {
+   "dim": "overworld",
+   "cx": 128,
+   "cz": -83,
+   "template": "litrpg:map/lumber_4_0_1",
+   "y": 98
+  },
+  {
+   "dim": "overworld",
+   "cx": 130,
+   "cz": -85,
+   "template": "litrpg:map/lumber_4_1_0",
+   "y": 98
+  },
+  {
+   "dim": "overworld",
+   "cx": 130,
+   "cz": -83,
+   "template": "litrpg:map/lumber_4_1_1",
    "y": 98
   },
   {
    "dim": "overworld",
    "cx": -146,
    "cz": 54,
-   "template": "litrpg:map/lumber_5",
+   "template": "litrpg:map/lumber_5_0_0",
+   "y": 75
+  },
+  {
+   "dim": "overworld",
+   "cx": -146,
+   "cz": 56,
+   "template": "litrpg:map/lumber_5_0_1",
+   "y": 75
+  },
+  {
+   "dim": "overworld",
+   "cx": -144,
+   "cz": 54,
+   "template": "litrpg:map/lumber_5_1_0",
+   "y": 75
+  },
+  {
+   "dim": "overworld",
+   "cx": -144,
+   "cz": 56,
+   "template": "litrpg:map/lumber_5_1_1",
    "y": 75
   },
   {
    "dim": "overworld",
    "cx": 88,
    "cz": 69,
-   "template": "litrpg:map/fishing_0",
+   "template": "litrpg:map/fishing_0_0_0",
+   "y": 58
+  },
+  {
+   "dim": "overworld",
+   "cx": 88,
+   "cz": 71,
+   "template": "litrpg:map/fishing_0_0_1",
+   "y": 58
+  },
+  {
+   "dim": "overworld",
+   "cx": 90,
+   "cz": 69,
+   "template": "litrpg:map/fishing_0_1_0",
+   "y": 58
+  },
+  {
+   "dim": "overworld",
+   "cx": 90,
+   "cz": 71,
+   "template": "litrpg:map/fishing_0_1_1",
    "y": 58
   },
   {
    "dim": "overworld",
    "cx": 113,
    "cz": 44,
-   "template": "litrpg:map/fishing_1",
+   "template": "litrpg:map/fishing_1_0_0",
+   "y": 70
+  },
+  {
+   "dim": "overworld",
+   "cx": 113,
+   "cz": 46,
+   "template": "litrpg:map/fishing_1_0_1",
+   "y": 70
+  },
+  {
+   "dim": "overworld",
+   "cx": 115,
+   "cz": 44,
+   "template": "litrpg:map/fishing_1_1_0",
+   "y": 70
+  },
+  {
+   "dim": "overworld",
+   "cx": 115,
+   "cz": 46,
+   "template": "litrpg:map/fishing_1_1_1",
    "y": 70
   },
   {
    "dim": "overworld",
    "cx": 149,
    "cz": 47,
-   "template": "litrpg:map/fishing_2",
+   "template": "litrpg:map/fishing_2_0_0",
+   "y": 60
+  },
+  {
+   "dim": "overworld",
+   "cx": 149,
+   "cz": 49,
+   "template": "litrpg:map/fishing_2_0_1",
+   "y": 60
+  },
+  {
+   "dim": "overworld",
+   "cx": 151,
+   "cz": 47,
+   "template": "litrpg:map/fishing_2_1_0",
+   "y": 60
+  },
+  {
+   "dim": "overworld",
+   "cx": 151,
+   "cz": 49,
+   "template": "litrpg:map/fishing_2_1_1",
    "y": 60
   },
   {
    "dim": "overworld",
    "cx": 173,
    "cz": 69,
-   "template": "litrpg:map/fishing_3",
+   "template": "litrpg:map/fishing_3_0_0",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": 173,
+   "cz": 71,
+   "template": "litrpg:map/fishing_3_0_1",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": 175,
+   "cz": 69,
+   "template": "litrpg:map/fishing_3_1_0",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": 175,
+   "cz": 71,
+   "template": "litrpg:map/fishing_3_1_1",
    "y": 65
   },
   {
    "dim": "overworld",
    "cx": -183,
    "cz": -70,
-   "template": "litrpg:map/fishing_4",
+   "template": "litrpg:map/fishing_4_0_0",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -183,
+   "cz": -68,
+   "template": "litrpg:map/fishing_4_0_1",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -181,
+   "cz": -70,
+   "template": "litrpg:map/fishing_4_1_0",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -181,
+   "cz": -68,
+   "template": "litrpg:map/fishing_4_1_1",
    "y": 65
   },
   {
    "dim": "overworld",
    "cx": -35,
    "cz": 56,
-   "template": "litrpg:map/fishing_5",
+   "template": "litrpg:map/fishing_5_0_0",
+   "y": 61
+  },
+  {
+   "dim": "overworld",
+   "cx": -35,
+   "cz": 58,
+   "template": "litrpg:map/fishing_5_0_1",
+   "y": 61
+  },
+  {
+   "dim": "overworld",
+   "cx": -33,
+   "cz": 56,
+   "template": "litrpg:map/fishing_5_1_0",
+   "y": 61
+  },
+  {
+   "dim": "overworld",
+   "cx": -33,
+   "cz": 58,
+   "template": "litrpg:map/fishing_5_1_1",
    "y": 61
   },
   {
    "dim": "overworld",
    "cx": 74,
    "cz": -233,
-   "template": "litrpg:map/fishing_6",
+   "template": "litrpg:map/fishing_6_0_0",
+   "y": 108
+  },
+  {
+   "dim": "overworld",
+   "cx": 74,
+   "cz": -231,
+   "template": "litrpg:map/fishing_6_0_1",
+   "y": 108
+  },
+  {
+   "dim": "overworld",
+   "cx": 76,
+   "cz": -233,
+   "template": "litrpg:map/fishing_6_1_0",
+   "y": 108
+  },
+  {
+   "dim": "overworld",
+   "cx": 76,
+   "cz": -231,
+   "template": "litrpg:map/fishing_6_1_1",
    "y": 108
   },
   {
    "dim": "overworld",
    "cx": -117,
    "cz": 76,
-   "template": "litrpg:map/fishing_7",
+   "template": "litrpg:map/fishing_7_0_0",
+   "y": 79
+  },
+  {
+   "dim": "overworld",
+   "cx": -117,
+   "cz": 78,
+   "template": "litrpg:map/fishing_7_0_1",
+   "y": 79
+  },
+  {
+   "dim": "overworld",
+   "cx": -115,
+   "cz": 76,
+   "template": "litrpg:map/fishing_7_1_0",
+   "y": 79
+  },
+  {
+   "dim": "overworld",
+   "cx": -115,
+   "cz": 78,
+   "template": "litrpg:map/fishing_7_1_1",
    "y": 79
   },
   {
    "dim": "overworld",
    "cx": -109,
    "cz": -17,
-   "template": "litrpg:map/caravan_0",
+   "template": "litrpg:map/caravan_0_0_0",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -109,
+   "cz": -15,
+   "template": "litrpg:map/caravan_0_0_1",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -107,
+   "cz": -17,
+   "template": "litrpg:map/caravan_0_1_0",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -107,
+   "cz": -15,
+   "template": "litrpg:map/caravan_0_1_1",
    "y": 68
   },
   {
    "dim": "overworld",
    "cx": -123,
    "cz": -131,
-   "template": "litrpg:map/caravan_1",
+   "template": "litrpg:map/caravan_1_0_0",
+   "y": 77
+  },
+  {
+   "dim": "overworld",
+   "cx": -123,
+   "cz": -129,
+   "template": "litrpg:map/caravan_1_0_1",
+   "y": 77
+  },
+  {
+   "dim": "overworld",
+   "cx": -121,
+   "cz": -131,
+   "template": "litrpg:map/caravan_1_1_0",
+   "y": 77
+  },
+  {
+   "dim": "overworld",
+   "cx": -121,
+   "cz": -129,
+   "template": "litrpg:map/caravan_1_1_1",
    "y": 77
   },
   {
    "dim": "overworld",
    "cx": 68,
    "cz": -86,
-   "template": "litrpg:map/caravan_2",
+   "template": "litrpg:map/caravan_2_0_0",
+   "y": 64
+  },
+  {
+   "dim": "overworld",
+   "cx": 68,
+   "cz": -84,
+   "template": "litrpg:map/caravan_2_0_1",
+   "y": 64
+  },
+  {
+   "dim": "overworld",
+   "cx": 70,
+   "cz": -86,
+   "template": "litrpg:map/caravan_2_1_0",
+   "y": 64
+  },
+  {
+   "dim": "overworld",
+   "cx": 70,
+   "cz": -84,
+   "template": "litrpg:map/caravan_2_1_1",
    "y": 64
   },
   {
    "dim": "overworld",
    "cx": 49,
    "cz": 27,
-   "template": "litrpg:map/caravan_3",
+   "template": "litrpg:map/caravan_3_0_0",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": 49,
+   "cz": 29,
+   "template": "litrpg:map/caravan_3_0_1",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": 51,
+   "cz": 27,
+   "template": "litrpg:map/caravan_3_1_0",
+   "y": 66
+  },
+  {
+   "dim": "overworld",
+   "cx": 51,
+   "cz": 29,
+   "template": "litrpg:map/caravan_3_1_1",
    "y": 66
   },
   {
    "dim": "overworld",
    "cx": 122,
    "cz": 149,
-   "template": "litrpg:map/caravan_4",
+   "template": "litrpg:map/caravan_4_0_0",
+   "y": 93
+  },
+  {
+   "dim": "overworld",
+   "cx": 122,
+   "cz": 151,
+   "template": "litrpg:map/caravan_4_0_1",
+   "y": 93
+  },
+  {
+   "dim": "overworld",
+   "cx": 124,
+   "cz": 149,
+   "template": "litrpg:map/caravan_4_1_0",
+   "y": 93
+  },
+  {
+   "dim": "overworld",
+   "cx": 124,
+   "cz": 151,
+   "template": "litrpg:map/caravan_4_1_1",
    "y": 93
   },
   {
    "dim": "overworld",
    "cx": -19,
    "cz": 111,
-   "template": "litrpg:map/caravan_5",
+   "template": "litrpg:map/caravan_5_0_0",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": -19,
+   "cz": 113,
+   "template": "litrpg:map/caravan_5_0_1",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": -17,
+   "cz": 111,
+   "template": "litrpg:map/caravan_5_1_0",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": -17,
+   "cz": 113,
+   "template": "litrpg:map/caravan_5_1_1",
    "y": 86
   },
   {
    "dim": "overworld",
    "cx": -97,
    "cz": 137,
-   "template": "litrpg:map/caravan_6",
+   "template": "litrpg:map/caravan_6_0_0",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": -97,
+   "cz": 139,
+   "template": "litrpg:map/caravan_6_0_1",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": -95,
+   "cz": 137,
+   "template": "litrpg:map/caravan_6_1_0",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": -95,
+   "cz": 139,
+   "template": "litrpg:map/caravan_6_1_1",
    "y": 86
   },
   {
    "dim": "overworld",
    "cx": 11,
    "cz": -123,
-   "template": "litrpg:map/caravan_7",
+   "template": "litrpg:map/caravan_7_0_0",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": 11,
+   "cz": -121,
+   "template": "litrpg:map/caravan_7_0_1",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": 13,
+   "cz": -123,
+   "template": "litrpg:map/caravan_7_1_0",
+   "y": 72
+  },
+  {
+   "dim": "overworld",
+   "cx": 13,
+   "cz": -121,
+   "template": "litrpg:map/caravan_7_1_1",
    "y": 72
   },
   {
    "dim": "overworld",
    "cx": 153,
    "cz": 11,
-   "template": "litrpg:map/caravan_8",
+   "template": "litrpg:map/caravan_8_0_0",
+   "y": 74
+  },
+  {
+   "dim": "overworld",
+   "cx": 153,
+   "cz": 13,
+   "template": "litrpg:map/caravan_8_0_1",
+   "y": 74
+  },
+  {
+   "dim": "overworld",
+   "cx": 155,
+   "cz": 11,
+   "template": "litrpg:map/caravan_8_1_0",
+   "y": 74
+  },
+  {
+   "dim": "overworld",
+   "cx": 155,
+   "cz": 13,
+   "template": "litrpg:map/caravan_8_1_1",
    "y": 74
   },
   {
    "dim": "overworld",
    "cx": 10,
    "cz": 200,
-   "template": "litrpg:map/caravan_9",
+   "template": "litrpg:map/caravan_9_0_0",
+   "y": 61
+  },
+  {
+   "dim": "overworld",
+   "cx": 10,
+   "cz": 202,
+   "template": "litrpg:map/caravan_9_0_1",
+   "y": 61
+  },
+  {
+   "dim": "overworld",
+   "cx": 12,
+   "cz": 200,
+   "template": "litrpg:map/caravan_9_1_0",
+   "y": 61
+  },
+  {
+   "dim": "overworld",
+   "cx": 12,
+   "cz": 202,
+   "template": "litrpg:map/caravan_9_1_1",
    "y": 61
   },
   {
@@ -5997,14 +9308,140 @@
    "dim": "nether",
    "cx": -26,
    "cz": 19,
-   "template": "litrpg:map/infernalis",
+   "template": "litrpg:map/infernalis_0_0",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": -26,
+   "cz": 21,
+   "template": "litrpg:map/infernalis_0_1",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": -26,
+   "cz": 23,
+   "template": "litrpg:map/infernalis_0_2",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": -26,
+   "cz": 25,
+   "template": "litrpg:map/infernalis_0_3",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": -24,
+   "cz": 19,
+   "template": "litrpg:map/infernalis_1_0",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": -24,
+   "cz": 21,
+   "template": "litrpg:map/infernalis_1_1",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": -24,
+   "cz": 23,
+   "template": "litrpg:map/infernalis_1_2",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": -24,
+   "cz": 25,
+   "template": "litrpg:map/infernalis_1_3",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": -22,
+   "cz": 19,
+   "template": "litrpg:map/infernalis_2_0",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": -22,
+   "cz": 21,
+   "template": "litrpg:map/infernalis_2_1",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": -22,
+   "cz": 23,
+   "template": "litrpg:map/infernalis_2_2",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": -22,
+   "cz": 25,
+   "template": "litrpg:map/infernalis_2_3",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": -20,
+   "cz": 19,
+   "template": "litrpg:map/infernalis_3_0",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": -20,
+   "cz": 21,
+   "template": "litrpg:map/infernalis_3_1",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": -20,
+   "cz": 23,
+   "template": "litrpg:map/infernalis_3_2",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": -20,
+   "cz": 25,
+   "template": "litrpg:map/infernalis_3_3",
    "y": 36
   },
   {
    "dim": "nether",
    "cx": 1,
    "cz": 27,
-   "template": "litrpg:map/ash_throne",
+   "template": "litrpg:map/ash_throne_0_0",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": 1,
+   "cz": 29,
+   "template": "litrpg:map/ash_throne_0_1",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": 3,
+   "cz": 27,
+   "template": "litrpg:map/ash_throne_1_0",
+   "y": 36
+  },
+  {
+   "dim": "nether",
+   "cx": 3,
+   "cz": 29,
+   "template": "litrpg:map/ash_throne_1_1",
    "y": 36
   },
   {
@@ -6254,153 +9691,153 @@
    "city": "arcadia",
    "craft": "blacksmith",
    "npc": "litrpg:human_artisan",
-   "x": -37,
+   "x": 31,
    "y": 73,
-   "z": -10
+   "z": 11
   },
   {
    "city": "arcadia",
    "craft": "armorer",
    "npc": "litrpg:human_artisan",
-   "x": 29,
-   "y": 72,
-   "z": 11
+   "x": -31,
+   "y": 73,
+   "z": 15
   },
   {
    "city": "arcadia",
    "craft": "weaponsmith",
    "npc": "litrpg:human_artisan",
-   "x": -33,
-   "y": 72,
-   "z": 13
-  },
-  {
-   "city": "arcadia",
-   "craft": "herbalist",
-   "npc": "litrpg:human_artisan",
    "x": -13,
    "y": 73,
-   "z": 29
-  },
-  {
-   "city": "arcadia",
-   "craft": "builder",
-   "npc": "litrpg:human_artisan",
-   "x": 16,
-   "y": 73,
-   "z": 37
-  },
-  {
-   "city": "arcadia",
-   "craft": "builder",
-   "npc": "litrpg:human_artisan",
-   "x": -10,
-   "y": 72,
-   "z": 45
-  },
-  {
-   "city": "arcadia",
-   "craft": "leatherworker",
-   "npc": "litrpg:human_artisan",
-   "x": -30,
-   "y": 73,
-   "z": 39
-  },
-  {
-   "city": "arcadia",
-   "craft": "fletcher",
-   "npc": "litrpg:human_artisan",
-   "x": 46,
-   "y": 73,
-   "z": 9
-  },
-  {
-   "city": "arcadia",
-   "craft": "jeweler",
-   "npc": "litrpg:human_artisan",
-   "x": 49,
-   "y": 73,
-   "z": 27
+   "z": 30
   },
   {
    "city": "arcadia",
    "craft": "tailor",
    "npc": "litrpg:human_artisan",
-   "x": -41,
-   "y": 74,
-   "z": 21
-  },
-  {
-   "city": "arcadia",
-   "craft": "healer",
-   "npc": "litrpg:human_artisan",
-   "x": 30,
-   "y": 74,
-   "z": 24
+   "x": -36,
+   "y": 73,
+   "z": -13
   },
   {
    "city": "arcadia",
    "craft": "scribe",
    "npc": "litrpg:human_artisan",
-   "x": 33,
-   "y": 74,
-   "z": 40
-  },
-  {
-   "city": "arcadia",
-   "craft": "innkeeper",
-   "npc": "litrpg:human_artisan",
-   "x": -53,
-   "y": 74,
-   "z": -23
-  },
-  {
-   "city": "arcadia",
-   "craft": "baker",
-   "npc": "litrpg:human_artisan",
-   "x": 9,
+   "x": 32,
    "y": 73,
-   "z": 59
+   "z": 25
   },
   {
    "city": "arcadia",
-   "craft": "alchemist",
+   "craft": "builder",
    "npc": "litrpg:human_artisan",
-   "x": 49,
-   "y": 72,
-   "z": -42
+   "x": 17,
+   "y": 73,
+   "z": 35
   },
   {
    "city": "arcadia",
    "craft": "stablemaster",
    "npc": "litrpg:human_artisan",
-   "x": -31,
+   "x": -30,
    "y": 73,
-   "z": 52
+   "z": 37
   },
   {
    "city": "arcadia",
    "craft": "miner",
    "npc": "litrpg:human_artisan",
-   "x": 35,
+   "x": -33,
    "y": 73,
-   "z": -45
+   "z": 25
+  },
+  {
+   "city": "arcadia",
+   "craft": "jeweler",
+   "npc": "litrpg:human_artisan",
+   "x": 46,
+   "y": 73,
+   "z": 12
+  },
+  {
+   "city": "arcadia",
+   "craft": "herbalist",
+   "npc": "litrpg:human_artisan",
+   "x": -11,
+   "y": 73,
+   "z": 45
+  },
+  {
+   "city": "arcadia",
+   "craft": "builder",
+   "npc": "litrpg:human_artisan",
+   "x": 49,
+   "y": 73,
+   "z": 26
+  },
+  {
+   "city": "arcadia",
+   "craft": "fletcher",
+   "npc": "litrpg:human_artisan",
+   "x": -44,
+   "y": 73,
+   "z": -36
+  },
+  {
+   "city": "arcadia",
+   "craft": "baker",
+   "npc": "litrpg:human_artisan",
+   "x": -51,
+   "y": 73,
+   "z": 12
+  },
+  {
+   "city": "arcadia",
+   "craft": "alchemist",
+   "npc": "litrpg:human_artisan",
+   "x": 36,
+   "y": 74,
+   "z": 40
+  },
+  {
+   "city": "arcadia",
+   "craft": "leatherworker",
+   "npc": "litrpg:human_artisan",
+   "x": 16,
+   "y": 73,
+   "z": 47
   },
   {
    "city": "arcadia",
    "craft": "innkeeper",
    "npc": "litrpg:human_artisan",
-   "x": 66,
-   "y": 72,
-   "z": 12
+   "x": 13,
+   "y": 73,
+   "z": 61
+  },
+  {
+   "city": "arcadia",
+   "craft": "healer",
+   "npc": "litrpg:human_artisan",
+   "x": 52,
+   "y": 73,
+   "z": -40
+  },
+  {
+   "city": "arcadia",
+   "craft": "innkeeper",
+   "npc": "litrpg:human_artisan",
+   "x": -55,
+   "y": 73,
+   "z": -24
   },
   {
    "city": "arcadia",
    "craft": "banker",
    "npc": "litrpg:human_artisan",
-   "x": -14,
+   "x": 67,
    "y": 73,
-   "z": 67
+   "z": 13
   },
   {
    "city": "haven",
@@ -6430,89 +9867,89 @@
    "city": "haven",
    "craft": "fishmonger",
    "npc": "litrpg:human_artisan",
-   "x": 1517,
-   "y": 68,
-   "z": 931
+   "x": 1535,
+   "y": 69,
+   "z": 909
   },
   {
    "city": "haven",
    "craft": "blacksmith",
    "npc": "litrpg:human_artisan",
-   "x": 1533,
-   "y": 68,
-   "z": 913
-  },
-  {
-   "city": "haven",
-   "craft": "leatherworker",
-   "npc": "litrpg:human_artisan",
-   "x": 1569,
-   "y": 68,
-   "z": 920
+   "x": 1515,
+   "y": 69,
+   "z": 931
   },
   {
    "city": "haven",
    "craft": "stablemaster",
    "npc": "litrpg:human_artisan",
-   "x": 1570,
-   "y": 68,
-   "z": 938
-  },
-  {
-   "city": "haven",
-   "craft": "innkeeper",
-   "npc": "litrpg:human_artisan",
-   "x": 1517,
+   "x": 1569,
    "y": 69,
-   "z": 899
+   "z": 919
   },
   {
    "city": "haven",
    "craft": "herbalist",
    "npc": "litrpg:human_artisan",
-   "x": 1502,
+   "x": 1507,
    "y": 69,
-   "z": 917
+   "z": 938
   },
   {
    "city": "haven",
    "craft": "scribe",
    "npc": "litrpg:human_artisan",
-   "x": 1566,
+   "x": 1570,
    "y": 68,
-   "z": 951
+   "z": 934
+  },
+  {
+   "city": "haven",
+   "craft": "banker",
+   "npc": "litrpg:human_artisan",
+   "x": 1570,
+   "y": 68,
+   "z": 944
   },
   {
    "city": "haven",
    "craft": "builder",
    "npc": "litrpg:human_artisan",
-   "x": 1536,
-   "y": 68,
-   "z": 960
-  },
-  {
-   "city": "haven",
-   "craft": "baker",
-   "npc": "litrpg:human_artisan",
-   "x": 1517,
+   "x": 1500,
    "y": 69,
-   "z": 952
-  },
-  {
-   "city": "haven",
-   "craft": "tailor",
-   "npc": "litrpg:human_artisan",
-   "x": 1504,
-   "y": 69,
-   "z": 942
+   "z": 917
   },
   {
    "city": "haven",
    "craft": "healer",
    "npc": "litrpg:human_artisan",
-   "x": 1550,
+   "x": 1520,
    "y": 69,
-   "z": 893
+   "z": 896
+  },
+  {
+   "city": "haven",
+   "craft": "baker",
+   "npc": "litrpg:human_artisan",
+   "x": 1514,
+   "y": 69,
+   "z": 951
+  },
+  {
+   "city": "haven",
+   "craft": "leatherworker",
+   "npc": "litrpg:human_artisan",
+   "x": 1539,
+   "y": 68,
+   "z": 959
+  },
+  {
+   "city": "haven",
+   "craft": "tailor",
+   "npc": "litrpg:human_artisan",
+   "x": 1535,
+   "y": 69,
+   "z": 889
   },
   {
    "city": "sylvendar",
@@ -6550,81 +9987,81 @@
    "city": "sylvendar",
    "craft": "herbalist",
    "npc": "litrpg:elf_artisan",
-   "x": -2798,
+   "x": -2799,
    "y": 76,
-   "z": -358
-  },
-  {
-   "city": "sylvendar",
-   "craft": "tailor",
-   "npc": "litrpg:elf_artisan",
-   "x": -2795,
-   "y": 76,
-   "z": -409
-  },
-  {
-   "city": "sylvendar",
-   "craft": "fletcher",
-   "npc": "litrpg:elf_artisan",
-   "x": -2827,
-   "y": 76,
-   "z": -400
-  },
-  {
-   "city": "sylvendar",
-   "craft": "baker",
-   "npc": "litrpg:elf_artisan",
-   "x": -2781,
-   "y": 76,
-   "z": -421
-  },
-  {
-   "city": "sylvendar",
-   "craft": "leatherworker",
-   "npc": "litrpg:elf_artisan",
-   "x": -2792,
-   "y": 77,
-   "z": -424
+   "z": -357
   },
   {
    "city": "sylvendar",
    "craft": "alchemist",
    "npc": "litrpg:elf_artisan",
-   "x": -2824,
+   "x": -2796,
    "y": 76,
-   "z": -348
+   "z": -411
   },
   {
    "city": "sylvendar",
-   "craft": "jeweler",
+   "craft": "fletcher",
    "npc": "litrpg:elf_artisan",
-   "x": -2834,
-   "y": 77,
-   "z": -410
+   "x": -2780,
+   "y": 76,
+   "z": -423
   },
   {
    "city": "sylvendar",
    "craft": "scribe",
    "npc": "litrpg:elf_artisan",
-   "x": -2804,
+   "x": -2823,
    "y": 76,
-   "z": -343
+   "z": -348
   },
   {
    "city": "sylvendar",
    "craft": "healer",
    "npc": "litrpg:elf_artisan",
-   "x": -2845,
+   "x": -2792,
+   "y": 77,
+   "z": -428
+  },
+  {
+   "city": "sylvendar",
+   "craft": "innkeeper",
+   "npc": "litrpg:elf_artisan",
+   "x": -2846,
    "y": 76,
-   "z": -387
+   "z": -384
+  },
+  {
+   "city": "sylvendar",
+   "craft": "tailor",
+   "npc": "litrpg:elf_artisan",
+   "x": -2809,
+   "y": 77,
+   "z": -430
+  },
+  {
+   "city": "sylvendar",
+   "craft": "jeweler",
+   "npc": "litrpg:elf_artisan",
+   "x": -2756,
+   "y": 76,
+   "z": -399
   },
   {
    "city": "sylvendar",
    "craft": "builder",
    "npc": "litrpg:elf_artisan",
-   "x": -2783,
+   "x": -2805,
    "y": 76,
-   "z": -343
+   "z": -342
+  },
+  {
+   "city": "sylvendar",
+   "craft": "leatherworker",
+   "npc": "litrpg:elf_artisan",
+   "x": -2846,
+   "y": 76,
+   "z": -371
   },
   {
    "city": "khazad",
@@ -6670,37 +10107,37 @@
    "city": "khazad",
    "craft": "armorer",
    "npc": "litrpg:dwarf_artisan",
+   "x": 2715,
+   "y": 168,
+   "z": -2546
+  },
+  {
+   "city": "khazad",
+   "craft": "jeweler",
+   "npc": "litrpg:dwarf_artisan",
    "x": 2691,
    "y": 169,
    "z": -2576
   },
   {
    "city": "khazad",
-   "craft": "jeweler",
+   "craft": "alchemist",
    "npc": "litrpg:dwarf_artisan",
-   "x": 2713,
-   "y": 168,
-   "z": -2543
-  },
-  {
-   "city": "khazad",
-   "craft": "builder",
-   "npc": "litrpg:dwarf_artisan",
-   "x": 2682,
+   "x": 2684,
    "y": 169,
-   "z": -2567
+   "z": -2566
   },
   {
    "city": "khazad",
-   "craft": "leatherworker",
+   "craft": "butcher",
    "npc": "litrpg:dwarf_artisan",
-   "x": 2731,
-   "y": 168,
-   "z": -2545
+   "x": 2729,
+   "y": 169,
+   "z": -2546
   },
   {
    "city": "khazad",
-   "craft": "builder",
+   "craft": "blacksmith",
    "npc": "litrpg:dwarf_artisan",
    "x": 2693,
    "y": 168,
@@ -6708,15 +10145,31 @@
   },
   {
    "city": "khazad",
-   "craft": "weaponsmith",
+   "craft": "miner",
    "npc": "litrpg:dwarf_artisan",
-   "x": 2700,
+   "x": 2699,
    "y": 169,
-   "z": -2592
+   "z": -2593
   },
   {
    "city": "khazad",
-   "craft": "miner",
+   "craft": "banker",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2741,
+   "y": 169,
+   "z": -2550
+  },
+  {
+   "city": "khazad",
+   "craft": "baker",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2679,
+   "y": 169,
+   "z": -2576
+  },
+  {
+   "city": "khazad",
+   "craft": "leatherworker",
    "npc": "litrpg:dwarf_artisan",
    "x": 2723,
    "y": 168,
@@ -6724,43 +10177,27 @@
   },
   {
    "city": "khazad",
-   "craft": "alchemist",
+   "craft": "builder",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2716,
+   "y": 169,
+   "z": -2597
+  },
+  {
+   "city": "khazad",
+   "craft": "builder",
    "npc": "litrpg:dwarf_artisan",
    "x": 2708,
    "y": 168,
-   "z": -2521
+   "z": -2522
   },
   {
    "city": "khazad",
-   "craft": "baker",
+   "craft": "weaponsmith",
    "npc": "litrpg:dwarf_artisan",
-   "x": 2678,
-   "y": 170,
-   "z": -2576
-  },
-  {
-   "city": "khazad",
-   "craft": "blacksmith",
-   "npc": "litrpg:dwarf_artisan",
-   "x": 2716,
-   "y": 170,
-   "z": -2595
-  },
-  {
-   "city": "khazad",
-   "craft": "butcher",
-   "npc": "litrpg:dwarf_artisan",
-   "x": 2743,
+   "x": 2664,
    "y": 169,
-   "z": -2553
-  },
-  {
-   "city": "khazad",
-   "craft": "banker",
-   "npc": "litrpg:dwarf_artisan",
-   "x": 2662,
-   "y": 170,
-   "z": -2573
+   "z": -2572
   },
   {
    "city": "ghardum",
@@ -6788,47 +10225,55 @@
   },
   {
    "city": "ghardum",
-   "craft": "leatherworker",
+   "craft": "butcher",
    "npc": "litrpg:orc_artisan",
-   "x": 2886,
+   "x": 2890,
    "y": 90,
-   "z": 2649
+   "z": 2650
   },
   {
    "city": "ghardum",
-   "craft": "weaponsmith",
+   "craft": "leatherworker",
    "npc": "litrpg:orc_artisan",
-   "x": 2926,
+   "x": 2869,
    "y": 90,
-   "z": 2616
+   "z": 2630
   },
   {
    "city": "ghardum",
    "craft": "blacksmith",
    "npc": "litrpg:orc_artisan",
-   "x": 2918,
+   "x": 2927,
    "y": 90,
-   "z": 2599
+   "z": 2616
   },
   {
    "city": "ghardum",
-   "craft": "herbalist",
+   "craft": "innkeeper",
    "npc": "litrpg:orc_artisan",
-   "x": 2872,
-   "y": 91,
-   "z": 2629
+   "x": 2919,
+   "y": 90,
+   "z": 2596
   },
   {
    "city": "ghardum",
    "craft": "fletcher",
    "npc": "litrpg:orc_artisan",
-   "x": 2920,
+   "x": 2867,
    "y": 90,
-   "z": 2653
+   "z": 2645
   },
   {
    "city": "ghardum",
-   "craft": "armorer",
+   "craft": "weaponsmith",
+   "npc": "litrpg:orc_artisan",
+   "x": 2871,
+   "y": 90,
+   "z": 2605
+  },
+  {
+   "city": "ghardum",
+   "craft": "herbalist",
    "npc": "litrpg:orc_artisan",
    "x": 2895,
    "y": 90,
@@ -6836,27 +10281,19 @@
   },
   {
    "city": "ghardum",
-   "craft": "butcher",
+   "craft": "armorer",
    "npc": "litrpg:orc_artisan",
-   "x": 2871,
+   "x": 2915,
    "y": 90,
-   "z": 2648
+   "z": 2657
   },
   {
    "city": "ghardum",
    "craft": "builder",
    "npc": "litrpg:orc_artisan",
-   "x": 2900,
+   "x": 2901,
    "y": 90,
-   "z": 2650
-  },
-  {
-   "city": "ghardum",
-   "craft": "innkeeper",
-   "npc": "litrpg:orc_artisan",
-   "x": 2898,
-   "y": 90,
-   "z": 2664
+   "z": 2663
   },
   {
    "city": "wolfden",
@@ -6878,65 +10315,57 @@
    "city": "wolfden",
    "craft": "leatherworker",
    "npc": "litrpg:beast_artisan",
-   "x": -2615,
-   "y": 86,
-   "z": -3046
+   "x": -2583,
+   "y": 87,
+   "z": -3049
   },
   {
    "city": "wolfden",
    "craft": "fletcher",
    "npc": "litrpg:beast_artisan",
-   "x": -2585,
+   "x": -2618,
    "y": 86,
-   "z": -3052
+   "z": -3044
   },
   {
    "city": "wolfden",
    "craft": "herbalist",
    "npc": "litrpg:beast_artisan",
-   "x": -2588,
+   "x": -2586,
    "y": 86,
    "z": -3066
   },
   {
    "city": "wolfden",
-   "craft": "builder",
-   "npc": "litrpg:beast_artisan",
-   "x": -2597,
-   "y": 86,
-   "z": -3025
-  },
-  {
-   "city": "wolfden",
    "craft": "tailor",
    "npc": "litrpg:beast_artisan",
-   "x": -2612,
+   "x": -2611,
    "y": 86,
    "z": -3022
   },
   {
    "city": "wolfden",
-   "craft": "innkeeper",
+   "craft": "butcher",
    "npc": "litrpg:beast_artisan",
-   "x": -2628,
+   "x": -2597,
    "y": 86,
-   "z": -3048
+   "z": -3021
   },
   {
    "city": "wolfden",
-   "craft": "butcher",
+   "craft": "builder",
    "npc": "litrpg:beast_artisan",
-   "x": -2603,
+   "x": -2574,
    "y": 87,
-   "z": -3062
+   "z": -3033
   },
   {
    "city": "wolfden",
    "craft": "healer",
    "npc": "litrpg:beast_artisan",
-   "x": -2624,
+   "x": -2631,
    "y": 86,
-   "z": -3027
+   "z": -3046
   },
   {
    "city": "ashgrad",
@@ -6958,89 +10387,89 @@
    "city": "ashgrad",
    "craft": "alchemist",
    "npc": "litrpg:demon_artisan",
-   "x": -2841,
+   "x": -2822,
    "y": 72,
-   "z": 2920
-  },
-  {
-   "city": "ashgrad",
-   "craft": "banker",
-   "npc": "litrpg:demon_artisan",
-   "x": -2821,
-   "y": 72,
-   "z": 2955
-  },
-  {
-   "city": "ashgrad",
-   "craft": "healer",
-   "npc": "litrpg:demon_artisan",
-   "x": -2862,
-   "y": 73,
-   "z": 2910
-  },
-  {
-   "city": "ashgrad",
-   "craft": "builder",
-   "npc": "litrpg:demon_artisan",
-   "x": -2849,
-   "y": 72,
-   "z": 2976
-  },
-  {
-   "city": "ashgrad",
-   "craft": "tailor",
-   "npc": "litrpg:demon_artisan",
-   "x": -2817,
-   "y": 72,
-   "z": 2938
-  },
-  {
-   "city": "ashgrad",
-   "craft": "armorer",
-   "npc": "litrpg:demon_artisan",
-   "x": -2870,
-   "y": 73,
    "z": 2954
   },
   {
    "city": "ashgrad",
    "craft": "jeweler",
    "npc": "litrpg:demon_artisan",
-   "x": -2884,
+   "x": -2840,
    "y": 73,
-   "z": 2957
+   "z": 2918
   },
   {
    "city": "ashgrad",
    "craft": "blacksmith",
    "npc": "litrpg:demon_artisan",
-   "x": -2832,
+   "x": -2872,
    "y": 72,
-   "z": 2969
-  },
-  {
-   "city": "ashgrad",
-   "craft": "scribe",
-   "npc": "litrpg:demon_artisan",
-   "x": -2875,
-   "y": 73,
-   "z": 2914
+   "z": 2954
   },
   {
    "city": "ashgrad",
    "craft": "weaponsmith",
    "npc": "litrpg:demon_artisan",
-   "x": -2888,
+   "x": -2833,
    "y": 72,
-   "z": 2942
+   "z": 2970
   },
   {
    "city": "ashgrad",
    "craft": "innkeeper",
    "npc": "litrpg:demon_artisan",
-   "x": -2839,
+   "x": -2866,
+   "y": 73,
+   "z": 2910
+  },
+  {
+   "city": "ashgrad",
+   "craft": "tailor",
+   "npc": "litrpg:demon_artisan",
+   "x": -2860,
    "y": 72,
-   "z": 2908
+   "z": 2969
+  },
+  {
+   "city": "ashgrad",
+   "craft": "healer",
+   "npc": "litrpg:demon_artisan",
+   "x": -2830,
+   "y": 73,
+   "z": 2916
+  },
+  {
+   "city": "ashgrad",
+   "craft": "builder",
+   "npc": "litrpg:demon_artisan",
+   "x": -2847,
+   "y": 72,
+   "z": 2977
+  },
+  {
+   "city": "ashgrad",
+   "craft": "scribe",
+   "npc": "litrpg:demon_artisan",
+   "x": -2813,
+   "y": 72,
+   "z": 2941
+  },
+  {
+   "city": "ashgrad",
+   "craft": "armorer",
+   "npc": "litrpg:demon_artisan",
+   "x": -2890,
+   "y": 72,
+   "z": 2943
+  },
+  {
+   "city": "ashgrad",
+   "craft": "banker",
+   "npc": "litrpg:demon_artisan",
+   "x": -2841,
+   "y": 73,
+   "z": 2907
   },
   {
    "city": "dawnfort",
@@ -7068,67 +10497,67 @@
   },
   {
    "city": "dawnfort",
-   "craft": "armorer",
+   "craft": "blacksmith",
    "npc": "litrpg:human_artisan",
-   "x": -85,
-   "y": 71,
-   "z": 2556
-  },
-  {
-   "city": "dawnfort",
-   "craft": "healer",
-   "npc": "litrpg:human_artisan",
-   "x": -65,
-   "y": 70,
-   "z": 2524
-  },
-  {
-   "city": "dawnfort",
-   "craft": "builder",
-   "npc": "litrpg:human_artisan",
-   "x": -42,
-   "y": 70,
-   "z": 2549
-  },
-  {
-   "city": "dawnfort",
-   "craft": "fletcher",
-   "npc": "litrpg:human_artisan",
-   "x": -50,
-   "y": 70,
-   "z": 2530
-  },
-  {
-   "city": "dawnfort",
-   "craft": "stablemaster",
-   "npc": "litrpg:human_artisan",
-   "x": -93,
-   "y": 71,
-   "z": 2541
-  },
-  {
-   "city": "dawnfort",
-   "craft": "herbalist",
-   "npc": "litrpg:human_artisan",
-   "x": -104,
+   "x": -87,
    "y": 71,
    "z": 2555
   },
   {
    "city": "dawnfort",
-   "craft": "blacksmith",
+   "craft": "healer",
+   "npc": "litrpg:human_artisan",
+   "x": -93,
+   "y": 71,
+   "z": 2534
+  },
+  {
+   "city": "dawnfort",
+   "craft": "fletcher",
    "npc": "litrpg:human_artisan",
    "x": -90,
-   "y": 71,
-   "z": 2570
+   "y": 70,
+   "z": 2571
+  },
+  {
+   "city": "dawnfort",
+   "craft": "stablemaster",
+   "npc": "litrpg:human_artisan",
+   "x": -50,
+   "y": 70,
+   "z": 2563
   },
   {
    "city": "dawnfort",
    "craft": "baker",
    "npc": "litrpg:human_artisan",
-   "x": -51,
-   "y": 71,
-   "z": 2566
+   "x": -52,
+   "y": 70,
+   "z": 2529
+  },
+  {
+   "city": "dawnfort",
+   "craft": "herbalist",
+   "npc": "litrpg:human_artisan",
+   "x": -41,
+   "y": 70,
+   "z": 2551
+  },
+  {
+   "city": "dawnfort",
+   "craft": "armorer",
+   "npc": "litrpg:human_artisan",
+   "x": -62,
+   "y": 70,
+   "z": 2526
+  },
+  {
+   "city": "dawnfort",
+   "craft": "builder",
+   "npc": "litrpg:human_artisan",
+   "x": -104,
+   "y": 70,
+   "z": 2552
   },
   {
    "city": "northwatch",
@@ -7164,75 +10593,67 @@
   },
   {
    "city": "northwatch",
-   "craft": "armorer",
+   "craft": "blacksmith",
    "npc": "litrpg:human_artisan",
-   "x": 329,
+   "x": 362,
    "y": 96,
-   "z": -3268
+   "z": -3269
   },
   {
    "city": "northwatch",
-   "craft": "weaponsmith",
+   "craft": "armorer",
    "npc": "litrpg:human_artisan",
-   "x": 362,
+   "x": 326,
    "y": 96,
    "z": -3266
   },
   {
    "city": "northwatch",
+   "craft": "weaponsmith",
+   "npc": "litrpg:human_artisan",
+   "x": 365,
+   "y": 97,
+   "z": -3251
+  },
+  {
+   "city": "northwatch",
    "craft": "healer",
    "npc": "litrpg:human_artisan",
-   "x": 321,
+   "x": 320,
    "y": 96,
-   "z": -3245
+   "z": -3244
   },
   {
    "city": "northwatch",
    "craft": "builder",
    "npc": "litrpg:human_artisan",
-   "x": 366,
+   "x": 353,
    "y": 97,
-   "z": -3252
+   "z": -3231
   },
   {
    "city": "northwatch",
    "craft": "fletcher",
    "npc": "litrpg:human_artisan",
-   "x": 351,
+   "x": 363,
    "y": 96,
-   "z": -3231
-  },
-  {
-   "city": "northwatch",
-   "craft": "herbalist",
-   "npc": "litrpg:human_artisan",
-   "x": 315,
-   "y": 96,
-   "z": -3256
-  },
-  {
-   "city": "northwatch",
-   "craft": "stablemaster",
-   "npc": "litrpg:human_artisan",
-   "x": 346,
-   "y": 96,
-   "z": -3288
-  },
-  {
-   "city": "northwatch",
-   "craft": "blacksmith",
-   "npc": "litrpg:human_artisan",
-   "x": 361,
-   "y": 96,
-   "z": -3283
+   "z": -3280
   },
   {
    "city": "northwatch",
    "craft": "baker",
    "npc": "litrpg:human_artisan",
-   "x": 372,
+   "x": 312,
    "y": 96,
-   "z": -3270
+   "z": -3260
+  },
+  {
+   "city": "northwatch",
+   "craft": "stablemaster",
+   "npc": "litrpg:human_artisan",
+   "x": 344,
+   "y": 97,
+   "z": -3291
   },
   {
    "city": "blackbastion",
@@ -7264,39 +10685,47 @@
    "npc": "litrpg:human_artisan",
    "x": 3153,
    "y": 85,
-   "z": -323
+   "z": -322
   },
   {
    "city": "blackbastion",
    "craft": "builder",
    "npc": "litrpg:human_artisan",
-   "x": 3119,
-   "y": 84,
+   "x": 3118,
+   "y": 85,
    "z": -346
   },
   {
    "city": "blackbastion",
    "craft": "stablemaster",
    "npc": "litrpg:human_artisan",
-   "x": 3134,
-   "y": 84,
-   "z": -358
+   "x": 3165,
+   "y": 85,
+   "z": -327
   },
   {
    "city": "blackbastion",
    "craft": "baker",
    "npc": "litrpg:human_artisan",
-   "x": 3142,
+   "x": 3117,
+   "y": 85,
+   "z": -359
+  },
+  {
+   "city": "blackbastion",
+   "craft": "herbalist",
+   "npc": "litrpg:human_artisan",
+   "x": 3158,
    "y": 84,
-   "z": -316
+   "z": -371
   },
   {
    "city": "blackbastion",
    "craft": "blacksmith",
    "npc": "litrpg:human_artisan",
-   "x": 3165,
+   "x": 3173,
    "y": 84,
-   "z": -327
+   "z": -339
   },
   {
    "city": "blackbastion",
@@ -7310,25 +10739,17 @@
    "city": "blackbastion",
    "craft": "fletcher",
    "npc": "litrpg:human_artisan",
-   "x": 3156,
-   "y": 84,
-   "z": -368
-  },
-  {
-   "city": "blackbastion",
-   "craft": "herbalist",
-   "npc": "litrpg:human_artisan",
    "x": 3176,
-   "y": 85,
-   "z": -341
+   "y": 84,
+   "z": -354
   },
   {
    "city": "blackbastion",
    "craft": "armorer",
    "npc": "litrpg:human_artisan",
-   "x": 3119,
-   "y": 84,
-   "z": -363
+   "x": 3142,
+   "y": 85,
+   "z": -316
   },
   {
    "city": "farm_0",

@@ -196,6 +196,13 @@ def workshop(b, x0, z0, craft, door, floors=None, roof=None, w=None, d=None, che
         # посетители таверны
         b.entities.append((cx + 1, G, cz + 1, npc.replace('artisan', 'citizen'), {}))
     b.workshops.append((craft, npc, nx, G, nz))
+    from gen_city_loot import CRAFT_GROUP
+    table = 'litrpg:chests/' + CRAFT_GROUP.get(craft, 'city_home')
+    for x in range(x0, x1 + 1):
+        for z in range(z0, z1 + 1):
+            for y in range(G, G + fl * 4):
+                if b.blocks.get((x, y, z), ('',))[0] in ('minecraft:chest', 'minecraft:barrel'):
+                    b.nbt.setdefault((x, y, z), {}).setdefault('LootTable', table)
     yard(b, x0, z0, x1, z1, door, craft)
     return True
 

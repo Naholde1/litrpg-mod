@@ -241,12 +241,12 @@ class City(Build):
                 for x in (x0, x1):
                     if (z - z0) % 4 != 0 and not (f == 0 and near_door(x, z)):
                         self.set(x, wy, z, pane, waterlogged='false')
-        # ящики с цветами под окнами первого этажа (ступенька-перевёртыш + горшок)
-        if pane == st['glass']:
-            wy = G + 1
+        # ящики с цветами под окнами второго этажа (ступенька-перевёртыш + горшок), на улице ничего не торчит
+        if pane == st['glass'] and floors > 1:
+            wy = G + fh + 1
             for x in range(x0 + 2, x1 - 1, 3):
                 for z, oz in ((z0, -1), (z1, 1)):
-                    if (x - x0) % 4 != 0 and not near_door(x, z) and self.rnd.random() < 0.45 and (x, wy, z + oz) not in self.blocks:
+                    if (x - x0) % 4 != 0 and self.rnd.random() < 0.5 and (x, wy, z + oz) not in self.blocks:
                         self.set(x, wy - 1, z + oz, self.st['plank'].replace('_planks', '_stairs') if '_planks' in self.st['plank'] else 'minecraft:spruce_stairs',
                                  facing='north' if oz > 0 else 'south', half='top', shape='straight', waterlogged='false')
                         self.set(x, wy, z + oz, 'minecraft:potted_' + self.rnd.choice(['red_tulip', 'poppy', 'dandelion', 'cornflower',
@@ -267,6 +267,9 @@ class City(Build):
             dx_, dz_ = x1, cz
         self.door(dx_, G, dz_, door)
         self.last_door = (dx_, dz_, door)
+        if not hasattr(self, 'doors'):
+            self.doors = []
+        self.doors.append((dx_, G, dz_, door))
         ox, oz = DIRS[door]
         self.set(dx_ + ox, G - 1, dz_ + oz, self.bp(st['found'], dx_, G, dz_))
         if lit:
@@ -274,9 +277,9 @@ class City(Build):
         # лестница между этажами
         if floors > 1:
             for f in range(floors - 1):
-                for i in range(fh):
+                # лестница проходит и сквозь проём в перекрытии — иначе с неё не выбраться наверх
+                for i in range(fh + 1):
                     self.set(x0 + 1, G + f * fh + i, z0 + 1, 'minecraft:ladder', facing='south', waterlogged='false')
-                self.set(x0 + 1, G + (f + 1) * fh, z0 + 1, 'minecraft:air')
         self.furnish(x0, z0, x1, z1, floors, interior, door)
         self.roof(x0, z0, x1, z1, top, roof)
         if npc:
@@ -610,6 +613,7 @@ def connect_blocks(b):
 
 def save_tiles(b, name, tile=128):
     """Сохранить постройку как набор плиток не больше tile×tile. -> список (dx, dz, имя)."""
+    finalize(b, name)
     fix_paintings(b, name)
     connect_blocks(b)
     sx, sy, sz = b.size
@@ -710,3 +714,78 @@ def preview_top(b, path, scale=2):
                 if 0 <= z * scale + dy < len(img) and 0 <= x * scale + dx < len(img[0]):
                     img[z * scale + dy][x * scale + dx] = (255, 0, 255, 255)
     write_png(path, img, sx * scale, sz * scale)
+
+
+# ---------------- финальная проверка постройки ----------------
+
+_OBSTACLE = ('barrel', 'composter', 'hay_block', 'fence', 'leaves', 'potted_', 'flower_pot', 'trapdoor', '_log', 'chest', 'cauldron',
+             'crafting_table', 'wool', 'chain', 'rose_bush', 'lilac', 'peony', 'pumpkin', 'melon', 'beehive', 'grindstone', 'anvil',
+             'lantern', 'campfire', 'bell', 'target', 'poppy', 'dandelion', 'tulip', 'allium', 'cornflower', 'daisy', 'fern', 'bluet')
+# то, что текущая вода/лава смывает и куда затекает (заборы, стенки, ступеньки и плиты её держат)
+_NONSOLID = ('air', 'grass', 'fern', 'poppy', 'dandelion', 'tulip', 'allium', 'cornflower', 'daisy', 'bluet', 'orchid', 'lily_of',
+             'wheat', 'carrots', 'potatoes', 'beetroots', 'sapling', 'torch', 'carpet', 'rail', 'vine', 'rose_bush', 'lilac', 'peony',
+             'mushroom', 'snow', 'dead_bush', 'sweet_berry')
+
+
+def _solid(b, x, y, z):
+    v = b.blocks.get((x, y, z))
+    if v is None:
+        return y < getattr(b, 'G', 0)  # ниже уровня земли плитки — естественный грунт
+    name = v[0].replace('minecraft:', '')
+    if name in ('grass_block', 'mud', 'soul_sand', 'farmland', 'dirt_path'):
+        return True
+    return not any(k in name for k in _NONSOLID)
+
+
+def finalize(b, name=''):
+    """
+    Перед сохранением: расчистить входы в дома, не дать воде/лаве вытечь,
+    раздать лут сундукам и бочкам без своего лута.
+    """
+    import gen_city_loot as GL
+    cleared = 0
+    for (x, y, z, side) in getattr(b, 'doors', []):
+        ox, oz = DIRS[side]
+        for k in (1, 2):
+            cx, cz = x + ox * k, z + oz * k
+            for yy in (y, y + 1):
+                v = b.blocks.get((cx, yy, cz))
+                if v and v[0] != 'minecraft:air' and any(t in v[0] for t in _OBSTACLE) and 'door' not in v[0]:
+                    b.set(cx, yy, cz, 'minecraft:air')
+                    b.nbt.pop((cx, yy, cz), None)
+                    cleared += 1
+            v = b.blocks.get((cx, y + 2, cz))
+            if v and 'lantern' in v[0] and dict(v[1]).get('hanging') == 'false' and b.blocks.get((cx, y + 1, cz), ('minecraft:air',))[0] == 'minecraft:air':
+                b.set(cx, y + 2, cz, 'minecraft:air')
+    # жидкости: источник не должен течь наружу (лава подожгла бы дома, вода — залила бы улицы)
+    sealed = 0
+    for (x, y, z), (bl, props) in list(b.blocks.items()):
+        if bl not in ('minecraft:water', 'minecraft:lava'):
+            continue
+        for dx, dy, dz in ((1, 0, 0), (-1, 0, 0), (0, 0, 1), (0, 0, -1), (0, -1, 0)):
+            n = (x + dx, y + dy, z + dz)
+            nv = b.blocks.get(n)
+            if nv and nv[0] in ('minecraft:water', 'minecraft:lava') or nv and 'waterlogged' in dict(nv[1]) and dict(nv[1])['waterlogged'] == 'true':
+                continue
+            if not _solid(b, *n):
+                if bl == 'minecraft:lava':
+                    b.set(x, y, z, 'minecraft:magma_block')
+                    break
+                b.set(*n, 'minecraft:mud' if dy < 0 or n[1] < b.G else _patch_block(b, n))
+                b.nbt.pop(n, None)
+                sealed += 1
+    # лут
+    loot = 0
+    for (x, y, z), (bl, props) in b.blocks.items():
+        if bl in ('minecraft:chest', 'minecraft:barrel', 'minecraft:trapped_chest'):
+            nbt = b.nbt.setdefault((x, y, z), {})
+            if 'LootTable' not in nbt:
+                nbt['LootTable'] = 'litrpg:chests/' + ('city_barrel' if bl == 'minecraft:barrel' else 'city_home')
+                loot += 1
+    if cleared or sealed:
+        print(f'  {name}: входов расчищено {cleared}, утечек закрыто {sealed}, лут в {loot} ящиках')
+
+
+def _patch_block(b, n):
+    """Чем заделать дыру у воды: мостовая на улице, иначе фундамент."""
+    return b.bp(b.st['found'], *n) if hasattr(b, 'st') else 'minecraft:stone_bricks'

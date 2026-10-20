@@ -70,7 +70,7 @@ def forge(b, x0, z0, w, d):
     for x in range(x0 + 1, x0 + 4):
         b.set(x, G, z0, 'minecraft:bricks')
         b.set(x, G + 1, z0, 'minecraft:bricks')
-    b.set(x0 + 2, G, z0, 'minecraft:lava')
+    b.set(x0 + 2, G, z0, 'minecraft:lava_cauldron')
     b.set(x0 + 2, G, z0 + 1, 'minecraft:iron_bars', north='true', south='false', east='false', west='false', waterlogged='false')
     b.set(x0 + 1, G, z0 + 1, 'minecraft:blast_furnace', facing='south', lit='true')
     b.set(x0 + 3, G, z0 + 1, 'minecraft:smithing_table')
@@ -264,6 +264,10 @@ def bailey(b, cx0, cz0, cx1, cz1, keep):
     wall_sheds(b, ix1, iz0, ix1, iz1, rnd)
     wall_sheds(b, ix0, iz1, C - 4, iz1, rnd)
     wall_sheds(b, C + 4, iz1, ix1, iz1, rnd)
+    # сундуки и бочки замка — арсенал и припасы гарнизона
+    for (x, y, z), (bl, _) in b.blocks.items():
+        if cx0 <= x <= cx1 and cz0 <= z <= cz1 and bl in ('minecraft:chest', 'minecraft:barrel'):
+            b.nbt.setdefault((x, y, z), {}).setdefault('LootTable', 'litrpg:chests/city_armory' if bl == 'minecraft:chest' else 'litrpg:chests/city_barrel')
     # остатки свободной земли — трава с цветами и кустами
     for x in range(ix0, ix1 + 1):
         for z in range(iz0, iz1 + 1):

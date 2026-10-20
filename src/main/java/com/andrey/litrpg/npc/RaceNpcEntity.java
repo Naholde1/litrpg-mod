@@ -153,7 +153,7 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
             targetSelector.addGoal(1, new HurtByTargetGoal(this, RaceNpcEntity.class).setAlertOthers());
             targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 5, false, false,
                     e -> e instanceof Player p && (com.andrey.litrpg.city.CityLaw.isWanted(p) || hostileTo(p))));
-            targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, net.minecraft.world.entity.Mob.class, 5, false, false,
+            targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, net.minecraft.world.entity.Mob.class, 10, false, false,
                     e -> e instanceof Enemy && com.andrey.litrpg.ability.Minions.ownerOf(e) == null));
         } else if (npc.fights()) {
             targetSelector.addGoal(1, new HurtByTargetGoal(this, RaceNpcEntity.class).setAlertOthers());
@@ -293,6 +293,26 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
     @Override
     public boolean causeFallDamage(float distance, float multiplier, DamageSource source) {
         return !npc.isGuard() && super.causeFallDamage(distance, multiplier, source);
+    }
+
+    /** Нет игроков рядом — житель «спит»: не ищет путь и цели (большие города не грузят сервер). */
+    private boolean idle;
+
+    @Override
+    public void aiStep() {
+        if (!level().isClientSide && tickCount % 20 == 0) {
+            boolean was = idle;
+            idle = getTarget() == null && getLastHurtByMob() == null && bossEvent == null
+                    && level().getNearestPlayer(getX(), getY(), getZ(), 64, false) == null;
+            if (idle && !was) getNavigation().stop();
+        }
+        super.aiStep();
+    }
+
+    /** Спящий житель стоит на месте: Майнкрафт пропускает его ИИ (цели, поиск пути, взгляд). */
+    @Override
+    protected boolean isImmobile() {
+        return super.isImmobile() || idle;
     }
 
     @Override

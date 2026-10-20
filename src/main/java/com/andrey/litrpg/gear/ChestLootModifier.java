@@ -49,7 +49,10 @@ public class ChestLootModifier extends LootModifier {
                 return loot;
             }
         }
-        if (rnd.nextFloat() >= chance) return loot;
+        if (table.startsWith("chests/city_")) {
+            // городские сундуки: снаряжение Системы только у оружейников и в арсенале замка
+            if (!(table.contains("armory") || table.contains("smith")) || rnd.nextFloat() >= 0.3f) return loot;
+        } else if (rnd.nextFloat() >= chance) return loot;
         Vec3 origin = ctx.getParamOrNull(LootContextParams.ORIGIN);
         int level = 3;
         if (origin != null) {

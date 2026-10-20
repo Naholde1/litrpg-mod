@@ -24,7 +24,7 @@ TILES = []
 WORKSHOPS = []
 
 
-def place(build, name, ox, oy, oz, dim='overworld', tile=128):
+def place(build, name, ox, oy, oz, dim='overworld', tile=32):
     """Сохранить постройку плитками и записать их места (ox, oz — кратны 16)."""
     assert ox % 16 == 0 and oz % 16 == 0, (name, ox, oz)
     for craft, npc, x, y, z in getattr(build, 'workshops', []):

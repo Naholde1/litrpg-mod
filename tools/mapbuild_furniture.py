@@ -318,6 +318,13 @@ def furnish(b, x0, z0, x1, z1, floors, kind, door_side, base_kind=None):
         r = Room(b, x0, z0, x1, z1, y, door=door if f == 0 else None, ladder=ladder, height=4 if f == 0 else 3)
         if r.w < 3 or r.d < 3:
             continue
+        if r.w * r.d >= 110 and kind not in ('workshop', 'smith'):
+            # большие здания: зал внизу, наверху — комнаты за перегородками
+            if f == 0:
+                big_hall(b, r, kind)
+            else:
+                split_floor(b, r, x0, z0, x1, z1, y, 3, ladder)
+            continue
         top = f == floors - 1
         k = kind
         if kind == 'workshop':
@@ -405,3 +412,114 @@ def furnish(b, x0, z0, x1, z1, floors, kind, door_side, base_kind=None):
                 r.bed_corner('gray')
                 r.bed_corner('gray')
             r.painting()
+
+
+# ---------------- большие здания ----------------
+
+def big_hall(b, r, kind):
+    """Большой зал первого этажа (ратуша, гильдия, донжон): длинные столы с проходами крестом,
+    люстры сеткой, камин, знамёна или стеллажи по стенам, стойки с доспехами, цветы по углам."""
+    rnd = b.rnd
+    y = r.y
+    wood = r.wood
+    cx, cz = (r.ix0 + r.ix1) // 2, (r.iz0 + r.iz1) // 2
+    along_x = r.w >= r.d
+    r.fireplace()
+    r.fireplace() if r.w * r.d > 250 else None
+    # вдоль стен: книги у библиотек/гильдий, иначе бочки-сундуки и знамёна
+    if kind == 'library':
+        r.bookshelves(max(8, (r.w + r.d)))
+    else:
+        r.shelf()
+        r.shelf()
+    colors = ['blue', 'red', 'yellow', 'white', 'cyan']
+    k = 0
+    for (x, z, inward, wall) in r.walls():
+        if (x + z) % 4 == 0 and r.free(x, z, 3):
+            wx, wz = x + DIRS[wall][0], z + DIRS[wall][1]
+            behind = b.blocks.get((wx, y + 2, wz), ('',))[0]
+            if behind and 'pane' not in behind and 'glass' not in behind and 'door' not in behind and behind != 'minecraft:air':
+                b.set(x, y + 2, z, f'minecraft:{colors[k % len(colors)]}_wall_banner', facing=inward)
+                k += 1
+    # длинные столы по обе стороны от центрального прохода, поперечный проход посредине
+    rows = (cz - 2, cz + 2) if along_x else (cx - 2, cx + 2)
+    span = range(r.ix0 + 2, r.ix1 - 1) if along_x else range(r.iz0 + 2, r.iz1 - 1)
+    mid = cx if along_x else cz
+    for row in rows:
+        for t in span:
+            if abs(t - mid) <= 1:
+                continue
+            x, z = (t, row) if along_x else (row, t)
+            if not r.free(x, z):
+                continue
+            b.set(x, y, z, f'minecraft:{wood}_fence', waterlogged='false')
+            top = rnd.random()
+            if top < 0.2:
+                b.set(x, y + 1, z, 'minecraft:white_candle', candles=str(rnd.randint(1, 3)), lit='true', waterlogged='false')
+            elif top < 0.27:
+                b.set(x, y + 1, z, 'minecraft:cake', bites=str(rnd.randint(0, 4)))
+            else:
+                b.set(x, y + 1, z, f'minecraft:{wood}_pressure_plate', powered='false')
+            r.take((x, z))
+            for s in (-1, 1):
+                px, pz = (x, z + s) if along_x else (x + s, z)
+                if r.free(px, pz):
+                    facing = ('north' if s > 0 else 'south') if along_x else ('west' if s > 0 else 'east')
+                    r.chair(px, pz, facing)
+    # ковровая дорожка поперёк — от входа через зал
+    for t in (range(r.iz0, r.iz1 + 1) if along_x else range(r.ix0, r.ix1 + 1)):
+        x, z = (cx, t) if along_x else (t, cz)
+        if r.free(x, z, 1):
+            b.set(x, y, z, 'minecraft:red_carpet')
+    # люстры сеткой
+    for gx in range(r.ix0 + 2, r.ix1 - 1, 5):
+        for gz in range(r.iz0 + 2, r.iz1 - 1, 5):
+            if r.height >= 4:
+                b.set(gx, y + 3, gz, 'minecraft:chain', axis='y', waterlogged='false')
+            b.set(gx, y + 2, gz, 'minecraft:lantern', hanging='true', waterlogged='false')
+    # доспехи и цветы по углам
+    for (x, z) in ((r.ix0, r.iz0 + 2), (r.ix1, r.iz0 + 2), (r.ix0, r.iz1 - 2), (r.ix1, r.iz1 - 2)):
+        if r.free(x, z):
+            b.entities.append((x, y, z, 'minecraft:armor_stand', {'ShowArms': __import__('mapbuild_lib').TByte(1)}))
+            r.take((x, z))
+    for _ in range(4):
+        r.corner_plant()
+    r.painting()
+    r.painting()
+
+
+def split_floor(b, r, x0, z0, x1, z1, y, height, ladder):
+    """Большой верхний этаж: перегородки с дверями — несколько комнат, каждая обставлена."""
+    along_x = (x1 - x0) >= (z1 - z0)
+    lo, hi = (x0, x1) if along_x else (z0, z1)
+    cuts = list(range(lo + 7, hi - 4, 7))
+    plank = f'minecraft:{WOOD.get(b.style, "spruce")}_planks'
+    mid = (z0 + z1) // 2 if along_x else (x0 + x1) // 2
+    for c in cuts:
+        for t in range((z0 + 1) if along_x else (x0 + 1), (z1 if along_x else x1)):
+            x, z = (c, t) if along_x else (t, c)
+            for yy in range(y, y + height):
+                b.set(x, yy, z, plank)
+        dx, dz = (c, mid) if along_x else (mid, c)
+        b.door(dx, y, dz, 'east' if along_x else 'south', f'minecraft:{WOOD.get(b.style, "spruce")}_door')
+    bounds = [lo] + cuts + [hi]
+    for i in range(len(bounds) - 1):
+        a, c = bounds[i], bounds[i + 1]
+        sub = Room(b, a, z0, c, z1, y, ladder=ladder, height=height) if along_x else Room(b, x0, a, x1, c, y, ladder=ladder, height=height)
+        # проходы у дверей перегородок
+        for cc in (a, c):
+            for s in (-1, 0, 1):
+                for e in (-1, 1):
+                    sub.taken.add((cc + e, mid + s) if along_x else (mid + s, cc + e))
+        sub.chandelier()
+        if i % 2 == 0:
+            sub.bed_corner(b.rnd.choice(['red', 'blue', 'white', 'green', 'light_blue']))
+            sub.wardrobe()
+            sub.shelf()
+            sub.rug((sub.ix0 + sub.ix1) // 2, (sub.iz0 + sub.iz1) // 2)
+        else:
+            sub.bookshelves(6)
+            sub.table_set()
+            sub.shelf()
+        sub.corner_plant()
+        sub.painting()

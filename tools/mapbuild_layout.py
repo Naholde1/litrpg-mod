@@ -117,8 +117,13 @@ class Organic:
                 self.street.add((x, z))
             else:
                 self.cell[(x, z)] = bi
+        # тротуар в 2 клетки вдоль проспектов, площадей и особых зданий — на нём мостовая успевает подняться к кварталу
+        sp = self.special
+        for (x, z) in list(self.cell):
+            if any((x + dx, z + dz) in sp for dx in range(-2, 3) for dz in range(-2, 3)):
+                del self.cell[(x, z)]
+                self.street.add((x, z))
         self.hh = None      # высота в полублоках
-        self.plat = {}      # площадки под домами: (x,z) -> высота в блоках
         self.foot = set()   # клетки под зданиями (фундамент)
 
     # ------------------------------------------------------------------
@@ -149,6 +154,11 @@ class Organic:
         return dist
 
     def _heights(self):
+        """
+        Высоты: у каждого квартала своя ровная высота (в блоках), соседние кварталы отличаются
+        не больше чем на блок, у площадей/проспектов/стены — ноль. Улица у края квартала — вровень
+        с ним, между кварталами разной высоты мостовая плавно поднимается полублоками.
+        """
         if self.hh is not None:
             return
         area = set(self.cell) | self.street
@@ -156,12 +166,81 @@ class Organic:
         d = self._dist(lambda p: p not in area, area)
         amp = self.terrace
         ph = (self.C * 0.37) % 6.28
-        hh = {}
-        for (x, z) in area:
-            v = 0.5 + 0.32 * math.sin(x * 0.041 + ph) * math.cos(z * 0.035 + 0.4) + 0.18 * math.sin((x + z) * 0.023 + 1.1)
-            fade = min(1.0, d.get((x, z), 0) / 16.0)
-            fade = fade * fade * (3 - 2 * fade)
-            hh[(x, z)] = max(0, int(round(2 * amp * v * fade)))
+        dq = {}
+        for p_, i in self.cell.items():
+            dq[i] = min(dq.get(i, 1e9), d.get(p_, 0))
+        H = {}
+        for i, (sx, sz) in enumerate(self.seeds):
+            v = 0.5 + 0.32 * math.sin(sx * 0.041 + ph) * math.cos(sz * 0.035 + 0.4) + 0.18 * math.sin((sx + sz) * 0.023 + 1.1)
+            # чтобы мостовая поднималась не круче полублока на клетку: не выше (расстояние до ровного места − 1) / 2
+            H[i] = max(0, min(int(round(amp * v)), (dq.get(i, 0) - 1) // 2))
+        # соседние кварталы (через улицу) — не больше блока разницы
+        pairs = set()
+        for (x, z) in self.street:
+            ids = {self.cell[(x + dx, z + dz)] for dx in range(-4, 5) for dz in range(-4, 5) if (x + dx, z + dz) in self.cell}
+            ids = sorted(ids)
+            for a in range(len(ids)):
+                for c in range(a + 1, len(ids)):
+                    pairs.add((ids[a], ids[c]))
+        changed = True
+        while changed:
+            changed = False
+            for a, c in pairs:
+                if H[a] > H[c] + 1:
+                    H[a] = H[c] + 1
+                    changed = True
+                elif H[c] > H[a] + 1:
+                    H[c] = H[a] + 1
+                    changed = True
+        self.H = H
+        # улицы: у кварталов — вровень, у особых мест — ноль, остальное — плавно
+        fixed = {}
+        for (x, z) in self.street:
+            if (x, z) in self.flat:
+                continue
+            vals = []
+            for _, dx, dz in D4:
+                n = (x + dx, z + dz)
+                if n in self.cell:
+                    vals.append(2 * H[self.cell[n]])
+                elif n not in area:
+                    vals.append(0)
+            if vals:
+                fixed[(x, z)] = min(vals)
+        val = dict(fixed)
+        # начальное приближение — ближайшая закреплённая клетка
+        from collections import deque
+        q = deque(fixed)
+        while q:
+            c = q.popleft()
+            for _, dx, dz in D4:
+                n = (c[0] + dx, c[1] + dz)
+                if n in self.street and n not in val and n not in self.flat:
+                    val[n] = val[c]
+                    q.append(n)
+        free = [c for c in val if c not in fixed]
+        vf = {c: float(v) for c, v in val.items()}
+        for _ in range(60):
+            for c in free:
+                nb = [vf[(c[0] + dx, c[1] + dz)] for _, dx, dz in D4 if (c[0] + dx, c[1] + dz) in vf]
+                if nb:
+                    vf[c] = sum(nb) / len(nb)
+        hh = {c: int(round(v)) for c, v in vf.items()}
+        # сгладить остатки: соседние клетки мостовой — не больше полублока разницы
+        for _ in range(20):
+            bad = 0
+            for (x, z), v in list(hh.items()):
+                for dx, dz in ((1, 0), (0, 1), (-1, 0), (0, -1)):
+                    n = (x + dx, z + dz)
+                    if n in hh and v - hh[n] > 1:
+                        bad += 1
+                        if (x, z) not in fixed or n in fixed:
+                            # край мостовой у квартала может опуститься на полблока — ступенька в полблока ходится
+                            hh[(x, z)] = v = hh[n] + 1
+                        else:
+                            hh[n] = v - 1
+            if not bad:
+                break
         self.hh = hh
 
     def street_level(self, x, z):
@@ -169,10 +248,11 @@ class Organic:
         return self.hh.get((x, z), 0) if self.hh else 0
 
     def ground(self, x, z):
-        """Высота земли двора/площадки в блоках над G0."""
-        if (x, z) in self.plat:
-            return self.plat[(x, z)]
-        return (self.street_level(x, z) + 1) // 2
+        """Высота земли квартала в блоках над G0."""
+        i = self.cell.get((x, z))
+        if i is None:
+            return (self.street_level(x, z) + 1) // 2
+        return self.H.get(i, 0)
 
     def street_y(self, x, z):
         """y, где стоят ноги на улице (для полублока — над плитой, такие клетки лучше не занимать)."""
@@ -222,14 +302,6 @@ class Organic:
                 b.set(x, top, z, 'minecraft:grass_block', snowy='false')
             else:
                 b.set(x, top, z, b.bp(st['path'], x, 0, z))
-        # стенки площадок, где двор выше соседа больше чем на блок, — подпорная кладка вместо голой земли
-        for (x, z) in self.cell:
-            h = self.ground(x, z)
-            for _, dx, dz in D4:
-                n = (x + dx, z + dz)
-                if n in self.cell and h - self.ground(*n) >= 2:
-                    for y in range(G - 1 + self.ground(*n) + 1, G - 1 + h):
-                        b.set(x, y, z, b.bp(found, x, y, z))
 
     # ------------------------------------------------------------------
     def _rect_ok(self, bid, x0, z0, x1, z1):
@@ -283,12 +355,8 @@ class Organic:
                     break
             if rect is None:
                 continue
-            # уровень пола — по улице перед фасадом (не выше полублока над мостовой)
             x0, z0, x1, z1 = rect
-            ox, oz = DIRS[side]
-            front = [(xx + ox, zz + oz) for xx in range(x0, x1 + 1) for zz in range(z0, z1 + 1)
-                     if (xx + ox, zz + oz) in self.street and not (x0 <= xx + ox <= x1 and z0 <= zz + oz <= z1)]
-            h = (max(self.street_level(*p) for p in front) + 1) // 2 if front else self.ground(x, z)
+            h = self.H[i]  # пол — на уровне квартала, мостовая у фасада вровень
             G0 = self.G0
             self.b.G = G0 + h
             try:
@@ -300,13 +368,6 @@ class Organic:
                 for xx in range(x0, x1 + 1):
                     for zz in range(z0, z1 + 1):
                         self.foot.add((xx, zz))
-                        self.plat[(xx, zz)] = h
-                # двор позади и по бокам — ровная площадка на том же уровне (свой квартал, не чужие дома)
-                for xx in range(x0 - 8, x1 + 9):
-                    for zz in range(z0 - 8, z1 + 9):
-                        p = (xx, zz)
-                        if self.cell.get(p) == i and p not in self.plat:
-                            self.plat[p] = h
                 self.steps(side, h)
         return placed
 
@@ -475,19 +536,19 @@ class Organic:
             open_n = sum(1 for _, dx, dz in D4 if (x + dx, z + dz) in self.street)
             if open_n < 3:
                 continue
+            # только у стены широкой улицы: поперёк ещё минимум 3 клетки мостовой для прохода
+            ex, ez = edge[0]
+            if not all((x - ex * k, z - ez * k) in self.street for k in range(1, 4)):
+                continue
             k += 1
             roll = rnd.random()
             if k % lamp_every == 0:
                 b.G = G
                 b.lamp_post(x, z, 3)
                 b.G = self.G0
-            elif roll < 0.06:
-                b.set(x, G, z, 'minecraft:barrel', facing='up', open='false')
-            elif roll < 0.11:
+            elif roll < 0.07:
                 b.set(x, G, z, 'minecraft:spruce_trapdoor', facing='north', half='top', open='false', powered='false', waterlogged='false')
                 b.set(x, G + 1, z, 'minecraft:potted_' + rnd.choice(['red_tulip', 'oxeye_daisy', 'fern', 'azure_bluet', 'cornflower']))
-            elif roll < 0.13:
-                b.set(x, G, z, 'minecraft:composter', level='5')
             else:
                 continue
             b.reserve(x, z, x, z)
