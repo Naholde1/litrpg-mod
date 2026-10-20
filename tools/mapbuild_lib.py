@@ -218,24 +218,35 @@ class City(Build):
                     self.set(x, G - 1, z, st['floor'])
         # окна (у орков и зверолюдов — просто проёмы с решёткой из забора)
         pane = st['glass'] if st['glass'] != 'minecraft:air' else st['fence']
+        # место двери считаем заранее: рядом с дверью окон не делаем (панель не стыкуется с дверью — дыры)
+        cx, cz = (x0 + x1) // 2, (z0 + z1) // 2
+        if (cx - x0) % 4 == 0:
+            cx += 1
+        if (cz - z0) % 4 == 0:
+            cz += 1
+        ddx, ddz = {'south': (cx, z1), 'north': (cx, z0), 'west': (x0, cz)}.get(door, (x1, cz))
+
+        def near_door(x, z):
+            return abs(x - ddx) + abs(z - ddz) <= 1 or (x == ddx and abs(z - ddz) <= 1) or (z == ddz and abs(x - ddx) <= 1)
+
         for f in range(floors):
             wy = G + f * fh + 1
             for x in range(x0 + 2, x1 - 1, 3):
                 for z in (z0, z1):
-                    if (x - x0) % 4 != 0:
+                    if (x - x0) % 4 != 0 and not (f == 0 and near_door(x, z)):
                         self.set(x, wy, z, pane, waterlogged='false')
                         if pane == st['glass']:
                             self.set(x, wy + 1, z, pane, waterlogged='false')
             for z in range(z0 + 2, z1 - 1, 3):
                 for x in (x0, x1):
-                    if (z - z0) % 4 != 0:
+                    if (z - z0) % 4 != 0 and not (f == 0 and near_door(x, z)):
                         self.set(x, wy, z, pane, waterlogged='false')
         # ящики с цветами под окнами первого этажа (ступенька-перевёртыш + горшок)
         if pane == st['glass']:
             wy = G + 1
             for x in range(x0 + 2, x1 - 1, 3):
                 for z, oz in ((z0, -1), (z1, 1)):
-                    if (x - x0) % 4 != 0 and self.rnd.random() < 0.45 and (x, wy, z + oz) not in self.blocks:
+                    if (x - x0) % 4 != 0 and not near_door(x, z) and self.rnd.random() < 0.45 and (x, wy, z + oz) not in self.blocks:
                         self.set(x, wy - 1, z + oz, self.st['plank'].replace('_planks', '_stairs') if '_planks' in self.st['plank'] else 'minecraft:spruce_stairs',
                                  facing='north' if oz > 0 else 'south', half='top', shape='straight', waterlogged='false')
                         self.set(x, wy, z + oz, 'minecraft:potted_' + self.rnd.choice(['red_tulip', 'poppy', 'dandelion', 'cornflower',

@@ -76,8 +76,11 @@ def map_board(b, x, z, frame='minecraft:stone_bricks', face='minecraft:smooth_st
 #                              АРКАДИЯ
 # =====================================================================
 
+FLAT_R = 182  # ровная земля вокруг Аркадии (gen_world: flat=185)
+
+
 def arcadia(city):
-    S = 256
+    S = 384
     C = S // 2
     b = City(S, 64, S, 'arcadia', 'human', ground=4)
     G = b.G
@@ -99,7 +102,7 @@ def arcadia(city):
     for x in range(S):
         for z in range(S):
             r = math.hypot(x - C, z - C)
-            if r > WR + 14:
+            if r > FLAT_R:
                 continue
             if r > WR + 2:
                 b.set(x, G - 1, z, 'minecraft:grass_block', snowy='false')
@@ -108,7 +111,7 @@ def arcadia(city):
             if is_street(x, z):
                 b.set(x, G - 2, z, 'minecraft:stone')
     # подъездные дороги от ворот до края плитки
-    for t in range(WR, C):
+    for t in range(WR, FLAT_R):
         for w in range(-2, 3):
             for (x, z) in ((C + w, C - t), (C + w, C + t - 1), (C - t, C + w), (C + t - 1, C + w)):
                 b.set(x, G - 1, z, b.bp(st['path'], x, 0, z))
@@ -202,7 +205,7 @@ def arcadia(city):
     POIS.append(dict(type='spawn', id='spawn', name='Площадь Обелиска', x=city['x'], z=city['z'] + 26, y=city['y'] + 1, r=0))
 
     # --- королевский замок (север) ---
-    cx0, cz0, cx1, cz1 = C - 30, 20, C + 30, C - PR - 6
+    cx0, cz0, cx1, cz1 = C - 30, C - 108, C + 30, C - PR - 6
     b.reserve(cx0, cz0, cx1, cz1)
     for x in range(cx0, cx1 + 1):
         for z in range(cz0, cz1 + 1):
@@ -226,16 +229,18 @@ def arcadia(city):
     for y in range(G + 12, G + 22):
         b.set(C, y, kz + 9, 'minecraft:dark_oak_fence' if y < G + 21 else 'minecraft:gold_block', waterlogged='false')
     b.set(C, G + 20, kz + 10, 'minecraft:blue_wall_banner', facing='south')
+    import mapbuild_castle as MCS
+    MCS.bailey(b, cx0, cz0, cx1, cz1, (kx, kz, kx + 26, kz + 18))
 
     # --- Гильдия искателей (запад) с картой мира ---
-    gx0, gz0 = 30, C - 18
+    gx0, gz0 = C - 98, C - 18
     b.house(gx0, gz0, 30, 22, floors=2, door='east', roof=st['roofs'][0], interior='library', npc='litrpg:human_knight')
     painting_map(b, gx0 + 1, G + 1, gz0 + 12, 'east')
     b.entities.append((gx0 + 10, G, gz0 + 5, 'litrpg:human_mage', {}))
     b.entities.append((gx0 + 18, G, gz0 + 15, 'litrpg:human_ranger', {}))
 
     # --- храм Света (юго-запад) ---
-    tx0, tz0, tw, td = 58, C + 34, 24, 44
+    tx0, tz0, tw, td = C - 70, C + 34, 24, 44
     b.reserve(tx0 - 1, tz0 - 1, tx0 + tw, tz0 + td)
     for x in range(tx0, tx0 + tw):
         for z in range(tz0, tz0 + td):
@@ -294,19 +299,25 @@ def arcadia(city):
     b.reserve(C - 4, 0, C + 4, S - 1)
     b.reserve(0, C - 4, S - 1, C + 4)
     b.reserve(cx0, cz0, cx1, cz1)
-    org = ML.Organic(b, C, WR - 10, 'arcadia', plaza_r=0, terrace=2)
+    import math as _m
+    octa = [(_m.cos(_m.radians(45 * k)), _m.sin(_m.radians(45 * k))) for k in range(8)]
+
+    def inside(x, z):
+        return max((x - C) * cx + (z - C) * cz for cx, cz in octa) <= WR - 2
+
+    org = ML.Organic(b, C, WR - 2, 'arcadia', plaza_r=0, terrace=3, inside=inside, rim=3)
     org.paint_ground()
     crafts = [c for c in MCR.CITY_CRAFTS['arcadia']]
     placed, homes = MCR.fill_city(b, org, crafts, 'litrpg:human_citizen', npc_chance=0.3)
     print('  мастерские Аркадии:', placed, '/', len(crafts), ' домов:', homes)
     org.street_life()
-    org.courtyards('litrpg:human_citizen', density=1.2, stashes=8)
+    org.courtyards('litrpg:human_citizen', density=2.0, stashes=8)
     # фонари вдоль проспектов
     for t in range(PR + 4, WR - 4, 9):
         for (x, z) in ((C + 4, C - t), (C - 4, C + t), (C - t, C - 4), (C + t, C + 4)):
             if b.free(x, z, x, z) and ML._air(b, x, G, z):
                 b.lamp_post(x, z, 4)
-    ML.outskirts(b, C, WR + 4, 'arcadia', 'litrpg:human_citizen')
+    ML.outskirts(b, C, WR + 10, 'arcadia', 'litrpg:human_citizen', outer=FLAT_R - 4)
     return b
 
 
@@ -459,7 +470,7 @@ def main():
     # ---------------- города ----------------
     c = cities['arcadia']
     b = arcadia(c)
-    place(b, 'arcadia', c['x'] - 128, c['y'] - b.G, c['z'] - 128)
+    place(b, 'arcadia', c['x'] - b.size[0] // 2, c['y'] - b.G, c['z'] - b.size[2] // 2)
     print('Аркадия:', len(b.blocks), 'blocks')
     builders = {
         'haven': lambda c, g: MC.haven(c, g, math.atan2(1380 - c['z'], 2080 - c['x'])),

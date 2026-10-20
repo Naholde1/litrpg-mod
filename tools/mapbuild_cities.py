@@ -378,6 +378,7 @@ def living(b, C, R, seed, crafts, citizen, merchant, terrace=1, market=(22, 15),
                 for c in cells:
                     org.cell.pop(c, None)
                     org.street.add(c)
+                    org.flat.add(c)
                 mk = (x0, z0, x0 + mw - 1, z0 + md - 1)
                 break
     org.paint_ground()

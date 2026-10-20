@@ -18,8 +18,9 @@ CARPETS = {'human': ['red', 'brown', 'yellow'], 'elf': ['lime', 'green', 'white'
 
 
 class Room:
-    def __init__(self, b, x0, z0, x1, z1, y, door=None, ladder=None):
+    def __init__(self, b, x0, z0, x1, z1, y, door=None, ladder=None, height=4):
         self.b, self.y = b, y
+        self.height = height  # от пола до потолка (верхние этажи ниже — над ними перекрытие)
         self.ix0, self.iz0, self.ix1, self.iz1 = x0 + 1, z0 + 1, x1 - 1, z1 - 1
         self.wood = WOOD.get(b.style, 'spruce')
         self.taken = set()
@@ -83,7 +84,8 @@ class Room:
     def chandelier(self):
         b, y = self.b, self.y
         cx, cz = (self.ix0 + self.ix1) // 2, (self.iz0 + self.iz1) // 2
-        b.set(cx, y + 3, cz, 'minecraft:chain', axis='y', waterlogged='false')
+        if self.height >= 4:
+            b.set(cx, y + 3, cz, 'minecraft:chain', axis='y', waterlogged='false')
         b.set(cx, y + 2, cz, b.st['light'] if 'lantern' in b.st['light'] else 'minecraft:lantern', hanging='true', waterlogged='false')
 
     def rug(self, cx, cz):
@@ -310,9 +312,10 @@ def furnish(b, x0, z0, x1, z1, floors, kind, door_side, base_kind=None):
     rnd = b.rnd
     door = getattr(b, 'last_door', None)
     for f in range(floors):
-        y = G + f * 4
+        # на верхних этажах блок y = G + 4f — это перекрытие, ходят на уровень выше
+        y = G + f * 4 + (1 if f else 0)
         ladder = (x0 + 1, z0 + 1) if floors > 1 else None
-        r = Room(b, x0, z0, x1, z1, y, door=door if f == 0 else None, ladder=ladder)
+        r = Room(b, x0, z0, x1, z1, y, door=door if f == 0 else None, ladder=ladder, height=4 if f == 0 else 3)
         if r.w < 3 or r.d < 3:
             continue
         top = f == floors - 1
@@ -329,7 +332,9 @@ def furnish(b, x0, z0, x1, z1, floors, kind, door_side, base_kind=None):
                 r.kitchen()
                 r.table_set()
                 r.fireplace() if rnd.random() < 0.6 else r.shelf()
-            if top or floors == 1:
+            if f > 0 and not top and rnd.random() < 0.5:
+                r.table_set()  # кабинет / детская на среднем этаже
+            if f > 0 or floors == 1:
                 r.bed_corner(rnd.choice(['red', 'blue', 'white', 'green', 'brown', 'light_blue', 'yellow']))
                 if r.w * r.d > 30:
                     r.bed_corner(rnd.choice(['red', 'blue', 'white']))
@@ -345,8 +350,10 @@ def furnish(b, x0, z0, x1, z1, floors, kind, door_side, base_kind=None):
             r.table_set()
             r.corner_plant()
             r.painting()
-            if top and floors > 1:
-                r.bed_corner('green')
+            if f > 0:
+                r.bed_corner('green')  # хозяин лавки живёт наверху
+                r.wardrobe()
+                r.rug((r.ix0 + r.ix1) // 2, (r.iz0 + r.iz1) // 2)
         elif k == 'library':
             r.bookshelves(10)
             r.table_set()

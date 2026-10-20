@@ -95,7 +95,7 @@ RIVERS = [
 
 # ---- города: x, z, высота площадки, радиус охраны, базовый уровень округи ----
 CITIES = [
-    dict(id='arcadia', name='Аркадия', faction='kingdom', x=0, z=0, y=72, r=150, flat=150, level=1, guard='human_guard',
+    dict(id='arcadia', name='Аркадия', faction='kingdom', x=0, z=0, y=72, r=150, flat=185, level=1, guard='human_guard',
          desc='Столица Королевства. Здесь начинается путь каждого Избранного.'),
     dict(id='haven', name='Солнечная Гавань', faction='kingdom', x=1535, z=925, y=68, r=100, flat=52, level=3, guard='human_guard',
          desc='Портовый город на берегу Изумрудного залива.'),
