@@ -155,7 +155,8 @@ public final class DevCommands {
                 if (line.startsWith("devmap ")) {
                     String[] a = line.split(" ");
                     double[] r = com.andrey.litrpg.world.map.WorldMap.get().compute(Double.parseDouble(a[1]), Double.parseDouble(a[2]));
-                    LitRPG.LOGGER.info("[dev] map {} {} -> H={} W={} T={} water={}", a[1], a[2], r[0], r[1], r[2], r[3]);
+                    LitRPG.LOGGER.info("[dev] map {} {} -> H={} W={} T={} water={} level={}", a[1], a[2], r[0], r[1], r[2], r[3],
+                            com.andrey.litrpg.world.map.WorldMap.get().levelAt(Double.parseDouble(a[1]), Double.parseDouble(a[2])));
                     continue;
                 }
                 if (line.equals("devterrain")) {

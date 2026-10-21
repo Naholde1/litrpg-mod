@@ -65,8 +65,14 @@ public final class WorldMap {
     public final List<Poi> pois = new ArrayList<>();
     public final List<Workshop> workshops = new ArrayList<>();
     public final Map<Long, Tile> overworldTiles = new HashMap<>(), netherTiles = new HashMap<>();
-    public double levelSlope = 40;
+    public double levelSlope = 40, levelSafe = 0, levelFar = 1e9, levelFarSlope = 1e9, roadEase = 0, settleEase = 0;
     public int levelMax = 60;
+    /** Особые места городов для сюжетов (тайники, двери, места встреч): город → имя → x, y, z. */
+    public final Map<String, Map<String, int[]>> anchors = new HashMap<>();
+    /** Отрезки дорог по клеткам 64×64 (для зон уровней): x1, z1, x2, z2. */
+    private final Map<Long, List<double[]>> roadGrid = new HashMap<>();
+    /** Поселения по клеткам 64×64 с запасом в 160 блоков — тихие окрестности. */
+    private final Map<Long, List<Poi>> calmGrid = new HashMap<>();
     /** Площадки Преисподней: x, z, радиус, высота пола. */
     public final List<double[]> netherFlats = new ArrayList<>();
 
@@ -326,7 +332,7 @@ public final class WorldMap {
     }
 
     /** Поселения, внутри которых не растёт лес мира (деревья и грибы не лезут во дворы). */
-    private static final java.util.Set<String> SETTLEMENTS = java.util.Set.of("village", "hamlet", "farm", "lumber", "fishing", "caravan", "outpost");
+    private static final java.util.Set<String> SETTLEMENTS = java.util.Set.of("village", "hamlet", "farm", "lumber", "fishing", "caravan", "outpost", "camp");
     private final Map<Long, List<Poi>> settleGrid = new HashMap<>();
 
     /** Поселение, на площадке которого точка (или null). */
@@ -359,12 +365,58 @@ public final class WorldMap {
         return out;
     }
 
-    /** Уровень монстров: от ближайшего города, плюс опасность земель. */
+    /** Особое место сюжета города или null. */
+    public int[] anchor(String city, String name) {
+        Map<String, int[]> m = anchors.get(city);
+        return m == null ? null : m.get(name);
+    }
+
+    /** Уровень от города без учёта дорог: пояс безопасности за стенами, потом рост, вдали — быстрее. */
+    public double cityLevel(City c, double dist) {
+        double d = Math.max(0, dist - c.r - levelSafe);
+        return c.level + d / levelSlope + Math.max(0, d - levelFar) / levelFarSlope;
+    }
+
+    /** Насколько тише вдоль трактов (0..roadEase): у самой дороги рост уровня вдвое медленнее. */
+    private double roadCalm(double x, double z) {
+        List<double[]> segs = roadGrid.get(key((int) Math.floor(x) >> 6, (int) Math.floor(z) >> 6));
+        if (segs == null) return 0;
+        double best = 1e9;
+        for (double[] s : segs) {
+            double dx = s[2] - s[0], dz = s[3] - s[1];
+            double l2 = dx * dx + dz * dz;
+            double u = l2 < 1e-6 ? 0 : Math.max(0, Math.min(1, ((x - s[0]) * dx + (z - s[1]) * dz) / l2));
+            best = Math.min(best, Math.hypot(x - s[0] - dx * u, z - s[1] - dz * u));
+        }
+        return roadEase * (1 - sstep(16, 64, best));
+    }
+
+    /** Насколько тише у поселений (0..settleEase). */
+    private double settleCalm(double x, double z) {
+        List<Poi> l = calmGrid.get(key((int) Math.floor(x) >> 6, (int) Math.floor(z) >> 6));
+        if (l == null) return 0;
+        double best = 0;
+        for (Poi p : l) {
+            double d = Math.hypot(x - p.x(), z - p.z()) - p.r();
+            best = Math.max(best, settleEase * (1 - sstep(24, 150, d)));
+        }
+        return best;
+    }
+
+    /** Уровень монстров: от ближайшего города (вдоль дорог и у поселений — ниже), плюс опасность земель. */
     public int levelAt(double x, double z) {
         double best = 1e9;
+        City near = null;
         for (City c : cities) {
-            double v = c.level + Math.hypot(x - c.x, z - c.z) / levelSlope;
-            if (v < best) best = v;
+            double v = cityLevel(c, Math.hypot(x - c.x, z - c.z));
+            if (v < best) {
+                best = v;
+                near = c;
+            }
+        }
+        if (near != null && best > near.level) {
+            double calm = Math.max(roadCalm(x, z), settleCalm(x, z));
+            best -= (best - near.level) * calm;
         }
         int t = territoryAt(x, z);
         if (t >= 0) best += territories.get(t).levelBonus;
@@ -491,9 +543,48 @@ public final class WorldMap {
                     for (int gz = (p.z() - rr) >> 6; gz <= (p.z() + rr) >> 6; gz++)
                         settleGrid.computeIfAbsent(key(gx, gz), k -> new ArrayList<>()).add(p);
             }
+            for (Poi p : pois) {
+                if (p.r() <= 0 || !SETTLEMENTS.contains(p.type()) && !p.type().equals("hamlet")) continue;
+                int rr = p.r() + 160;
+                for (int gx = (p.x() - rr) >> 6; gx <= (p.x() + rr) >> 6; gx++)
+                    for (int gz = (p.z() - rr) >> 6; gz <= (p.z() + rr) >> 6; gz++)
+                        calmGrid.computeIfAbsent(key(gx, gz), k -> new ArrayList<>()).add(p);
+            }
+            for (Road rd : roads) {
+                for (int i = 0; i + 1 < rd.points().length; i++) {
+                    double[] a = rd.points()[i], b = rd.points()[i + 1];
+                    double[] seg = {a[0], a[1], b[0], b[1]};
+                    int x0 = (int) Math.floor(Math.min(a[0], b[0]) - 64) >> 6, x1 = (int) Math.floor(Math.max(a[0], b[0]) + 64) >> 6;
+                    int z0 = (int) Math.floor(Math.min(a[1], b[1]) - 64) >> 6, z1 = (int) Math.floor(Math.max(a[1], b[1]) + 64) >> 6;
+                    double len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+                    for (int gx = x0; gx <= x1; gx++)
+                        for (int gz = z0; gz <= z1; gz++) {
+                            // клетка рядом с отрезком (с запасом на диагональ клетки)
+                            double cx = gx * 64 + 32, cz = gz * 64 + 32;
+                            double u = len < 1e-6 ? 0 : Math.max(0, Math.min(1, ((cx - a[0]) * (b[0] - a[0]) + (cz - a[1]) * (b[1] - a[1])) / (len * len)));
+                            if (Math.hypot(cx - a[0] - (b[0] - a[0]) * u, cz - a[1] - (b[1] - a[1]) * u) < 64 + 46)
+                                roadGrid.computeIfAbsent(key(gx, gz), k -> new ArrayList<>()).add(seg);
+                        }
+                }
+            }
+            if (root.has("anchors")) {
+                for (var e : root.getAsJsonObject("anchors").entrySet()) {
+                    Map<String, int[]> m = new HashMap<>();
+                    for (var a : e.getValue().getAsJsonObject().entrySet()) {
+                        var arr = a.getValue().getAsJsonArray();
+                        m.put(a.getKey(), new int[]{arr.get(0).getAsInt(), arr.get(1).getAsInt(), arr.get(2).getAsInt()});
+                    }
+                    anchors.put(e.getKey(), m);
+                }
+            }
             JsonObject lv = root.getAsJsonObject("levels");
             levelSlope = lv.get("slope").getAsDouble();
             levelMax = lv.get("max").getAsInt();
+            if (lv.has("safe")) levelSafe = lv.get("safe").getAsDouble();
+            if (lv.has("far")) levelFar = lv.get("far").getAsDouble();
+            if (lv.has("far_slope")) levelFarSlope = lv.get("far_slope").getAsDouble();
+            if (lv.has("road_ease")) roadEase = lv.get("road_ease").getAsDouble();
+            if (lv.has("settle_ease")) settleEase = lv.get("settle_ease").getAsDouble();
             LitRPG.LOGGER.info("World map: {} territories, {} cities, {} pois, {} tiles", territories.size(), cities.size(),
                     pois.size(), overworldTiles.size() + netherTiles.size());
         } catch (Exception e) {

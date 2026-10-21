@@ -67,12 +67,21 @@ def hall(b, x0, z0, w, d, door, floors=2, roof=None, interior='library', npc=Non
 #                      СОЛНЕЧНАЯ ГАВАНЬ (порт)
 # =====================================================================
 
+def i_end(x, x0, L):
+    """Торцы корпуса — всегда обшивка."""
+    return x == x0 or x == x0 + L - 1
+
+
 def ship(b, x0, zc, wl, L=26, bow=1, sail='minecraft:white_wool', stripe='minecraft:blue_wool', flag='minecraft:blue_banner', crew=None):
     """Корабль вдоль оси x: x0..x0+L-1, середина по zc, wl — y поверхности воды. Сухой трюм, палуба, ют с каютой,
     две мачты с парусами и марсом, бушприт, якорная цепь."""
     keel = wl - 3
     deck = wl + 2
     hull = 'minecraft:dark_oak_planks'
+    # корпус: сначала объём, потом обшивка — оболочкой служит любая клетка объёма, у которой есть сосед снаружи,
+    # так что вода не просочится ни снизу, ни с торцов, ни на подъёме носа
+    inside = set()
+    cols = {}
     for i in range(L):
         u = i / (L - 1)  # 0 — корма, 1 — нос
         x = x0 + i if bow > 0 else x0 + L - 1 - i
@@ -82,22 +91,26 @@ def ship(b, x0, zc, wl, L=26, bow=1, sail='minecraft:white_wool', stripe='minecr
         elif u < 0.1:
             taper = 0.8 + u / 0.1 * 0.2
         lift = int((u - 0.75) / 0.25 * 3) if u > 0.75 else 0
+        cols[x] = (u, taper)
         for y in range(keel + lift, deck + 1):
             hrel = (y - keel) / (deck - keel)
             half = (1.2 + 3.0 * math.sqrt(hrel)) * taper
             for dz in range(-5, 6):
-                ad = abs(dz)
-                if ad > half + 0.35:
-                    continue
-                z = zc + dz
-                if y == deck:
-                    b.set(x, y, z, hull if ad > half - 1 else 'minecraft:spruce_planks')
-                elif ad > half - 1.0 or y == keel + lift:
-                    b.set(x, y, z, stripe.replace('_wool', '_terracotta') if y == wl + 1 and 'blue' not in stripe else
-                          ('minecraft:spruce_planks' if y == wl + 1 else hull))
-                else:
-                    b.set(x, y, z, 'minecraft:air')
-            # борт над палубой
+                if abs(dz) <= half + 0.35:
+                    inside.add((x, y, zc + dz))
+    for (x, y, z) in inside:
+        ad = abs(z - zc)
+        shell = y == deck or i_end(x, x0, L) or any((x + dx, y + dy, z + dz) not in inside
+                                                     for dx, dy, dz in ((1, 0, 0), (-1, 0, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)))
+        if y == deck:
+            b.set(x, y, z, hull if (x, y, z + 1) not in inside or (x, y, z - 1) not in inside else 'minecraft:spruce_planks')
+        elif shell:
+            b.set(x, y, z, stripe.replace('_wool', '_terracotta') if y == wl + 1 and 'blue' not in stripe else
+                  ('minecraft:spruce_planks' if y == wl + 1 else hull))
+        else:
+            b.set(x, y, z, 'minecraft:air')
+    for x, (u, taper) in cols.items():
+        # борт над палубой
         top_half = (1.2 + 3.0) * taper
         for dz in range(-5, 6):
             if top_half - 1.0 < abs(dz) <= top_half + 0.35 and u > 0.12:
@@ -108,6 +121,7 @@ def ship(b, x0, zc, wl, L=26, bow=1, sail='minecraft:white_wool', stripe='minecr
         b.set(hx, keel + 1, zc + dz, 'minecraft:barrel', facing='up', open='false')
         b.set(hx + 1, keel + 1, zc + dz, 'minecraft:barrel', facing='up', open='false')
     b.chest(hx + 2, keel + 1, zc, 'litrpg:chests/city_barrel')
+    b.set(hx + 2, deck - 1, zc - 1, 'minecraft:lantern', hanging='true', waterlogged='false')   # свет в трюме
     b.set(hx, deck, zc, 'minecraft:spruce_trapdoor', facing='north', half='top', open='false', powered='false', waterlogged='false')
     for y in range(keel + 1, deck):
         b.set(hx, y, zc + 1, 'minecraft:ladder', facing='north', waterlogged='false')
@@ -360,6 +374,12 @@ def haven(city, gates):
     if sp:
         b.house(sp[0], sp[1], 16, 12, floors=2, door=t.facing_center(*sp), roof=st['roofs'][3], interior='library', npc='litrpg:human_ranger')
 
+    # сюжет «Чёрный парус»: грот контрабандистов под набережной и дом начальника порта с тайным подвалом
+    import mapbuild_secrets as SEC
+    if len(piers) > 2:
+        SEC.sea_cave(b, QX, piers[1] + 12, wl, G)
+    SEC.town_secret(t, 'smugglers', -0.9, Q - 30)
+    SEC.anchor(b, 'quay', *SEC.walk_spot(b, QX - 3, (zn + zs) // 2, G, 6))
     t.quarters(_crafts('haven', drop=('innkeeper', 'fishmonger')), 'litrpg:human_citizen', 'litrpg:human_merchant', terrace=2,
                market=(22, 14), market_crafts=['fishmonger', 'baker', 'farmer', 'tailor', 'herbalist', 'jeweler'],
                inside=lambda x, z: t.in_walls(x, z, 4) and x < QX - 19)
@@ -368,6 +388,7 @@ def haven(city, gates):
     # площадка рельефа: суша до набережной, за ней — гавань, вырытая до y=58 (море подходит само)
     b.fit = dict(cut=[1.0, 0.0, Q + 1],
                  extra=[[0, 0, S // 2 + 8, 58, 48, -1.0, 0.0, -(Q + 1)]])
+    SEC.finish(t, ['litrpg:human_knight'])
     return b
 
 

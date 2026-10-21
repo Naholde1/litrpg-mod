@@ -416,16 +416,18 @@ public class CharacterScreen extends SystemScreen {
             rows.add(() -> g.drawString(font, "✦ Сюжет «Путь Избранного» пройден!", x, cy[0] + 2, UiKit.GOLD, false));
         }
         heights.add(14);
-        rows.add(() -> g.drawString(font, "Задания (" + log.active.size() + "/" + com.andrey.litrpg.quest.QuestLog.MAX_ACTIVE
+        rows.add(() -> g.drawString(font, "Задания (" + log.regularCount() + "/" + com.andrey.litrpg.quest.QuestLog.MAX_ACTIVE
                 + ")  •  выполнено всего: " + log.completed, x, cy[0] + 3, UiKit.GOLD, false));
         if (log.active.isEmpty()) {
             heights.add(14);
             rows.add(() -> g.drawString(font, "Нет заданий. Возьмите поручение ниже или у жителей народов (ПКМ).", x, cy[0] + 2, UiKit.MUTED, false));
         }
         for (var q : log.active) {
-            heights.add(42);
+            // сюжеты городов — с описанием шага, чтобы история читалась прямо в журнале
+            boolean chain = q.source == com.andrey.litrpg.quest.Quest.Source.CHAIN;
+            heights.add(chain ? 42 + Math.min(3, font.split(Component.literal(q.desc), w - 64).size()) * 10 : 42);
             rows.add(() -> {
-                QuestUi.card(g, font, q, x, cy[0], w - 52, false);
+                QuestUi.card(g, font, q, x, cy[0], w - 52, chain);
                 int bx = x + w - 48;
                 questButton(g, mx, my, bx, cy[0], 48, 12, "Отказ", 0xE53935,
                         () -> QuestUi.send(com.andrey.litrpg.network.QuestActionPacket.Action.ABANDON, "", q.id));

@@ -27,7 +27,8 @@ public class MapTilePiece extends TemplateStructurePiece {
     }
 
     private static StructurePlaceSettings settings() {
-        return new StructurePlaceSettings().setFinalizeEntities(true);
+        // вода мира не просачивается в лестницы, люки и заборы шаблона (иначе трюмы кораблей затапливает)
+        return new StructurePlaceSettings().setFinalizeEntities(true).setKeepLiquids(false);
     }
 
     /** Посевы: при генерации Майнкрафт сносит их (свет ещё не посчитан) — досаживаем из шаблона. */

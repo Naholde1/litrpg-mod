@@ -117,6 +117,12 @@ public final class RepEvents {
         ServerPlayer p = DamageTracker.topContributor(dead, event.getSource());
         if (p == null) return;
         Faction f = factionOf(dead);
+        if (dead instanceof com.andrey.litrpg.npc.RaceNpcEntity npc && npc.npcType().outlaw()) {
+            // разбойники и пираты: людям — спокойнее, разбойному люду — обида
+            change(p, Faction.KINGDOM, npc.npcType().role == com.andrey.litrpg.npc.NpcType.Role.CHIEF ? 15 : 2);
+            change(p, Faction.ILLAGERS, -4);
+            return;
+        }
         if (dead instanceof com.andrey.litrpg.npc.RaceNpcEntity npc) {
             boolean chief = npc.npcType().role == com.andrey.litrpg.npc.NpcType.Role.CHIEF;
             change(p, f, chief ? -120 : -25);
@@ -302,6 +308,7 @@ public final class RepEvents {
         LivingEntity target = event.getEntity();
         Faction f = factionOf(target);
         if (f == null) return;
+        if (target instanceof com.andrey.litrpg.npc.RaceNpcEntity o && o.npcType().outlaw()) return;
         if (target instanceof com.andrey.litrpg.npc.RaceNpcEntity && event.getSource().getEntity() instanceof ServerPlayer sp
                 && !target.getPersistentData().getBoolean(PROVOKED_TAG)) {
             change(sp, f, -10); // нападение на жителя

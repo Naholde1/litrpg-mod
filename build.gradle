@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.andrey.litrpg'
-version = '2.8.0'
+version = '2.9.0'
 
 base {
     archivesName = 'litrpg-system'

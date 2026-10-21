@@ -62,6 +62,8 @@ public class AtlasScreen extends Screen {
                     case "caravan" -> "стоянка караванщиков";
                     case "outpost" -> "застава";
                     case "ruins" -> "руины";
+                    case "pirates" -> "пиратский корабль — опасно!";
+                    case "camp" -> "лагерь";
                     default -> p.type();
                 };
                 tip.add(Component.literal(p.name()).withStyle(s -> s.withColor(0xFFE8B0)));

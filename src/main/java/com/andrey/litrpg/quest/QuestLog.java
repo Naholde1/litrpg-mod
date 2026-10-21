@@ -24,6 +24,17 @@ public final class QuestLog {
     public final Map<String, Long> offersDay = new HashMap<>();
     public int completed = 0;
     public int nextId = 1;
+    /** Сюжеты городов: на каком шаге остановился игрок, пройденные сюжеты и их исход (очки концовки). */
+    public final Map<String, Integer> chainStep = new HashMap<>();
+    public final java.util.Set<String> chainsDone = new java.util.HashSet<>();
+    public final Map<String, Integer> chainScore = new HashMap<>();
+
+    /** Обычных заданий (сюжеты городов в лимит не входят). */
+    public int regularCount() {
+        int n = 0;
+        for (Quest q : active) if (q.source != Quest.Source.CHAIN) n++;
+        return n;
+    }
 
     public Quest find(String id) {
         if (story != null && story.id.equals(id)) return story;
@@ -61,6 +72,15 @@ public final class QuestLog {
         t.put("days", days);
         t.putInt("done", completed);
         t.putInt("next", nextId);
+        CompoundTag ch = new CompoundTag();
+        chainStep.forEach(ch::putInt);
+        t.put("chains", ch);
+        CompoundTag sc = new CompoundTag();
+        chainScore.forEach(sc::putInt);
+        t.put("chainScore", sc);
+        ListTag done = new ListTag();
+        for (String c : chainsDone) done.add(net.minecraft.nbt.StringTag.valueOf(c));
+        t.put("chainsDone", done);
         return t;
     }
 
@@ -81,5 +101,13 @@ public final class QuestLog {
         for (String k : days.getAllKeys()) offersDay.put(k, days.getLong(k));
         completed = t.getInt("done");
         nextId = Math.max(1, t.getInt("next"));
+        chainStep.clear();
+        CompoundTag ch = t.getCompound("chains");
+        for (String k : ch.getAllKeys()) chainStep.put(k, ch.getInt(k));
+        chainScore.clear();
+        CompoundTag sc = t.getCompound("chainScore");
+        for (String k : sc.getAllKeys()) chainScore.put(k, sc.getInt(k));
+        chainsDone.clear();
+        for (Tag d : t.getList("chainsDone", Tag.TAG_STRING)) chainsDone.add(d.getAsString());
     }
 }

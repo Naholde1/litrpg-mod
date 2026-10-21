@@ -39,7 +39,9 @@ public enum QuestTarget {
     ELITE("elites", "элитных монстров и чемпионов", e -> e instanceof Enemy && MobLevels.getRank(e) != MobLevels.Rank.NORMAL),
     RAT("rats", "крыс", e -> e instanceof com.andrey.litrpg.entity.RatEntity),
     WOLF("wolves", "волков", e -> e instanceof net.minecraft.world.entity.animal.Wolf w && !w.isTame()),
-    BANDIT("bandits", "разбойников", e -> e instanceof net.minecraft.world.entity.monster.Pillager || e instanceof net.minecraft.world.entity.monster.Vindicator);
+    BANDIT("bandits", "разбойников", e -> e instanceof net.minecraft.world.entity.monster.Pillager || e instanceof net.minecraft.world.entity.monster.Vindicator
+            || e instanceof com.andrey.litrpg.npc.RaceNpcEntity n && n.npcType().outlaw()),
+    PIRATE("pirates", "пиратов", e -> e instanceof com.andrey.litrpg.npc.RaceNpcEntity n && n.npcType().key.startsWith("pirate_"));
 
     public final String key;
     /** Название в родительном падеже множественного числа: «Убейте 10 …». */

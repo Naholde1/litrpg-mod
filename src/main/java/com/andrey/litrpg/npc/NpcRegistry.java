@@ -46,7 +46,7 @@ public final class NpcRegistry {
             case DWARF -> 0xB08A4A;
             case ORC -> 0x5A8A3A;
             case BEASTKIN -> 0xC9A36B;
-            case HUMAN -> 0x5D8AD2;
+            case HUMAN -> t.outlaw() ? 0x3A3030 : 0x5D8AD2;
             default -> 0xA02818;
         };
         int spot = switch (t.role) {

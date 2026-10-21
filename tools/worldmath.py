@@ -64,6 +64,13 @@ def poly_dist(px, pz, pts):
 
 # ---------------- карта ----------------
 
+def city_level(c, dist, lv):
+    """Уровень от города: за стенами — пояс безопасности, дальше рост, после far — вдвое быстрее.
+    (В WorldMap.java у дорог и поселений рост ещё и замедляется — здесь только основа.)"""
+    d = max(0.0, dist - c.get('r', 0) - lv.get('safe', 0))
+    return c['level'] + d / lv['slope'] + max(0.0, d - lv.get('far', 1e9)) / lv.get('far_slope', 1e9)
+
+
 class World:
     """Загружается из того же JSON, что читает Java."""
 
@@ -194,7 +201,7 @@ class World:
         lv = self.d['levels']
         best = 1e9
         for c in self.d['cities']:
-            v = c['level'] + math.hypot(x - c['x'], z - c['z']) / lv['slope']
+            v = city_level(c, math.hypot(x - c['x'], z - c['z']), lv)
             if v < best:
                 best = v
         if t is None:

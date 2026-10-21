@@ -414,6 +414,95 @@ def paint(race, role, seed, craft=None):
             for y in range(3, 11):
                 for x in range(2, 6):
                     s.face_px('body', 'front', x, y, 0xD8D0C0)
+    elif role in ('pirate', 'pirate_captain'):
+        # полосатая рубаха, бандана, кушак, широкие штаны и сапоги; у капитана — камзол, треуголка и повязка на глазу
+        import random as _r
+        rr = _r.Random(seed)
+        stripe = rr.choice([0x2A3A6A, 0x8A1A1A, 0x2A2A2A])
+        for part in ('body', 'rarm', 'larm'):
+            for y in range(12):
+                s.row(part, y, 0xE8E4DA if y % 2 == 0 else stripe) if part == 'body' or y < 6 else None
+        sash = rr.choice([0xB02020, 0xC08020, 0x6A2A8A])
+        s.row('body', 8, sash)
+        s.row('body', 9, mul(sash, 0.8))
+        for leg in ('rleg', 'lleg'):
+            s.fill(leg, rr.choice([0x4A3A2A, 0x3A3A4A, 0x5A4632]), rows=range(0, 8))
+            s.fill(leg, 0x2A1E14, rows=range(8, 12))
+        if role == 'pirate_captain':
+            coat = 0x5A1414
+            s.fill('jacket', coat, face_names=('right', 'left', 'back', 'top'))
+            for y in range(12):
+                for x in (0, 1, 6, 7):
+                    s.face_px('jacket', 'front', x, y, coat)
+                s.face_px('jacket', 'front', 2, y, 0xD8B040) if y % 3 == 1 else None
+            for arm, sleeve in (('rarm', 'rsleeve'), ('larm', 'lsleeve')):
+                s.fill(sleeve, coat, rows=range(0, 10))
+                s.fill(sleeve, 0xD8B040, rows=range(9, 10))
+            s.fill('hat', 0x1A1A1A, face_names=('top', 'right', 'left', 'back'))
+            s.fill('hat', 0x1A1A1A, rows=range(0, 2), face_names=('front',))
+            s.face_px('hat', 'front', 3, 1, 0xF0F0F0)
+            s.face_px('hat', 'front', 4, 1, 0xF0F0F0)
+            # повязка через глаз
+            for x in range(8):
+                s.face_px('head', 'front', x, 3, 0x111111) if x < 4 else None
+            s.face_px('head', 'front', 1, 4, 0x111111)
+            s.face_px('head', 'front', 2, 4, 0x111111)
+            for y in range(5, 8):
+                for x in range(1, 7):
+                    s.face_px('head', 'front', x, y, 0x2A1A10) if not (y == 6 and 2 < x < 5) else None
+        else:
+            band = rr.choice([0xB02020, 0x2A4A9A, 0x1A1A1A])
+            s.fill('hat', band, face_names=('top', 'right', 'left', 'back'))
+            s.fill('hat', band, rows=range(0, 2), face_names=('front',))
+            s.face_px('hat', 'back', 3, 2, band)
+            s.face_px('hat', 'back', 4, 3, band)
+            if rr.random() < 0.5:
+                for y in range(5, 8):
+                    for x in range(1, 7):
+                        s.face_px('head', 'front', x, y, mul(p['hair'], 0.8)) if not (y == 6 and 2 < x < 5) else None
+    elif role == 'thug':
+        # разбойник: кожаная куртка, шарф-маска до глаз, серый капюшон
+        s.fill('body', 0x4A3A2A)
+        s.fill('rarm', 0x4A3A2A, rows=range(0, 8))
+        s.fill('larm', 0x4A3A2A, rows=range(0, 8))
+        for leg in ('rleg', 'lleg'):
+            s.fill(leg, 0x3A3A3A, rows=range(0, 9))
+            s.fill(leg, 0x2A1E14, rows=range(9, 12))
+        s.row('body', 9, 0x2A1E14)
+        for y in range(5, 8):
+            for x in range(8):
+                s.face_px('head', 'front', x, y, 0x3A3A44)
+        s.fill('hat', 0x55555F, face_names=('top', 'right', 'left', 'back'))
+        s.fill('hat', 0x55555F, rows=range(0, 2), face_names=('front',))
+        for i in range(8):
+            s.face_px('body', 'front', i, i + 1, 0x2A1E14)
+    elif role == 'cultist':
+        # сектант Пепла: чёрная ряса с багровой каймой, глубокий капюшон, лицо в тени
+        robe, red = 0x1C1A1E, 0x8A1A22
+        for part in ('body', 'rarm', 'larm', 'rleg', 'lleg'):
+            s.fill(part, robe)
+        s.fill('jacket', robe)
+        for arm, sleeve in (('rarm', 'rsleeve'), ('larm', 'lsleeve')):
+            s.fill(sleeve, robe, rows=range(0, 10))
+            s.fill(sleeve, red, rows=range(9, 10))
+        for leg, pants in (('rleg', 'rpants'), ('lleg', 'lpants')):
+            s.fill(pants, robe, rows=range(0, 12))
+            s.fill(pants, red, rows=range(11, 12))
+        for y in range(12):
+            s.face_px('jacket', 'front', 3, y, red)
+            s.face_px('jacket', 'front', 4, y, red)
+        s.face_px('jacket', 'front', 3, 3, 0xE07020)
+        s.face_px('jacket', 'front', 4, 3, 0xE07020)
+        s.fill('hat', robe, face_names=('top', 'right', 'left', 'back'))
+        s.fill('hat', robe, rows=range(0, 3), face_names=('front',))
+        for y in range(3, 8):
+            s.face_px('hat', 'front', 0, y, robe)
+            s.face_px('hat', 'front', 7, y, robe)
+        for y in range(0, 4):
+            for x in range(8):
+                s.face_px('head', 'front', x, y, 0x101010)
+        s.face_px('head', 'front', 2, 4, 0xFF5020)
+        s.face_px('head', 'front', 5, 4, 0xFF5020)
     else:  # торговец
         s.fill('body', 0xE8E0D0)
         s.fill('jacket', cloth2, face_names=('right', 'left', 'back', 'top'))
@@ -446,6 +535,8 @@ ROLES = {
     'orc_extra': [('orc_bloodguard', 'guard'), ('orc_citizen', 'citizen')],
     'beastkin_extra': [('beast_fangguard', 'guard'), ('beast_citizen', 'citizen')],
     'demonkin_extra': [('demon_hellguard', 'guard'), ('demon_citizen', 'citizen')],
+    'outlaw_human': [('outlaw_thug', 'thug'), ('outlaw_cultist', 'cultist'), ('pirate_cutthroat', 'pirate'), ('pirate_gunner', 'pirate'),
+                     ('pirate_captain', 'pirate_captain')],
     'demonkin': [('demon_cultist', 'mage'), ('demon_guard', 'warrior'), ('demon_hellbow', 'archer'), ('demon_trader', 'trader'), ('demon_archfiend', 'chief')],
 }
 
@@ -455,7 +546,7 @@ def main():
     out = {}
     for race, items in ROLES.items():
         for i, (key, role) in enumerate(items):
-            img = paint(race.replace('_extra', ''), role, key)
+            img = paint(race.replace('_extra', '').replace('outlaw_', ''), role, key)
             write_png(os.path.join(OUT, key + '.png'), img, 64, 64)
             out[key] = img
             models = os.path.join(OUT, '..', '..', '..', 'models', 'item')

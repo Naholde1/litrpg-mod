@@ -21,6 +21,7 @@ public final class QuestUi {
             case SYSTEM -> 0xFF8FE3FF;
             case FACTION -> q.faction == null ? 0xFFFFFFFF : 0xFF000000 | q.faction.color;
             case CITY -> 0xFFE8B070;
+            case CHAIN -> 0xFFFF8A50;
         };
     }
 
@@ -73,6 +74,7 @@ public final class QuestUi {
             case SYSTEM -> "Система";
             case FACTION -> q.faction == null ? "" : q.faction.title;
             case CITY -> q.giver + (q.placeName.isEmpty() ? "" : " • " + q.placeName);
+            case CHAIN -> "★ Сюжет" + (q.placeName.isEmpty() ? "" : " • " + q.placeName);
         };
         g.drawString(font, q.title, x + 7, ty, sourceColor(q), false);
         g.drawString(font, tag, x + w - 6 - font.width(tag), ty, UiKit.MUTED, false);

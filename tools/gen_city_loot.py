@@ -73,6 +73,16 @@ T = {
     'city_armory': table((3, 6), [it('arrow', 6, 6, 24), it('iron_sword', 2), it('shield', 2), it('crossbow', 1), it('iron_helmet', 1),
                                   it('iron_chestplate', 1), it('chainmail_chestplate', 2), it('iron_ingot', 4, 1, 4), it('bread', 4, 2, 5),
                                   it('cooked_beef', 3, 1, 4), it('potion', 2, potion='healing')], coins=(4, 16)),
+    # пиратские корабли и грот контрабандистов: награбленное, ром (мёд), порох, редкости с морского дна
+    'pirate_treasure': table((4, 7), [it('gold_ingot', 5, 1, 4), it('gold_nugget', 6, 4, 12), it('emerald', 5, 1, 4), it('diamond', 2, 1, 2),
+                                      it('gunpowder', 6, 2, 8), it('honey_bottle', 4, 1, 3), it('cooked_cod', 4, 2, 6), it('sugar', 3, 2, 6),
+                                      it('nautilus_shell', 2), it('heart_of_the_sea', 1), it('compass', 2), it('spyglass', 2), it('map', 2),
+                                      it('litrpg:reforge_stone', 1), it('litrpg:mana_potion', 3, 1, 2), it('potion', 2, potion='water_breathing'),
+                                      it('trident', 1), it('crossbow', 2)], coins=(8, 30)),
+    'pirate_captain': table((3, 5), [it('gold_ingot', 5, 2, 6), it('emerald', 5, 2, 5), it('diamond', 3, 1, 3), it('spyglass', 3),
+                                     it('litrpg:tome_of_experience', 2), it('litrpg:ascension_stone', 1), it('litrpg:reforge_stone', 2),
+                                     it('golden_apple', 2), it('heart_of_the_sea', 1), it('music_disc_pigstep', 1), it('filled_map', 2)],
+                            coins=(16, 50)),
 }
 
 CRAFT_GROUP = {'blacksmith': 'city_smith', 'armorer': 'city_smith', 'weaponsmith': 'city_smith', 'jeweler': 'city_jewel', 'banker': 'city_bank',

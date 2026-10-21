@@ -92,6 +92,9 @@ public final class CityQuests {
         Faction faction;
         String giver;
         BlockPos home;
+        /** Поселение мастера (город или деревня): id, название, центр. */
+        String homeId = "", homeName = "";
+        int hx, hz;
     }
 
     private static List<Quest> generate(ServerPlayer p, RaceNpcEntity npc, RandomSource r) {
@@ -107,6 +110,21 @@ public final class CityQuests {
         String full = npc.getName().getString();
         c.giver = full.contains(",") ? full.substring(0, full.indexOf(',')) : full;
         c.home = npc.hasRestriction() ? npc.getRestrictCenter() : npc.blockPosition();
+        if (c.city != null) {
+            c.homeId = c.city.id();
+            c.homeName = c.city.name();
+            c.hx = c.city.x();
+            c.hz = c.city.z();
+        } else if (SystemWorld.isOverworld(npc.level())) {
+            // мастер деревни или хутора
+            WorldMap.Poi poi = WorldMap.get().settlementAt(npc.getX(), npc.getZ());
+            if (poi != null) {
+                c.homeId = poi.id();
+                c.homeName = poi.name();
+                c.hx = poi.x();
+                c.hz = poi.z();
+            }
+        }
         Craft craft = npc.craft();
         List<Supplier<Quest>> opts = new ArrayList<>(options(c, craft == null ? Craft.FARMER : craft));
         Collections.shuffle(opts, new java.util.Random(r.nextLong()));
@@ -118,6 +136,11 @@ public final class CityQuests {
             boolean dup = false;
             for (Quest e : out) dup |= e.type == q.type && e.target.equals(q.target);
             if (!dup) out.add(q);
+        }
+        // сюжет города — всегда первым на доске, пока не пройден
+        if (c.city != null) {
+            Quest story = StoryEngine.offer(p, c.city.id());
+            if (story != null) out.add(0, story);
         }
         return out;
     }
@@ -278,6 +301,7 @@ public final class CityQuests {
                 o.add(() -> hunt(c, QuestTarget.WOLF, 5, "Волки у пастбища", "Волки пугают табун. Отгони их."));
             }
             case MINER -> {
+                o.add(() -> deliverFar(c, Craft.MINER, "Образцы руды", "Отнеси образцы новой жилы рудокопу в %s — пусть оценит."));
                 o.add(() -> collect(c, "minecraft:coal", 32, "Уголь", "Шахта даёт мало угля. Помоги добыть."));
                 o.add(() -> collect(c, "minecraft:raw_copper", 24, "Медная руда", "Медь нужна для громоотводов и котлов."));
                 o.add(() -> hunt(c, QuestTarget.SPIDER, 10, "Пауки в шахте", "В старой шахте завелись пауки. Шахтёры боятся спускаться."));
@@ -286,7 +310,141 @@ public final class CityQuests {
                 if (L >= 5) o.add(() -> collect(c, "minecraft:raw_iron", 12, "Железная руда", "Железная жила иссякла. Найди новую."));
             }
         }
+        // поручения между поселениями: посылки в другие города, защита деревень, охота в окрестностях
+        o.add(() -> deliverFar(c, craft, farTitle(craft), farText(craft)));
+        if (c.r.nextBoolean()) o.add(() -> deliverFar(c, Craft.INNKEEPER, "Письмо трактирщику", "Отнеси это письмо трактирщику в %s. Там ждут вестей."));
+        o.add(() -> defend(c));
+        o.add(() -> huntNear(c));
         return o;
+    }
+
+    private static String farTitle(Craft craft) {
+        return switch (craft) {
+            case BLACKSMITH, ARMORER, WEAPONSMITH -> "Заказ для собрата по горну";
+            case JEWELER -> "Камни для огранки";
+            case ALCHEMIST, HERBALIST -> "Редкие травы";
+            case SCRIBE -> "Свиток в дальний город";
+            case BANKER -> "Векселя торговой палаты";
+            case INNKEEPER, BAKER, BUTCHER -> "Гостинец для родни";
+            default -> "Посылка коллеге";
+        };
+    }
+
+    private static String farText(Craft craft) {
+        return switch (craft) {
+            case BLACKSMITH, ARMORER, WEAPONSMITH -> "Мой собрат по ремеслу в %s ждёт заготовки. Дорога неблизкая — не потеряй.";
+            case JEWELER -> "В %s живёт лучший огранщик, чем я. Отнеси ему эти камни — он знает, что делать.";
+            case ALCHEMIST, HERBALIST -> "Эти травы растут только у нас. В %s их ждут, чтобы сварить лекарство.";
+            case SCRIBE -> "Этот свиток нужно доставить писарю в %s. Печать не ломать!";
+            case BANKER -> "Векселя нужно доставить меняле в %s. Доверяю только тебе.";
+            case INNKEEPER, BAKER, BUTCHER -> "Отнеси гостинец моей родне в %s — пусть знают, что я жив-здоров.";
+            default -> "Отнеси эту посылку моему собрату-мастеру в %s. Он давно ждёт.";
+        };
+    }
+
+    /** Посылка мастеру того же ремесла в другом городе (по дорогам — от нескольких сотен до тысяч блоков). */
+    private static Quest deliverFar(Ctx c, Craft to, String title, String descFmt) {
+        if (c.homeId.isEmpty()) return null;
+        int maxDist = 2100 + c.level * 120;
+        List<WorldMap.Workshop> ok = new ArrayList<>();
+        for (WorldMap.Workshop w : WorldMap.get().workshops) {
+            if (!w.craft().equals(to.key) || w.city().equals(c.homeId)) continue;
+            WorldMap.City dest = WorldMap.get().city(w.city());
+            if (dest == null) continue;
+            double d = Math.hypot(dest.x() - c.hx, dest.z() - c.hz);
+            if (d > 300 && d < maxDist) ok.add(w);
+        }
+        if (ok.isEmpty()) return null;
+        WorldMap.Workshop w = ok.get(c.r.nextInt(ok.size()));
+        WorldMap.City dest = WorldMap.get().city(w.city());
+        Quest q = base(c, title, String.format(descFmt, dest.name()));
+        q.type = Quest.Type.DELIVER;
+        q.target = to.key;
+        q.dest = dest.id();
+        q.need = 1;
+        q.where = dative(to) + " в город " + dest.name() + " (" + to.workshop + ")";
+        q.hasPos = true;
+        q.px = w.x();
+        q.py = w.y();
+        q.pz = w.z();
+        double d = Math.hypot(dest.x() - c.hx, dest.z() - c.hz);
+        reward(c, q, Math.min(3.2f, 1.0f + (float) (d / 900.0)));
+        return q;
+    }
+
+    private static final String[] SETTLE = {"village", "hamlet", "farm", "fishing", "lumber"};
+
+    private static WorldMap.Poi nearSettlement(Ctx c) {
+        if (c.homeId.isEmpty()) return null;
+        int maxDist = 450 + c.level * 50;
+        List<WorldMap.Poi> ok = new ArrayList<>();
+        for (WorldMap.Poi poi : WorldMap.get().pois) {
+            boolean t = false;
+            for (String s : SETTLE) t |= poi.type().equals(s);
+            if (!t || poi.id().equals(c.homeId)) continue;
+            double d = Math.hypot(poi.x() - c.hx, poi.z() - c.hz);
+            if (d > 140 && d < maxDist) ok.add(poi);
+        }
+        return ok.isEmpty() ? null : ok.get(c.r.nextInt(ok.size()));
+    }
+
+    /** На поселение нападают: отряд выходит, когда подходишь (StoryEngine.spawnFoes). */
+    private static Quest defend(Ctx c) {
+        WorldMap.Poi poi = nearSettlement(c);
+        if (poi == null) return null;
+        int L = Math.max(c.level, WorldMap.get().levelAt(poi.x(), poi.z()));
+        String spec, title, text;
+        int k = c.r.nextInt(3);
+        if (L < 7) {
+            spec = k == 0 ? "minecraft:zombie*4,minecraft:skeleton*2" : k == 1 ? "minecraft:spider*3,minecraft:zombie*3"
+                    : "litrpg:rat*5,litrpg:rat_king@Король крыс!";
+            title = k == 2 ? "Крысиное нашествие" : "Мертвецы у околицы";
+            text = k == 2 ? "Крысы заполонили амбары в %s. Местные боятся выходить из домов." : "По ночам к %s выходят мертвецы. Помоги отбиться!";
+        } else if (L < 16) {
+            spec = k == 0 ? "litrpg:outlaw_thug*4,litrpg:outlaw_thug@Атаман Ржавый Нож!" : k == 1 ? "litrpg:goblin*5,litrpg:goblin_shaman*1"
+                    : "minecraft:wolf*4,minecraft:zombie*2";
+            title = k == 0 ? "Разбойники грабят хутор" : k == 1 ? "Гоблинский набег" : "Нападение на скот";
+            text = k == 0 ? "Разбойники повадились грабить %s. Прогони их — и атамана тоже." : k == 1
+                    ? "Гоблины совершают набеги на %s. Проучи их, пока не сожгли всё дотла." : "Звери и мертвецы режут скот у %s. Защити селян.";
+        } else {
+            spec = k == 0 ? "litrpg:outlaw_cultist*3,litrpg:outlaw_thug*2,litrpg:outlaw_cultist@Проповедник Пепла!"
+                    : k == 1 ? "litrpg:grave_knight*2,minecraft:skeleton*4" : "litrpg:stone_troll*1,litrpg:goblin*4";
+            title = k == 0 ? "Сектанты у околицы" : k == 1 ? "Восставшие рыцари" : "Тролль у моста";
+            text = k == 0 ? "Сектанты Пепла проповедуют у %s и уводят людей. Останови их." : k == 1
+                    ? "У %s из старых курганов встали мёртвые рыцари. Упокой их." : "У %s завёлся тролль с гоблинами. Селяне в ужасе.";
+        }
+        Quest q = base(c, title, String.format(text, poi.name()));
+        q.type = Quest.Type.FIGHT;
+        q.extra = L + ";" + spec;
+        q.need = StoryEngine.units(spec).size();
+        q.where = poi.name();
+        q.hasPos = true;
+        q.px = poi.x();
+        q.py = poi.y();
+        q.pz = poi.z();
+        reward(c, q, 1.5f);
+        return q;
+    }
+
+    /** Охота в окрестностях поселения: засчитываются только твари в радиусе. */
+    private static Quest huntNear(Ctx c) {
+        WorldMap.Poi poi = nearSettlement(c);
+        if (poi == null) return null;
+        QuestTarget t = c.level < 8 ? QuestTarget.ANY : c.level < 16 ? (c.r.nextBoolean() ? QuestTarget.UNDEAD : QuestTarget.SPIDER) : QuestTarget.ELITE;
+        int n = t == QuestTarget.ELITE ? 2 + c.level / 20 : 8 + c.level / 5;
+        Quest q = base(c, "Окрестности: " + poi.name(), "Селяне " + poi.name() + " боятся выходить за ограду. Убей " + n + " " + t.plural
+                + " в окрестностях — и люди вздохнут спокойно.");
+        q.type = Quest.Type.KILL;
+        q.target = t.key;
+        q.need = n;
+        q.where = poi.name();
+        q.hasPos = true;
+        q.rad = 96;
+        q.px = poi.x();
+        q.py = poi.y();
+        q.pz = poi.z();
+        reward(c, q, 1.3f);
+        return q;
     }
 
     // ---------------- типы поручений ----------------
@@ -299,9 +457,9 @@ public final class CityQuests {
         q.title = title;
         q.desc = "«" + desc + "» — " + c.giver;
         q.giver = c.giver;
-        if (c.city != null) {
-            q.place = c.city.id();
-            q.placeName = c.city.name();
+        if (!c.homeId.isEmpty()) {
+            q.place = c.homeId;
+            q.placeName = c.homeName;
         }
         return q;
     }
@@ -377,9 +535,9 @@ public final class CityQuests {
 
     /** Отнести посылку мастеру другого ремесла в этом же городе. */
     private static Quest deliver(Ctx c, Craft to, String title, String desc) {
-        if (c.city == null) return null;
+        if (c.homeId.isEmpty()) return null;
         WorldMap.Workshop best = null;
-        for (WorldMap.Workshop w : WorldMap.get().workshopsOf(c.city.id())) {
+        for (WorldMap.Workshop w : WorldMap.get().workshopsOf(c.homeId)) {
             if (!w.craft().equals(to.key)) continue;
             if (Math.abs(w.x() - c.home.getX()) + Math.abs(w.z() - c.home.getZ()) < 4) continue;
             if (best == null || c.r.nextBoolean()) best = w;
@@ -400,14 +558,14 @@ public final class CityQuests {
 
     /** Добраться до места рядом с городом (деревня, руины, застава, другой город). */
     private static Quest visit(Ctx c, String[] types, String title, String descFmt) {
-        if (c.city == null) return null;
+        if (c.homeId.isEmpty()) return null;
         int maxDist = 500 + c.level * 60;
         List<WorldMap.Poi> ok = new ArrayList<>();
         for (WorldMap.Poi poi : WorldMap.get().pois) {
             boolean typeOk = false;
             for (String t : types) typeOk |= poi.type().equals(t);
-            if (!typeOk || poi.id().equals(c.city.id())) continue;
-            double d = Math.hypot(poi.x() - c.city.x(), poi.z() - c.city.z());
+            if (!typeOk || poi.id().equals(c.homeId)) continue;
+            double d = Math.hypot(poi.x() - c.hx, poi.z() - c.hz);
             if (d > 120 && d < maxDist) ok.add(poi);
         }
         if (ok.isEmpty()) return null;
@@ -422,7 +580,7 @@ public final class CityQuests {
         q.px = poi.x();
         q.py = poi.y();
         q.pz = poi.z();
-        double d = Math.hypot(poi.x() - c.city.x(), poi.z() - c.city.z());
+        double d = Math.hypot(poi.x() - c.hx, poi.z() - c.hz);
         reward(c, q, Math.min(2.0f, 0.8f + (float) (d / 700.0)));
         return q;
     }
@@ -472,6 +630,10 @@ public final class CityQuests {
     // ===================================================================
 
     public static void onAccept(ServerPlayer p, Quest q) {
+        if (q.source == Quest.Source.CHAIN) {
+            StoryEngine.onAccept(p, q);
+            return;
+        }
         if (q.source != Quest.Source.CITY) return;
         if (q.type == Quest.Type.DELIVER) {
             ItemStack parcel = new ItemStack(ModItems.PARCEL.get());
@@ -513,9 +675,15 @@ public final class CityQuests {
         if (!(event.getEntity() instanceof ServerPlayer p) || !(event.getTarget() instanceof RaceNpcEntity npc)) return;
         if (event.getHand() != net.minecraft.world.InteractionHand.MAIN_HAND || npc.craft() == null) return;
         WorldMap.City city = SystemWorld.isOverworld(npc.level()) ? WorldMap.get().cityAt(npc.getX(), npc.getZ()) : null;
+        String here = city != null ? city.id() : "";
+        if (city == null && SystemWorld.isOverworld(npc.level())) {
+            WorldMap.Poi poi = WorldMap.get().settlementAt(npc.getX(), npc.getZ());
+            if (poi != null) here = poi.id();
+        }
         for (Quest q : StatsManager.get(p).quests().active) {
             if (q.type != Quest.Type.DELIVER || q.isComplete() || !q.target.equals(npc.craft().key)) continue;
-            if (!q.place.isEmpty() && (city == null || !city.id().equals(q.place))) continue;
+            String want = q.dest.isEmpty() ? q.place : q.dest;
+            if (!want.isEmpty() && !want.equals(here)) continue;
             if (!removeParcel(p, q.id)) {
                 StatsManager.message(p, Component.literal(npc.getName().getString() + ": «А где же посылка? Без неё не приму».")
                         .withStyle(ChatFormatting.GRAY));
@@ -556,7 +724,7 @@ public final class CityQuests {
             if (q.isComplete() || !q.hasPos) continue;
             double dx = p.getX() - q.px, dz = p.getZ() - q.pz;
             double d2 = dx * dx + dz * dz;
-            if (q.type == Quest.Type.VISIT && d2 < 16 * 16 && SystemWorld.isOverworld(p.level())) {
+            if (q.type == Quest.Type.VISIT && q.rad == 0 && d2 < 16 * 16 && SystemWorld.isOverworld(p.level())) {
                 q.have = q.need;
                 changed = true;
                 StatsManager.message(p, Component.literal("Вы добрались: " + q.where).withStyle(ChatFormatting.GREEN));

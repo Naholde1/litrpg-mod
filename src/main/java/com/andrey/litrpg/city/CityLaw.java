@@ -208,6 +208,10 @@ public final class CityLaw {
         }
         if (exempt(p)) return;
         if (isStash(sl, event.getPos())) return;
+        if (secretWall(c, event.getPos(), event.getState())) {
+            p.displayClientMessage(Component.literal("Кладка поддаётся — за ней пустота!").withStyle(ChatFormatting.GOLD), true);
+            return;
+        }
         BlockState st = event.getState();
         rep.record(sl, event.getPos(), st, c.id());
         if (rep.wasRestored(event.getPos())) {
@@ -227,6 +231,14 @@ public final class CityLaw {
             p.displayClientMessage(Component.literal("Никто не видел… пока.").withStyle(ChatFormatting.DARK_GRAY), true);
         }
         data.putLong(DAMAGE_TIME, now);
+    }
+
+    /** Треснувшая кладка у тайника сюжета: её можно разбить без наказания. */
+    public static boolean secretWall(WorldMap.City c, BlockPos pos, BlockState st) {
+        var key = net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey(st.getBlock());
+        if (key == null || !key.getPath().startsWith("cracked_")) return false;
+        int[] a = WorldMap.get().anchor(c.id(), "crack");
+        return a != null && Math.abs(pos.getX() - a[0]) <= 3 && Math.abs(pos.getZ() - a[2]) <= 3 && Math.abs(pos.getY() - a[1]) <= 3;
     }
 
     /** Самовольная стройка в городе роняет репутацию; строители со временем разберут чужое. */
@@ -278,7 +290,7 @@ public final class CityLaw {
         if (!(event.getSource().getEntity() instanceof ServerPlayer p) || exempt(p)) return;
         LivingEntity t = event.getEntity();
         if (!(t instanceof RaceNpcEntity || t instanceof AbstractVillager || t instanceof IronGolem)) return;
-        if (t instanceof RaceNpcEntity npc && npc.getTarget() == p) return; // самооборона
+        if (t instanceof RaceNpcEntity npc && (npc.getTarget() == p || npc.npcType().outlaw())) return; // самооборона, разбойники
         WorldMap.City c = cityAt(t);
         if (c == null) return;
         var data = p.getPersistentData();

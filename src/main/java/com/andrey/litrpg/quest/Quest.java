@@ -27,10 +27,18 @@ public final class Quest {
         /** Дойти до места (px, pz). */
         VISIT,
         /** Развести N животных target (id сущности). */
-        BREED
+        BREED,
+        /** Поговорить с героем сюжета target (появляется у места anchor). */
+        TALK,
+        /** Осмотреть место (подойти вплотную): улика, тайник, след. */
+        SEARCH,
+        /** Одолеть отряд extra, который выходит у места (засада, сектанты, налёт на деревню). */
+        FIGHT,
+        /** Сделать выбор: варианты в extra («текст|текст»), ответ — кликом в чате. */
+        CHOICE
     }
 
-    public enum Source { STORY, SYSTEM, FACTION, CITY }
+    public enum Source { STORY, SYSTEM, FACTION, CITY, CHAIN }
 
     public String id = "";
     public Source source = Source.SYSTEM;
@@ -60,10 +68,17 @@ public final class Quest {
     public int px, py, pz;
     public boolean hasPos;
     public int spawned;
+    /** Сюжет города: id цепочки и номер шага; rad — радиус места (0 — по умолчанию), extra — отряд или варианты выбора. */
+    public String chain = "";
+    public int step;
+    public int rad;
+    public String extra = "";
+    /** Город назначения для посылок в другой город. */
+    public String dest = "";
 
     /** Есть ли у задания точка на карте. */
     public boolean locatable() {
-        return hasPos || type == Type.BOSS;
+        return hasPos || type == Type.BOSS || type == Type.CHOICE;
     }
 
     public boolean isComplete() {
@@ -91,6 +106,10 @@ public final class Quest {
             case DELIVER -> (have >= need ? "Доставлено" : "Отнесите посылку: " + where);
             case VISIT -> (have >= need ? "Место найдено" : "Доберитесь: " + where);
             case BREED -> "Разведено " + breedName() + ": " + Math.min(have, need) + "/" + need;
+            case TALK -> (have >= need ? "Разговор состоялся" : "Поговорите: " + where);
+            case SEARCH -> (have >= need ? "Осмотрено" : "Осмотрите: " + where);
+            case FIGHT -> "Повержено: " + Math.min(have, need) + "/" + need + (where.isEmpty() ? "" : " — " + where);
+            case CHOICE -> "Примите решение (варианты — в чате, кнопка «Где?» повторит их)";
         };
     }
 
@@ -134,6 +153,13 @@ public final class Quest {
         if (!where.isEmpty()) t.putString("where", where);
         if (hasPos) t.putIntArray("pos", new int[]{px, py, pz});
         if (spawned > 0) t.putInt("spawned", spawned);
+        if (!chain.isEmpty()) {
+            t.putString("chain", chain);
+            t.putInt("step", step);
+        }
+        if (rad > 0) t.putInt("rad", rad);
+        if (!extra.isEmpty()) t.putString("extra", extra);
+        if (!dest.isEmpty()) t.putString("dest", dest);
         return t;
     }
 
@@ -167,6 +193,11 @@ public final class Quest {
             q.pz = pos[2];
         }
         q.spawned = t.getInt("spawned");
+        q.chain = t.getString("chain");
+        q.step = t.getInt("step");
+        q.rad = t.getInt("rad");
+        q.extra = t.getString("extra");
+        q.dest = t.getString("dest");
         return q;
     }
 }

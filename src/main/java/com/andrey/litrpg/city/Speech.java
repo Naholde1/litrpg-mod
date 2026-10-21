@@ -126,28 +126,7 @@ public final class Speech {
 
     // ---------------- имена ----------------
 
-    private static final String[] HUMAN_M = {"Гаррет", "Освин", "Бертран", "Томас", "Элрик", "Мартин", "Годрик", "Ульрих", "Роланд", "Седрик", "Бенедикт", "Ансельм"};
-    private static final String[] HUMAN_F = {"Мира", "Элоиза", "Агата", "Беатрис", "Ровена", "Марта", "Хильда", "Ирма", "Лисбет", "Аделина"};
-    private static final String[] ELF_M = {"Аэлин", "Тауриэль", "Лиандир", "Фаэрон", "Элеандор", "Силваэн", "Каэлис", "Ирвандил"};
-    private static final String[] ELF_F = {"Иллиэна", "Наэрис", "Лаэль", "Сильвара", "Аэрин", "Миэлла", "Таэлия"};
-    private static final String[] DWARF_M = {"Торин", "Балин", "Гримли", "Двалин", "Бруни", "Харгрим", "Онар", "Дурин", "Кхарн", "Брок"};
-    private static final String[] DWARF_F = {"Дагна", "Хельга", "Брунхильд", "Тора", "Гуннхильд", "Рагна"};
-    private static final String[] ORC_M = {"Гром", "Урзаг", "Морк", "Гаррош", "Скарг", "Тхрок", "Бругг", "Нарзуг", "Дурга"};
-    private static final String[] ORC_F = {"Шагра", "Ургха", "Гхола", "Мазра", "Ракха"};
-    private static final String[] BEAST_M = {"Серый Клык", "Быстрая Лапа", "Рррауг", "Тёмная Грива", "Острый Нюх", "Буран"};
-    private static final String[] BEAST_F = {"Белая Лань", "Мягкая Лапа", "Рыжая Тень", "Тихий Шаг", "Звонкий Ручей"};
-    private static final String[] DEMON_M = {"Азгор", "Мальфас", "Зарвен", "Кассиэль", "Бельзар", "Оркус", "Вексар"};
-    private static final String[] DEMON_F = {"Лилит", "Азара", "Сецира", "Морвена", "Иззара", "Кхалисса"};
-
     public static String name(Race race, boolean female, RandomSource r) {
-        String[] a = switch (race) {
-            case ELF -> female ? ELF_F : ELF_M;
-            case DWARF -> female ? DWARF_F : DWARF_M;
-            case ORC -> female ? ORC_F : ORC_M;
-            case BEASTKIN -> female ? BEAST_F : BEAST_M;
-            case DEMONKIN -> female ? DEMON_F : DEMON_M;
-            default -> female ? HUMAN_F : HUMAN_M;
-        };
-        return pick(a, r);
+        return com.andrey.litrpg.npc.Names.first(race, female, r);
     }
 }

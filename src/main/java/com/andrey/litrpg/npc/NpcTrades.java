@@ -199,8 +199,93 @@ public final class NpcTrades {
     }
 
 
+    /** Товары горожанина по его занятию: немного, зато своё — пахарь продаёт зерно, гончар горшки. */
+    private static List<Ware> jobWares(Job j) {
+        Faction.Tier N = Faction.Tier.NEUTRAL, F = Faction.Tier.FRIENDLY, H = Faction.Tier.HONORED;
+        return switch (j) {
+            case PLOWMAN -> List.of(item(Items.WHEAT, 16, 3, N), item(Items.POTATO, 12, 3, N), item(Items.CARROT, 12, 3, N),
+                    item(Items.BEETROOT, 12, 3, N), item(Items.WHEAT_SEEDS, 16, 2, N), item(Items.HAY_BLOCK, 2, 6, F));
+            case SHEPHERD -> List.of(item(Items.WHITE_WOOL, 8, 6, N), item(Items.MUTTON, 6, 5, N), item(Items.LEAD, 1, 8, N),
+                    item(Items.SHEARS, 1, 8, N), item(Items.BROWN_WOOL, 8, 7, F), item(Items.BLACK_WOOL, 8, 7, F));
+            case WOODCUTTER -> List.of(item(Items.OAK_LOG, 16, 6, N), item(Items.SPRUCE_LOG, 16, 6, N), item(Items.BIRCH_LOG, 16, 6, N),
+                    item(Items.STICK, 32, 2, N), item(Items.CHARCOAL, 8, 5, N), item(Items.IRON_AXE, 1, 26, F));
+            case FISHER -> List.of(item(Items.COD, 8, 4, N), item(Items.SALMON, 6, 5, N), item(Items.FISHING_ROD, 1, 10, N),
+                    item(Items.KELP, 16, 2, N), item(Items.PUFFERFISH, 1, 8, F), item(Items.NAUTILUS_SHELL, 1, 55, H));
+            case LAUNDRESS -> List.of(item(Items.WATER_BUCKET, 1, 12, N), item(Items.WHITE_DYE, 6, 4, N), item(Items.WHITE_CARPET, 6, 5, N),
+                    item(Items.LIGHT_BLUE_DYE, 4, 5, N), item(Items.CAULDRON, 1, 22, F));
+            case POTTER -> List.of(item(Items.FLOWER_POT, 4, 4, N), item(Items.CLAY_BALL, 16, 4, N), item(Items.TERRACOTTA, 16, 6, N),
+                    item(Items.BRICKS, 16, 10, N), item(Items.DECORATED_POT, 1, 14, F), item(Items.WHITE_GLAZED_TERRACOTTA, 8, 10, F));
+            case COOPER -> List.of(item(Items.BARREL, 2, 8, N), item(Items.BUCKET, 1, 12, N), item(Items.COMPOSTER, 1, 6, N),
+                    item(Items.CHEST, 1, 8, N), item(Items.CAULDRON, 1, 20, F));
+            case CHANDLER -> List.of(item(Items.CANDLE, 6, 5, N), item(Items.WHITE_CANDLE, 4, 5, N), item(Items.HONEYCOMB, 4, 6, N),
+                    item(Items.TORCH, 16, 3, N), item(Items.LANTERN, 2, 8, N), item(Items.RED_CANDLE, 4, 6, F), item(Items.BLACK_CANDLE, 4, 6, F));
+            case MINSTREL -> List.of(item(Items.NOTE_BLOCK, 1, 10, N), item(Items.BOOK, 1, 8, N), item(Items.JUKEBOX, 1, 60, F),
+                    item(Items.MUSIC_DISC_CAT, 1, 120, H), item(Items.MUSIC_DISC_MALL, 1, 120, H));
+            case FLOWER -> List.of(item(Items.POPPY, 6, 2, N), item(Items.DANDELION, 6, 2, N), item(Items.CORNFLOWER, 4, 3, N),
+                    item(Items.ALLIUM, 4, 3, N), item(Items.AZURE_BLUET, 4, 3, N), item(Items.ROSE_BUSH, 2, 4, N), item(Items.LILAC, 2, 4, N),
+                    item(Items.SUNFLOWER, 2, 5, F), item(Items.FLOWER_POT, 2, 4, N));
+            case CHARCOAL -> List.of(item(Items.CHARCOAL, 12, 5, N), item(Items.COAL, 12, 5, N), item(Items.CAMPFIRE, 1, 6, N),
+                    item(Items.TORCH, 16, 3, N), item(Items.COAL_BLOCK, 2, 18, F));
+            case MASON -> List.of(item(Items.COBBLESTONE, 32, 5, N), item(Items.STONE_BRICKS, 32, 8, N), item(Items.SMOOTH_STONE, 16, 8, N),
+                    item(Items.CHISELED_STONE_BRICKS, 8, 10, N), item(Items.POLISHED_ANDESITE, 16, 8, F), item(Items.DEEPSLATE_BRICKS, 16, 12, F));
+            case BREWER -> List.of(item(Items.HONEY_BOTTLE, 3, 8, N), item(Items.SUGAR, 8, 3, N), item(Items.WHEAT, 16, 3, N),
+                    item(Items.BARREL, 1, 8, N), item(Items.GLASS_BOTTLE, 6, 3, F));
+            case BEEKEEPER -> List.of(item(Items.HONEY_BOTTLE, 3, 7, N), item(Items.HONEYCOMB, 6, 6, N), item(Items.CANDLE, 6, 5, N),
+                    item(Items.HONEY_BLOCK, 2, 12, F), item(Items.BEEHIVE, 1, 40, F));
+            case BEGGAR -> List.of(item(Items.STICK, 8, 1, N), item(Items.STRING, 4, 2, N), item(Items.BOWL, 2, 1, N), item(Items.PAPER, 4, 2, N),
+                    item(Items.FILLED_MAP, 1, 12, F));
+            case PEDDLER -> List.of(item(Items.STRING, 12, 4, N), item(Items.SHEARS, 1, 8, N), item(Items.LEAD, 1, 8, N),
+                    item(Items.CANDLE, 4, 5, N), item(Items.COMPASS, 1, 22, F), item(Items.SPYGLASS, 1, 40, F), item(Items.NAME_TAG, 1, 30, H));
+            case GARDENER -> List.of(item(Items.OAK_SAPLING, 4, 4, N), item(Items.BIRCH_SAPLING, 4, 4, N), item(Items.SPRUCE_SAPLING, 4, 4, N),
+                    item(Items.BONE_MEAL, 12, 4, N), item(Items.MOSS_BLOCK, 8, 6, N), item(Items.AZALEA, 2, 8, N), item(Items.FLOWERING_AZALEA, 2, 10, F),
+                    item(Items.CHERRY_SAPLING, 2, 12, F));
+            case BERRYPICKER -> List.of(item(Items.SWEET_BERRIES, 16, 3, N), item(Items.APPLE, 6, 4, N), item(Items.MELON_SLICE, 12, 3, N),
+                    item(Items.GLOW_BERRIES, 8, 6, F));
+            case WOODCARVER -> List.of(item(Items.BOWL, 4, 2, N), item(Items.STICK, 32, 2, N), item(Items.OAK_PLANKS, 32, 5, N),
+                    item(Items.ITEM_FRAME, 2, 6, N), item(Items.BOW, 1, 14, N), item(Items.ARMOR_STAND, 1, 12, F));
+            case WEAVER -> List.of(item(Items.STRING, 16, 4, N), item(Items.WHITE_WOOL, 8, 6, N), item(Items.GREEN_WOOL, 8, 7, N),
+                    item(Items.LIME_WOOL, 8, 7, N), item(Items.LIGHT_BLUE_WOOL, 8, 7, N), item(Items.WHITE_BANNER, 1, 10, F));
+            case BARD -> List.of(item(Items.NOTE_BLOCK, 1, 10, N), item(Items.BOOK, 2, 8, N), item(Items.FEATHER, 8, 3, N),
+                    item(Items.MUSIC_DISC_FAR, 1, 120, H), item(Items.MUSIC_DISC_STRAD, 1, 120, H));
+            case PROSPECTOR -> List.of(item(Items.RAW_IRON, 6, 12, N), item(Items.RAW_COPPER, 12, 8, N), item(Items.LAPIS_LAZULI, 8, 8, N),
+                    item(Items.REDSTONE, 12, 6, N), item(Items.AMETHYST_SHARD, 4, 10, F), item(Items.RAW_GOLD, 3, 14, F), item(Items.EMERALD, 1, 20, H));
+            case LAMPLIGHTER -> List.of(item(Items.LANTERN, 4, 8, N), item(Items.TORCH, 32, 3, N), item(Items.CHAIN, 4, 6, N),
+                    item(Items.SOUL_LANTERN, 2, 10, F), item(Items.GLOWSTONE, 2, 14, F));
+            case MUSHROOM -> List.of(item(Items.BROWN_MUSHROOM, 8, 3, N), item(Items.RED_MUSHROOM, 8, 3, N), item(Items.MUSHROOM_STEW, 1, 4, N),
+                    item(Items.GLOW_LICHEN, 8, 4, N), item(Items.SHROOMLIGHT, 2, 12, F));
+            case SKINNER -> List.of(item(Items.LEATHER, 6, 7, N), item(Items.RABBIT_HIDE, 6, 4, N), item(Items.BEEF, 6, 5, N),
+                    item(Items.LEATHER_HORSE_ARMOR, 1, 20, F));
+            case SWINEHERD -> List.of(item(Items.PORKCHOP, 8, 5, N), item(Items.COOKED_PORKCHOP, 6, 6, N), item(Items.CARROT, 12, 3, N),
+                    item(Items.LEAD, 1, 8, N), item(Items.CARROT_ON_A_STICK, 1, 10, F));
+            case BONECARVER -> List.of(item(Items.BONE, 12, 3, N), item(Items.BONE_MEAL, 16, 2, N), item(Items.BONE_BLOCK, 4, 8, N),
+                    item(Items.ARROW, 16, 4, F), item(Items.SKELETON_SKULL, 1, 80, H));
+            case DRUMMER -> List.of(item(Items.NOTE_BLOCK, 2, 10, N), item(Items.LEATHER, 4, 7, N), item(Items.STICK, 16, 2, N),
+                    item(Items.JUKEBOX, 1, 60, H));
+            case TRAPPER -> List.of(item(Items.RABBIT_HIDE, 6, 4, N), item(Items.RABBIT, 4, 4, N), item(Items.LEATHER, 4, 7, N),
+                    item(Items.LEAD, 1, 8, N), item(Items.RABBIT_FOOT, 1, 16, F));
+            case SULFUR -> List.of(item(Items.GUNPOWDER, 6, 8, N), item(Items.NETHERRACK, 32, 4, N), item(Items.MAGMA_CREAM, 2, 10, N),
+                    item(Items.BLAZE_POWDER, 2, 14, F), item(Items.BLAZE_ROD, 1, 22, H));
+            case FUNGUS -> List.of(item(Items.CRIMSON_FUNGUS, 6, 6, N), item(Items.WARPED_FUNGUS, 6, 6, N), item(Items.NETHER_WART, 6, 10, N),
+                    item(Items.SHROOMLIGHT, 2, 12, F), item(Items.WEEPING_VINES, 8, 6, F));
+            case OBSIDIAN -> List.of(item(Items.OBSIDIAN, 4, 16, N), item(Items.BLACKSTONE, 32, 5, N), item(Items.POLISHED_BLACKSTONE_BRICKS, 16, 8, N),
+                    item(Items.CRYING_OBSIDIAN, 2, 24, F), item(Items.LODESTONE, 1, 90, H));
+            case GLASS -> List.of(item(Items.GLASS, 16, 6, N), item(Items.GLASS_PANE, 16, 4, N), item(Items.RED_STAINED_GLASS, 8, 7, N),
+                    item(Items.BLACK_STAINED_GLASS, 8, 7, N), item(Items.GLASS_BOTTLE, 6, 3, N), item(Items.TINTED_GLASS, 4, 12, F));
+        };
+    }
+
+    /** Есть ли у жителя товар (у воинов, стражи и вождей торговли нет). */
+    public static boolean trades(RaceNpcEntity npc) {
+        return switch (npc.npcType().role) {
+            case TRADER, ARTISAN -> true;
+            case CITIZEN -> npc.job() != null;
+            default -> false;
+        };
+    }
+
     private static List<Ware> wares(RaceNpcEntity npc, RandomSource r) {
         if (npc.npcType().isArtisan() && npc.craft() != null) return craftWares(npc, npc.craft(), r);
+        if (npc.npcType().role == NpcType.Role.CITIZEN && npc.job() != null) return jobWares(npc.job());
         Faction.Tier N = Faction.Tier.NEUTRAL, F = Faction.Tier.FRIENDLY, H = Faction.Tier.HONORED, R = Faction.Tier.REVERED;
         Rarity U = Rarity.UNCOMMON, RA = Rarity.RARE, E = Rarity.EPIC;
         return switch (npc.npcType().race) {

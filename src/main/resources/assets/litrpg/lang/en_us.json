@@ -920,5 +920,15 @@
   "item.litrpg.beast_artisan_spawn_egg": "Beastkin Artisan Spawn Egg",
   "entity.litrpg.demon_artisan": "Demonkin Artisan",
   "item.litrpg.demon_artisan_spawn_egg": "Demonkin Artisan Spawn Egg",
-  "item.litrpg.parcel": "Parcel"
+  "item.litrpg.parcel": "Parcel",
+  "entity.litrpg.outlaw_thug": "Bandit",
+  "item.litrpg.outlaw_thug_spawn_egg": "Bandit Spawn Egg",
+  "entity.litrpg.outlaw_cultist": "Cultist",
+  "item.litrpg.outlaw_cultist_spawn_egg": "Cultist Spawn Egg",
+  "entity.litrpg.pirate_cutthroat": "Pirate Cutthroat",
+  "item.litrpg.pirate_cutthroat_spawn_egg": "Pirate Cutthroat Spawn Egg",
+  "entity.litrpg.pirate_gunner": "Pirate Gunner",
+  "item.litrpg.pirate_gunner_spawn_egg": "Pirate Gunner Spawn Egg",
+  "entity.litrpg.pirate_captain": "Pirate Captain",
+  "item.litrpg.pirate_captain_spawn_egg": "Pirate Captain Spawn Egg"
 }

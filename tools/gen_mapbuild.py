@@ -22,6 +22,7 @@ ASSETS = os.path.join(RES, 'assets', 'litrpg')
 POIS = []
 TILES = []
 WORKSHOPS = []
+ANCHORS = {}   # сюжетные места: город → имя → [x, y, z] (мировые)
 
 
 def place(build, name, ox, oy, oz, dim='overworld', tile=32):
@@ -29,6 +30,9 @@ def place(build, name, ox, oy, oz, dim='overworld', tile=32):
     assert ox % 16 == 0 and oz % 16 == 0, (name, ox, oz)
     for craft, npc, x, y, z in getattr(build, 'workshops', []):
         WORKSHOPS.append(dict(city=name, craft=craft, npc=npc, x=ox + x, y=oy + y, z=oz + z))
+    owner = getattr(build, 'anchor_city', name)
+    for k, (x, y, z) in getattr(build, 'anchors', {}).items():
+        ANCHORS.setdefault(owner, {})[k] = [ox + x, oy + y, oz + z]
     for dx, dz, tname in save_tiles(build, name, tile):
         TILES.append(dict(dim=dim, cx=(ox + dx) // 16, cz=(oz + dz) // 16, template='litrpg:map/' + tname, y=oy))
 
@@ -82,7 +86,7 @@ FLAT_R = 182  # ровная земля вокруг Аркадии (gen_world: 
 def arcadia(city):
     S = 384
     C = S // 2
-    b = City(S, 64, S, 'arcadia', 'human', ground=4)
+    b = City(S, 72, S, 'arcadia', 'human', ground=12)   # запас под землёй: тайный подвал сюжета
     G = b.G
     st = b.st
     WR = 112  # радиус стен
@@ -295,6 +299,24 @@ def arcadia(city):
     b.round_tower(C + 64, C - 64, 6, 28, roof_block='minecraft:purple_terracotta')
     b.entities.append((C + 64, G, C - 64, 'litrpg:human_mage', {}))
 
+    # --- сюжет «Пепел под мостовой»: заброшенный склад с люком, подвал культа и святилище за треснувшей кладкой ---
+    import mapbuild_secrets as SEC
+    done = None
+    for rr in range(64, 100, 6):
+        for k in range(16):
+            a = math.pi * 1.1 + k * 2 * math.pi / 16
+            x0, z0 = int(C + math.cos(a) * rr) - 5, int(C + math.sin(a) * rr) - 4
+            if math.hypot(x0 + 5 - C, z0 + 4 - C) < WR - 14 and b.free(x0 - 3, z0 - 3, x0 + 13, z0 + 11) and \
+                    not any(abs(x - C) <= 5 or abs(z - C) <= 5 for x in (x0, x0 + 10) for z in (z0, z0 + 8)):
+                door = 'east' if x0 + 5 < C else 'west'
+                done = SEC.secret(b, x0, z0, 11, 9, G, 'human', 'ash_cult', door)
+                break
+        if done:
+            break
+    print('  тайник Аркадии:', done)
+    SEC.anchor(b, 'captain', *SEC.walk_spot(b, C + 27, C + 65, G, 5))
+    SEC.anchor(b, 'market', *SEC.walk_spot(b, C + 53, C - 18, G, 6))
+    SEC.anchor(b, 'gate', *SEC.walk_spot(b, C, C + WR - 10, G, 6))
     # --- жилые кварталы: кривые улочки, террасы, дома вдоль улиц ---
     b.reserve(C - 4, 0, C + 4, S - 1)
     b.reserve(0, C - 4, S - 1, C + 4)
@@ -318,6 +340,11 @@ def arcadia(city):
             if b.free(x, z, x, z) and ML._air(b, x, G, z):
                 b.lamp_post(x, z, 4)
     ML.outskirts(b, C, WR + 10, 'arcadia', 'litrpg:human_citizen', outer=FLAT_R - 4)
+    SEC.entity_anchor(b, 'chief', ['litrpg:human_lord'], b.anchors['gate'])
+    SEC.anchor(b, 'center', *SEC.walk_spot(b, C + 6, C + PR + 4, G, 8))
+    for craft, npc, x, y, z in b.workshops:
+        if 'craft_' + craft not in b.anchors:
+            SEC.anchor(b, 'craft_' + craft, x, y, z)
     return b
 
 
@@ -641,6 +668,7 @@ def main():
         ox, oz = chunk_origin(x, z, 41)
         TILES.append(dict(dim='overworld', cx=ox // 16, cz=oz // 16, template='litrpg:dungeon_' + key, y=y - GD.G))
         POIS.append(dict(type='dungeon', id='dungeon_' + key, name=titles[key], x=ox + 20, z=oz + 20, y=y, r=24, extra=key))
+        ANCHORS.setdefault('world', {})['dungeon_' + key] = [ox + 20, y, oz + 20]
         plan.take(ox + 20, oz + 20, 24)
         print(f'подземелье {titles[key]} ур.{lvl}: ({ox + 20}, {oz + 20}) y={y}, уровень места {plan.world.level(ox + 20, oz + 20)}')
 
@@ -767,6 +795,53 @@ def main():
         if spot:
             put_poi(plan, MP.ruins(i), f'ruins_{i}', 'ruins', 'Древние руины', *spot, 14)
 
+    # ---------------- пиратские корабли в открытом море ----------------
+    import mapbuild_pirates as MPI
+    sx, sz, sr, _ = data['seas'][0]
+    hv = cities['haven']
+    ships = []
+    k = 0
+    for deg in (330, 20, 75, 125, 175, 285):
+        if len(ships) >= 4:
+            break
+        a = math.radians(deg)
+        for rr in (sr * 0.55, sr * 0.45, sr * 0.65):
+            px, pz = sx + math.cos(a) * rr, sz + math.sin(a) * rr
+            if math.hypot(px - hv['x'], pz - hv['z']) < 380:
+                continue
+            deep = all(plan.world.sample(px + dx, pz + dz)[3] != 0 and plan.world.sample(px + dx, pz + dz)[0] < 55
+                       for dx in (-24, 0, 24) for dz in (-24, 0, 24))
+            if not deep:
+                continue
+            b = MPI.pirate_ship(k)
+            ox, oz = chunk_origin(px, pz, b.size[0])
+            place(b, f'pirates_{k}', ox, 63 - b.wl, oz)
+            title = ['«Чёрная Вдова»', '«Морской Змей»', '«Кровавая Мэри»', '«Ржавый Якорь»'][k % 4]
+            POIS.append(dict(type='pirates', id=f'pirates_{k}', name='Пиратский корабль ' + title, x=ox + b.size[0] // 2,
+                             z=oz + b.size[2] // 2, y=63, r=0))
+            ships.append((ox + b.size[0] // 2, oz + b.size[2] // 2))
+            print('пиратский корабль', title, ships[-1])
+            k += 1
+            break
+    if ships:
+        bx_, bz_ = min(ships, key=lambda p: math.hypot(p[0] - hv['x'], p[1] - hv['z']))
+        ANCHORS.setdefault('haven', {})['pirate_ship'] = [bx_, 66, bz_]
+
+    # ---------------- лагерь браконьеров у Стойбища (сюжет «Белый волк») ----------------
+    import mapbuild_secrets as SEC
+    wd = cities['wolfden']
+    for deg in range(0, 360, 30):
+        a = math.radians(deg + 15)
+        dist = FIT.get('wolfden', {}).get('flat', wd['flat']) + 90
+        spot = plan.find(wd['x'] + math.cos(a) * dist, wd['z'] + math.sin(a) * dist, 14, search=60)
+        if spot:
+            cb = City(32, 24, 32, 'poachers', 'beast', ground=4)
+            SEC.poacher_camp(cb, 16, 16, 4)
+            cb.anchor_city = 'wolfden'
+            put_poi(plan, cb, 'poachers', 'camp', 'Лагерь браконьеров', *spot, 14)
+            print('лагерь браконьеров', spot)
+            break
+
     # ---------------- Преисподняя (координаты ада) ----------------
     nether_flats = []
     b = MP.infernalis()
@@ -791,6 +866,9 @@ def main():
     data['fit'] = FIT
     data['tiles'] = TILES
     data['workshops'] = WORKSHOPS
+    data['anchors'] = ANCHORS
+    for cid_, m in ANCHORS.items():
+        print('сюжетные места', cid_, ', '.join(sorted(m)))
     print('мастерских:', len(WORKSHOPS))
     json.dump(data, open(MAP_JSON, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     from collections import Counter

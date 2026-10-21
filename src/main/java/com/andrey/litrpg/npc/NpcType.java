@@ -65,7 +65,13 @@ public enum NpcType {
     DWARF_ARTISAN("dwarf_artisan", Race.DWARF, Faction.DWARVES, Role.ARTISAN, 36, 4, 0.25),
     ORC_ARTISAN("orc_artisan", Race.ORC, Faction.ORCS, Role.ARTISAN, 38, 4, 0.28),
     BEAST_ARTISAN("beast_artisan", Race.BEASTKIN, Faction.BEASTKIN, Role.ARTISAN, 30, 3, 0.31),
-    DEMON_ARTISAN("demon_artisan", Race.DEMONKIN, Faction.DEMONKIN, Role.ARTISAN, 32, 3, 0.28);
+    DEMON_ARTISAN("demon_artisan", Race.DEMONKIN, Faction.DEMONKIN, Role.ARTISAN, 32, 3, 0.28),
+    // ---- разбойники, сектанты и пираты: враждебны всем (сюжеты городов, пиратские корабли) ----
+    OUTLAW_THUG("outlaw_thug", Race.HUMAN, Faction.ILLAGERS, Role.WARRIOR, 34, 6, 0.3),
+    OUTLAW_CULTIST("outlaw_cultist", Race.HUMAN, Faction.ILLAGERS, Role.MAGE, 28, 6, 0.28),
+    PIRATE_CUTTHROAT("pirate_cutthroat", Race.HUMAN, Faction.ILLAGERS, Role.WARRIOR, 36, 7, 0.3),
+    PIRATE_GUNNER("pirate_gunner", Race.HUMAN, Faction.ILLAGERS, Role.ARCHER, 30, 6, 0.3),
+    PIRATE_CAPTAIN("pirate_captain", Race.HUMAN, Faction.ILLAGERS, Role.CHIEF, 200, 12, 0.3);
 
     public enum Role { WARRIOR, ARCHER, MAGE, TRADER, CHIEF, GUARD, CITIZEN, ARTISAN }
 
@@ -90,6 +96,9 @@ public enum NpcType {
     public boolean fights() { return role != Role.TRADER && role != Role.CITIZEN && role != Role.ARTISAN; }
 
     public boolean isArtisan() { return role == Role.ARTISAN; }
+
+    /** Разбойник или пират: нападает на любого игрока, стража бьёт его без разговоров. */
+    public boolean outlaw() { return key.startsWith("outlaw_") || key.startsWith("pirate_"); }
 
     public static NpcType artisanOf(Faction f) {
         for (NpcType t : values()) if (t.role == Role.ARTISAN && t.faction == f) return t;
@@ -133,4 +142,23 @@ public enum NpcType {
     }
 
     public String nameKey() { return "entity.litrpg." + key; }
+
+    private static java.util.Map<String, String> ru;
+
+    /** Русское название типа (сервер не знает языка клиента — читаем ru_ru.json из мода). */
+    public String title() {
+        if (ru == null) {
+            java.util.Map<String, String> m = new java.util.HashMap<>();
+            try (var in = NpcType.class.getResourceAsStream("/assets/litrpg/lang/ru_ru.json")) {
+                if (in != null) {
+                    var o = com.google.gson.JsonParser.parseReader(new java.io.InputStreamReader(in, java.nio.charset.StandardCharsets.UTF_8))
+                            .getAsJsonObject();
+                    for (var e : o.entrySet()) if (e.getKey().startsWith("entity.litrpg.")) m.put(e.getKey(), e.getValue().getAsString());
+                }
+            } catch (Exception ignored) {
+            }
+            ru = m;
+        }
+        return ru.getOrDefault(nameKey(), key);
+    }
 }

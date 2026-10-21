@@ -68,6 +68,11 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
             net.minecraft.network.syncher.SynchedEntityData.defineId(RaceNpcEntity.class, net.minecraft.network.syncher.EntityDataSerializers.INT);
     private final NpcType npc;
     private boolean female;
+    /** Личное имя («Гаррет Ашфорд») и занятие горожанина; полное имя собирается в refreshName(). */
+    private String pname = "";
+    /** Имя героя сюжета («Капитан стражи Освальд») — показывается как есть. */
+    private String storyName = "";
+    @Nullable private Job job;
     private int chatterCooldown = 2 + (int) (Math.random() * 12);
     @Nullable private Player tradingPlayer;
     @Nullable private MerchantOffers offers;
@@ -102,13 +107,67 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
         entityData.set(CRAFT, c == null ? -1 : c.ordinal());
     }
 
-    /** Имя мастера: «Гаррет, кузнец». */
-    private void nameArtisan() {
-        Craft c = craft();
-        if (c == null || hasCustomName()) return;
-        female = random.nextInt(3) == 0;
-        String n = com.andrey.litrpg.city.Speech.name(npc.race, female, random);
-        setCustomName(Component.literal(n + ", " + (female ? c.titleF : c.title)));
+    @Nullable
+    public Job job() { return job; }
+
+    public String personalName() { return pname; }
+
+    public void setStoryName(String name) {
+        storyName = name;
+        pname = name;
+        job = null;
+        refreshName();
+    }
+
+    public boolean isFemale() { return female; }
+
+    /** Выдать имя (и занятие горожанину), если их ещё нет. */
+    public void ensureName() {
+        if (!pname.isEmpty()) return;
+        if (npc.role == NpcType.Role.CHIEF || npc.isGuard()) female = false;
+        else female = random.nextInt(npc.role == NpcType.Role.CITIZEN || npc.role == NpcType.Role.TRADER ? 2 : npc.outlaw() ? 6 : 3) == 0;
+        if (npc.key.startsWith("pirate_")) {
+            pname = Names.pirate(random);
+            female = false;
+        } else {
+            pname = Names.full(npc.race, female, random);
+        }
+        if (npc.role == NpcType.Role.CITIZEN && job == null) job = Job.random(npc.race, random);
+        refreshName();
+    }
+
+    /** Имя без фамилии и рода: «Серый Клык», «Торин», «Аэлин». */
+    private String shortName() {
+        String n = pname.split(" из ")[0].split(",")[0];
+        return npc.race == com.andrey.litrpg.stats.Race.BEASTKIN ? n : n.split(" ")[0];
+    }
+
+    /** Полное имя над головой: «Гаррет Ашфорд, гончар», «[Ур. 12] Гром Костолом, орк-налётчик», «Лорд-регент Аркадии Годрик». */
+    public void refreshName() {
+        if (pname.isEmpty()) return;
+        String type = npc.title();
+        String low = type.isEmpty() ? "" : Character.toLowerCase(type.charAt(0)) + type.substring(1);
+        String text = !storyName.isEmpty() ? storyName : switch (npc.role) {
+            case ARTISAN -> {
+                Craft c = craft();
+                yield pname + (c == null ? "" : ", " + (female ? c.titleF : c.title));
+            }
+            case CITIZEN -> pname + (job == null ? "" : ", " + job.title(female));
+            case TRADER -> pname + ", " + (female ? "торговка" : "торговец");
+            case CHIEF -> npc.key.startsWith("pirate_") ? "Капитан " + pname : type + " " + shortName();
+            default -> pname + ", " + low;
+        };
+        int lvl = getPersistentData().getInt(com.andrey.litrpg.event.MobLevels.TAG);
+        boolean showLevel = npc.fights() && lvl > 0;
+        net.minecraft.network.chat.MutableComponent name = Component.empty();
+        if (showLevel) {
+            ChatFormatting color = npc.isGuard() ? ChatFormatting.DARK_RED : lvl < 10 ? ChatFormatting.GRAY : lvl < 20 ? ChatFormatting.YELLOW
+                    : lvl < 35 ? ChatFormatting.GOLD : ChatFormatting.RED;
+            name.append(Component.literal("[Ур. " + lvl + "] ").withStyle(color));
+        }
+        name.append(Component.literal(text).withStyle(npc.outlaw() ? ChatFormatting.RED : npc.isGuard() ? ChatFormatting.GOLD : ChatFormatting.WHITE));
+        setCustomName(name);
+        setCustomNameVisible(false);
     }
 
     public static AttributeSupplier.Builder createAttributes(NpcType t) {
@@ -154,7 +213,12 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
             targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 5, false, false,
                     e -> e instanceof Player p && (com.andrey.litrpg.city.CityLaw.isWanted(p) || hostileTo(p))));
             targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, net.minecraft.world.entity.Mob.class, 10, false, false,
-                    e -> e instanceof Enemy && com.andrey.litrpg.ability.Minions.ownerOf(e) == null));
+                    e -> (e instanceof Enemy && com.andrey.litrpg.ability.Minions.ownerOf(e) == null)
+                            || e instanceof RaceNpcEntity o && o.npcType().outlaw()));
+        } else if (npc.outlaw()) {
+            targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
+            targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false,
+                    e -> e instanceof Player p && hostileTo(p)));
         } else if (npc.fights()) {
             targetSelector.addGoal(1, new HurtByTargetGoal(this, RaceNpcEntity.class).setAlertOthers());
             targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false,
@@ -167,6 +231,7 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
     /** Народ ненавидит игрока — нападать без предупреждения. */
     public boolean hostileTo(Player p) {
         if (p.isCreative() || p.isSpectator()) return false;
+        if (npc.outlaw()) return true;
         int rep = StatsManager.get(p).getRep(npc.faction);
         return rep < Faction.Tier.UNFRIENDLY.from;
     }
@@ -178,10 +243,8 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason,
                                         @Nullable SpawnGroupData data, @Nullable CompoundTag tag) {
         SpawnGroupData result = super.finalizeSpawn(level, difficulty, reason, data, tag);
-        if (npc.isArtisan()) {
-            if (craft() == null) setCraft(Craft.values()[random.nextInt(Craft.values().length)]);
-            nameArtisan();
-        }
+        if (npc.isArtisan() && craft() == null) setCraft(Craft.values()[random.nextInt(Craft.values().length)]);
+        ensureName();
         equip();
         setPersistenceRequired();
         restrictTo(blockPosition(), homeRadius());
@@ -219,6 +282,29 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
             });
             setItemSlot(EquipmentSlot.MAINHAND, tool);
             setDropChance(EquipmentSlot.MAINHAND, 0f);
+            return;
+        }
+        if (npc.role == NpcType.Role.CITIZEN && job != null) {
+            setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(job.tool));
+            setDropChance(EquipmentSlot.MAINHAND, 0f);
+            return;
+        }
+        if (npc.outlaw()) {
+            setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(switch (npc) {
+                case OUTLAW_THUG -> Items.IRON_AXE;
+                case OUTLAW_CULTIST -> ModItems.APPRENTICE_STAFF.get();
+                case PIRATE_GUNNER -> Items.CROSSBOW;
+                case PIRATE_CAPTAIN -> Items.GOLDEN_SWORD;
+                default -> Items.IRON_SWORD;
+            }));
+            setDropChance(EquipmentSlot.MAINHAND, 0.05f);
+            if (npc.key.startsWith("pirate_")) {
+                ItemStack hat = new ItemStack(Items.LEATHER_HELMET);
+                ((net.minecraft.world.item.DyeableLeatherItem) Items.LEATHER_HELMET).setColor(hat,
+                        npc == NpcType.PIRATE_CAPTAIN ? 0x1A1A1A : random.nextBoolean() ? 0xA02020 : 0x303A60);
+                setItemSlot(EquipmentSlot.HEAD, hat);
+                setDropChance(EquipmentSlot.HEAD, 0f);
+            }
             return;
         }
         ItemStack main = switch (npc.role) {
@@ -300,6 +386,10 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
 
     @Override
     public void aiStep() {
+        if (!level().isClientSide && pname.isEmpty() && tickCount > 2) {
+            ensureName();
+            if (npc.role == NpcType.Role.CITIZEN && getMainHandItem().isEmpty()) equip();
+        }
         if (!level().isClientSide && tickCount % 20 == 0) {
             boolean was = idle;
             idle = getTarget() == null && getLastHurtByMob() == null && bossEvent == null
@@ -383,6 +473,16 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
     protected void dropCustomDeathLoot(DamageSource source, int looting, boolean hit) {
         super.dropCustomDeathLoot(source, looting, hit);
         boolean chief = npc.role == NpcType.Role.CHIEF;
+        if (npc.outlaw()) {
+            // разбойники: монеты, у капитана — ещё и снаряжение Системы
+            for (ItemStack c : LootRolls.coinStacks((chief ? 160 : 10) + random.nextInt(chief ? 120 : 14))) spawnAtLocation(c);
+            if (chief) {
+                int lvl = Math.max(1, getPersistentData().getInt(com.andrey.litrpg.event.MobLevels.TAG));
+                spawnAtLocation(com.andrey.litrpg.gear.GearGen.random(random, lvl,
+                        random.nextFloat() < 0.3f ? com.andrey.litrpg.gear.Rarity.EPIC : com.andrey.litrpg.gear.Rarity.RARE));
+            }
+            return;
+        }
         if (random.nextFloat() < (chief ? 1f : 0.35f)) spawnAtLocation(new ItemStack(token(), chief ? 3 + random.nextInt(3) : 1));
         for (ItemStack c : LootRolls.coinStacks((chief ? 120 : 6) + random.nextInt(chief ? 80 : 10))) spawnAtLocation(c);
     }
@@ -402,11 +502,21 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
-        if (!isAlive() || getTarget() == player) return super.mobInteract(player, hand);
+        if (!isAlive() || getTarget() == player || npc.outlaw()) return super.mobInteract(player, hand);
         if (npc.role == NpcType.Role.CITIZEN) {
             if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
-            if (!level().isClientSide) com.andrey.litrpg.city.Gossip.talk((ServerPlayer) player, this);
-            return InteractionResult.sidedSuccess(level().isClientSide);
+            if (level().isClientSide) return InteractionResult.SUCCESS;
+            ServerPlayer sp = (ServerPlayer) player;
+            // слух — всегда; торговля — если есть занятие и житель не держит зла
+            com.andrey.litrpg.city.Gossip.talk(sp, this);
+            if (job != null && !player.isShiftKeyDown() && StatsManager.get(sp).getRep(npc.faction) >= Faction.Tier.NEUTRAL.from) {
+                offers = NpcTrades.offers(this, StatsManager.get(sp).getRep(npc.faction));
+                if (!offers.isEmpty()) {
+                    setTradingPlayer(player);
+                    openTradingScreen(player, getDisplayName(), 1);
+                }
+            }
+            return InteractionResult.CONSUME;
         }
         if (npc.isArtisan()) {
             if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
@@ -576,6 +686,9 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
         super.addAdditionalSaveData(tag);
         if (craft() != null) tag.putString("Craft", craft().key);
         tag.putBoolean("Female", female);
+        if (!pname.isEmpty()) tag.putString("PName", pname);
+        if (!storyName.isEmpty()) tag.putString("SName", storyName);
+        if (job != null) tag.putString("Job", job.name());
         if (hasRestriction()) {
             tag.putInt("HomeX", getRestrictCenter().getX());
             tag.putInt("HomeY", getRestrictCenter().getY());
@@ -588,6 +701,9 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
         super.readAdditionalSaveData(tag);
         if (tag.contains("Craft")) setCraft(Craft.byKey(tag.getString("Craft")));
         female = tag.getBoolean("Female");
+        pname = tag.getString("PName");
+        storyName = tag.getString("SName");
+        job = tag.contains("Job") ? Job.byKey(tag.getString("Job")) : null;
         if (tag.contains("HomeX")) {
             restrictTo(new net.minecraft.core.BlockPos(tag.getInt("HomeX"), tag.getInt("HomeY"), tag.getInt("HomeZ")), homeRadius());
         }

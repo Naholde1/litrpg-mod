@@ -70,6 +70,8 @@ public final class QuestEvents {
             for (Quest q : StatsManager.get(p).quests().tracked()) {
                 if (q.type != Quest.Type.KILL || q.isComplete()) continue;
                 QuestTarget t = QuestTarget.byKey(q.target);
+                // охота «у деревни»: считаются только твари рядом с местом
+                if (q.hasPos && q.rad > 0 && dead.distanceToSqr(q.px + 0.5, dead.getY(), q.pz + 0.5) > (double) q.rad * q.rad) continue;
                 if (t != null && t.matches(dead)) {
                     q.have++;
                     changed = true;
@@ -196,6 +198,7 @@ public final class QuestEvents {
         }
         StatsManager.message(p, Component.literal("✔ " + q.title).withStyle(ChatFormatting.GREEN));
         StatsManager.message(p, Component.literal(sb.toString()).withStyle(ChatFormatting.GOLD));
+        if (q.source == Quest.Source.CHAIN) StoryEngine.advance(p, q);
     }
 
     public static String coinText(int copper) {
@@ -238,7 +241,17 @@ public final class QuestEvents {
         Quest q = null;
         for (Quest o : list) if (o.id.equals(id)) q = o;
         if (q == null) return;
-        if (log.active.size() >= QuestLog.MAX_ACTIVE) {
+        if (q.source == Quest.Source.CHAIN) {
+            Quest fresh = StoryEngine.refresh(p, q);
+            list.remove(q);
+            if (fresh == null) {
+                StatsManager.message(p, Component.literal("Этот сюжет уже идёт или пройден.").withStyle(ChatFormatting.GRAY));
+                StatsManager.sync(p);
+                return;
+            }
+            q = fresh;
+            list.add(q);
+        } else if (log.regularCount() >= QuestLog.MAX_ACTIVE) {
             StatsManager.message(p, Component.literal("Слишком много заданий (максимум " + QuestLog.MAX_ACTIVE + "). Выполните или откажитесь от какого-нибудь.")
                     .withStyle(ChatFormatting.RED));
             return;
@@ -302,6 +315,7 @@ public final class QuestEvents {
     /** Указать путь к подземелью, где живёт босс из задания. */
     public static void locate(ServerPlayer p, String id) {
         Quest q = StatsManager.get(p).quests().find(id);
+        if (q != null && StoryEngine.locate(p, q)) return;
         if (q != null && q.hasPos) {
             CityQuests.waypoint(p, q);
             return;

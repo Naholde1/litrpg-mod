@@ -106,9 +106,9 @@ def moon_temple(b, cx, cz, r=9):
 
 def sylvendar(city, gates):
     from mapbuild_cities import giant_tree
-    S, G = 256, 4
+    S, G = 256, 12   # запас под землёй: тайный подвал сюжета
     gates = list(gates) + [gates[0] + math.pi]
-    t = Town('sylvendar', S, 'elf', 92, gates, sides=9, ground=G, height=110)
+    t = Town('sylvendar', S, 'elf', 92, gates, sides=9, ground=G, height=118)
     b, C = t.b, t.C
     t.paint_base()
     t.walls('hedge', h=5, gate_r=4)
@@ -180,6 +180,8 @@ def sylvendar(city, gates):
                     b.set(x, G, z, 'minecraft:' + ('lily_of_the_valley' if r == 3 else 'blue_orchid'))
         b.set((x0 + x1) // 2, G, (z0 + z1) // 2, 'minecraft:budding_amethyst')
         b.reserve(*sp)
+    import mapbuild_secrets as SEC
+    SEC.town_secret(t, 'rot', t.gates[0] + math.pi / 2, 32)   # «Увядающее Древо»: хижина садовника у самого Древа
     t.quarters(_crafts('sylvendar'), 'litrpg:elf_citizen', 'litrpg:elf_trader', terrace=1, market=(18, 13),
                market_crafts=['herbalist', 'tailor', 'jeweler', 'alchemist', 'fletcher'], kinds=('home', 'library', 'home'), floors=(1, 2, 2),
                sizes=((6, 9), (6, 9)), density=2.4)
@@ -191,6 +193,8 @@ def sylvendar(city, gates):
             if t.in_walls(x, z, 2) and b.blocks.get((x, G - 1, z), ('',))[0] == 'minecraft:grass_block' and (x, G, z) not in b.blocks:
                 if rnd.random() < 0.08:
                     b.set(x, G, z, 'minecraft:' + rnd.choice(['lily_of_the_valley', 'allium', 'blue_orchid', 'azure_bluet', 'grass', 'fern']))
+    SEC.finish(t, ['litrpg:elf_moonsage'])
+    SEC.anchor(b, 'tree', *SEC.walk_spot(b, C + 8, C, G, 6))
     return b
 
 
@@ -394,6 +398,8 @@ def khazad(city, gates):
     sp = t.spot(20, 11, gate_a + 0.5, t.WR - 24)
     if sp:
         b.house(sp[0], sp[1], 20, 11, floors=2, door=t.facing_center(*sp), interior='guard', npc='litrpg:dwarf_ironguard')
+    import mapbuild_secrets as SEC
+    SEC.town_secret(t, 'goblin_forge', gate_a - 0.7, 60)    # «Рунный ключ»: сторожка старой штольни
     t.quarters(_crafts('khazad', drop=('innkeeper',)), 'litrpg:dwarf_citizen', 'litrpg:dwarf_smith', terrace=2, market=(20, 13),
                market_crafts=['jeweler', 'butcher', 'baker', 'alchemist', 'leatherworker'], kinds=('home', 'smith', 'shop', 'home'),
                floors=(1, 2, 2, 3), density=1.4)
@@ -405,6 +411,7 @@ def khazad(city, gates):
                 if ML._air(b, x, G, z) and ML._air(b, x, G + 1, z):
                     rune_pillar(b, x, z, 4)
     t.countryside('litrpg:dwarf_citizen', 'dwarf', n_fields=6)
+    SEC.finish(t, ['litrpg:dwarf_thane', 'litrpg:dwarf_runepriest'])
     return b
 
 
@@ -535,8 +542,8 @@ def _tents_in_yards(t, n, colors, npcs, seed):
 
 def ghardum(city, gates):
     from mapbuild_cities import arena, bonfire, totem
-    S, G = 224, 4
-    t = Town('ghardum', S, 'orc', 80, gates, sides=9, ground=G, height=72)
+    S, G = 224, 12
+    t = Town('ghardum', S, 'orc', 80, gates, sides=9, ground=G, height=80)
     b, C = t.b, t.C
     t.paint_base()
     t.walls('palisade', h=8, gate_r=4)
@@ -602,11 +609,15 @@ def ghardum(city, gates):
     n2 = tent_camp(t, 26, 24, gate_a - math.pi * 0.75, 54, ['brown', 'red', 'black'], ['litrpg:orc_citizen', None],
                    ['minecraft:coarse_dirt', 'minecraft:packed_mud'])
     print('  шатров:', n1 + n2)
+    import mapbuild_secrets as SEC
+    SEC.town_secret(t, 'bloodcap', gate_a + math.pi * 0.35, 40)   # «Кровь на арене»: лавка менялы с ямой под полом
+    SEC.anchor(b, 'arena', *SEC.walk_spot(b, C + 15, C, G, 5))
     t.quarters(_crafts('ghardum'), 'litrpg:orc_citizen', 'litrpg:orc_trader', terrace=1, market=(18, 12),
                market_crafts=['butcher', 'leatherworker', 'herbalist', 'fletcher'], floors=(1, 1, 2), sizes=((6, 9), (6, 8)), npc_chance=0.35,
                kinds=('home', 'guard', 'home'), density=1.2)
     t.lamps_on_avenues(every=11)
     t.countryside('litrpg:orc_citizen', 'orc', n_fields=6)
+    SEC.finish(t, ['litrpg:orc_warlord'])
     return b
 
 
@@ -616,9 +627,9 @@ def ghardum(city, gates):
 
 def wolfden(city, gates):
     from mapbuild_cities import tent, bonfire, totem
-    S, G = 192, 4
+    S, G = 192, 12
     gates = list(gates) + [gates[0] + math.pi]
-    t = Town('wolfden', S, 'beast', 68, gates, sides=8, ground=G, height=64)
+    t = Town('wolfden', S, 'beast', 68, gates, sides=8, ground=G, height=72)
     b, C = t.b, t.C
     t.paint_base()
     t.walls('palisade', h=7, gate_r=4)
@@ -659,11 +670,15 @@ def wolfden(city, gates):
     n1 = tent_camp(t, 26, 24, gate_a - math.pi * 0.3, 40, ['brown', 'white', 'light_gray'], ['litrpg:beast_citizen', None],
                    ['minecraft:podzol', 'minecraft:coarse_dirt'])
     print('  шатров:', n1)
+    import mapbuild_secrets as SEC
+    SEC.town_secret(t, 'den', gate_a - math.pi * 0.7, 36)   # «Белый волк»: нора шамана
     t.quarters(_crafts('wolfden'), 'litrpg:beast_citizen', 'litrpg:beast_trader', terrace=1, market=(14, 10),
                market_crafts=['leatherworker', 'herbalist', 'butcher'], floors=(1, 1, 2), sizes=((5, 8), (6, 8)), npc_chance=0.35,
                kinds=('home', 'home', 'guard'), density=1.2)
     t.lamps_on_avenues(every=10)
     t.countryside('litrpg:beast_citizen', 'beast', n_fields=4)
+    SEC.finish(t, ['litrpg:beast_alpha'])
+    SEC.anchor(b, 'totem', *SEC.walk_spot(b, C + 4, C + 4, G, 6))
     return b
 
 
@@ -686,8 +701,8 @@ def obsidian_spire(b, x, z, h=14):
 
 def ashgrad(city, gates):
     from mapbuild_cities import ziggurat
-    S, G = 224, 6
-    t = Town('ashgrad', S, 'demon', 78, gates, sides=8, ground=G, height=80)
+    S, G = 224, 12
+    t = Town('ashgrad', S, 'demon', 78, gates, sides=8, ground=G, height=86)
     b, C = t.b, t.C
     t.paint_base()
     # лавовый ров за стенами (мосты у ворот), под лавой — магма и чернокамень; ограда по внешнему краю
@@ -735,6 +750,8 @@ def ashgrad(city, gates):
     if sp:
         hall(b, sp[0], sp[1], 18, 14, t.facing_center(*sp), floors=3, roof=b.st['roofs'][1], interior='library', npc='litrpg:demon_trader',
              tower='minecraft:nether_bricks')
+    import mapbuild_secrets as SEC
+    SEC.town_secret(t, 'void', t.gates[0] + math.pi * 0.3, 46)   # «Шёпот из обсидиана»: часовня с комнатой шёпота
     t.quarters(_crafts('ashgrad', drop=('blacksmith',)), 'litrpg:demon_citizen', 'litrpg:demon_trader', terrace=2, market=(18, 13),
                market_crafts=['alchemist', 'jeweler', 'tailor', 'butcher'], kinds=('home', 'library', 'shop'), density=1.4)
     for (a, r0, r1, half) in t.avenues:
@@ -747,6 +764,7 @@ def ashgrad(city, gates):
                     b.set(x, G + 1, z, 'minecraft:nether_brick_fence', waterlogged='false')
                     b.set(x, G + 2, z, 'minecraft:soul_lantern', hanging='false', waterlogged='false')
     t.countryside('litrpg:demon_citizen', 'demon', n_fields=10, wall_pad=12)
+    SEC.finish(t, ['litrpg:demon_cultist'])
     return b
 
 
@@ -765,8 +783,8 @@ FORTS = {
 def fort(city, gates, cid):
     import mapbuild_castle as MCS
     cfg = FORTS[cid]
-    S, G = 192, 4
-    t = Town(cid, S, 'human', 68, gates, sides=8, ground=G, height=72)
+    S, G = 192, 12
+    t = Town(cid, S, 'human', 68, gates, sides=8, ground=G, height=80)
     b, C = t.b, t.C
     b.st = dict(b.st, banner=cfg['banner'])
     if cfg['found']:
@@ -829,8 +847,11 @@ def fort(city, gates, cid):
         sp = t.spot(16, 10, a + 0.45, t.WR - 18)
         if sp:
             b.house(sp[0], sp[1], 16, 10, floors=2, door=t.facing_center(*sp), interior='guard', npc='litrpg:human_knight')
+    import mapbuild_secrets as SEC
+    SEC.town_secret(t, {'dawnfort': 'goblin_gold', 'northwatch': 'ice_crypt', 'blackbastion': 'necro'}[cid], gate_a + math.pi / 2, 40)
     t.quarters(_crafts('fort'), 'litrpg:human_citizen', 'litrpg:human_merchant', terrace=1, market=(14, 10),
                market_crafts=['baker', 'butcher', 'farmer'], kinds=('home', 'guard', 'smith'), floors=(1, 2, 2), density=1.6)
     t.lamps_on_avenues(every=9)
     t.countryside('litrpg:human_citizen', 'human', n_fields=10)
+    SEC.finish(t, ['litrpg:human_knight'])
     return b

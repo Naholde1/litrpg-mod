@@ -78,7 +78,7 @@ public class QuestBoardScreen extends SystemScreen {
         y += 2;
         g.fill(x, y, left + W - 10, y + 1, UiKit.FRAME_DIM);
         y += 5;
-        g.drawString(font, "Ваши задания (" + log.active.size() + "/" + QuestLog.MAX_ACTIVE + ")", x, y, UiKit.GOLD, false);
+        g.drawString(font, "Ваши задания (" + log.regularCount() + "/" + QuestLog.MAX_ACTIVE + ")", x, y, UiKit.GOLD, false);
         y += 12;
         for (Quest q : log.active) {
             if (y > top + H - 20) break;

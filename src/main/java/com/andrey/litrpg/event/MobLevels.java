@@ -102,9 +102,8 @@ public class MobLevels {
         if (mob instanceof com.andrey.litrpg.npc.RaceNpcEntity npc && npc.npcType().isGuard()) {
             if (!mob.getPersistentData().contains(TAG)) {
                 mob.getPersistentData().putInt(TAG, 80);
-                mob.setCustomName(Component.literal("[Ур. 80] ").withStyle(ChatFormatting.DARK_RED)
-                        .append(Component.empty().append(mob.getType().getDescription()).withStyle(ChatFormatting.GOLD)));
-                mob.setCustomNameVisible(false);
+                npc.ensureName();
+                npc.refreshName();
             }
             return;
         }
@@ -170,7 +169,9 @@ public class MobLevels {
         if (hasAffix(mob, Affix.BURNING)) mob.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, inf, 0, false, true));
         if (rank != Rank.NORMAL) mob.setPersistenceRequired();
 
-        if (!mob.hasCustomName()) {
+        if (mob instanceof com.andrey.litrpg.npc.RaceNpcEntity npc && !npc.personalName().isEmpty()) {
+            npc.refreshName();
+        } else if (!mob.hasCustomName()) {
             mob.setCustomName(displayName(mob, lvl, rank));
             // имя видно только при взгляде прямо на моба (как у ванильных именованных мобов)
             mob.setCustomNameVisible(false);

@@ -927,5 +927,15 @@
   "item.litrpg.beast_artisan_spawn_egg": "Яйцо призыва: Мастер-зверолюд",
   "entity.litrpg.demon_artisan": "Демонид-мастер",
   "item.litrpg.demon_artisan_spawn_egg": "Яйцо призыва: Демонид-мастер",
-  "item.litrpg.parcel": "Посылка"
+  "item.litrpg.parcel": "Посылка",
+  "entity.litrpg.outlaw_thug": "Разбойник",
+  "item.litrpg.outlaw_thug_spawn_egg": "Яйцо призыва: Разбойник",
+  "entity.litrpg.outlaw_cultist": "Сектант",
+  "item.litrpg.outlaw_cultist_spawn_egg": "Яйцо призыва: Сектант",
+  "entity.litrpg.pirate_cutthroat": "Пират-головорез",
+  "item.litrpg.pirate_cutthroat_spawn_egg": "Яйцо призыва: Пират-головорез",
+  "entity.litrpg.pirate_gunner": "Пират-стрелок",
+  "item.litrpg.pirate_gunner_spawn_egg": "Яйцо призыва: Пират-стрелок",
+  "entity.litrpg.pirate_captain": "Капитан пиратов",
+  "item.litrpg.pirate_captain_spawn_egg": "Яйцо призыва: Капитан пиратов"
 }

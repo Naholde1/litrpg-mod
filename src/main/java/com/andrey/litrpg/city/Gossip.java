@@ -29,7 +29,13 @@ public final class Gossip {
     public static void talk(ServerPlayer p, RaceNpcEntity npc) {
         var rnd = p.getRandom();
         String line = COMMON[rnd.nextInt(COMMON.length)];
-        if (SystemWorld.isOverworld(p.serverLevel()) && rnd.nextFloat() < 0.6f) {
+        // слух о сюжете города, пока он не пройден
+        WorldMap.City city = SystemWorld.isOverworld(p.serverLevel()) ? WorldMap.get().cityAt(npc.getX(), npc.getZ()) : null;
+        var chain = city == null ? null : com.andrey.litrpg.quest.CityStories.forCity(city.id());
+        boolean storyHint = chain != null && !com.andrey.litrpg.stats.StatsManager.get(p).quests().chainsDone.contains(chain.id) && rnd.nextFloat() < 0.35f;
+        if (storyHint) {
+            line = chain.hook + " (Сюжет «" + chain.title + "» — на досках мастеров.)";
+        } else if (SystemWorld.isOverworld(p.serverLevel()) && rnd.nextFloat() < 0.6f) {
             String hint = hint(p, rnd.nextInt(3));
             if (hint != null) line = hint;
         }

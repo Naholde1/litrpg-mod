@@ -121,7 +121,9 @@ CITIES = [
 CITY_SIZES = {'arcadia': 384, 'haven': 256, 'sylvendar': 256, 'khazad': 256, 'ghardum': 224, 'wolfden': 192, 'ashgrad': 224,
               'dawnfort': 192, 'northwatch': 192, 'blackbastion': 192}
 
-LEVELS = dict(slope=40, max=60)
+# уровни монстров: пояс safe блоков за стенами — уровень города; дальше +1 за slope блоков, после far — ещё +1 за far_slope;
+# у трактов рост вдвое медленнее (road_ease), у поселений — почти втрое (settle_ease)
+LEVELS = dict(slope=70, max=60, safe=48, far=500, far_slope=140, road_ease=0.5, settle_ease=0.65)
 
 # ---- дороги (точки) ----
 ROADS = [
@@ -745,7 +747,7 @@ def render_art(world, size=512):
     # поселения и подземелья — значки
     icons = {'village': ((120, 80, 40), 1), 'farm': ((150, 120, 40), 1), 'dungeon': ((150, 20, 20), 2), 'wonder': ((150, 40, 160), 2),
              'camp': ((90, 60, 30), 1), 'fishing': ((40, 80, 130), 1), 'lumber': ((60, 100, 40), 1), 'caravan': ((170, 120, 30), 1),
-             'outpost': ((80, 80, 80), 1), 'settlement': ((90, 60, 30), 1)}
+             'outpost': ((80, 80, 80), 1), 'settlement': ((90, 60, 30), 1), 'hamlet': ((140, 100, 50), 1), 'pirates': ((20, 20, 20), 2)}
     for poi in world.d['pois']:
         col, r = icons.get(poi['type'], ((60, 60, 60), 1))
         x, z = to_px(poi['x'], poi['z'])
@@ -824,6 +826,7 @@ def main():
         data['tiles'] = old.get('tiles', [])
         data['nether'] = old.get('nether', {})
         data['workshops'] = old.get('workshops', [])
+        data['anchors'] = old.get('anchors', {})
     # площадки городов и поселений: радиус — по реальному следу постройки (его посчитал gen_mapbuild.py, поле fit),
     # ширина склона — по перепаду высот с округой, чтобы постройки не висели и не уходили в склон
     fit = old.get('fit', {}) if os.path.exists(old_path) else {}
