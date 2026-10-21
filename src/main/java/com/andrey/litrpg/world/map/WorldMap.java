@@ -229,12 +229,16 @@ public final class WorldMap {
             }
         }
         for (double[] f : flats) {
+            double bl = f.length > 4 ? f[4] : 48;
             double dd = Math.hypot(x - f[0], z - f[1]);
-            if (dd < f[2] + 48) {
-                double k = sstep(f[2] + 48, f[2], dd);
+            if (dd < f[2] + bl) {
+                double k = sstep(f[2] + bl, f[2], dd);
+                // срез полуплоскостью: площадка только там, где (p - центр)·n < d (гавань, берег)
+                if (f.length > 7) k *= sstep(f[7] + 5, f[7], (x - f[0]) * f[5] + (z - f[1]) * f[6]);
+                if (k <= 0) continue;
                 H = lerp(H, f[3], k);
                 W = lerp(W, 1.0, k);
-                if (dd < f[2]) water = 0;
+                if (dd < f[2] && k > 0.99 && f[3] >= 63) water = 0;
             }
         }
         double c = Math.max(Math.abs(x), Math.abs(z));
@@ -317,6 +321,21 @@ public final class WorldMap {
         for (City c : cities) {
             double dx = x - c.x, dz = z - c.z;
             if (dx * dx + dz * dz < (double) c.core * c.core) return c;
+        }
+        return null;
+    }
+
+    /** Поселения, внутри которых не растёт лес мира (деревья и грибы не лезут во дворы). */
+    private static final java.util.Set<String> SETTLEMENTS = java.util.Set.of("village", "hamlet", "farm", "lumber", "fishing", "caravan", "outpost");
+    private final Map<Long, List<Poi>> settleGrid = new HashMap<>();
+
+    /** Поселение, на площадке которого точка (или null). */
+    public Poi settlementAt(double x, double z) {
+        List<Poi> l = settleGrid.get(key((int) Math.floor(x) >> 6, (int) Math.floor(z) >> 6));
+        if (l == null) return null;
+        for (Poi p : l) {
+            double dx = x - p.x(), dz = z - p.z(), r = p.r() + 4;
+            if (dx * dx + dz * dz < r * r) return p;
         }
         return null;
     }
@@ -464,6 +483,13 @@ public final class WorldMap {
             }
             if (root.has("nether") && root.getAsJsonObject("nether").has("flats")) {
                 for (double[] s : points(root.getAsJsonObject("nether").getAsJsonArray("flats"))) netherFlats.add(s);
+            }
+            for (Poi p : pois) {
+                if (p.r() <= 0 || !SETTLEMENTS.contains(p.type())) continue;
+                int rr = p.r() + 8;
+                for (int gx = (p.x() - rr) >> 6; gx <= (p.x() + rr) >> 6; gx++)
+                    for (int gz = (p.z() - rr) >> 6; gz <= (p.z() + rr) >> 6; gz++)
+                        settleGrid.computeIfAbsent(key(gx, gz), k -> new ArrayList<>()).add(p);
             }
             JsonObject lv = root.getAsJsonObject("levels");
             levelSlope = lv.get("slope").getAsDouble();

@@ -37,7 +37,8 @@ public class TerritoryBiomeSource extends BiomeSource {
         for (WorldMap.Territory t : map.territories) for (String b : t.biomes) biome(b);
         for (WorldMap.City c : map.cities) biome(c.biome());
         for (String b : new String[]{"litrpg:frontier_plains", "litrpg:frontier_woods", "litrpg:frontier_hills", "litrpg:frontier_taiga",
-                "litrpg:frontier_savanna", "litrpg:world_wall", "litrpg:city_lands", "litrpg:emerald_bay", "litrpg:silver_lake",
+                "litrpg:frontier_savanna", "litrpg:world_wall", "litrpg:city_lands", "litrpg:city_snow", "litrpg:city_steppe", "litrpg:city_ash",
+                "litrpg:city_stone", "litrpg:city_grove", "litrpg:emerald_bay", "litrpg:silver_lake",
                 "minecraft:river", "minecraft:frozen_river", "minecraft:beach", "minecraft:snowy_beach", "minecraft:lush_caves",
                 "minecraft:dripstone_caves", "minecraft:deep_dark"}) {
             biome(b);
@@ -85,6 +86,18 @@ public class TerritoryBiomeSource extends BiomeSource {
         int t = map.territoryAt(x, z);
         WorldMap.Territory terr = map.territory(t);
         boolean cold = terr != null ? terr.cold : z < -2600;
+        // площадка поселения — «обжитой» биом без леса: деревья и грибы мира не прорастают сквозь дворы и крыши
+        if (map.settlementAt(x, z) != null && map.waterAt(x, z) == 0) {
+            String id = terr == null ? "" : terr.id;
+            if (cold || id.equals("frost")) return "litrpg:city_snow";
+            return switch (id) {
+                case "orcs" -> "litrpg:city_steppe";
+                case "demonkin" -> "litrpg:city_ash";
+                case "deadlands", "dwarves" -> "litrpg:city_stone";
+                case "elves" -> "litrpg:city_grove";
+                default -> "litrpg:city_lands";
+            };
+        }
         switch (map.waterAt(x, z)) {
             case 1 -> { return cold ? "minecraft:frozen_river" : "minecraft:river"; }
             case 2 -> { return "litrpg:silver_lake"; }

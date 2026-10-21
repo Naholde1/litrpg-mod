@@ -102,6 +102,43 @@ public final class DevCommands {
         LitRPG.LOGGER.info("[dev] render {}px in {} ms", size, System.currentTimeMillis() - t0);
     }
 
+    /** Проверка площадок: настоящий рельеф (без загрузки чанков) под каждой площадкой против её высоты. */
+    private static void terrain(MinecraftServer server) {
+        var level = server.overworld();
+        var gen = level.getChunkSource().getGenerator();
+        var rs = level.getChunkSource().randomState();
+        var map = com.andrey.litrpg.world.map.WorldMap.get();
+        int bad = 0, total = 0;
+        for (double[] f : map.flats) {
+            if (f[3] < 63) continue; // гавани — под водой
+            String name = "?";
+            double best = 1e9;
+            for (var p : map.pois) {
+                double d = Math.hypot(p.x() - f[0], p.z() - f[1]);
+                if (d < best) { best = d; name = p.id(); }
+            }
+            int n = 0, off = 0, worst = 0;
+            int wx = 0, wz = 0;
+            int r = (int) f[2] - 2;
+            for (int dx = -r; dx <= r; dx += 4) {
+                for (int dz = -r; dz <= r; dz += 4) {
+                    if (dx * dx + dz * dz > r * r) continue;
+                    if (f.length > 7 && dx * f[5] + dz * f[6] > f[7] - 3) continue;
+                    int x = (int) f[0] + dx, z = (int) f[1] + dz;
+                    int h = gen.getBaseHeight(x, z, net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE_WG, level, rs);
+                    int dev = h - (int) f[3];
+                    n++;
+                    if (Math.abs(dev) > 1) off++;
+                    if (Math.abs(dev) > Math.abs(worst)) { worst = dev; wx = x; wz = z; }
+                }
+            }
+            total++;
+            if (off > 0) bad++;
+            LitRPG.LOGGER.info("[dev] terrain {} r={} y={}: {} точек, отклонений {}, худшее {} у {} {}", name, (int) f[2], (int) f[3], n, off, worst, wx, wz);
+        }
+        LitRPG.LOGGER.info("[dev] terrain done: площадок {}, с отклонениями {}", total, bad);
+    }
+
     private static String lastBoard = "";
 
     @SubscribeEvent
@@ -119,6 +156,10 @@ public final class DevCommands {
                     String[] a = line.split(" ");
                     double[] r = com.andrey.litrpg.world.map.WorldMap.get().compute(Double.parseDouble(a[1]), Double.parseDouble(a[2]));
                     LitRPG.LOGGER.info("[dev] map {} {} -> H={} W={} T={} water={}", a[1], a[2], r[0], r[1], r[2], r[3]);
+                    continue;
+                }
+                if (line.equals("devterrain")) {
+                    terrain(server);
                     continue;
                 }
                 if (line.startsWith("devrender")) {

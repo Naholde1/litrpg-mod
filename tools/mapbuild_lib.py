@@ -843,8 +843,61 @@ def finalize(b, name=''):
             if 'LootTable' not in nbt:
                 nbt['LootTable'] = 'litrpg:chests/' + ('city_barrel' if bl == 'minecraft:barrel' else 'city_home')
                 loot += 1
-    if cleared or sealed:
-        print(f'  {name}: входов расчищено {cleared}, утечек закрыто {sealed}, лут в {loot} ящиках')
+    # жители и животные не должны появляться внутри полных блоков (иначе «погребён заживо»)
+    moved = 0
+    ents = []
+    for e in b.entities:
+        x, y, z, eid = e[0], e[1], e[2], e[3]
+        if eid in ('minecraft:boat', 'minecraft:minecart', 'minecraft:painting', 'minecraft:armor_stand') or                 not (_suffocates(b, x, y, z) or _suffocates(b, x, y + 1, z)):
+            ents.append(e)
+            continue
+        spot = None
+        for dy in (0, 1, -1):
+            for r in range(1, 5):
+                for dx in range(-r, r + 1):
+                    for dz in range(-r, r + 1):
+                        if max(abs(dx), abs(dz)) != r:
+                            continue
+                        px, py, pz = x + dx, y + dy, z + dz
+                        if not _suffocates(b, px, py, pz) and not _suffocates(b, px, py + 1, pz) and _floor(b, px, py - 1, pz):
+                            spot = (px, py, pz)
+                            break
+                    if spot:
+                        break
+                if spot:
+                    break
+            if spot:
+                break
+        if spot:
+            ents.append((spot[0], spot[1], spot[2]) + tuple(e[3:]))
+            moved += 1
+    b.entities = ents
+    if cleared or sealed or moved:
+        print(f'  {name}: входов расчищено {cleared}, утечек закрыто {sealed}, лут в {loot} ящиках, жителей сдвинуто {moved}')
+
+
+_NOSUFF = ('air', 'slab', 'stairs', 'fence', '_wall', 'pane', 'bars', 'door', 'chest', 'lantern', 'chain', 'leaves', 'carpet', '_bed',
+           'anvil', 'cauldron', 'campfire', 'grass', 'fern', 'sapling', 'rail', 'torch', 'sign', 'banner', 'pressure_plate', 'button', 'lever',
+           'ladder', 'vine', 'water', 'lava', 'snow', 'cake', 'candle', 'pot', 'skull', 'head', 'bell', 'lectern', 'enchanting', 'brewing',
+           'grindstone', 'stonecutter', 'composter', 'scaffolding', 'cobweb', 'mushroom', 'wheat', 'carrots', 'potatoes', 'beetroots', 'wart',
+           'sweet_berry', 'sugar_cane', 'lily', 'dead_bush', 'end_rod', 'lightning_rod', 'conduit', 'cluster', 'poppy', 'dandelion', 'tulip',
+           'orchid', 'allium', 'bluet', 'daisy', 'cornflower', 'rose', 'lilac', 'peony', 'roots', 'fungus', 'flower', 'azalea', 'hopper')
+
+
+def _suffocates(b, x, y, z):
+    v = b.blocks.get((x, y, z))
+    if v is None:
+        return y < getattr(b, 'G', 0) - 1
+    if v[0].endswith(('grass_block', 'snow_block', 'mushroom_block', 'wart_block', 'moss_block', 'hay_block')):
+        return True
+    return not any(k in v[0] for k in _NOSUFF)
+
+
+def _floor(b, x, y, z):
+    v = b.blocks.get((x, y, z))
+    if v is None:
+        return y < getattr(b, 'G', 0)
+    return v[0] != 'minecraft:air' and 'water' not in v[0] and 'lava' not in v[0]
 
 
 def _patch_block(b, n):

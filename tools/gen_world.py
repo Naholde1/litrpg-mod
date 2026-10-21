@@ -93,29 +93,33 @@ RIVERS = [
 ]
 
 
-# ---- города: x, z, высота площадки, радиус охраны, базовый уровень округи ----
+# ---- города: x, z, высота площадки, радиус охраны (чуть больше шаблона — дороги начинаются у его края), базовый уровень ----
 CITIES = [
-    dict(id='arcadia', name='Аркадия', faction='kingdom', x=0, z=0, y=72, r=150, flat=185, level=1, guard='human_guard',
+    dict(id='arcadia', name='Аркадия', faction='kingdom', x=0, z=0, y=72, r=208, flat=185, level=1, guard='human_guard',
          desc='Столица Королевства. Здесь начинается путь каждого Избранного.'),
-    dict(id='haven', name='Солнечная Гавань', faction='kingdom', x=1535, z=925, y=68, r=100, flat=52, level=3, guard='human_guard',
+    dict(id='haven', name='Солнечная Гавань', faction='kingdom', x=1535, z=925, y=68, r=144, flat=52, level=3, guard='human_guard',
          desc='Портовый город на берегу Изумрудного залива.'),
-    dict(id='sylvendar', name='Сильвендар', faction='elves', x=-2800, z=-380, y=76, r=100, flat=96, level=7, guard='elf_sentinel',
+    dict(id='sylvendar', name='Сильвендар', faction='elves', x=-2800, z=-380, y=76, r=144, flat=96, level=7, guard='elf_sentinel',
          desc='Древний город эльфов среди исполинских деревьев.'),
-    dict(id='khazad', name='Кхазад-Бар', faction='dwarves', x=2700, z=-2560, y=168, r=100, flat=96, level=10, guard='dwarf_ironguard',
+    dict(id='khazad', name='Кхазад-Бар', faction='dwarves', x=2700, z=-2560, y=172, r=144, flat=96, level=10, guard='dwarf_ironguard',
          desc='Твердыня дварфов, высеченная в сердце гор.'),
-    dict(id='ghardum', name="Гхар'Дум", faction='orcs', x=2900, z=2620, y=90, r=100, flat=92, level=12, guard='orc_bloodguard',
+    dict(id='ghardum', name="Гхар'Дум", faction='orcs', x=2900, z=2620, y=90, r=128, flat=92, level=12, guard='orc_bloodguard',
          desc='Военный город Орды за стенами из брёвен и костей.'),
-    dict(id='wolfden', name='Стойбище Белого Волка', faction='beastkin', x=-2600, z=-3040, y=86, r=80, flat=72, level=9, guard='beast_fangguard',
+    dict(id='wolfden', name='Стойбище Белого Волка', faction='beastkin', x=-2600, z=-3040, y=88, r=112, flat=72, level=9, guard='beast_fangguard',
          desc='Сердце земель зверолюдов.'),
-    dict(id='ashgrad', name='Пеплград', faction='demonkin', x=-2850, z=2950, y=72, r=100, flat=96, level=16, guard='demon_hellguard',
+    dict(id='ashgrad', name='Пеплград', faction='demonkin', x=-2850, z=2950, y=76, r=128, flat=96, level=16, guard='demon_hellguard',
          desc='Город демонидов среди пепла и лавы.'),
-    dict(id='dawnfort', name='Форт Рассвет', faction='kingdom', x=-80, z=2560, y=70, r=70, flat=64, level=10, guard='human_guard',
+    dict(id='dawnfort', name='Форт Рассвет', faction='kingdom', x=-80, z=2560, y=74, r=112, flat=64, level=10, guard='human_guard',
          desc='Пограничная крепость Королевства у Гоблинских топей.'),
-    dict(id='northwatch', name='Северный Дозор', faction='kingdom', x=350, z=-3250, y=96, r=70, flat=64, level=20, guard='human_guard',
+    dict(id='northwatch', name='Северный Дозор', faction='kingdom', x=350, z=-3250, y=108, r=112, flat=64, level=20, guard='human_guard',
          desc='Застава у Ледяного Предела. Отсюда уходят смельчаки на север.'),
-    dict(id='blackbastion', name='Чёрный Бастион', faction='kingdom', x=3150, z=-350, y=84, r=70, flat=64, level=18, guard='human_guard',
+    dict(id='blackbastion', name='Чёрный Бастион', faction='kingdom', x=3150, z=-350, y=88, r=112, flat=64, level=18, guard='human_guard',
          desc='Последний оплот живых у Мёртвых Земель.'),
 ]
+
+# размер шаблона города (кратно 32) — gen_mapbuild строит под тот же размер
+CITY_SIZES = {'arcadia': 384, 'haven': 256, 'sylvendar': 256, 'khazad': 256, 'ghardum': 224, 'wolfden': 192, 'ashgrad': 224,
+              'dawnfort': 192, 'northwatch': 192, 'blackbastion': 192}
 
 LEVELS = dict(slope=40, max=60)
 
@@ -129,7 +133,7 @@ ROADS = [
     dict(name='Южный тракт', style='stone', points=[[0, 130], [-200, 700], [-350, 1500], [-200, 2100], [-80, 2560]]),
     dict(name='Пепельный путь', style='dirt', points=[[-350, 1500], [-1100, 2000], [-1900, 2500], [-2850, 2950]]),
     dict(name='Дозорная тропа', style='dirt', points=[[150, -500], [100, -1500], [250, -2400], [350, -3250]]),
-    dict(name='Восточный тракт', style='stone', points=[[1535, 925], [2200, 400], [2700, -50], [3150, -350]]),
+    dict(name='Восточный тракт', style='stone', points=[[1535, 925], [1560, 640], [2200, 400], [2700, -50], [3150, -350]]),
     dict(name='Топкая гать', style='dirt', points=[[-80, 2560], [150, 3000], [300, 3350]]),
 ]
 
@@ -259,7 +263,7 @@ def make_data():
         xs = [p[0] for p in pts]
         zs = [p[1] for p in pts]
         d['rivers'].append(dict(name=rv['name'], width=rv['width'], points=pts, box=[min(xs), min(zs), max(xs), max(zs)]))
-    sizes = {'arcadia': 256, 'wolfden': 112, 'dawnfort': 112, 'northwatch': 112, 'blackbastion': 112}
+    sizes = CITY_SIZES
     for c in CITIES:
         # центр города — так, чтобы шаблон начинался на границе чанка
         S = sizes.get(c['id'], 128)
@@ -395,6 +399,9 @@ def biome_json(bid, analog, opt):
             feats[VEG_STEPS].append('minecraft:patch_dead_bush_badlands')
     if opt.get('columns'):
         feats[VEG_STEPS].append('litrpg:charred_columns')
+    if bid.startswith('city_'):
+        # в городах и поселениях — ни лавовых озёр, ни источников: они пробивались из фундаментов и стенок прямо на улицы
+        feats = [[f for f in step if 'lake' not in f and 'spring' not in f] for step in feats]
     if opt.get('lava'):
         feats[1] = list(feats[1]) + ['minecraft:lake_lava_surface']
     if bid == 'bone_wastes':
@@ -789,6 +796,23 @@ def render_art(world, size=512):
     return img
 
 
+def flat_entry(world0, x, z, r, y, cut=None):
+    """[x, z, r, y, склон, (nx, nz, d)] — склон тем шире, чем сильнее округа отличается по высоте от площадки."""
+    dh = 0.0
+    for k in range(32):
+        a = 2 * math.pi * k / 32
+        for t in (r + 16, r + 40):
+            h, _, _, wat = world0.sample(x + math.cos(a) * t, z + math.sin(a) * t)
+            if wat and h < y:
+                continue  # вода ниже площадки — берег, склон не нужен
+            dh = max(dh, abs(h - y))
+    blend = int(max(40, min(120, 28 + 1.5 * dh)))
+    e = [x, z, r, y, blend]
+    if cut:
+        e += list(cut)
+    return e
+
+
 def main():
     data = make_data()
     world = World(data)
@@ -800,10 +824,27 @@ def main():
         data['tiles'] = old.get('tiles', [])
         data['nether'] = old.get('nether', {})
         data['workshops'] = old.get('workshops', [])
-    # площадки поселений (их радиус и высоту выбрал gen_mapbuild.py)
+    # площадки городов и поселений: радиус — по реальному следу постройки (его посчитал gen_mapbuild.py, поле fit),
+    # ширина склона — по перепаду высот с округой, чтобы постройки не висели и не уходили в склон
+    fit = old.get('fit', {}) if os.path.exists(old_path) else {}
+    data['fit'] = fit
+    world0 = World(dict(data, flats=[]))
+    data['flats'] = []
+    for c in data['cities']:
+        f = fit.get(c['id'], {})
+        c['flat'] = f.get('flat', c['flat'])
+        data['flats'].append(flat_entry(world0, c['x'], c['z'], c['flat'], c['y'], f.get('cut')))
+        for e in f.get('extra', []):
+            data['flats'].append(e)
     for p in data['pois']:
         if p.get('r'):
-            data['flats'].append([p['x'], p['z'], p['r'], p['y']])
+            f = fit.get(p['id'], {})
+            data['flats'].append(flat_entry(world0, p['x'], p['z'], p['r'], p['y'], f.get('cut')))
+            for e in f.get('extra', []):
+                data['flats'].append(e)
+    # тропы от деревень к трактам
+    data['spurs'] = old.get('spurs', []) if os.path.exists(old_path) else []
+    data['roads'] = data['roads'] + data['spurs']
     # высоты городов: проверка суши
     for c in CITIES:
         h, _, t, _ = World(dict(data, flats=[])).sample(c['x'], c['z'])

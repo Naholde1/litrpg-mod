@@ -387,8 +387,13 @@ class Planner:
 
     def __init__(self, data):
         self.data = data
-        self.world = World(dict(data, flats=[[c['x'], c['z'], c['flat'], c['y']] for c in data['cities']]))
-        self.taken = [(c['x'], c['z'], c['flat'] + 40) for c in data['cities']]
+        flats = []
+        for c in data['cities']:
+            f = FIT.get(c['id'], {})
+            flats.append([c['x'], c['z'], f.get('flat', c['flat']), c['y'], 60] + list(f.get('cut', [])))
+            flats += f.get('extra', [])
+        self.world = World(dict(data, flats=flats))
+        self.taken = [(c['x'], c['z'], FIT.get(c['id'], {}).get('flat', c['flat']) + 50) for c in data['cities']]
 
     def ok(self, x, z, r, terr=None):
         if max(abs(x), abs(z)) > 4300:
@@ -422,13 +427,13 @@ class Planner:
                     return int(px), int(pz), y
         return None
 
-    def find_level(self, cx, cz, level, r, terr):
+    def find_level(self, cx, cz, level, r, terr, tol=1):
         best = None
         for d in range(140, 2200, 20):
             for k in range(36):
                 a = 2 * math.pi * k / 36
                 px, pz = cx + math.cos(a) * d, cz + math.sin(a) * d
-                if abs(self.world.level(px, pz) - level) > 1:
+                if abs(self.world.level(px, pz) - level) > tol:
                     continue
                 y = self.ok(px, pz, r, terr)
                 if y is not None:
@@ -439,20 +444,97 @@ class Planner:
         self.taken.append((x, z, r))
 
 
+def footprint_r(b):
+    """Радиус следа постройки от центра плитки: все колонны, где есть блоки на уровне земли и выше
+    (за срезом b.fit['cut'] — вода, там площадка не нужна)."""
+    G = b.G
+    cx, cz = b.size[0] / 2, b.size[2] / 2
+    cut = getattr(b, 'fit', {}).get('cut')
+    cols = set()
+    for (x, y, z), v in b.blocks.items():
+        if y >= G - 1 and v[0] != 'minecraft:air':
+            cols.add((x, z))
+    best = 0.0
+    for (x, z) in cols:
+        dx, dz = x + 0.5 - cx, z + 0.5 - cz
+        if cut and dx * cut[0] + dz * cut[1] > cut[2]:
+            continue
+        best = max(best, math.hypot(dx, dz))
+    return int(math.ceil(best))
+
+
+FIT = {}
+
+
+def fit_of(b, wx, wz, flat):
+    """Параметры площадки для gen_world: радиус, срез и доп. площадки (в мировых координатах)."""
+    f = dict(flat=flat)
+    bf = getattr(b, 'fit', None)
+    if bf:
+        if bf.get('cut'):
+            f['cut'] = [round(v, 4) for v in bf['cut']]
+        if bf.get('extra'):
+            f['extra'] = [[wx + e[0], wz + e[1]] + list(e[2:]) for e in bf['extra']]
+    return f
+
+
 def put_poi(plan, build, name, kind, title, x, z, y, r, extra='', ground=None, tile_name=None):
     size = build.size[0]
     ox, oz = chunk_origin(x, z, size)
     cx, cz = ox + size // 2, oz + build.size[2] // 2
     g = build.G if ground is None else ground
     place(build, tile_name or name, ox, y - g, oz)
+    r = max(r, footprint_r(build) + 2)
     POIS.append(dict(type=kind, id=name, name=title, x=cx, z=cz, y=y, r=r, extra=extra))
+    if getattr(build, 'fit', None):
+        FIT[name] = fit_of(build, cx, cz, r)
     plan.take(cx, cz, r)
     return cx, cz
+
+
+def nearest_road(data, x, z):
+    """Ближайшая точка трактов: (x, z, расстояние)."""
+    best = (x, z, 1e9)
+    for rd in data['roads']:
+        if rd.get('style') == 'path':
+            continue
+        pts = rd['points']
+        for i in range(len(pts) - 1):
+            (ax, az), (bx, bz) = pts[i], pts[i + 1]
+            dx, dz = bx - ax, bz - az
+            L2 = dx * dx + dz * dz or 1
+            u = max(0.0, min(1.0, ((x - ax) * dx + (z - az) * dz) / L2))
+            px, pz = ax + dx * u, az + dz * u
+            d = math.hypot(x - px, z - pz)
+            if d < best[2]:
+                best = (px, pz, d)
+    return best
+
+
+def shore_spot(plan, wx, wz, x, z):
+    """Место для рыбацкого посёлка: идём от воды (wx, wz) к точке (x, z) и дальше, пока не выйдем на сушу;
+    центр — в 12 блоках от кромки воды. Пробуем соседние направления."""
+    a0 = math.atan2(z - wz, x - wx)
+    for da in (0, 0.2, -0.2, 0.4, -0.4, 0.7, -0.7, 1.0, -1.0):
+        a = a0 + da
+        prev_w = None
+        for t in range(40, 1400, 4):
+            px, pz = wx + math.cos(a) * t, wz + math.sin(a) * t
+            h, _, _, w = plan.world.sample(px, pz)
+            if prev_w and not w and h >= 63.5:
+                cx, cz = px + math.cos(a) * 12, pz + math.sin(a) * 12
+                if all(math.hypot(cx - tx, cz - tz) > tr + 60 for tx, tz, tr in plan.taken):
+                    return int(cx), int(cz)
+                break
+            prev_w = w
+    return None
 
 
 def road_angles(data, c):
     out = []
     for rd in data['roads']:
+        if rd.get('style') == 'path':
+            continue
         pts = rd['points']
         for i, (x, z) in enumerate(pts):
             if math.hypot(x - c['x'], z - c['z']) < 5:
@@ -464,20 +546,23 @@ def road_angles(data, c):
 def main():
     import mapbuild_cities as MC
     import mapbuild_pois as MP
+    import mapbuild_towns2 as T2
+    import mapbuild_towns3 as T3
+    import mapbuild_villages as MV
     data = json.load(open(MAP_JSON, encoding='utf-8'))
-    plan = Planner(data)
     cities = {c['id']: c for c in data['cities']}
     # ---------------- города ----------------
     c = cities['arcadia']
     b = arcadia(c)
     place(b, 'arcadia', c['x'] - b.size[0] // 2, c['y'] - b.G, c['z'] - b.size[2] // 2)
-    print('Аркадия:', len(b.blocks), 'blocks')
+    FIT['arcadia'] = fit_of(b, c['x'], c['z'], footprint_r(b) + 3)
+    print('Аркадия:', len(b.blocks), 'blocks, площадка', FIT['arcadia']['flat'])
     builders = {
-        'haven': lambda c, g: MC.haven(c, g, math.atan2(1380 - c['z'], 2080 - c['x'])),
-        'sylvendar': MC.sylvendar, 'khazad': MC.khazad, 'ghardum': MC.ghardum, 'wolfden': MC.wolfden, 'ashgrad': MC.ashgrad,
-        'dawnfort': lambda c, g: MC.fort(c, g, 'dawnfort', 'minecraft:blue_banner'),
-        'northwatch': lambda c, g: MC.fort(c, g, 'northwatch', 'minecraft:light_blue_banner'),
-        'blackbastion': lambda c, g: MC.fort(c, g, 'blackbastion', 'minecraft:black_banner'),
+        'haven': T2.haven, 'sylvendar': T3.sylvendar, 'khazad': T3.khazad, 'ghardum': T3.ghardum, 'wolfden': T3.wolfden,
+        'ashgrad': T3.ashgrad,
+        'dawnfort': lambda c, g: T3.fort(c, g, 'dawnfort'),
+        'northwatch': lambda c, g: T3.fort(c, g, 'northwatch'),
+        'blackbastion': lambda c, g: T3.fort(c, g, 'blackbastion'),
     }
     for cid, fn in builders.items():
         c = cities[cid]
@@ -485,7 +570,9 @@ def main():
         b = fn(c, gates)
         S = b.size[0]
         place(b, cid, c['x'] - S // 2, c['y'] - b.G, c['z'] - S // 2)
-        print(f"{c['name']}: {len(b.blocks)} blocks, {len(b.entities)} entities")
+        FIT[cid] = fit_of(b, c['x'], c['z'], footprint_r(b) + 3)
+        print(f"{c['name']}: {len(b.blocks)} blocks, {len(b.entities)} entities, площадка {FIT[cid]['flat']}")
+    plan = Planner(data)
     for c in data['cities']:
         POIS.append(dict(type='city', id=c['id'], name=c['name'], x=c['x'], z=c['z'], y=c['y'], r=0))
 
@@ -499,7 +586,7 @@ def main():
         base_a = frnd.random() * 2 * math.pi
         for i in range(n):
             a = base_a + 2 * math.pi * i / n + frnd.uniform(-0.3, 0.3)
-            dist = c.get('flat', c['r']) + frnd.uniform(80, 150)
+            dist = FIT.get(c['id'], {}).get('flat', c['flat']) + frnd.uniform(110, 170)
             spot = plan.find(c['x'] + math.cos(a) * dist, c['z'] + math.sin(a) * dist, 30, search=140)
             if not spot:
                 continue
@@ -546,6 +633,8 @@ def main():
         if not spot:
             spot = plan.find_level(a['x'], a['z'], lvl, 24, None)
         if not spot:
+            spot = plan.find_level(a['x'], a['z'], lvl, 24, terr, tol=2)
+        if not spot:
             print('!! нет места для подземелья', key)
             continue
         x, z, y = spot
@@ -559,17 +648,24 @@ def main():
     rnd = random.Random(42)
     vill = [(520, 260), (-620, -420), (-1000, 480), (330, -880), (980, -360), (-420, 1060), (-260, -1100), (1150, -980),
             (-1650, -320), (1100, 1350), (-380, 2150), (250, -2650)]
+    spurs = []
     for i, (x, z) in enumerate(vill):
-        spot = plan.find(x, z, 30)
+        spot = plan.find(x, z, 56)
         if not spot:
+            print('!! нет места для деревни', i)
             continue
-        b = MP.village(i)
-        put_poi(plan, b, f'village_{i}', 'village', 'Деревня ' + MP.VILLAGE_NAMES[i % len(MP.VILLAGE_NAMES)], *spot, 30)
+        rx, rz, rd_ = nearest_road(data, spot[0], spot[1])
+        road_a = math.atan2(rz - spot[1], rx - spot[0])
+        b = MV.village(i, 'human', road_a)
+        cx, cz = put_poi(plan, b, f'village_{i}', 'village', 'Деревня ' + MP.VILLAGE_NAMES[i % len(MP.VILLAGE_NAMES)], *spot, 50)
+        if rd_ < 420:
+            ex, ez = cx + math.cos(road_a) * (b.size[0] // 2 - 2), cz + math.sin(road_a) * (b.size[0] // 2 - 2)
+            spurs.append(dict(name='Тропа', style='path', points=[[round(ex), round(ez)], [round(rx), round(rz)]]))
     for i, (x, z, terr) in enumerate([(-1650, -760, None), (-1950, -2150, None), (900, -1550, None), (-760, -1560, None),
                                       (2050, -1350, None), (-2300, 900, None)]):
         spot = plan.find(x, z, 22)
         if spot:
-            put_poi(plan, MP.lumber_camp(i), f'lumber_{i}', 'lumber', 'Лесопилка', *spot, 22)
+            put_poi(plan, MV.lumber_camp(i), f'lumber_{i}', 'lumber', 'Лесопилка', *spot, 30)
     # рыбацкие посёлки: по берегам залива и озёр
     shores = []
     bx, bz, br, _ = data['seas'][0]
@@ -579,14 +675,19 @@ def main():
     for lx, lz, lr, _ in data['lakes'][:4]:
         shores.append((lx + lr + 32, lz, math.pi))
     for i, (x, z, sea_a) in enumerate(shores):
-        spot = plan.find(x, z, 20, search=120)
+        wx_, wz_ = (bx, bz) if i < 4 else data['lakes'][i - 4][:2]
+        spot = shore_spot(plan, wx_, wz_, x, z)
         if spot:
-            sa = math.atan2((bz if i < 4 else data['lakes'][i - 4][1]) - spot[1], (bx if i < 4 else data['lakes'][i - 4][0]) - spot[0])
-            put_poi(plan, MP.fishing_village(i, sa), f'fishing_{i}', 'fishing', 'Рыбацкий посёлок', spot[0], spot[1], spot[2], 20)
+            sa = math.atan2(wz_ - spot[1], wx_ - spot[0])
+            put_poi(plan, MV.fishing_village(i, sa), f'fishing_{i}', 'fishing', 'Рыбацкий посёлок', spot[0], spot[1], 66, 30)
+        else:
+            print('!! нет берега для рыбацкого посёлка', i)
     # стоянки караванов вдоль трактов
     traders = ['litrpg:dwarf_smith', 'litrpg:elf_trader', 'litrpg:orc_trader', 'litrpg:beast_trader', 'litrpg:demon_trader']
     k = 0
     for rd in data['roads']:
+        if rd.get('style') == 'path':
+            continue
         pts = rd['points']
         segs = [(pts[i], pts[i + 1]) for i in range(len(pts) - 1)]
         (ax, az), (bx2, bz2) = segs[len(segs) // 2]
@@ -598,6 +699,61 @@ def main():
         if spot:
             put_poi(plan, MP.caravan_camp(k, traders[k % len(traders)]), f'caravan_{k}', 'caravan', 'Стоянка караванщиков', *spot, 18)
             k += 1
+    # придорожные хутора: постоялые дворы, мельницы, кузни, часовни — у самых трактов
+    kinds = ['inn', 'mill', 'smithy', 'inn', 'shrine', 'mill', 'inn', 'smithy', 'shrine']
+    used = {k: 0 for k in MV.HAMLET_NAMES}
+    hk = 0
+    for rd in data['roads']:
+        if rd.get('style') == 'path':
+            continue
+        pts = rd['points']
+        segs = []
+        acc = 0.0
+        for i in range(len(pts) - 1):
+            L = math.hypot(pts[i + 1][0] - pts[i][0], pts[i + 1][1] - pts[i][1])
+            segs.append((acc, L, pts[i], pts[i + 1]))
+            acc += L
+        s_ = 300.0
+        side = 1
+        while s_ < acc - 300:
+            done = False
+            for shift in (0, 70, -70, 140, -140):
+                pos = s_ + shift
+                for (a0, L, p, q) in segs:
+                    if a0 <= pos <= a0 + L:
+                        u = (pos - a0) / L
+                        mx, mz = p[0] + (q[0] - p[0]) * u, p[1] + (q[1] - p[1]) * u
+                        tx, tz = (q[0] - p[0]) / L, (q[1] - p[1]) / L
+                        break
+                else:
+                    continue
+                if any(math.hypot(mx - c['x'], mz - c['z']) < c['r'] + 140 for c in data['cities']):
+                    continue
+                for sd in (side, -side):
+                    cx, cz = mx - tz * sd * 34, mz + tx * sd * 34
+                    _, _, dr = nearest_road(data, cx, cz)
+                    if dr < 33:
+                        continue
+                    y = plan.ok(cx, cz, 34)
+                    if y is None:
+                        continue
+                    kind = kinds[hk % len(kinds)]
+                    names = MV.HAMLET_NAMES[kind]
+                    title = names[used[kind] % len(names)]
+                    used[kind] += 1
+                    road_a = math.atan2(-tx * sd, tz * sd)
+                    b = MV.hamlet(hk, kind, road_a)
+                    put_poi(plan, b, f'hamlet_{hk}', 'hamlet', title, int(cx), int(cz), y, 30)
+                    hk += 1
+                    side = -side
+                    done = True
+                    break
+                if done:
+                    break
+            s_ += 560 if done else 200
+    print('придорожных хуторов:', hk)
+    data['spurs'] = spurs
+
     # сторожевые башни
     for i, (x, z) in enumerate([(-1380, -100), (180, -560), (-380, 1460), (1560, 1720), (-1880, 2520), (2200, 360), (130, -1600), (-1760, -1660)]):
         spot = plan.find(x + 40, z + 40, 14, search=160)
@@ -632,6 +788,7 @@ def main():
     data['nether'] = dict(flats=nether_flats)
 
     data['pois'] = POIS
+    data['fit'] = FIT
     data['tiles'] = TILES
     data['workshops'] = WORKSHOPS
     print('мастерских:', len(WORKSHOPS))

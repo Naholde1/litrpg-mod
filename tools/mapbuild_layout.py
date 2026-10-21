@@ -633,18 +633,22 @@ def market(b, x0, z0, x1, z1, crafts, merchant, citizen, seed, ground=None):
 #                          ЗА СТЕНАМИ
 # ======================================================================
 
-def outskirts(b, C, wall_r, seed, citizen, outer=None):
+def outskirts(b, C, wall_r, seed, citizen, outer=None, allow=None, n_fields=42, mix=None, extra=None, crops=None):
     """
     Земли за стенами: большие наделы из длинных полос (как средневековые поля) с разными
     культурами, оросительными канавами и межами-тропинками, стога, пугала, полевые сараи,
     сады, пастбища с навесом и сельские домики с огородами.
+    allow(x, z) — где можно строить (берег, своя форма стен); mix — веса видов после полей;
+    extra — свои виды народа: {вид: (размер(rnd, попытка) -> (w, d), постройка(x0, z0, x1, z1))}.
     """
     rnd = random.Random(str(seed) + 'out')
     S = b.size[0]
     G = b.G
     st = b.st
     outer = outer or (S // 2 - 2)
-    crops = ['minecraft:wheat', 'minecraft:wheat', 'minecraft:carrots', 'minecraft:potatoes', 'minecraft:beetroots']
+    crops = crops or ['minecraft:wheat', 'minecraft:wheat', 'minecraft:carrots', 'minecraft:potatoes', 'minecraft:beetroots']
+    extra = extra or {}
+    mix = mix or {'pasture': 1, 'orchard': 1, 'house': 1, 'melons': 1, 'field': 1}
     if b.style == 'demon':
         crops = ['minecraft:nether_wart']
 
@@ -653,6 +657,8 @@ def outskirts(b, C, wall_r, seed, citizen, outer=None):
         if any(math.hypot(cx - C, cz - C) < wall_r + 4 or math.hypot(cx - C, cz - C) > outer for cx, cz in corners):
             return False
         if x0 < 1 or z0 < 1 or x1 >= S - 1 or z1 >= S - 1:
+            return False
+        if allow and not all(allow(cx, cz) for cx, cz in corners):
             return False
         return b.free(x0 - 1, z0 - 1, x1 + 1, z1 + 1)
 
@@ -765,17 +771,20 @@ def outskirts(b, C, wall_r, seed, citizen, outer=None):
                     b.set(x, G, z, rnd.choice(['minecraft:pumpkin', 'minecraft:melon', 'minecraft:pumpkin']))
         b.reserve(x0 - 1, z0 - 1, x1 + 1, z1 + 1)
 
-    made = {'field': 0, 'pasture': 0, 'orchard': 0, 'house': 0, 'melons': 0}
+    made = {k: 0 for k in ['field', 'pasture', 'orchard', 'house', 'melons'] + list(extra)}
+    kinds_w = [k for k, wgt in mix.items() for _ in range(wgt)]
     spots = [(x, z) for x in range(2, S - 8, 4) for z in range(2, S - 8, 4)]
     seen = set()
     rnd.shuffle(spots)
     # сначала большие поля, потом пастбища, сады и домики в промежутках
     for (x, z) in spots + spots:
-        kind = 'field' if made['field'] < 42 and (x, z) not in seen else rnd.choice(['pasture', 'orchard', 'house', 'melons', 'field'])
+        kind = 'field' if made['field'] < n_fields and (x, z) not in seen else rnd.choice(kinds_w)
         seen.add((x, z))
         found = None
         for attempt in range(4):
-            if kind == 'field':
+            if kind in extra:
+                w, d = extra[kind][0](rnd, attempt)
+            elif kind == 'field':
                 w, d = rnd.randint(22, 40) - attempt * 5, rnd.randint(14, 24) - attempt * 3
                 if rnd.random() < 0.5:
                     w, d = d, w
@@ -791,7 +800,11 @@ def outskirts(b, C, wall_r, seed, citizen, outer=None):
         if not found:
             continue
         w, d = found
-        if kind == 'field':
+        if kind in extra:
+            if extra[kind][1](x, z, x + w - 1, z + d - 1) is False:
+                continue
+            b.reserve(x - 1, z - 1, x + w, z + d)
+        elif kind == 'field':
             field(x, z, x + w - 1, z + d - 1)
         elif kind == 'pasture':
             pasture(x, z, x + w - 1, z + d - 1)

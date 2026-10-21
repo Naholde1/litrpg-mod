@@ -157,13 +157,20 @@ class World:
                 if dr < half and water == 0:
                     water = 1
         # площадки городов и поселений
-        for fx, fz, r, y in self.d['flats']:
+        for f in self.d['flats']:
+            fx, fz, r, y = f[:4]
+            bl = f[4] if len(f) > 4 else 48
             dd = math.hypot(x - fx, z - fz)
-            if dd < r + 48:
-                k = sstep(r + 48, r, dd)
+            if dd < r + bl:
+                k = sstep(r + bl, r, dd)
+                if len(f) > 7:
+                    # срез полуплоскостью: площадка только там, где (p - центр)·n < d (гавань, берег)
+                    k *= sstep(f[7] + 5, f[7], (x - fx) * f[5] + (z - fz) * f[6])
+                if k <= 0:
+                    continue
                 H = lerp(H, y, k)
                 W = lerp(W, 1.0, k)
-                if dd < r:
+                if dd < r and k > 0.99 and y >= 63:
                     water = 0
         # край мира
         c = max(abs(x), abs(z))

@@ -62,7 +62,8 @@ public class RoadFeature extends Feature<NoneFeatureConfiguration> {
                 }
                 if (bs == null) continue;
                 boolean stone = bs.road.style().equals("stone");
-                double half = stone ? 2.6 : 2.0;
+                // тропа (path) — узкая дорожка от деревни к тракту
+                double half = stone ? 2.6 : bs.road.style().equals("path") ? 1.2 : 2.0;
                 if (best > half + 0.5) continue;
                 if (inSettlement(map, x, z)) continue;
                 any |= paint(level, pos, x, z, best, half, stone);
@@ -71,7 +72,7 @@ public class RoadFeature extends Feature<NoneFeatureConfiguration> {
         // фонари вдоль трактов
         for (Seg s : segs) {
             double segLen = Math.hypot(s.bx - s.ax, s.bz - s.az);
-            if (segLen < 1) continue;
+            if (segLen < 1 || s.road.style().equals("path")) continue;
             double first = Math.ceil(s.startLen / POST_STEP) * POST_STEP - s.startLen;
             for (double t = first; t < segLen; t += POST_STEP) {
                 double nx = -(s.bz - s.az) / segLen, nz = (s.bx - s.ax) / segLen;
