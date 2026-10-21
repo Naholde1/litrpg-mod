@@ -274,17 +274,78 @@ class City(Build):
         self.set(dx_ + ox, G - 1, dz_ + oz, self.bp(st['found'], dx_, G, dz_))
         if lit:
             self.lantern(dx_ + ox + (1 if door in ('north', 'south') else 0), G + 2, dz_ + oz + (0 if door in ('north', 'south') else 1))
-        # лестница между этажами
-        if floors > 1:
+        # между этажами: в больших зданиях — марш из ступеней с проёмом и перилами, в остальных — приставная лестница
+        self._stairs = None
+        self._partitions = []
+        if floors > 1 and (w - 2) * (d - 2) >= 110:
+            self._stairs = self.stair_flights(x0, z0, x1, z1, floors, fh, door)
+        elif floors > 1:
             for f in range(floors - 1):
                 # лестница проходит и сквозь проём в перекрытии — иначе с неё не выбраться наверх
                 for i in range(fh + 1):
                     self.set(x0 + 1, G + f * fh + i, z0 + 1, 'minecraft:ladder', facing='south', waterlogged='false')
         self.furnish(x0, z0, x1, z1, floors, interior, door)
         self.roof(x0, z0, x1, z1, top, roof)
+        self.under_roof(x0, z0, x1, z1, top)
         if npc:
             self.entities.append((cx, G, cz if door in ('east', 'west') else (z0 + z1) // 2, npc, {}))
         return cx, cz
+
+    def stair_flights(self, x0, z0, x1, z1, floors, fh, door):
+        """Марши из ступеней вдоль стены: 5 ступеней на этаж (последняя — в перекрытии), под ними кладка,
+        проём в полу над маршем с перилами. Этажи чередуют стену. -> {этаж: занятые клетки}."""
+        G = self.G
+        plank = self.st['plank']
+        stair = plank.replace('_planks', '_stairs') if '_planks' in plank else 'minecraft:spruce_stairs'
+        fence = plank.replace('_planks', '_fence') if '_planks' in plank else 'minecraft:spruce_fence'
+        taken = {}
+        for f in range(floors - 1):
+            north = (f % 2 == 0) != (door == 'north')
+            row = z0 + 1 if north else z1 - 1
+            inn = 1 if north else -1
+            base = G + f * fh
+            for k in range(fh + 1):
+                x, y = x0 + 1 + k, base + k
+                for yy in range(base, y):
+                    self.set(x, yy, row, plank)
+                self.set(x, y, row, stair, facing='east', half='bottom', shape='straight', waterlogged='false')
+                for yy in range(y + 1, y + 3):
+                    if yy != base + fh or k == fh:
+                        self.set(x, yy, row, 'minecraft:air')
+            for k in range(fh):
+                self.set(x0 + 1 + k, base + fh, row, 'minecraft:air')          # проём в перекрытии
+                self.set(x0 + 1 + k, base + fh + 1, row + inn, fence, waterlogged='false')  # перила наверху
+            self.set(x0 + 1, base + fh + 1, row, fence, waterlogged='false')    # перила у торца проёма
+            low = taken.setdefault(f, set())
+            for k in range(fh + 2):
+                low.add((x0 + 1 + k, row))
+            low |= {(x0 + 1, row + inn), (x0 + 2, row + inn), (x0 + 1, row + 2 * inn)}
+            up = taken.setdefault(f + 1, set())
+            for k in range(fh + 3):
+                up.add((x0 + 1 + k, row))
+                up.add((x0 + 1 + k, row + inn))
+            up |= {(x0 + fh + 1, row + 2 * inn), (x0 + fh + 2, row + 2 * inn)}
+        return taken
+
+    def under_roof(self, x0, z0, x1, z1, top):
+        """После крыши: перегородки верхнего этажа доводятся до скатов, фонари вешаются на цепях к коньку."""
+        for (x, z, y, blk) in getattr(self, '_partitions', []):
+            yy = y
+            while yy < y + 16 and self.blocks.get((x, yy, z), ('minecraft:air',))[0] == 'minecraft:air':
+                self.set(x, yy, z, blk)
+                yy += 1
+        self._partitions = []
+        for x in range(x0 + 1, x1):
+            for z in range(z0 + 1, z1):
+                for y in range(top - 3, top + 2):
+                    v = self.blocks.get((x, y, z))
+                    if v and 'lantern' in v[0] and dict(v[1]).get('hanging') == 'true':
+                        yy = y + 1
+                        while yy < y + 14 and self.blocks.get((x, yy, z), ('minecraft:air',))[0] == 'minecraft:air':
+                            yy += 1
+                        if yy < y + 14:
+                            for c in range(y + 1, yy):
+                                self.set(x, c, z, 'minecraft:chain', axis='y', waterlogged='false')
 
     def furnish(self, x0, z0, x1, z1, floors, kind, door):
         import mapbuild_furniture as MF

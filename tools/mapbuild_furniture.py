@@ -314,8 +314,11 @@ def furnish(b, x0, z0, x1, z1, floors, kind, door_side, base_kind=None):
     for f in range(floors):
         # на верхних этажах блок y = G + 4f — это перекрытие, ходят на уровень выше
         y = G + f * 4 + (1 if f else 0)
-        ladder = (x0 + 1, z0 + 1) if floors > 1 else None
+        stairs = getattr(b, '_stairs', None)
+        ladder = (x0 + 1, z0 + 1) if floors > 1 and not stairs else None
+        extra = (stairs or {}).get(f, set())
         r = Room(b, x0, z0, x1, z1, y, door=door if f == 0 else None, ladder=ladder, height=4 if f == 0 else 3)
+        r.taken |= extra
         if r.w < 3 or r.d < 3:
             continue
         if r.w * r.d >= 110 and kind not in ('workshop', 'smith'):
@@ -323,7 +326,7 @@ def furnish(b, x0, z0, x1, z1, floors, kind, door_side, base_kind=None):
             if f == 0:
                 big_hall(b, r, kind)
             else:
-                split_floor(b, r, x0, z0, x1, z1, y, 3, ladder)
+                split_floor(b, r, x0, z0, x1, z1, y, 3, ladder, extra)
             continue
         top = f == floors - 1
         k = kind
@@ -488,7 +491,7 @@ def big_hall(b, r, kind):
     r.painting()
 
 
-def split_floor(b, r, x0, z0, x1, z1, y, height, ladder):
+def split_floor(b, r, x0, z0, x1, z1, y, height, ladder, extra=()):
     """Большой верхний этаж: перегородки с дверями — несколько комнат, каждая обставлена."""
     along_x = (x1 - x0) >= (z1 - z0)
     lo, hi = (x0, x1) if along_x else (z0, z1)
@@ -498,8 +501,11 @@ def split_floor(b, r, x0, z0, x1, z1, y, height, ladder):
     for c in cuts:
         for t in range((z0 + 1) if along_x else (x0 + 1), (z1 if along_x else x1)):
             x, z = (c, t) if along_x else (t, c)
+            if (x, z) in extra:
+                continue  # не загораживать лестничный марш
             for yy in range(y, y + height):
                 b.set(x, yy, z, plank)
+            b._partitions.append((x, z, y + height, plank))
         dx, dz = (c, mid) if along_x else (mid, c)
         b.door(dx, y, dz, 'east' if along_x else 'south', f'minecraft:{WOOD.get(b.style, "spruce")}_door')
     bounds = [lo] + cuts + [hi]
@@ -511,6 +517,7 @@ def split_floor(b, r, x0, z0, x1, z1, y, height, ladder):
             for s in (-1, 0, 1):
                 for e in (-1, 1):
                     sub.taken.add((cc + e, mid + s) if along_x else (mid + s, cc + e))
+        sub.taken |= set(extra)
         sub.chandelier()
         if i % 2 == 0:
             sub.bed_corner(b.rnd.choice(['red', 'blue', 'white', 'green', 'light_blue']))
