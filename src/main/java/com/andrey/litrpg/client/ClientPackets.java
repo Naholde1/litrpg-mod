@@ -9,4 +9,8 @@ public final class ClientPackets {
     public static void openQuestBoard(String board, String faction, String npcName, String workshop, int entityId) {
         Minecraft.getInstance().setScreen(new QuestBoardScreen(board, faction, npcName, workshop, entityId));
     }
+
+    public static void openService(com.andrey.litrpg.network.OpenServicePacket data) {
+        Minecraft.getInstance().setScreen(new ServiceScreen(data));
+    }
 }

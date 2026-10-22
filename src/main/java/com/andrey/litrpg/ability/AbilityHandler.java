@@ -309,7 +309,7 @@ public class AbilityHandler {
         t.setDeltaMovement(v.x, 0.35 + dist * 0.02, v.z);
         t.hurtMarked = true;
         applyFoe(a, t, p);
-        if (t instanceof Mob m) m.setTarget(p);
+        if (t instanceof Mob m) com.andrey.litrpg.event.Threat.taunt(m, p);
         line(p.serverLevel(), p.getEyePosition(), t.position().add(0, 1, 0), ParticleTypes.SOUL_FIRE_FLAME);
         sound(p, SoundEvents.FISHING_BOBBER_RETRIEVE, 1.0f, 0.6f);
         return true;
@@ -618,7 +618,9 @@ public class AbilityHandler {
         boolean any = false;
         for (LivingEntity ally : alliesAround(p, a.radius)) {
             if (ally.getHealth() < ally.getMaxHealth()) any = true;
+            float before = ally.getHealth();
             ally.heal(ally == p ? amount : amount * 0.8f);
+            com.andrey.litrpg.event.Threat.healed(p, ally, ally.getHealth() - before);
             ally.removeEffect(MobEffects.POISON);
             p.serverLevel().sendParticles(ParticleTypes.HEART, ally.getX(), ally.getY() + 1.2, ally.getZ(), 5, 0.4, 0.4, 0.4, 0.1);
         }
@@ -655,7 +657,7 @@ public class AbilityHandler {
         applySelf(a, p);
         for (LivingEntity e : enemiesAround(p, p.getBoundingBox().inflate(a.radius))) {
             applyFoe(a, e, p);
-            if (e instanceof Mob m) m.setTarget(p);
+            if (e instanceof Mob m) com.andrey.litrpg.event.Threat.taunt(m, p);
         }
         ring(p.serverLevel(), p.position(), a.radius * 0.6, ParticleTypes.ANGRY_VILLAGER, 24);
         sound(p, SoundEvents.RAID_HORN.get(), 0.8f, 1.4f);

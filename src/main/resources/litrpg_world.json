@@ -15948,15 +15948,23 @@
   },
   {
    "city": "arcadia",
-   "craft": "blacksmith",
+   "craft": "teleporter",
    "npc": "litrpg:human_artisan",
-   "x": -11,
-   "y": 73,
-   "z": 29
+   "x": -13,
+   "y": 72,
+   "z": 35
   },
   {
    "city": "arcadia",
-   "craft": "armorer",
+   "craft": "hosteler",
+   "npc": "litrpg:human_artisan",
+   "x": 45,
+   "y": 72,
+   "z": 21
+  },
+  {
+   "city": "arcadia",
+   "craft": "blacksmith",
    "npc": "litrpg:human_artisan",
    "x": -29,
    "y": 73,
@@ -15964,63 +15972,39 @@
   },
   {
    "city": "arcadia",
-   "craft": "weaponsmith",
+   "craft": "tailor",
    "npc": "litrpg:human_artisan",
-   "x": 29,
+   "x": 17,
    "y": 73,
-   "z": 13
+   "z": 38
+  },
+  {
+   "city": "arcadia",
+   "craft": "scribe",
+   "npc": "litrpg:human_artisan",
+   "x": -14,
+   "y": 73,
+   "z": 47
   },
   {
    "city": "arcadia",
    "craft": "builder",
    "npc": "litrpg:human_artisan",
-   "x": 17,
+   "x": -28,
    "y": 73,
-   "z": 35
+   "z": 38
   },
   {
    "city": "arcadia",
    "craft": "leatherworker",
    "npc": "litrpg:human_artisan",
-   "x": -11,
-   "y": 73,
-   "z": 44
-  },
-  {
-   "city": "arcadia",
-   "craft": "miner",
-   "npc": "litrpg:human_artisan",
-   "x": 45,
-   "y": 73,
-   "z": 11
-  },
-  {
-   "city": "arcadia",
-   "craft": "banker",
-   "npc": "litrpg:human_artisan",
-   "x": -31,
-   "y": 73,
-   "z": 41
-  },
-  {
-   "city": "arcadia",
-   "craft": "jeweler",
-   "npc": "litrpg:human_artisan",
-   "x": 47,
-   "y": 73,
-   "z": 30
-  },
-  {
-   "city": "arcadia",
-   "craft": "tailor",
-   "npc": "litrpg:human_artisan",
-   "x": 34,
+   "x": 35,
    "y": 74,
-   "z": 43
+   "z": 40
   },
   {
    "city": "arcadia",
-   "craft": "herbalist",
+   "craft": "stablemaster",
    "npc": "litrpg:human_artisan",
    "x": -53,
    "y": 73,
@@ -16028,47 +16012,55 @@
   },
   {
    "city": "arcadia",
-   "craft": "scribe",
-   "npc": "litrpg:human_artisan",
-   "x": 14,
-   "y": 73,
-   "z": 44
-  },
-  {
-   "city": "arcadia",
-   "craft": "builder",
-   "npc": "litrpg:human_artisan",
-   "x": -50,
-   "y": 73,
-   "z": -20
-  },
-  {
-   "city": "arcadia",
    "craft": "baker",
    "npc": "litrpg:human_artisan",
-   "x": 12,
+   "x": 47,
    "y": 73,
-   "z": 58
+   "z": 34
   },
   {
    "city": "arcadia",
-   "craft": "fletcher",
+   "craft": "weaponsmith",
    "npc": "litrpg:human_artisan",
-   "x": -47,
+   "x": -45,
    "y": 73,
    "z": 24
   },
   {
    "city": "arcadia",
-   "craft": "stablemaster",
+   "craft": "herbalist",
    "npc": "litrpg:human_artisan",
-   "x": 48,
+   "x": -50,
    "y": 73,
-   "z": -44
+   "z": -19
   },
   {
    "city": "arcadia",
-   "craft": "alchemist",
+   "craft": "healer",
+   "npc": "litrpg:human_artisan",
+   "x": 13,
+   "y": 73,
+   "z": 60
+  },
+  {
+   "city": "arcadia",
+   "craft": "fletcher",
+   "npc": "litrpg:human_artisan",
+   "x": 47,
+   "y": 73,
+   "z": -43
+  },
+  {
+   "city": "arcadia",
+   "craft": "armorer",
+   "npc": "litrpg:human_artisan",
+   "x": -12,
+   "y": 73,
+   "z": 64
+  },
+  {
+   "city": "arcadia",
+   "craft": "builder",
    "npc": "litrpg:human_artisan",
    "x": 64,
    "y": 73,
@@ -16076,19 +16068,19 @@
   },
   {
    "city": "arcadia",
-   "craft": "healer",
+   "craft": "miner",
    "npc": "litrpg:human_artisan",
-   "x": -13,
+   "x": -31,
    "y": 73,
-   "z": 64
+   "z": 52
   },
   {
    "city": "arcadia",
-   "craft": "innkeeper",
+   "craft": "alchemist",
    "npc": "litrpg:human_artisan",
-   "x": 12,
+   "x": 46,
    "y": 73,
-   "z": 70
+   "z": 54
   },
   {
    "city": "arcadia",
@@ -16097,6 +16089,30 @@
    "x": -73,
    "y": 73,
    "z": 16
+  },
+  {
+   "city": "arcadia",
+   "craft": "jeweler",
+   "npc": "litrpg:human_artisan",
+   "x": -50,
+   "y": 73,
+   "z": -54
+  },
+  {
+   "city": "arcadia",
+   "craft": "innkeeper",
+   "npc": "litrpg:human_artisan",
+   "x": -73,
+   "y": 73,
+   "z": -32
+  },
+  {
+   "city": "arcadia",
+   "craft": "banker",
+   "npc": "litrpg:human_artisan",
+   "x": 71,
+   "y": 73,
+   "z": -47
   },
   {
    "city": "haven",
@@ -16116,47 +16132,55 @@
   },
   {
    "city": "haven",
+   "craft": "teleporter",
+   "npc": "litrpg:human_artisan",
+   "x": 1512,
+   "y": 68,
+   "z": 932
+  },
+  {
+   "city": "haven",
+   "craft": "hosteler",
+   "npc": "litrpg:human_artisan",
+   "x": 1550,
+   "y": 68,
+   "z": 967
+  },
+  {
+   "city": "haven",
    "craft": "fishmonger",
    "npc": "litrpg:human_artisan",
-   "x": 1535,
+   "x": 1485,
    "y": 68,
-   "z": 950
+   "z": 917
   },
   {
    "city": "haven",
    "craft": "farmer",
    "npc": "litrpg:human_artisan",
-   "x": 1550,
+   "x": 1500,
    "y": 68,
-   "z": 950
+   "z": 917
   },
   {
    "city": "haven",
    "craft": "tailor",
    "npc": "litrpg:human_artisan",
-   "x": 1542,
+   "x": 1492,
    "y": 68,
-   "z": 955
+   "z": 922
   },
   {
    "city": "haven",
    "craft": "herbalist",
    "npc": "litrpg:human_artisan",
-   "x": 1547,
+   "x": 1497,
    "y": 68,
-   "z": 955
+   "z": 922
   },
   {
    "city": "haven",
    "craft": "blacksmith",
-   "npc": "litrpg:human_artisan",
-   "x": 1512,
-   "y": 69,
-   "z": 923
-  },
-  {
-   "city": "haven",
-   "craft": "tailor",
    "npc": "litrpg:human_artisan",
    "x": 1522,
    "y": 68,
@@ -16164,67 +16188,91 @@
   },
   {
    "city": "haven",
-   "craft": "baker",
-   "npc": "litrpg:human_artisan",
-   "x": 1561,
-   "y": 68,
-   "z": 956
-  },
-  {
-   "city": "haven",
    "craft": "herbalist",
    "npc": "litrpg:human_artisan",
-   "x": 1501,
+   "x": 1563,
    "y": 69,
-   "z": 919
+   "z": 952
   },
   {
    "city": "haven",
-   "craft": "scribe",
+   "craft": "baker",
    "npc": "litrpg:human_artisan",
-   "x": 1536,
-   "y": 68,
-   "z": 967
+   "x": 1549,
+   "y": 69,
+   "z": 888
   },
   {
    "city": "haven",
    "craft": "leatherworker",
    "npc": "litrpg:human_artisan",
-   "x": 1565,
-   "y": 68,
-   "z": 946
+   "x": 1567,
+   "y": 69,
+   "z": 963
   },
   {
    "city": "haven",
-   "craft": "stablemaster",
+   "craft": "tailor",
    "npc": "litrpg:human_artisan",
-   "x": 1551,
+   "x": 1488,
+   "y": 68,
+   "z": 935
+  },
+  {
+   "city": "haven",
+   "craft": "scribe",
+   "npc": "litrpg:human_artisan",
+   "x": 1560,
    "y": 69,
-   "z": 889
+   "z": 887
   },
   {
    "city": "haven",
    "craft": "builder",
    "npc": "litrpg:human_artisan",
-   "x": 1550,
+   "x": 1548,
    "y": 69,
-   "z": 977
+   "z": 981
+  },
+  {
+   "city": "haven",
+   "craft": "stablemaster",
+   "npc": "litrpg:human_artisan",
+   "x": 1484,
+   "y": 68,
+   "z": 910
   },
   {
    "city": "haven",
    "craft": "healer",
    "npc": "litrpg:human_artisan",
-   "x": 1485,
+   "x": 1499,
    "y": 69,
-   "z": 933
+   "z": 975
   },
   {
    "city": "haven",
    "craft": "banker",
    "npc": "litrpg:human_artisan",
-   "x": 1480,
+   "x": 1565,
    "y": 69,
-   "z": 908
+   "z": 980
+  },
+  {
+   "city": "sylvendar",
+   "craft": "teleporter",
+   "npc": "litrpg:elf_artisan",
+   "x": -2772,
+   "y": 76,
+   "z": -363
+  },
+  {
+   "city": "sylvendar",
+   "craft": "hosteler",
+   "npc": "litrpg:elf_artisan",
+   "x": -2859,
+   "y": 76,
+   "z": -414
   },
   {
    "city": "sylvendar",
@@ -16260,91 +16308,91 @@
   },
   {
    "city": "sylvendar",
-   "craft": "jeweler",
-   "npc": "litrpg:elf_artisan",
-   "x": -2758,
-   "y": 77,
-   "z": -391
-  },
-  {
-   "city": "sylvendar",
-   "craft": "scribe",
+   "craft": "leatherworker",
    "npc": "litrpg:elf_artisan",
    "x": -2806,
    "y": 76,
-   "z": -426
-  },
-  {
-   "city": "sylvendar",
-   "craft": "builder",
-   "npc": "litrpg:elf_artisan",
-   "x": -2837,
-   "y": 76,
-   "z": -401
-  },
-  {
-   "city": "sylvendar",
-   "craft": "baker",
-   "npc": "litrpg:elf_artisan",
-   "x": -2784,
-   "y": 76,
-   "z": -427
-  },
-  {
-   "city": "sylvendar",
-   "craft": "leatherworker",
-   "npc": "litrpg:elf_artisan",
-   "x": -2764,
-   "y": 77,
-   "z": -368
-  },
-  {
-   "city": "sylvendar",
-   "craft": "fletcher",
-   "npc": "litrpg:elf_artisan",
-   "x": -2851,
-   "y": 76,
-   "z": -377
-  },
-  {
-   "city": "sylvendar",
-   "craft": "healer",
-   "npc": "litrpg:elf_artisan",
-   "x": -2798,
-   "y": 77,
-   "z": -332
-  },
-  {
-   "city": "sylvendar",
-   "craft": "herbalist",
-   "npc": "litrpg:elf_artisan",
-   "x": -2792,
-   "y": 76,
-   "z": -432
-  },
-  {
-   "city": "sylvendar",
-   "craft": "alchemist",
-   "npc": "litrpg:elf_artisan",
-   "x": -2756,
-   "y": 77,
-   "z": -355
+   "z": -422
   },
   {
    "city": "sylvendar",
    "craft": "tailor",
    "npc": "litrpg:elf_artisan",
-   "x": -2744,
+   "x": -2758,
    "y": 77,
-   "z": -402
+   "z": -389
+  },
+  {
+   "city": "sylvendar",
+   "craft": "scribe",
+   "npc": "litrpg:elf_artisan",
+   "x": -2785,
+   "y": 76,
+   "z": -425
   },
   {
    "city": "sylvendar",
    "craft": "innkeeper",
    "npc": "litrpg:elf_artisan",
-   "x": -2758,
+   "x": -2755,
    "y": 77,
-   "z": -430
+   "z": -362
+  },
+  {
+   "city": "sylvendar",
+   "craft": "builder",
+   "npc": "litrpg:elf_artisan",
+   "x": -2799,
+   "y": 77,
+   "z": -333
+  },
+  {
+   "city": "sylvendar",
+   "craft": "baker",
+   "npc": "litrpg:elf_artisan",
+   "x": -2851,
+   "y": 76,
+   "z": -376
+  },
+  {
+   "city": "sylvendar",
+   "craft": "herbalist",
+   "npc": "litrpg:elf_artisan",
+   "x": -2817,
+   "y": 77,
+   "z": -330
+  },
+  {
+   "city": "sylvendar",
+   "craft": "alchemist",
+   "npc": "litrpg:elf_artisan",
+   "x": -2744,
+   "y": 77,
+   "z": -403
+  },
+  {
+   "city": "sylvendar",
+   "craft": "fletcher",
+   "npc": "litrpg:elf_artisan",
+   "x": -2762,
+   "y": 77,
+   "z": -429
+  },
+  {
+   "city": "sylvendar",
+   "craft": "jeweler",
+   "npc": "litrpg:elf_artisan",
+   "x": -2771,
+   "y": 77,
+   "z": -436
+  },
+  {
+   "city": "sylvendar",
+   "craft": "healer",
+   "npc": "litrpg:elf_artisan",
+   "x": -2765,
+   "y": 76,
+   "z": -330
   },
   {
    "city": "khazad",
@@ -16353,6 +16401,22 @@
    "x": 2734,
    "y": 172,
    "z": -2517
+  },
+  {
+   "city": "khazad",
+   "craft": "teleporter",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2680,
+   "y": 172,
+   "z": -2558
+  },
+  {
+   "city": "khazad",
+   "craft": "hosteler",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2703,
+   "y": 172,
+   "z": -2528
   },
   {
    "city": "khazad",
@@ -16398,71 +16462,79 @@
    "city": "khazad",
    "craft": "blacksmith",
    "npc": "litrpg:dwarf_artisan",
-   "x": 2681,
-   "y": 172,
-   "z": -2567
+   "x": 2728,
+   "y": 173,
+   "z": -2546
   },
   {
    "city": "khazad",
    "craft": "armorer",
    "npc": "litrpg:dwarf_artisan",
-   "x": 2709,
+   "x": 2717,
    "y": 173,
-   "z": -2536
-  },
-  {
-   "city": "khazad",
-   "craft": "weaponsmith",
-   "npc": "litrpg:dwarf_artisan",
-   "x": 2729,
-   "y": 173,
-   "z": -2545
-  },
-  {
-   "city": "khazad",
-   "craft": "leatherworker",
-   "npc": "litrpg:dwarf_artisan",
-   "x": 2737,
-   "y": 173,
-   "z": -2560
-  },
-  {
-   "city": "khazad",
-   "craft": "jeweler",
-   "npc": "litrpg:dwarf_artisan",
-   "x": 2699,
-   "y": 172,
-   "z": -2596
+   "z": -2534
   },
   {
    "city": "khazad",
    "craft": "miner",
    "npc": "litrpg:dwarf_artisan",
-   "x": 2669,
+   "x": 2735,
    "y": 173,
-   "z": -2577
-  },
-  {
-   "city": "khazad",
-   "craft": "builder",
-   "npc": "litrpg:dwarf_artisan",
-   "x": 2682,
-   "y": 172,
-   "z": -2588
+   "z": -2558
   },
   {
    "city": "khazad",
    "craft": "alchemist",
    "npc": "litrpg:dwarf_artisan",
-   "x": 2718,
+   "x": 2702,
+   "y": 172,
+   "z": -2594
+  },
+  {
+   "city": "khazad",
+   "craft": "butcher",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2683,
+   "y": 172,
+   "z": -2590
+  },
+  {
+   "city": "khazad",
+   "craft": "weaponsmith",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2664,
    "y": 173,
-   "z": -2599
+   "z": -2573
+  },
+  {
+   "city": "khazad",
+   "craft": "jeweler",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2717,
+   "y": 173,
+   "z": -2602
   },
   {
    "city": "khazad",
    "craft": "baker",
    "npc": "litrpg:dwarf_artisan",
-   "x": 2684,
+   "x": 2744,
+   "y": 173,
+   "z": -2538
+  },
+  {
+   "city": "khazad",
+   "craft": "leatherworker",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2669,
+   "y": 173,
+   "z": -2585
+  },
+  {
+   "city": "khazad",
+   "craft": "builder",
+   "npc": "litrpg:dwarf_artisan",
+   "x": 2680,
    "y": 173,
    "z": -2520
   },
@@ -16470,25 +16542,33 @@
    "city": "khazad",
    "craft": "banker",
    "npc": "litrpg:dwarf_artisan",
-   "x": 2741,
-   "y": 173,
-   "z": -2535
-  },
-  {
-   "city": "khazad",
-   "craft": "butcher",
-   "npc": "litrpg:dwarf_artisan",
-   "x": 2701,
-   "y": 174,
-   "z": -2523
+   "x": 2689,
+   "y": 172,
+   "z": -2611
   },
   {
    "city": "khazad",
    "craft": "builder",
    "npc": "litrpg:dwarf_artisan",
-   "x": 2692,
-   "y": 172,
-   "z": -2608
+   "x": 2745,
+   "y": 173,
+   "z": -2558
+  },
+  {
+   "city": "ghardum",
+   "craft": "teleporter",
+   "npc": "litrpg:orc_artisan",
+   "x": 2867,
+   "y": 90,
+   "z": 2635
+  },
+  {
+   "city": "ghardum",
+   "craft": "hosteler",
+   "npc": "litrpg:orc_artisan",
+   "x": 2852,
+   "y": 90,
+   "z": 2594
   },
   {
    "city": "ghardum",
@@ -16518,49 +16598,17 @@
    "city": "ghardum",
    "craft": "butcher",
    "npc": "litrpg:orc_artisan",
-   "x": 2890,
+   "x": 2887,
    "y": 91,
-   "z": 2653
-  },
-  {
-   "city": "ghardum",
-   "craft": "weaponsmith",
-   "npc": "litrpg:orc_artisan",
-   "x": 2884,
-   "y": 90,
-   "z": 2596
-  },
-  {
-   "city": "ghardum",
-   "craft": "blacksmith",
-   "npc": "litrpg:orc_artisan",
-   "x": 2866,
-   "y": 90,
-   "z": 2605
-  },
-  {
-   "city": "ghardum",
-   "craft": "herbalist",
-   "npc": "litrpg:orc_artisan",
-   "x": 2860,
-   "y": 90,
-   "z": 2629
-  },
-  {
-   "city": "ghardum",
-   "craft": "fletcher",
-   "npc": "litrpg:orc_artisan",
-   "x": 2933,
-   "y": 91,
-   "z": 2608
+   "z": 2654
   },
   {
    "city": "ghardum",
    "craft": "leatherworker",
    "npc": "litrpg:orc_artisan",
-   "x": 2879,
-   "y": 91,
-   "z": 2653
+   "x": 2886,
+   "y": 90,
+   "z": 2596
   },
   {
    "city": "ghardum",
@@ -16574,57 +16622,89 @@
    "city": "ghardum",
    "craft": "builder",
    "npc": "litrpg:orc_artisan",
+   "x": 2931,
+   "y": 91,
+   "z": 2608
+  },
+  {
+   "city": "ghardum",
+   "craft": "weaponsmith",
+   "npc": "litrpg:orc_artisan",
    "x": 2929,
    "y": 91,
    "z": 2649
   },
   {
    "city": "ghardum",
+   "craft": "herbalist",
+   "npc": "litrpg:orc_artisan",
+   "x": 2853,
+   "y": 90,
+   "z": 2631
+  },
+  {
+   "city": "ghardum",
    "craft": "armorer",
    "npc": "litrpg:orc_artisan",
-   "x": 2868,
+   "x": 2869,
    "y": 91,
    "z": 2663
+  },
+  {
+   "city": "ghardum",
+   "craft": "blacksmith",
+   "npc": "litrpg:orc_artisan",
+   "x": 2858,
+   "y": 90,
+   "z": 2653
+  },
+  {
+   "city": "ghardum",
+   "craft": "fletcher",
+   "npc": "litrpg:orc_artisan",
+   "x": 2869,
+   "y": 90,
+   "z": 2580
+  },
+  {
+   "city": "wolfden",
+   "craft": "teleporter",
+   "npc": "litrpg:beast_artisan",
+   "x": -2594,
+   "y": 88,
+   "z": -3014
+  },
+  {
+   "city": "wolfden",
+   "craft": "hosteler",
+   "npc": "litrpg:beast_artisan",
+   "x": -2588,
+   "y": 88,
+   "z": -3070
   },
   {
    "city": "wolfden",
    "craft": "leatherworker",
    "npc": "litrpg:beast_artisan",
-   "x": -2595,
+   "x": -2618,
    "y": 88,
-   "z": -3062
+   "z": -3036
   },
   {
    "city": "wolfden",
    "craft": "herbalist",
    "npc": "litrpg:beast_artisan",
-   "x": -2593,
+   "x": -2616,
    "y": 88,
-   "z": -3057
-  },
-  {
-   "city": "wolfden",
-   "craft": "herbalist",
-   "npc": "litrpg:beast_artisan",
-   "x": -2578,
-   "y": 88,
-   "z": -3061
+   "z": -3031
   },
   {
    "city": "wolfden",
    "craft": "butcher",
    "npc": "litrpg:beast_artisan",
-   "x": -2616,
+   "x": -2576,
    "y": 88,
-   "z": -3024
-  },
-  {
-   "city": "wolfden",
-   "craft": "healer",
-   "npc": "litrpg:beast_artisan",
-   "x": -2597,
-   "y": 89,
-   "z": -3010
+   "z": -3063
   },
   {
    "city": "wolfden",
@@ -16636,35 +16716,51 @@
   },
   {
    "city": "wolfden",
-   "craft": "tailor",
+   "craft": "builder",
    "npc": "litrpg:beast_artisan",
-   "x": -2595,
-   "y": 88,
-   "z": -3081
+   "x": -2598,
+   "y": 89,
+   "z": -3003
   },
   {
    "city": "wolfden",
-   "craft": "builder",
+   "craft": "tailor",
    "npc": "litrpg:beast_artisan",
-   "x": -2564,
-   "y": 88,
-   "z": -3073
+   "x": -2583,
+   "y": 89,
+   "z": -3003
   },
   {
    "city": "wolfden",
    "craft": "leatherworker",
    "npc": "litrpg:beast_artisan",
-   "x": -2582,
+   "x": -2563,
+   "y": 88,
+   "z": -3071
+  },
+  {
+   "city": "wolfden",
+   "craft": "herbalist",
+   "npc": "litrpg:beast_artisan",
+   "x": -2628,
+   "y": 88,
+   "z": -3012
+  },
+  {
+   "city": "wolfden",
+   "craft": "healer",
+   "npc": "litrpg:beast_artisan",
+   "x": -2584,
    "y": 89,
-   "z": -3000
+   "z": -2991
   },
   {
    "city": "wolfden",
    "craft": "innkeeper",
    "npc": "litrpg:beast_artisan",
-   "x": -2597,
+   "x": -2554,
    "y": 89,
-   "z": -2996
+   "z": -3002
   },
   {
    "city": "ashgrad",
@@ -16673,6 +16769,22 @@
    "x": -2843,
    "y": 76,
    "z": 2993
+  },
+  {
+   "city": "ashgrad",
+   "craft": "teleporter",
+   "npc": "litrpg:demon_artisan",
+   "x": -2826,
+   "y": 76,
+   "z": 2920
+  },
+  {
+   "city": "ashgrad",
+   "craft": "hosteler",
+   "npc": "litrpg:demon_artisan",
+   "x": -2792,
+   "y": 76,
+   "z": 2947
   },
   {
    "city": "ashgrad",
@@ -16694,7 +16806,7 @@
    "city": "ashgrad",
    "craft": "alchemist",
    "npc": "litrpg:demon_artisan",
-   "x": -2844,
+   "x": -2850,
    "y": 76,
    "z": 2915
   },
@@ -16702,73 +16814,73 @@
    "city": "ashgrad",
    "craft": "jeweler",
    "npc": "litrpg:demon_artisan",
-   "x": -2839,
+   "x": -2838,
    "y": 77,
    "z": 2973
   },
   {
    "city": "ashgrad",
-   "craft": "healer",
-   "npc": "litrpg:demon_artisan",
-   "x": -2881,
-   "y": 76,
-   "z": 2956
-  },
-  {
-   "city": "ashgrad",
-   "craft": "tailor",
-   "npc": "litrpg:demon_artisan",
-   "x": -2864,
-   "y": 76,
-   "z": 2914
-  },
-  {
-   "city": "ashgrad",
-   "craft": "weaponsmith",
-   "npc": "litrpg:demon_artisan",
-   "x": -2809,
-   "y": 77,
-   "z": 2951
-  },
-  {
-   "city": "ashgrad",
-   "craft": "builder",
-   "npc": "litrpg:demon_artisan",
-   "x": -2867,
-   "y": 77,
-   "z": 2970
-  },
-  {
-   "city": "ashgrad",
-   "craft": "armorer",
-   "npc": "litrpg:demon_artisan",
-   "x": -2887,
-   "y": 76,
-   "z": 2926
-  },
-  {
-   "city": "ashgrad",
    "craft": "scribe",
    "npc": "litrpg:demon_artisan",
-   "x": -2862,
+   "x": -2869,
    "y": 77,
-   "z": 2985
+   "z": 2972
   },
   {
    "city": "ashgrad",
    "craft": "innkeeper",
    "npc": "litrpg:demon_artisan",
+   "x": -2864,
+   "y": 76,
+   "z": 2910
+  },
+  {
+   "city": "ashgrad",
+   "craft": "tailor",
+   "npc": "litrpg:demon_artisan",
+   "x": -2881,
+   "y": 76,
+   "z": 2958
+  },
+  {
+   "city": "ashgrad",
+   "craft": "weaponsmith",
+   "npc": "litrpg:demon_artisan",
+   "x": -2862,
+   "y": 77,
+   "z": 2984
+  },
+  {
+   "city": "ashgrad",
+   "craft": "builder",
+   "npc": "litrpg:demon_artisan",
    "x": -2844,
    "y": 76,
-   "z": 2896
+   "z": 2900
+  },
+  {
+   "city": "ashgrad",
+   "craft": "armorer",
+   "npc": "litrpg:demon_artisan",
+   "x": -2888,
+   "y": 76,
+   "z": 2929
   },
   {
    "city": "ashgrad",
    "craft": "banker",
    "npc": "litrpg:demon_artisan",
-   "x": -2823,
+   "x": -2822,
    "y": 77,
-   "z": 2895
+   "z": 2899
+  },
+  {
+   "city": "ashgrad",
+   "craft": "healer",
+   "npc": "litrpg:demon_artisan",
+   "x": -2810,
+   "y": 77,
+   "z": 2980
   },
   {
    "city": "dawnfort",
@@ -16780,107 +16892,123 @@
   },
   {
    "city": "dawnfort",
+   "craft": "teleporter",
+   "npc": "litrpg:human_artisan",
+   "x": -98,
+   "y": 74,
+   "z": 2553
+  },
+  {
+   "city": "dawnfort",
+   "craft": "hosteler",
+   "npc": "litrpg:human_artisan",
+   "x": -91,
+   "y": 74,
+   "z": 2581
+  },
+  {
+   "city": "dawnfort",
    "craft": "baker",
    "npc": "litrpg:human_artisan",
-   "x": -102,
+   "x": -107,
    "y": 74,
-   "z": 2554
+   "z": 2563
   },
   {
    "city": "dawnfort",
    "craft": "butcher",
    "npc": "litrpg:human_artisan",
-   "x": -97,
+   "x": -102,
    "y": 74,
-   "z": 2554
+   "z": 2563
   },
   {
    "city": "dawnfort",
    "craft": "farmer",
    "npc": "litrpg:human_artisan",
-   "x": -100,
+   "x": -105,
    "y": 74,
-   "z": 2559
+   "z": 2568
   },
   {
    "city": "dawnfort",
    "craft": "healer",
    "npc": "litrpg:human_artisan",
-   "x": -101,
+   "x": -105,
    "y": 74,
-   "z": 2582
-  },
-  {
-   "city": "dawnfort",
-   "craft": "builder",
-   "npc": "litrpg:human_artisan",
-   "x": -81,
-   "y": 75,
-   "z": 2589
-  },
-  {
-   "city": "dawnfort",
-   "craft": "stablemaster",
-   "npc": "litrpg:human_artisan",
-   "x": -94,
-   "y": 74,
-   "z": 2542
-  },
-  {
-   "city": "dawnfort",
-   "craft": "baker",
-   "npc": "litrpg:human_artisan",
-   "x": -112,
-   "y": 74,
-   "z": 2562
-  },
-  {
-   "city": "dawnfort",
-   "craft": "armorer",
-   "npc": "litrpg:human_artisan",
-   "x": -113,
-   "y": 74,
-   "z": 2546
-  },
-  {
-   "city": "dawnfort",
-   "craft": "weaponsmith",
-   "npc": "litrpg:human_artisan",
-   "x": -53,
-   "y": 75,
-   "z": 2586
+   "z": 2581
   },
   {
    "city": "dawnfort",
    "craft": "fletcher",
    "npc": "litrpg:human_artisan",
-   "x": -124,
+   "x": -114,
    "y": 74,
-   "z": 2575
+   "z": 2547
   },
   {
    "city": "dawnfort",
-   "craft": "blacksmith",
+   "craft": "stablemaster",
    "npc": "litrpg:human_artisan",
-   "x": -96,
-   "y": 75,
-   "z": 2601
+   "x": -98,
+   "y": 74,
+   "z": 2533
   },
   {
    "city": "dawnfort",
    "craft": "herbalist",
    "npc": "litrpg:human_artisan",
-   "x": -112,
-   "y": 74,
-   "z": 2531
+   "x": -54,
+   "y": 75,
+   "z": 2585
   },
   {
    "city": "dawnfort",
    "craft": "innkeeper",
    "npc": "litrpg:human_artisan",
-   "x": -51,
+   "x": -116,
    "y": 74,
-   "z": 2514
+   "z": 2529
+  },
+  {
+   "city": "dawnfort",
+   "craft": "baker",
+   "npc": "litrpg:human_artisan",
+   "x": -124,
+   "y": 74,
+   "z": 2570
+  },
+  {
+   "city": "dawnfort",
+   "craft": "builder",
+   "npc": "litrpg:human_artisan",
+   "x": -96,
+   "y": 75,
+   "z": 2605
+  },
+  {
+   "city": "dawnfort",
+   "craft": "weaponsmith",
+   "npc": "litrpg:human_artisan",
+   "x": -131,
+   "y": 74,
+   "z": 2547
+  },
+  {
+   "city": "dawnfort",
+   "craft": "blacksmith",
+   "npc": "litrpg:human_artisan",
+   "x": -53,
+   "y": 74,
+   "z": 2515
+  },
+  {
+   "city": "dawnfort",
+   "craft": "armorer",
+   "npc": "litrpg:human_artisan",
+   "x": -111,
+   "y": 74,
+   "z": 2598
   },
   {
    "city": "northwatch",
@@ -16892,35 +17020,51 @@
   },
   {
    "city": "northwatch",
+   "craft": "teleporter",
+   "npc": "litrpg:human_artisan",
+   "x": 361,
+   "y": 108,
+   "z": -3226
+  },
+  {
+   "city": "northwatch",
+   "craft": "hosteler",
+   "npc": "litrpg:human_artisan",
+   "x": 326,
+   "y": 108,
+   "z": -3238
+  },
+  {
+   "city": "northwatch",
    "craft": "baker",
    "npc": "litrpg:human_artisan",
-   "x": 330,
+   "x": 365,
    "y": 108,
-   "z": -3250
+   "z": -3249
   },
   {
    "city": "northwatch",
    "craft": "butcher",
    "npc": "litrpg:human_artisan",
-   "x": 335,
+   "x": 370,
    "y": 108,
-   "z": -3250
+   "z": -3249
   },
   {
    "city": "northwatch",
    "craft": "farmer",
    "npc": "litrpg:human_artisan",
-   "x": 332,
+   "x": 367,
    "y": 108,
-   "z": -3245
+   "z": -3244
   },
   {
    "city": "northwatch",
    "craft": "baker",
    "npc": "litrpg:human_artisan",
-   "x": 337,
+   "x": 372,
    "y": 108,
-   "z": -3245
+   "z": -3244
   },
   {
    "city": "northwatch",
@@ -16928,39 +17072,31 @@
    "npc": "litrpg:human_artisan",
    "x": 333,
    "y": 108,
-   "z": -3238
+   "z": -3251
   },
   {
    "city": "northwatch",
-   "craft": "builder",
+   "craft": "innkeeper",
    "npc": "litrpg:human_artisan",
-   "x": 381,
-   "y": 109,
-   "z": -3242
-  },
-  {
-   "city": "northwatch",
-   "craft": "fletcher",
-   "npc": "litrpg:human_artisan",
-   "x": 370,
+   "x": 383,
    "y": 108,
-   "z": -3229
+   "z": -3240
   },
   {
    "city": "northwatch",
-   "craft": "armorer",
+   "craft": "herbalist",
    "npc": "litrpg:human_artisan",
-   "x": 329,
+   "x": 367,
    "y": 109,
-   "z": -3220
+   "z": -3213
   },
   {
    "city": "northwatch",
    "craft": "stablemaster",
    "npc": "litrpg:human_artisan",
-   "x": 367,
-   "y": 109,
-   "z": -3213
+   "x": 308,
+   "y": 108,
+   "z": -3241
   },
   {
    "city": "northwatch",
@@ -16972,35 +17108,43 @@
   },
   {
    "city": "northwatch",
-   "craft": "healer",
+   "craft": "armorer",
    "npc": "litrpg:human_artisan",
-   "x": 308,
+   "x": 312,
    "y": 108,
-   "z": -3242
+   "z": -3225
   },
   {
    "city": "northwatch",
-   "craft": "herbalist",
+   "craft": "healer",
    "npc": "litrpg:human_artisan",
-   "x": 388,
+   "x": 392,
    "y": 108,
-   "z": -3281
+   "z": -3277
+  },
+  {
+   "city": "northwatch",
+   "craft": "fletcher",
+   "npc": "litrpg:human_artisan",
+   "x": 400,
+   "y": 109,
+   "z": -3254
   },
   {
    "city": "northwatch",
    "craft": "weaponsmith",
    "npc": "litrpg:human_artisan",
-   "x": 382,
+   "x": 377,
    "y": 109,
-   "z": -3231
+   "z": -3211
   },
   {
    "city": "northwatch",
-   "craft": "innkeeper",
+   "craft": "builder",
    "npc": "litrpg:human_artisan",
-   "x": 308,
-   "y": 108,
-   "z": -3227
+   "x": 394,
+   "y": 109,
+   "z": -3221
   },
   {
    "city": "blackbastion",
@@ -17012,107 +17156,123 @@
   },
   {
    "city": "blackbastion",
-   "craft": "baker",
+   "craft": "teleporter",
+   "npc": "litrpg:human_artisan",
+   "x": 3133,
+   "y": 88,
+   "z": -352
+  },
+  {
+   "city": "blackbastion",
+   "craft": "hosteler",
    "npc": "litrpg:human_artisan",
    "x": 3154,
    "y": 88,
-   "z": -338
+   "z": -325
+  },
+  {
+   "city": "blackbastion",
+   "craft": "baker",
+   "npc": "litrpg:human_artisan",
+   "x": 3167,
+   "y": 88,
+   "z": -354
   },
   {
    "city": "blackbastion",
    "craft": "butcher",
    "npc": "litrpg:human_artisan",
-   "x": 3159,
+   "x": 3172,
    "y": 88,
-   "z": -338
+   "z": -354
   },
   {
    "city": "blackbastion",
    "craft": "farmer",
    "npc": "litrpg:human_artisan",
-   "x": 3156,
+   "x": 3169,
    "y": 88,
-   "z": -333
-  },
-  {
-   "city": "blackbastion",
-   "craft": "blacksmith",
-   "npc": "litrpg:human_artisan",
-   "x": 3171,
-   "y": 88,
-   "z": -346
-  },
-  {
-   "city": "blackbastion",
-   "craft": "weaponsmith",
-   "npc": "litrpg:human_artisan",
-   "x": 3146,
-   "y": 88,
-   "z": -332
-  },
-  {
-   "city": "blackbastion",
-   "craft": "fletcher",
-   "npc": "litrpg:human_artisan",
-   "x": 3172,
-   "y": 88,
-   "z": -330
-  },
-  {
-   "city": "blackbastion",
-   "craft": "stablemaster",
-   "npc": "litrpg:human_artisan",
-   "x": 3129,
-   "y": 88,
-   "z": -369
-  },
-  {
-   "city": "blackbastion",
-   "craft": "herbalist",
-   "npc": "litrpg:human_artisan",
-   "x": 3120,
-   "y": 88,
-   "z": -355
-  },
-  {
-   "city": "blackbastion",
-   "craft": "builder",
-   "npc": "litrpg:human_artisan",
-   "x": 3163,
-   "y": 89,
-   "z": -314
-  },
-  {
-   "city": "blackbastion",
-   "craft": "baker",
-   "npc": "litrpg:human_artisan",
-   "x": 3145,
-   "y": 89,
-   "z": -310
-  },
-  {
-   "city": "blackbastion",
-   "craft": "innkeeper",
-   "npc": "litrpg:human_artisan",
-   "x": 3198,
-   "y": 89,
-   "z": -351
+   "z": -349
   },
   {
    "city": "blackbastion",
    "craft": "armorer",
    "npc": "litrpg:human_artisan",
-   "x": 3112,
+   "x": 3174,
    "y": 88,
-   "z": -379
+   "z": -341
+  },
+  {
+   "city": "blackbastion",
+   "craft": "weaponsmith",
+   "npc": "litrpg:human_artisan",
+   "x": 3128,
+   "y": 88,
+   "z": -372
+  },
+  {
+   "city": "blackbastion",
+   "craft": "fletcher",
+   "npc": "litrpg:human_artisan",
+   "x": 3119,
+   "y": 88,
+   "z": -355
+  },
+  {
+   "city": "blackbastion",
+   "craft": "blacksmith",
+   "npc": "litrpg:human_artisan",
+   "x": 3170,
+   "y": 88,
+   "z": -329
+  },
+  {
+   "city": "blackbastion",
+   "craft": "builder",
+   "npc": "litrpg:human_artisan",
+   "x": 3144,
+   "y": 89,
+   "z": -311
+  },
+  {
+   "city": "blackbastion",
+   "craft": "baker",
+   "npc": "litrpg:human_artisan",
+   "x": 3164,
+   "y": 89,
+   "z": -312
   },
   {
    "city": "blackbastion",
    "craft": "healer",
    "npc": "litrpg:human_artisan",
-   "x": 3122,
+   "x": 3197,
+   "y": 89,
+   "z": -351
+  },
+  {
+   "city": "blackbastion",
+   "craft": "stablemaster",
+   "npc": "litrpg:human_artisan",
+   "x": 3124,
    "y": 88,
-   "z": -317
+   "z": -316
+  },
+  {
+   "city": "blackbastion",
+   "craft": "herbalist",
+   "npc": "litrpg:human_artisan",
+   "x": 3114,
+   "y": 88,
+   "z": -384
+  },
+  {
+   "city": "blackbastion",
+   "craft": "innkeeper",
+   "npc": "litrpg:human_artisan",
+   "x": 3184,
+   "y": 88,
+   "z": -325
   },
   {
    "city": "farm_0",
@@ -17994,6 +18154,196 @@
     72,
     102
    ],
+   "portal": [
+    -13,
+    72,
+    31
+   ],
+   "inn_room_1_lo": [
+    48,
+    78,
+    10
+   ],
+   "inn_room_1_hi": [
+    43,
+    80,
+    14
+   ],
+   "inn_room_1_door": [
+    46,
+    78,
+    15
+   ],
+   "inn_room_2_lo": [
+    41,
+    78,
+    10
+   ],
+   "inn_room_2_hi": [
+    36,
+    80,
+    14
+   ],
+   "inn_room_2_door": [
+    39,
+    78,
+    15
+   ],
+   "inn_room_3_lo": [
+    34,
+    78,
+    10
+   ],
+   "inn_room_3_hi": [
+    29,
+    80,
+    14
+   ],
+   "inn_room_3_door": [
+    32,
+    78,
+    15
+   ],
+   "inn_room_4_lo": [
+    48,
+    78,
+    23
+   ],
+   "inn_room_4_hi": [
+    43,
+    80,
+    19
+   ],
+   "inn_room_4_door": [
+    46,
+    78,
+    18
+   ],
+   "inn_room_5_lo": [
+    41,
+    78,
+    23
+   ],
+   "inn_room_5_hi": [
+    36,
+    80,
+    19
+   ],
+   "inn_room_5_door": [
+    39,
+    78,
+    18
+   ],
+   "inn_room_6_lo": [
+    34,
+    78,
+    23
+   ],
+   "inn_room_6_hi": [
+    29,
+    80,
+    19
+   ],
+   "inn_room_6_door": [
+    32,
+    78,
+    18
+   ],
+   "inn_room_7_lo": [
+    48,
+    82,
+    10
+   ],
+   "inn_room_7_hi": [
+    43,
+    84,
+    14
+   ],
+   "inn_room_7_door": [
+    46,
+    82,
+    15
+   ],
+   "inn_room_8_lo": [
+    41,
+    82,
+    10
+   ],
+   "inn_room_8_hi": [
+    36,
+    84,
+    14
+   ],
+   "inn_room_8_door": [
+    39,
+    82,
+    15
+   ],
+   "inn_room_9_lo": [
+    34,
+    82,
+    10
+   ],
+   "inn_room_9_hi": [
+    29,
+    84,
+    14
+   ],
+   "inn_room_9_door": [
+    32,
+    82,
+    15
+   ],
+   "inn_room_10_lo": [
+    48,
+    82,
+    23
+   ],
+   "inn_room_10_hi": [
+    43,
+    84,
+    19
+   ],
+   "inn_room_10_door": [
+    46,
+    82,
+    18
+   ],
+   "inn_room_11_lo": [
+    41,
+    82,
+    23
+   ],
+   "inn_room_11_hi": [
+    36,
+    84,
+    19
+   ],
+   "inn_room_11_door": [
+    39,
+    82,
+    18
+   ],
+   "inn_room_12_lo": [
+    34,
+    82,
+    23
+   ],
+   "inn_room_12_hi": [
+    29,
+    84,
+    19
+   ],
+   "inn_room_12_door": [
+    32,
+    82,
+    18
+   ],
+   "inn": [
+    38,
+    72,
+    6
+   ],
    "chief": [
     -1,
     72,
@@ -18059,50 +18409,60 @@
     72,
     -12
    ],
-   "craft_armorer": [
-    -29,
-    73,
-    19
-   ],
-   "craft_weaponsmith": [
-    29,
-    73,
-    13
-   ],
-   "craft_builder": [
-    17,
-    73,
+   "craft_teleporter": [
+    -13,
+    72,
     35
    ],
-   "craft_miner": [
+   "craft_hosteler": [
     45,
-    73,
-    11
-   ],
-   "craft_banker": [
-    -31,
-    73,
-    41
+    72,
+    21
    ],
    "craft_scribe": [
-    14,
+    -14,
     73,
-    44
+    47
+   ],
+   "craft_builder": [
+    -28,
+    73,
+    38
    ],
    "craft_stablemaster": [
-    48,
+    -53,
     73,
-    -44
+    12
+   ],
+   "craft_weaponsmith": [
+    -45,
+    73,
+    24
    ],
    "craft_healer": [
-    -13,
+    13,
+    73,
+    60
+   ],
+   "craft_armorer": [
+    -12,
     73,
     64
    ],
-   "craft_innkeeper": [
-    12,
+   "craft_miner": [
+    -31,
     73,
-    70
+    52
+   ],
+   "craft_innkeeper": [
+    -73,
+    73,
+    16
+   ],
+   "craft_banker": [
+    71,
+    73,
+    -47
    ]
   },
   "haven": {
@@ -18156,6 +18516,106 @@
     68,
     928
    ],
+   "portal": [
+    1512,
+    68,
+    928
+   ],
+   "inn_room_1_lo": [
+    1539,
+    74,
+    970
+   ],
+   "inn_room_1_hi": [
+    1543,
+    76,
+    965
+   ],
+   "inn_room_1_door": [
+    1544,
+    74,
+    968
+   ],
+   "inn_room_2_lo": [
+    1539,
+    74,
+    963
+   ],
+   "inn_room_2_hi": [
+    1543,
+    76,
+    958
+   ],
+   "inn_room_2_door": [
+    1544,
+    74,
+    961
+   ],
+   "inn_room_3_lo": [
+    1539,
+    74,
+    956
+   ],
+   "inn_room_3_hi": [
+    1543,
+    76,
+    951
+   ],
+   "inn_room_3_door": [
+    1544,
+    74,
+    954
+   ],
+   "inn_room_4_lo": [
+    1552,
+    74,
+    970
+   ],
+   "inn_room_4_hi": [
+    1548,
+    76,
+    965
+   ],
+   "inn_room_4_door": [
+    1547,
+    74,
+    968
+   ],
+   "inn_room_5_lo": [
+    1552,
+    74,
+    963
+   ],
+   "inn_room_5_hi": [
+    1548,
+    76,
+    958
+   ],
+   "inn_room_5_door": [
+    1547,
+    74,
+    961
+   ],
+   "inn_room_6_lo": [
+    1552,
+    74,
+    956
+   ],
+   "inn_room_6_hi": [
+    1548,
+    76,
+    951
+   ],
+   "inn_room_6_door": [
+    1547,
+    74,
+    954
+   ],
+   "inn": [
+    1536,
+    68,
+    961
+   ],
    "center": [
     1540,
     68,
@@ -18181,60 +18641,70 @@
     68,
     908
    ],
-   "craft_farmer": [
-    1550,
-    68,
-    950
-   ],
-   "craft_tailor": [
-    1542,
-    68,
-    955
-   ],
-   "craft_herbalist": [
-    1547,
-    68,
-    955
-   ],
-   "craft_blacksmith": [
+   "craft_teleporter": [
     1512,
-    69,
-    923
-   ],
-   "craft_baker": [
-    1561,
     68,
-    956
+    932
    ],
-   "craft_scribe": [
-    1536,
+   "craft_hosteler": [
+    1550,
     68,
     967
    ],
-   "craft_leatherworker": [
-    1565,
+   "craft_farmer": [
+    1500,
     68,
-    946
+    917
    ],
-   "craft_stablemaster": [
-    1551,
+   "craft_tailor": [
+    1492,
+    68,
+    922
+   ],
+   "craft_herbalist": [
+    1497,
+    68,
+    922
+   ],
+   "craft_blacksmith": [
+    1522,
+    68,
+    903
+   ],
+   "craft_baker": [
+    1549,
     69,
-    889
+    888
+   ],
+   "craft_leatherworker": [
+    1567,
+    69,
+    963
+   ],
+   "craft_scribe": [
+    1560,
+    69,
+    887
    ],
    "craft_builder": [
-    1550,
+    1548,
     69,
-    977
+    981
+   ],
+   "craft_stablemaster": [
+    1484,
+    68,
+    910
    ],
    "craft_healer": [
-    1485,
+    1499,
     69,
-    933
+    975
    ],
    "craft_banker": [
-    1480,
+    1565,
     69,
-    908
+    980
    ],
    "pirate_ship": [
     1864,
@@ -18273,6 +18743,106 @@
     69,
     -343
    ],
+   "portal": [
+    -2772,
+    76,
+    -367
+   ],
+   "inn_room_1_lo": [
+    -2862,
+    82,
+    -403
+   ],
+   "inn_room_1_hi": [
+    -2857,
+    84,
+    -407
+   ],
+   "inn_room_1_door": [
+    -2860,
+    82,
+    -408
+   ],
+   "inn_room_2_lo": [
+    -2855,
+    82,
+    -403
+   ],
+   "inn_room_2_hi": [
+    -2850,
+    84,
+    -407
+   ],
+   "inn_room_2_door": [
+    -2853,
+    82,
+    -408
+   ],
+   "inn_room_3_lo": [
+    -2848,
+    82,
+    -403
+   ],
+   "inn_room_3_hi": [
+    -2843,
+    84,
+    -407
+   ],
+   "inn_room_3_door": [
+    -2846,
+    82,
+    -408
+   ],
+   "inn_room_4_lo": [
+    -2862,
+    82,
+    -416
+   ],
+   "inn_room_4_hi": [
+    -2857,
+    84,
+    -412
+   ],
+   "inn_room_4_door": [
+    -2860,
+    82,
+    -411
+   ],
+   "inn_room_5_lo": [
+    -2855,
+    82,
+    -416
+   ],
+   "inn_room_5_hi": [
+    -2850,
+    84,
+    -412
+   ],
+   "inn_room_5_door": [
+    -2853,
+    82,
+    -411
+   ],
+   "inn_room_6_lo": [
+    -2848,
+    82,
+    -416
+   ],
+   "inn_room_6_hi": [
+    -2843,
+    84,
+    -412
+   ],
+   "inn_room_6_door": [
+    -2846,
+    82,
+    -411
+   ],
+   "inn": [
+    -2853,
+    76,
+    -400
+   ],
    "center": [
     -2796,
     76,
@@ -18287,6 +18857,16 @@
     -2771,
     91,
     -347
+   ],
+   "craft_teleporter": [
+    -2772,
+    76,
+    -363
+   ],
+   "craft_hosteler": [
+    -2859,
+    76,
+    -414
    ],
    "craft_herbalist": [
     -2799,
@@ -18303,45 +18883,45 @@
     76,
     -418
    ],
-   "craft_scribe": [
+   "craft_leatherworker": [
     -2806,
     76,
-    -426
+    -422
    ],
-   "craft_builder": [
-    -2837,
+   "craft_scribe": [
+    -2785,
     76,
-    -401
-   ],
-   "craft_baker": [
-    -2784,
-    76,
-    -427
-   ],
-   "craft_leatherworker": [
-    -2764,
-    77,
-    -368
-   ],
-   "craft_fletcher": [
-    -2851,
-    76,
-    -377
-   ],
-   "craft_healer": [
-    -2798,
-    77,
-    -332
-   ],
-   "craft_alchemist": [
-    -2756,
-    77,
-    -355
+    -425
    ],
    "craft_innkeeper": [
-    -2758,
+    -2755,
     77,
-    -430
+    -362
+   ],
+   "craft_builder": [
+    -2799,
+    77,
+    -333
+   ],
+   "craft_baker": [
+    -2851,
+    76,
+    -376
+   ],
+   "craft_alchemist": [
+    -2744,
+    77,
+    -403
+   ],
+   "craft_fletcher": [
+    -2762,
+    77,
+    -429
+   ],
+   "craft_healer": [
+    -2765,
+    76,
+    -330
    ],
    "tree": [
     -2792,
@@ -18380,6 +18960,136 @@
     165,
     -2493
    ],
+   "portal": [
+    2680,
+    172,
+    -2562
+   ],
+   "inn_room_1_lo": [
+    2706,
+    178,
+    -2539
+   ],
+   "inn_room_1_hi": [
+    2701,
+    180,
+    -2535
+   ],
+   "inn_room_1_door": [
+    2704,
+    178,
+    -2534
+   ],
+   "inn_room_2_lo": [
+    2699,
+    178,
+    -2539
+   ],
+   "inn_room_2_hi": [
+    2694,
+    180,
+    -2535
+   ],
+   "inn_room_2_door": [
+    2697,
+    178,
+    -2534
+   ],
+   "inn_room_3_lo": [
+    2706,
+    178,
+    -2526
+   ],
+   "inn_room_3_hi": [
+    2701,
+    180,
+    -2530
+   ],
+   "inn_room_3_door": [
+    2704,
+    178,
+    -2531
+   ],
+   "inn_room_4_lo": [
+    2699,
+    178,
+    -2526
+   ],
+   "inn_room_4_hi": [
+    2694,
+    180,
+    -2530
+   ],
+   "inn_room_4_door": [
+    2697,
+    178,
+    -2531
+   ],
+   "inn_room_5_lo": [
+    2706,
+    182,
+    -2539
+   ],
+   "inn_room_5_hi": [
+    2701,
+    184,
+    -2535
+   ],
+   "inn_room_5_door": [
+    2704,
+    182,
+    -2534
+   ],
+   "inn_room_6_lo": [
+    2699,
+    182,
+    -2539
+   ],
+   "inn_room_6_hi": [
+    2694,
+    184,
+    -2535
+   ],
+   "inn_room_6_door": [
+    2697,
+    182,
+    -2534
+   ],
+   "inn_room_7_lo": [
+    2706,
+    182,
+    -2526
+   ],
+   "inn_room_7_hi": [
+    2701,
+    184,
+    -2530
+   ],
+   "inn_room_7_door": [
+    2704,
+    182,
+    -2531
+   ],
+   "inn_room_8_lo": [
+    2699,
+    182,
+    -2526
+   ],
+   "inn_room_8_hi": [
+    2694,
+    184,
+    -2530
+   ],
+   "inn_room_8_door": [
+    2697,
+    182,
+    -2531
+   ],
+   "inn": [
+    2700,
+    172,
+    -2542
+   ],
    "center": [
     2708,
     172,
@@ -18399,6 +19109,16 @@
     2734,
     172,
     -2517
+   ],
+   "craft_teleporter": [
+    2680,
+    172,
+    -2558
+   ],
+   "craft_hosteler": [
+    2703,
+    172,
+    -2528
    ],
    "craft_jeweler": [
     2691,
@@ -18421,39 +19141,39 @@
     -2582
    ],
    "craft_blacksmith": [
-    2681,
-    172,
-    -2567
+    2728,
+    173,
+    -2546
    ],
    "craft_armorer": [
-    2709,
+    2717,
     173,
-    -2536
-   ],
-   "craft_weaponsmith": [
-    2729,
-    173,
-    -2545
+    -2534
    ],
    "craft_miner": [
-    2669,
+    2735,
     173,
-    -2577
-   ],
-   "craft_builder": [
-    2682,
-    172,
-    -2588
+    -2558
    ],
    "craft_alchemist": [
-    2718,
+    2702,
+    172,
+    -2594
+   ],
+   "craft_weaponsmith": [
+    2664,
     173,
-    -2599
+    -2573
+   ],
+   "craft_builder": [
+    2680,
+    173,
+    -2520
    ],
    "craft_banker": [
-    2741,
-    173,
-    -2535
+    2689,
+    172,
+    -2611
    ]
   },
   "ghardum": {
@@ -18492,6 +19212,106 @@
     91,
     2624
    ],
+   "portal": [
+    2867,
+    90,
+    2631
+   ],
+   "inn_room_1_lo": [
+    2849,
+    96,
+    2605
+   ],
+   "inn_room_1_hi": [
+    2854,
+    98,
+    2601
+   ],
+   "inn_room_1_door": [
+    2851,
+    96,
+    2600
+   ],
+   "inn_room_2_lo": [
+    2856,
+    96,
+    2605
+   ],
+   "inn_room_2_hi": [
+    2861,
+    98,
+    2601
+   ],
+   "inn_room_2_door": [
+    2858,
+    96,
+    2600
+   ],
+   "inn_room_3_lo": [
+    2863,
+    96,
+    2605
+   ],
+   "inn_room_3_hi": [
+    2868,
+    98,
+    2601
+   ],
+   "inn_room_3_door": [
+    2865,
+    96,
+    2600
+   ],
+   "inn_room_4_lo": [
+    2849,
+    96,
+    2592
+   ],
+   "inn_room_4_hi": [
+    2854,
+    98,
+    2596
+   ],
+   "inn_room_4_door": [
+    2851,
+    96,
+    2597
+   ],
+   "inn_room_5_lo": [
+    2856,
+    96,
+    2592
+   ],
+   "inn_room_5_hi": [
+    2861,
+    98,
+    2596
+   ],
+   "inn_room_5_door": [
+    2858,
+    96,
+    2597
+   ],
+   "inn_room_6_lo": [
+    2863,
+    96,
+    2592
+   ],
+   "inn_room_6_hi": [
+    2868,
+    98,
+    2596
+   ],
+   "inn_room_6_door": [
+    2865,
+    96,
+    2597
+   ],
+   "inn": [
+    2858,
+    90,
+    2608
+   ],
    "center": [
     2900,
     88,
@@ -18506,6 +19326,16 @@
     2939,
     90,
     2634
+   ],
+   "craft_teleporter": [
+    2867,
+    90,
+    2635
+   ],
+   "craft_hosteler": [
+    2852,
+    90,
+    2594
    ],
    "craft_leatherworker": [
     2899,
@@ -18522,35 +19352,35 @@
     90,
     2596
    ],
-   "craft_weaponsmith": [
-    2884,
-    90,
-    2596
-   ],
-   "craft_blacksmith": [
-    2866,
-    90,
-    2605
-   ],
-   "craft_herbalist": [
-    2860,
-    90,
-    2629
-   ],
    "craft_innkeeper": [
     2899,
     91,
     2663
    ],
    "craft_builder": [
+    2931,
+    91,
+    2608
+   ],
+   "craft_weaponsmith": [
     2929,
     91,
     2649
    ],
+   "craft_herbalist": [
+    2853,
+    90,
+    2631
+   ],
    "craft_armorer": [
-    2868,
+    2869,
     91,
     2663
+   ],
+   "craft_blacksmith": [
+    2858,
+    90,
+    2653
    ]
   },
   "wolfden": {
@@ -18584,6 +19414,76 @@
     81,
     -3082
    ],
+   "portal": [
+    -2594,
+    88,
+    -3018
+   ],
+   "inn_room_1_lo": [
+    -2599,
+    94,
+    -3067
+   ],
+   "inn_room_1_hi": [
+    -2595,
+    96,
+    -3072
+   ],
+   "inn_room_1_door": [
+    -2594,
+    94,
+    -3069
+   ],
+   "inn_room_2_lo": [
+    -2599,
+    94,
+    -3074
+   ],
+   "inn_room_2_hi": [
+    -2595,
+    96,
+    -3079
+   ],
+   "inn_room_2_door": [
+    -2594,
+    94,
+    -3076
+   ],
+   "inn_room_3_lo": [
+    -2586,
+    94,
+    -3067
+   ],
+   "inn_room_3_hi": [
+    -2590,
+    96,
+    -3072
+   ],
+   "inn_room_3_door": [
+    -2591,
+    94,
+    -3069
+   ],
+   "inn_room_4_lo": [
+    -2586,
+    94,
+    -3074
+   ],
+   "inn_room_4_hi": [
+    -2590,
+    96,
+    -3079
+   ],
+   "inn_room_4_door": [
+    -2591,
+    94,
+    -3076
+   ],
+   "inn": [
+    -2602,
+    88,
+    -3073
+   ],
    "center": [
     -2588,
     88,
@@ -18599,45 +19499,55 @@
     88,
     -3047
    ],
-   "craft_leatherworker": [
-    -2595,
+   "craft_teleporter": [
+    -2594,
     88,
-    -3062
+    -3014
+   ],
+   "craft_hosteler": [
+    -2588,
+    88,
+    -3070
+   ],
+   "craft_leatherworker": [
+    -2618,
+    88,
+    -3036
    ],
    "craft_herbalist": [
-    -2593,
-    88,
-    -3057
-   ],
-   "craft_butcher": [
     -2616,
     88,
-    -3024
+    -3031
    ],
-   "craft_healer": [
-    -2597,
-    89,
-    -3010
+   "craft_butcher": [
+    -2576,
+    88,
+    -3063
    ],
    "craft_fletcher": [
     -2564,
     89,
     -3019
    ],
-   "craft_tailor": [
-    -2595,
-    88,
-    -3081
-   ],
    "craft_builder": [
-    -2564,
-    88,
-    -3073
+    -2598,
+    89,
+    -3003
+   ],
+   "craft_tailor": [
+    -2583,
+    89,
+    -3003
+   ],
+   "craft_healer": [
+    -2584,
+    89,
+    -2991
    ],
    "craft_innkeeper": [
-    -2597,
+    -2554,
     89,
-    -2996
+    -3002
    ],
    "totem": [
     -2588,
@@ -18686,6 +19596,106 @@
     69,
     2966
    ],
+   "portal": [
+    -2826,
+    76,
+    2916
+   ],
+   "inn_room_1_lo": [
+    -2789,
+    82,
+    2936
+   ],
+   "inn_room_1_hi": [
+    -2794,
+    84,
+    2940
+   ],
+   "inn_room_1_door": [
+    -2791,
+    82,
+    2941
+   ],
+   "inn_room_2_lo": [
+    -2796,
+    82,
+    2936
+   ],
+   "inn_room_2_hi": [
+    -2801,
+    84,
+    2940
+   ],
+   "inn_room_2_door": [
+    -2798,
+    82,
+    2941
+   ],
+   "inn_room_3_lo": [
+    -2803,
+    82,
+    2936
+   ],
+   "inn_room_3_hi": [
+    -2808,
+    84,
+    2940
+   ],
+   "inn_room_3_door": [
+    -2805,
+    82,
+    2941
+   ],
+   "inn_room_4_lo": [
+    -2789,
+    82,
+    2949
+   ],
+   "inn_room_4_hi": [
+    -2794,
+    84,
+    2945
+   ],
+   "inn_room_4_door": [
+    -2791,
+    82,
+    2944
+   ],
+   "inn_room_5_lo": [
+    -2796,
+    82,
+    2949
+   ],
+   "inn_room_5_hi": [
+    -2801,
+    84,
+    2945
+   ],
+   "inn_room_5_door": [
+    -2798,
+    82,
+    2944
+   ],
+   "inn_room_6_lo": [
+    -2803,
+    82,
+    2949
+   ],
+   "inn_room_6_hi": [
+    -2808,
+    84,
+    2945
+   ],
+   "inn_room_6_door": [
+    -2805,
+    82,
+    2944
+   ],
+   "inn": [
+    -2798,
+    76,
+    2933
+   ],
    "center": [
     -2853,
     78,
@@ -18706,6 +19716,16 @@
     76,
     2993
    ],
+   "craft_teleporter": [
+    -2826,
+    76,
+    2920
+   ],
+   "craft_hosteler": [
+    -2792,
+    76,
+    2947
+   ],
    "craft_alchemist": [
     -2885,
     76,
@@ -18716,45 +19736,45 @@
     76,
     2938
    ],
-   "craft_healer": [
-    -2881,
-    76,
-    2956
-   ],
-   "craft_tailor": [
-    -2864,
-    76,
-    2914
-   ],
-   "craft_weaponsmith": [
-    -2809,
-    77,
-    2951
-   ],
-   "craft_builder": [
-    -2867,
-    77,
-    2970
-   ],
-   "craft_armorer": [
-    -2887,
-    76,
-    2926
-   ],
    "craft_scribe": [
-    -2862,
+    -2869,
     77,
-    2985
+    2972
    ],
    "craft_innkeeper": [
+    -2864,
+    76,
+    2910
+   ],
+   "craft_tailor": [
+    -2881,
+    76,
+    2958
+   ],
+   "craft_weaponsmith": [
+    -2862,
+    77,
+    2984
+   ],
+   "craft_builder": [
     -2844,
     76,
-    2896
+    2900
+   ],
+   "craft_armorer": [
+    -2888,
+    76,
+    2929
    ],
    "craft_banker": [
-    -2823,
+    -2822,
     77,
-    2895
+    2899
+   ],
+   "craft_healer": [
+    -2810,
+    77,
+    2980
    ]
   },
   "dawnfort": {
@@ -18788,6 +19808,76 @@
     67,
     2520
    ],
+   "portal": [
+    -98,
+    74,
+    2549
+   ],
+   "inn_room_1_lo": [
+    -80,
+    80,
+    2578
+   ],
+   "inn_room_1_hi": [
+    -84,
+    82,
+    2583
+   ],
+   "inn_room_1_door": [
+    -85,
+    80,
+    2580
+   ],
+   "inn_room_2_lo": [
+    -80,
+    80,
+    2585
+   ],
+   "inn_room_2_hi": [
+    -84,
+    82,
+    2590
+   ],
+   "inn_room_2_door": [
+    -85,
+    80,
+    2587
+   ],
+   "inn_room_3_lo": [
+    -93,
+    80,
+    2578
+   ],
+   "inn_room_3_hi": [
+    -89,
+    82,
+    2583
+   ],
+   "inn_room_3_door": [
+    -88,
+    80,
+    2580
+   ],
+   "inn_room_4_lo": [
+    -93,
+    80,
+    2585
+   ],
+   "inn_room_4_hi": [
+    -89,
+    82,
+    2590
+   ],
+   "inn_room_4_door": [
+    -88,
+    80,
+    2587
+   ],
+   "inn": [
+    -77,
+    74,
+    2584
+   ],
    "center": [
     -76,
     74,
@@ -18808,60 +19898,70 @@
     74,
     2569
    ],
-   "craft_baker": [
-    -102,
+   "craft_teleporter": [
+    -98,
     74,
-    2554
+    2553
+   ],
+   "craft_hosteler": [
+    -91,
+    74,
+    2581
+   ],
+   "craft_baker": [
+    -107,
+    74,
+    2563
    ],
    "craft_butcher": [
-    -97,
+    -102,
     74,
-    2554
+    2563
    ],
    "craft_farmer": [
-    -100,
+    -105,
     74,
-    2559
+    2568
    ],
    "craft_healer": [
-    -101,
+    -105,
     74,
-    2582
-   ],
-   "craft_builder": [
-    -81,
-    75,
-    2589
-   ],
-   "craft_stablemaster": [
-    -94,
-    74,
-    2542
-   ],
-   "craft_armorer": [
-    -113,
-    74,
-    2546
-   ],
-   "craft_weaponsmith": [
-    -53,
-    75,
-    2586
+    2581
    ],
    "craft_fletcher": [
-    -124,
+    -114,
     74,
-    2575
+    2547
+   ],
+   "craft_stablemaster": [
+    -98,
+    74,
+    2533
    ],
    "craft_herbalist": [
-    -112,
-    74,
-    2531
+    -54,
+    75,
+    2585
    ],
    "craft_innkeeper": [
-    -51,
+    -116,
     74,
-    2514
+    2529
+   ],
+   "craft_builder": [
+    -96,
+    75,
+    2605
+   ],
+   "craft_weaponsmith": [
+    -131,
+    74,
+    2547
+   ],
+   "craft_armorer": [
+    -111,
+    74,
+    2598
    ]
   },
   "northwatch": {
@@ -18895,6 +19995,76 @@
     101,
     -3253
    ],
+   "portal": [
+    361,
+    108,
+    -3230
+   ],
+   "inn_room_1_lo": [
+    337,
+    114,
+    -3241
+   ],
+   "inn_room_1_hi": [
+    333,
+    116,
+    -3236
+   ],
+   "inn_room_1_door": [
+    332,
+    114,
+    -3239
+   ],
+   "inn_room_2_lo": [
+    337,
+    114,
+    -3234
+   ],
+   "inn_room_2_hi": [
+    333,
+    116,
+    -3229
+   ],
+   "inn_room_2_door": [
+    332,
+    114,
+    -3232
+   ],
+   "inn_room_3_lo": [
+    324,
+    114,
+    -3241
+   ],
+   "inn_room_3_hi": [
+    328,
+    116,
+    -3236
+   ],
+   "inn_room_3_door": [
+    329,
+    114,
+    -3239
+   ],
+   "inn_room_4_lo": [
+    324,
+    114,
+    -3234
+   ],
+   "inn_room_4_hi": [
+    328,
+    116,
+    -3229
+   ],
+   "inn_room_4_door": [
+    329,
+    114,
+    -3232
+   ],
+   "inn": [
+    340,
+    108,
+    -3235
+   ],
    "center": [
     356,
     108,
@@ -18915,60 +20085,70 @@
     108,
     -3272
    ],
-   "craft_baker": [
-    330,
+   "craft_teleporter": [
+    361,
     108,
-    -3250
+    -3226
+   ],
+   "craft_hosteler": [
+    326,
+    108,
+    -3238
+   ],
+   "craft_baker": [
+    365,
+    108,
+    -3249
    ],
    "craft_butcher": [
-    335,
-    108,
-    -3250
-   ],
-   "craft_farmer": [
-    332,
-    108,
-    -3245
-   ],
-   "craft_builder": [
-    381,
-    109,
-    -3242
-   ],
-   "craft_fletcher": [
     370,
     108,
-    -3229
+    -3249
    ],
-   "craft_armorer": [
-    329,
-    109,
-    -3220
+   "craft_farmer": [
+    367,
+    108,
+    -3244
    ],
-   "craft_stablemaster": [
+   "craft_innkeeper": [
+    383,
+    108,
+    -3240
+   ],
+   "craft_herbalist": [
     367,
     109,
     -3213
    ],
-   "craft_healer": [
+   "craft_stablemaster": [
     308,
     108,
-    -3242
+    -3241
    ],
-   "craft_herbalist": [
-    388,
+   "craft_armorer": [
+    312,
     108,
-    -3281
+    -3225
+   ],
+   "craft_healer": [
+    392,
+    108,
+    -3277
+   ],
+   "craft_fletcher": [
+    400,
+    109,
+    -3254
    ],
    "craft_weaponsmith": [
-    382,
+    377,
     109,
-    -3231
+    -3211
    ],
-   "craft_innkeeper": [
-    308,
-    108,
-    -3227
+   "craft_builder": [
+    394,
+    109,
+    -3221
    ]
   },
   "blackbastion": {
@@ -19002,6 +20182,76 @@
     81,
     -394
    ],
+   "portal": [
+    3133,
+    88,
+    -356
+   ],
+   "inn_room_1_lo": [
+    3157,
+    94,
+    -336
+   ],
+   "inn_room_1_hi": [
+    3152,
+    96,
+    -332
+   ],
+   "inn_room_1_door": [
+    3155,
+    94,
+    -331
+   ],
+   "inn_room_2_lo": [
+    3150,
+    94,
+    -336
+   ],
+   "inn_room_2_hi": [
+    3145,
+    96,
+    -332
+   ],
+   "inn_room_2_door": [
+    3148,
+    94,
+    -331
+   ],
+   "inn_room_3_lo": [
+    3157,
+    94,
+    -323
+   ],
+   "inn_room_3_hi": [
+    3152,
+    96,
+    -327
+   ],
+   "inn_room_3_door": [
+    3155,
+    94,
+    -328
+   ],
+   "inn_room_4_lo": [
+    3150,
+    94,
+    -323
+   ],
+   "inn_room_4_hi": [
+    3145,
+    96,
+    -327
+   ],
+   "inn_room_4_door": [
+    3148,
+    94,
+    -328
+   ],
+   "inn": [
+    3151,
+    88,
+    -339
+   ],
    "center": [
     3156,
     88,
@@ -19022,60 +20272,70 @@
     88,
     -373
    ],
-   "craft_baker": [
+   "craft_teleporter": [
+    3133,
+    88,
+    -352
+   ],
+   "craft_hosteler": [
     3154,
     88,
-    -338
+    -325
+   ],
+   "craft_baker": [
+    3167,
+    88,
+    -354
    ],
    "craft_butcher": [
-    3159,
-    88,
-    -338
-   ],
-   "craft_farmer": [
-    3156,
-    88,
-    -333
-   ],
-   "craft_weaponsmith": [
-    3146,
-    88,
-    -332
-   ],
-   "craft_fletcher": [
     3172,
     88,
-    -330
+    -354
    ],
-   "craft_stablemaster": [
-    3129,
+   "craft_farmer": [
+    3169,
     88,
-    -369
+    -349
    ],
-   "craft_herbalist": [
-    3120,
+   "craft_armorer": [
+    3174,
+    88,
+    -341
+   ],
+   "craft_weaponsmith": [
+    3128,
+    88,
+    -372
+   ],
+   "craft_fletcher": [
+    3119,
     88,
     -355
    ],
    "craft_builder": [
-    3163,
+    3144,
     89,
-    -314
+    -311
    ],
-   "craft_innkeeper": [
-    3198,
+   "craft_healer": [
+    3197,
     89,
     -351
    ],
-   "craft_armorer": [
-    3112,
+   "craft_stablemaster": [
+    3124,
     88,
-    -379
+    -316
    ],
-   "craft_healer": [
-    3122,
+   "craft_herbalist": [
+    3114,
     88,
-    -317
+    -384
+   ],
+   "craft_innkeeper": [
+    3184,
+    88,
+    -325
    ]
   },
   "world": {

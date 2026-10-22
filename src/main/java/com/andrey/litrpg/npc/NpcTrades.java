@@ -216,6 +216,13 @@ public final class NpcTrades {
             case MINER -> w.addAll(List.of(item(Items.COAL, 16, 5, N), item(Items.TORCH, 16, 3, N), item(Items.RAW_IRON, 6, 12, N), item(Items.RAW_COPPER, 12, 8, N),
                     item(Items.RAW_GOLD, 3, 14, F), item(Items.IRON_PICKAXE, 1, 30, N), item(Items.RAIL, 16, 10, N), item(Items.TNT, 2, 20, H),
                     gear("ring_miner", lv, U, r, N), gear("gloves_miner", lv, U, r, N), gear("dwarven_helmet", lv, RA, r, H)));
+            case HOSTELER -> w.addAll(List.of(item(Items.BREAD, 6, 3, N), item(Items.COOKED_BEEF, 4, 5, N), item(Items.RABBIT_STEW, 1, 6, N),
+                    item(Items.HONEY_BOTTLE, 2, 8, N), item(Items.WHITE_BED, 1, 16, N), item(Items.CANDLE, 4, 6, N), item(Items.LANTERN, 2, 8, N),
+                    item(Items.CHEST, 1, 6, N), item(Items.BARREL, 1, 6, N), item(Items.PAINTING, 2, 8, N), item(Items.FLOWER_POT, 2, 3, N),
+                    item(Items.ENDER_CHEST, 1, 120, F), item(Items.GOLDEN_CARROT, 4, 18, F)));
+            case TELEPORTER -> w.addAll(List.of(item(Items.ENDER_PEARL, 2, 30, N), item(Items.AMETHYST_SHARD, 8, 6, N), item(Items.COMPASS, 1, 14, N),
+                    item(Items.RECOVERY_COMPASS, 1, 60, F), item(Items.LODESTONE, 1, 70, F), item(Items.ENDER_EYE, 1, 70, H),
+                    item(Items.CHORUS_FRUIT, 8, 20, H), gear("amulet_wind", lv, RA, r, H), gear("bracelet_mage", lv, RA, r, F)));
         }
         return w;
     }

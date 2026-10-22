@@ -50,11 +50,17 @@ public class QuestBoardScreen extends SystemScreen {
         Faction.Tier tier = Faction.Tier.of(rep);
         int x = left + 10, y = top + 24;
         String hello = artisan() ? npcName + ": «Есть дело — и товар найдётся»." : npcName + ": «Чем поможешь нашему народу?»";
-        if (font.width(hello) > W - 80) hello = font.plainSubstrByWidth(hello, W - 86) + "…";
+        int helloW = artisan() ? W - (workshop.equals(com.andrey.litrpg.npc.Craft.HOSTELER.workshop) ? 144 : 84) : W - 20;
+        if (font.width(hello) > helloW) hello = font.plainSubstrByWidth(hello, helloW - 6) + "…";
         g.drawString(font, hello, x, y, UiKit.TEXT, false);
         if (artisan()) {
             button(g, mx, my, left + W - 66, y - 3, 56, 16, "Торговать", 0xFFB300,
                     () -> QuestUi.send(QuestActionPacket.Action.TRADE, board, String.valueOf(entityId)));
+            if (workshop.equals(com.andrey.litrpg.npc.Craft.HOSTELER.workshop)) {
+                // постоялый двор: аренда комнат
+                button(g, mx, my, left + W - 128, y - 3, 58, 16, "Комнаты", 0x4FC3F7,
+                        () -> com.andrey.litrpg.network.ModNetwork.CHANNEL.sendToServer(new com.andrey.litrpg.network.ServicePacket(entityId, "open")));
+            }
         }
         y += 11;
         String rt = f.title + ": " + tier.title + " (" + rep + ")";

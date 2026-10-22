@@ -2,7 +2,7 @@
   "name": "Криты и уклонение",
   "icon": "minecraft:arrow",
   "category": "litrpg:combat",
-  "sortnum": 2,
+  "sortnum": 3,
   "pages": [
     {
       "type": "patchouli:text",

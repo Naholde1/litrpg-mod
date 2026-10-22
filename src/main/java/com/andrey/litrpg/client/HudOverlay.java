@@ -122,11 +122,30 @@ public class HudOverlay {
         if (!(e instanceof LivingEntity le) || e instanceof Player || !le.isAlive() || le.isInvisible()) return;
         if (e instanceof com.andrey.litrpg.entity.Animated a && a.awakeAnim(1f) < 0.5f) return;   // мимик притворяется сундуком
         Component name = le.getDisplayName();
+        Aggro ag = AGGRO.get(le.getId());
+        boolean aggro = ag != null && mc.level != null && mc.level.getGameTime() - ag.time < 30 && !ag.target.isEmpty();
+        String who = !aggro ? "" : ag.onMe ? "⚔ Агр: на тебе" : "⚔ Агр: " + ag.target;
+        String pct = !aggro ? "" : "угроза " + ag.percent + "%";
         int w = Math.max(140, font.width(name) + 16);
+        if (aggro) w = Math.max(w, font.width(who) + (int) (font.width(pct) * 0.7f) + 34 + 22);
         int x = width / 2 - w / 2;
         int y = 4;
-        g.fill(x, y, x + w, y + 24, 0xB0050A12);
-        UiKit.frame(g, x, y, w, 24, UiKit.FRAME_DIM);
+        int h = aggro ? 34 : 24;
+        g.fill(x, y, x + w, y + h, 0xB0050A12);
+        UiKit.frame(g, x, y, w, h, aggro && ag.onMe ? 0xFFB03030 : UiKit.FRAME_DIM);
+        if (aggro) {
+            // агр: кого бьёт моб и твоя угроза относительно лидера
+            g.drawString(font, who, x + 6, y + 23, ag.onMe ? 0xFFFF6A5A : 0xFFB8C8D8, false);
+            int pw = font.width(pct);
+            int barW = 34;
+            UiKit.bar(g, x + w - 6 - barW, y + 25, barW, 4, ag.percent / 100f, 0xFF20140A,
+                    ag.percent >= 100 ? 0xFFE04030 : ag.percent >= 80 ? 0xFFE0A030 : 0xFF6FB04A);
+            g.pose().pushPose();
+            g.pose().translate(x + w - 9 - barW - pw * 0.7f, y + 24.5f, 0);
+            g.pose().scale(0.7f, 0.7f, 1f);
+            g.drawString(font, pct, 0, 0, 0xFFB8C8D8, false);
+            g.pose().popPose();
+        }
         g.drawString(font, name, x + w / 2 - font.width(name) / 2, y + 3, 0xFFFFFFFF);
         float frac = le.getHealth() / Math.max(1f, le.getMaxHealth());
         int color = frac > 0.5f ? 0xFFD03A3A : frac > 0.25f ? 0xFFE0822A : 0xFFFF2020;
@@ -137,6 +156,18 @@ public class HudOverlay {
         g.pose().scale(0.6f, 0.6f, 1f);
         g.drawString(font, hp, -font.width(hp) / 2, 0, 0xFFFFFFFF, true);
         g.pose().popPose();
+    }
+
+    private record Aggro(String target, boolean onMe, int percent, long time) {}
+
+    private static final java.util.Map<Integer, Aggro> AGGRO = new java.util.HashMap<>();
+
+    /** Сервер сообщил агр моба (см. event/Threat). */
+    public static void threat(int entityId, String target, boolean onMe, int percent) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level == null) return;
+        if (AGGRO.size() > 64) AGGRO.entrySet().removeIf(e -> mc.level.getGameTime() - e.getValue().time > 100);
+        AGGRO.put(entityId, new Aggro(target, onMe, percent, mc.level.getGameTime()));
     }
 
     public static void bar(GuiGraphics g, int x, int y, int w, int h, float frac, int bg, int fg) {

@@ -249,7 +249,7 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason,
                                         @Nullable SpawnGroupData data, @Nullable CompoundTag tag) {
         SpawnGroupData result = super.finalizeSpawn(level, difficulty, reason, data, tag);
-        if (npc.isArtisan() && craft() == null) setCraft(Craft.values()[random.nextInt(Craft.values().length)]);
+        if (npc.isArtisan() && craft() == null) setCraft(Craft.values()[random.nextInt(Craft.HOSTELER.ordinal())]);
         ensureName();
         equip();
         setPersistenceRequired();
@@ -285,6 +285,8 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
                 case BANKER -> Items.GOLD_INGOT;
                 case STABLEMASTER -> Items.LEAD;
                 case MINER -> Items.IRON_PICKAXE;
+                case HOSTELER -> Items.TRIPWIRE_HOOK;
+                case TELEPORTER -> Items.ENDER_PEARL;
             });
             setItemSlot(EquipmentSlot.MAINHAND, tool);
             setDropChance(EquipmentSlot.MAINHAND, 0f);
@@ -533,6 +535,11 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
             ItemStack held = player.getItemInHand(hand);
             if (player.isShiftKeyDown() && !held.isEmpty()) {
                 sell(sp, held, rep);
+                return InteractionResult.CONSUME;
+            }
+            if (craft() == Craft.TELEPORTER && !player.isShiftKeyDown()) {
+                // маг порталов: сразу список городов (поручения и товары — Shift+ПКМ с пустой рукой)
+                com.andrey.litrpg.city.Teleport.open(sp, this);
                 return InteractionResult.CONSUME;
             }
             // доска мастера: его поручения и кнопка «Торговать»

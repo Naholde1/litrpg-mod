@@ -380,6 +380,8 @@ def haven(city, gates):
         SEC.sea_cave(b, QX, piers[1] + 12, wl, G)
     SEC.town_secret(t, 'smugglers', -0.9, Q - 30)
     SEC.anchor(b, 'quay', *SEC.walk_spot(b, QX - 3, (zn + zs) // 2, G, 6))
+    import mapbuild_inns as MI
+    MI.town_extras(t)   # постоялый двор и круг телепорта у проспектов
     t.quarters(_crafts('haven', drop=('innkeeper', 'fishmonger')), 'litrpg:human_citizen', 'litrpg:human_merchant', terrace=2,
                market=(22, 14), market_crafts=['fishmonger', 'baker', 'farmer', 'tailor', 'herbalist', 'jeweler'],
                inside=lambda x, z: t.in_walls(x, z, 4) and x < QX - 19)

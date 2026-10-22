@@ -29,6 +29,12 @@ ANCHORS = {}   # сюжетные места: город → имя → [x, y, z
 def place(build, name, ox, oy, oz, dim='overworld', tile=32):
     """Сохранить постройку плитками и записать их места (ox, oz — кратны 16)."""
     assert ox % 16 == 0 and oz % 16 == 0, (name, ox, oz)
+    for pos, (blk, nbt) in getattr(build, 'restamp', {}).items():
+        build.blocks[pos] = blk
+        if nbt is not None:
+            build.nbt[pos] = nbt
+        else:
+            build.nbt.pop(pos, None)
     for craft, npc, x, y, z in getattr(build, 'workshops', []):
         WORKSHOPS.append(dict(city=name, craft=craft, npc=npc, x=ox + x, y=oy + y, z=oz + z))
     owner = getattr(build, 'anchor_city', name)
@@ -349,6 +355,10 @@ def arcadia(city):
     def inside(x, z):
         return max((x - C) * cx + (z - C) * cz for cx, cz in octa) <= WR - 2
 
+    # постоялый двор «Золотой грифон» и круг телепорта — у проспектов
+    import mapbuild_inns as MI
+    MI.place_circle(b, C, 'arcadia', [math.pi / 2, 0.0, math.pi, -math.pi / 2], PR + 8, WR * 0.55, lambda x, z: inside(x, z) and math.hypot(x - C, z - C) < WR - 8, half=4)
+    MI.place_inn(b, C, 'arcadia', [0.0, math.pi, -math.pi / 2, math.pi / 2], PR + 10, WR - 10, lambda x, z: inside(x, z) and math.hypot(x - C, z - C) < WR - 8, half=4)
     org = ML.Organic(b, C, WR - 2, 'arcadia', plaza_r=0, terrace=3, inside=inside, rim=3)
     org.paint_ground()
     crafts = [c for c in MCR.CITY_CRAFTS['arcadia']]
@@ -512,6 +522,28 @@ def footprint_r(b):
     return int(math.ceil(best))
 
 
+def clear_ground(b, r=None):
+    """
+    Рельеф площадки бывает на блок выше земли шаблона — тогда трава закрывает мостовые и площади.
+    Над каждой клеткой земли шаблона (в пределах следа постройки) ставим воздух на уровне G:
+    шаблон сам срезает лишний слой.
+    """
+    G = b.G
+    r = footprint_r(b) if r is None else r
+    cx, cz = b.size[0] / 2, b.size[2] / 2
+    cut = getattr(b, 'fit', {}).get('cut')
+    n = 0
+    for (x, y, z), v in list(b.blocks.items()):
+        if y != G - 1 or v[0] in ('minecraft:air', 'minecraft:water', 'minecraft:lava') or (x, G, z) in b.blocks:
+            continue
+        dx, dz = x + 0.5 - cx, z + 0.5 - cz
+        if math.hypot(dx, dz) > r or cut and dx * cut[0] + dz * cut[1] > cut[2]:
+            continue
+        b.blocks[(x, G, z)] = ('minecraft:air', ())
+        n += 1
+    return n
+
+
 FIT = {}
 
 
@@ -603,6 +635,7 @@ def main():
     # ---------------- города ----------------
     c = cities['arcadia']
     b = arcadia(c)
+    clear_ground(b)
     place(b, 'arcadia', c['x'] - b.size[0] // 2, c['y'] - b.G, c['z'] - b.size[2] // 2)
     FIT['arcadia'] = fit_of(b, c['x'], c['z'], footprint_r(b) + 3)
     print('Аркадия:', len(b.blocks), 'blocks, площадка', FIT['arcadia']['flat'])
@@ -618,6 +651,7 @@ def main():
         gates = road_angles(data, c)
         b = fn(c, gates)
         S = b.size[0]
+        clear_ground(b)
         place(b, cid, c['x'] - S // 2, c['y'] - b.G, c['z'] - S // 2)
         FIT[cid] = fit_of(b, c['x'], c['z'], footprint_r(b) + 3)
         print(f"{c['name']}: {len(b.blocks)} blocks, {len(b.entities)} entities, площадка {FIT[cid]['flat']}")

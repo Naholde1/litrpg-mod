@@ -309,6 +309,22 @@ public final class CityQuests {
                 o.add(() -> deliver(c, Craft.BLACKSMITH, "Руда для кузницы", "Отнеси кузнецу образцы новой руды."));
                 if (L >= 5) o.add(() -> collect(c, "minecraft:raw_iron", 12, "Железная руда", "Железная жила иссякла. Найди новую."));
             }
+            case HOSTELER -> {
+                o.add(() -> pests(c, 6, "Крысы в комнатах", "Постоялец проснулся от того, что крыса грызла его сапог! Выгони их, пока гости не разбежались."));
+                o.add(() -> collect(c, "minecraft:white_wool", 16, "Свежие простыни", "Постели надо перестелить к приезду каравана. Принеси белой шерсти."));
+                o.add(() -> collect(c, "minecraft:candle", 8, "Свечи для комнат", "Гости жалуются на темноту. Добудь свечей."));
+                o.add(() -> deliver(c, Craft.INNKEEPER, "Бочонок эля", "Отнеси трактирщику пустой бочонок — пусть нальёт эля для постояльцев."));
+                o.add(() -> deliverFar(c, Craft.HOSTELER, "Книга постояльцев", "Отнеси книгу постояльцев хозяину постоялого двора в %s — мы сверяем, кто из бродяг не платит."));
+                if (L >= 6) o.add(() -> hunt(c, QuestTarget.BANDIT, 4, "Ночные гости", "Разбойники обирают моих постояльцев на дороге. Проучи их!"));
+            }
+            case TELEPORTER -> {
+                o.add(() -> collect(c, "minecraft:ender_pearl", 4, "Жемчуг для круга", "Круг теряет силу. Жемчуг Края его подпитает — принеси, сколько найдёшь."));
+                o.add(() -> collect(c, "minecraft:amethyst_shard", 16, "Поющие кристаллы", "Аметист держит настройку круга. Нужно много осколков."));
+                o.add(() -> deliverFar(c, Craft.TELEPORTER, "Настройка кругов", "Отнеси этот камень-настройку магу порталов в %s. Своим ходом — через круг его везти нельзя."));
+                o.add(() -> deliver(c, Craft.SCRIBE, "Карта нитей", "Отнеси писарю мои записи: пусть перепишет карту нитей Системы набело."));
+                o.add(() -> visit(c, new String[]{"ruins"}, "Эхо старого круга", "У %s когда-то стоял древний круг. Сходи и посмотри, что от него осталось."));
+                if (L >= 10) o.add(() -> collect(c, "minecraft:crying_obsidian", 4, "Плачущий обсидиан", "Для нового круга нужен плачущий обсидиан. Он бывает в Преисподней."));
+            }
         }
         // поручения между поселениями: посылки в другие города, защита деревень, охота в окрестностях
         o.add(() -> deliverFar(c, craft, farTitle(craft), farText(craft)));
@@ -551,6 +567,8 @@ public final class CityQuests {
             case BANKER -> new String[]{"litrpg:silver_coin", "6"};
             case STABLEMASTER -> new String[]{"minecraft:saddle", "1"};
             case MINER -> new String[]{"minecraft:coal", "16"};
+            case HOSTELER -> new String[]{"minecraft:cooked_beef", "6"};
+            case TELEPORTER -> new String[]{"minecraft:ender_pearl", "2"};
         };
     }
 
@@ -673,6 +691,8 @@ public final class CityQuests {
             case BANKER -> "меняле";
             case STABLEMASTER -> "конюху";
             case MINER -> "рудокопу";
+            case HOSTELER -> "хозяину постоялого двора";
+            case TELEPORTER -> "магу порталов";
         };
     }
 

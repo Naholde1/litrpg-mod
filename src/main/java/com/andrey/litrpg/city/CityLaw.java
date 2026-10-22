@@ -200,6 +200,7 @@ public final class CityLaw {
         if (!(event.getLevel() instanceof ServerLevel sl)) return;
         WorldMap.City c = cityAt(sl, event.getPos());
         if (c == null) return;
+        if (Inns.ownsRoomAt(p, event.getPos())) return;   // своя комната на постоялом дворе
         CityRepairs rep = CityRepairs.get(sl);
         BlockState orig = rep.original(event.getPos());
         if (orig != null && orig.isAir()) {
@@ -247,7 +248,7 @@ public final class CityLaw {
         if (!(event.getEntity() instanceof ServerPlayer p) || exempt(p)) return;
         if (!(event.getLevel() instanceof ServerLevel sl)) return;
         WorldMap.City c = cityAt(sl, event.getPos());
-        if (c == null) return;
+        if (c == null || Inns.ownsRoomAt(p, event.getPos())) return;
         CityRepairs.get(sl).record(sl, event.getPos(), event.getBlockSnapshot().getReplacedBlock(), c.id());
         Faction f = c.faction() == null ? Faction.KINGDOM : Faction.byKey(c.faction());
         if (f != null) RepEvents.change(p, f, -1);
@@ -272,7 +273,8 @@ public final class CityLaw {
             return;
         }
         var be = sl.getBlockEntity(event.getPos());
-        if (be instanceof Container && !(sl.getBlockState(event.getPos()).getBlock() instanceof EnderChestBlock)) {
+        if (be instanceof Container && !(sl.getBlockState(event.getPos()).getBlock() instanceof EnderChestBlock)
+                && !Inns.ownsRoomAt(p, event.getPos())) {
             // свой сундук и ничьи тайники открывать можно
             BlockState orig = CityRepairs.get(sl).original(event.getPos());
             if (orig != null && orig.isAir() || isStash(sl, event.getPos())) return;

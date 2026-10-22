@@ -125,6 +125,8 @@ CRAFTS = {
     'banker': dict(tunic=0x2A1A4A, pants=0x1A1A2A, trim=0xF2D060, hat=('cap', 0x14141C), sleeves=True, rich=True),
     'stablemaster': dict(tunic=0x6A5A3A, pants=0x3A3A2A, boots=0x4A2A14, hat=('brim', 0x5A3A1A), sleeves=True),
     'miner': dict(tunic=0x5A5A5A, pants=0x3A3A3A, hat=('helmet', 0xD0A040), soot=True, sleeves=True),
+    'hosteler': dict(tunic=0xF0E8D8, vest=0x2A5A3A, pants=0x2A2018, apron=0xE8DCC0, trim=0xC8A040, hat=('cap', 0x2A5A3A), sleeves=True),
+    'teleporter': dict(robe=0x3A1A6A, trim=0xE0C060, hat=('hood', 0x2A1050), stains=0xB060FF),
 }
 
 

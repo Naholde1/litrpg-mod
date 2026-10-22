@@ -278,6 +278,34 @@ public final class DevCommands {
                     LitRPG.LOGGER.info("[dev] {} {} -> {} (block now {})", a[0], pos, ok, p.serverLevel().getBlockState(pos));
                     continue;
                 }
+                if (line.startsWith("devservice ")) {
+                    // devservice <ремесло> <open|ключ> — услуга ближайшего мастера (комнаты, круг телепорта) от лица Dev
+                    String[] a = line.split(" ");
+                    var p = server.getPlayerList().getPlayerByName("Dev");
+                    if (p == null) continue;
+                    var list = p.serverLevel().getEntitiesOfClass(com.andrey.litrpg.npc.RaceNpcEntity.class, p.getBoundingBox().inflate(96),
+                            n -> n.craft() != null && n.craft().key.equals(a[1]));
+                    list.sort(java.util.Comparator.comparingDouble(n -> n.distanceToSqr(p)));
+                    if (list.isEmpty()) {
+                        LitRPG.LOGGER.info("[dev] no {} nearby", a[1]);
+                        continue;
+                    }
+                    var npc = list.get(0);
+                    if (a[2].equals("open")) com.andrey.litrpg.city.Services.open(p, npc);
+                    else com.andrey.litrpg.city.Services.choose(p, npc, a[2]);
+                    LitRPG.LOGGER.info("[dev] service {} {} at {} -> money {}", a[1], a[2], npc.blockPosition(), com.andrey.litrpg.npc.Wallet.total(p));
+                    continue;
+                }
+                if (line.equals("devthreat")) {
+                    var p = server.getPlayerList().getPlayerByName("Dev");
+                    if (p == null) continue;
+                    for (var m : p.serverLevel().getEntitiesOfClass(net.minecraft.world.entity.Mob.class, p.getBoundingBox().inflate(24),
+                            m -> !(m instanceof com.andrey.litrpg.npc.RaceNpcEntity))) {
+                        LitRPG.LOGGER.info("[dev] threat {} -> target {} table {}", m.getName().getString(),
+                                m.getTarget() == null ? "-" : m.getTarget().getName().getString(), com.andrey.litrpg.event.Threat.debug(m));
+                    }
+                    continue;
+                }
                 if (line.equals("devdump")) {
                     dump(server);
                     continue;
