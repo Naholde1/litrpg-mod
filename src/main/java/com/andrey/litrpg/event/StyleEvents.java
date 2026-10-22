@@ -68,6 +68,15 @@ public class StyleEvents {
         } else {
             add(p, Style.MELEE, amount);
         }
+        // с кем и как сражается
+        boolean friends = false;
+        for (ServerPlayer o : p.serverLevel().players()) {
+            if (o != p && o.distanceToSqr(p) < 32 * 32 && com.andrey.litrpg.party.Party.sameParty(p, o)) friends = true;
+        }
+        add(p, friends ? Style.PARTY : Style.SOLO, amount * (friends ? 0.6f : 0.3f));
+        if (p.level().isNight() || p.level().getMaxLocalRawBrightness(p.blockPosition()) < 6) add(p, Style.NIGHT, amount * 0.5f);
+        if (p.isInWater() || target.isInWater()) add(p, Style.WATER, amount * 0.6f);
+        if (p.getHealth() < p.getMaxHealth() * 0.35f) add(p, Style.RISK, amount);
         if (p.isCrouching() || Stealth.isHidden(p) || p.isInvisible() || AbilityHandler.isBehind(p, target)) {
             add(p, Style.STEALTH, amount * 0.8f);
         }
@@ -90,17 +99,46 @@ public class StyleEvents {
 
     @SubscribeEvent
     public static void onBreed(BabyEntitySpawnEvent event) {
-        if (event.getCausedByPlayer() != null) add(event.getCausedByPlayer(), Style.NATURE, 10);
+        if (event.getCausedByPlayer() != null) {
+            add(event.getCausedByPlayer(), Style.NATURE, 5);
+            add(event.getCausedByPlayer(), Style.BEAST, 8);
+        }
     }
 
     @SubscribeEvent
     public static void onTame(AnimalTameEvent event) {
-        add(event.getTamer(), Style.NATURE, 20);
+        add(event.getTamer(), Style.NATURE, 8);
+        add(event.getTamer(), Style.BEAST, 25);
     }
 
     @SubscribeEvent
     public static void onFish(ItemFishedEvent event) {
-        add(event.getEntity(), Style.NATURE, 5);
+        add(event.getEntity(), Style.NATURE, 3);
+        add(event.getEntity(), Style.WATER, 5);
+    }
+
+    @SubscribeEvent
+    public static void onMine(BlockEvent.BreakEvent event) {
+        if (event.getState().is(net.minecraftforge.common.Tags.Blocks.ORES)) add(event.getPlayer(), Style.MINING, 4);
+        else if (event.getState().is(net.minecraft.tags.BlockTags.BASE_STONE_OVERWORLD) && event.getPlayer().getRandom().nextInt(8) == 0) {
+            add(event.getPlayer(), Style.MINING, 1);
+        }
+    }
+
+    /** Дальние походы: каждые ~100 блоков пути — очко исследования. */
+    private static final java.util.Map<java.util.UUID, net.minecraft.world.phys.Vec3> WALK = new java.util.HashMap<>();
+
+    @SubscribeEvent
+    public static void onWalk(net.minecraftforge.event.TickEvent.PlayerTickEvent event) {
+        if (event.phase != net.minecraftforge.event.TickEvent.Phase.END || !(event.player instanceof ServerPlayer p) || p.tickCount % 100 != 0) return;
+        var last = WALK.get(p.getUUID());
+        var now = p.position();
+        if (last == null || last.distanceToSqr(now) > 400 * 400) {
+            WALK.put(p.getUUID(), now);
+        } else if (last.distanceToSqr(now) > 100 * 100) {
+            add(p, Style.EXPLORE, 2);
+            WALK.put(p.getUUID(), now);
+        }
     }
 
     @SubscribeEvent
@@ -147,7 +185,7 @@ public class StyleEvents {
 
     @SubscribeEvent
     public static void onTrade(TradeWithVillagerEvent event) {
-        add(event.getEntity(), Style.SUPPORT, 5);
+        add(event.getEntity(), Style.TRADE, 6);
     }
 
     @SubscribeEvent

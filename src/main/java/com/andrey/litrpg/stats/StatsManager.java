@@ -174,14 +174,28 @@ public class StatsManager {
                 .append(Component.literal(String.valueOf(to)).withStyle(ChatFormatting.GOLD))
                 .append(". Свободных очков: " + s.getFreePoints() + " (окно персонажа: K)"));
 
-        for (int slot = 0; slot < Ability.SLOTS; slot++) {
-            Ability a = Ability.forSlot(s.getPlayerClass(), slot);
-            int need = Ability.unlockLevel(s.getPlayerClass(), slot);
+        PlayerClass cls = s.getPlayerClass();
+        java.util.List<String> keys = new java.util.ArrayList<>();
+        if (cls == null) keys.addAll(java.util.List.of(Ability.NOVICE));
+        else {
+            keys.addAll(java.util.List.of(cls.skills));
+            if (cls.isInvoker()) cls.invoke.combos().forEach(c -> keys.add(c.skill()));
+        }
+        for (String k : keys) {
+            Ability a = Ability.byKey(k);
+            int need = Ability.unlockLevel(cls, a);
             if (a != null && need > from && need <= to) {
                 message(player, Component.literal("Открыт навык: ")
                         .append(Component.translatable(a.nameKey()).withStyle(ChatFormatting.LIGHT_PURPLE))
                         .append(" — ")
                         .append(Component.translatable(a.descKey())));
+            }
+        }
+        if (cls != null && !cls.isInvoker()) {
+            var left = s.fillBar();
+            if (!left.isEmpty()) {
+                message(player, Component.literal("Панель навыков заполнена. Новые навыки можно поставить вместо старых: K → «Навыки».")
+                        .withStyle(ChatFormatting.GRAY));
             }
         }
         if (s.canChooseClass()) offerClasses(player);
@@ -270,17 +284,34 @@ public class StatsManager {
         sync(player);
     }
 
-    /** Сгенерировать (если ещё нет) три предложения и открыть окно выбора класса. */
+    /** Выбор роли (в начале пути или у старых персонажей без роли). */
+    public static void chooseRole(ServerPlayer player, Role role) {
+        PlayerStats s = get(player);
+        if (s.hasClass() || role == null) return;
+        s.setRole(role);
+        s.setOffers(java.util.List.of());
+        message(player, Component.literal("Роль: ").append(Component.literal(role.title).withStyle(ChatFormatting.GOLD))
+                .append(". На 10 уровне Система предложит классы этой роли."));
+        applyAttributes(player);
+        sync(player);
+        if (s.canChooseClass()) offerClasses(player);
+    }
+
+    /** Сгенерировать (если ещё нет) предложения и открыть окно выбора класса. */
     public static void offerClasses(ServerPlayer player) {
         PlayerStats s = get(player);
         if (!s.canChooseClass()) return;
+        if (s.getRole() == null) {
+            openOriginScreen(player); // сначала роль
+            return;
+        }
         if (s.getOffers().isEmpty()) {
             s.setOffers(ClassOffers.generate(s, player.getRandom()));
             player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 70, 20));
             player.connection.send(new ClientboundSetTitleTextPacket(
                     Component.literal("ВЫБОР КЛАССА").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD)));
             player.connection.send(new ClientboundSetSubtitleTextPacket(
-                    Component.literal("Система подобрала классы под твой стиль").withStyle(ChatFormatting.GRAY)));
+                    Component.literal("Система подобрала " + s.getOffers().size() + " классов под твой стиль").withStyle(ChatFormatting.GRAY)));
             for (PlayerClass c : s.getOffers()) {
                 if (c.isHidden()) {
                     message(player, Component.literal("Обнаружен СКРЫТЫЙ класс: ").withStyle(ChatFormatting.LIGHT_PURPLE)
@@ -309,7 +340,10 @@ public class StatsManager {
                 Component.literal("Класс получен").withStyle(ChatFormatting.YELLOW)));
         message(player, Component.literal("Получен класс ")
                 .append(Component.translatable(cls.nameKey()).withStyle(ChatFormatting.GOLD))
-                .append(". Навыки: Z, X, C, V, B (открываются на 10, 13, 17, 22 и 28 уровнях)."));
+                .append(cls.isInvoker()
+                        ? ". Z, X, C — сферы, V — Призыв (сплетает три сферы в заклинание), B и G — сплетённые заклинания."
+                        : ". Восемь навыков открываются с 10 по 45 уровень; в бою работают только шесть на панели (Z X C V B G)."
+                        + " Сменить их можно вне боя: K → «Навыки»."));
         if (first && giveKit) giveClassKit(player, cls);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.PLAYERS, 1.0f, 1.0f);

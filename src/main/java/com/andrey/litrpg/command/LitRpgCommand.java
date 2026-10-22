@@ -137,6 +137,17 @@ public class LitRpgCommand {
                     s.setOffers(java.util.List.of());
                 })))));
 
+        root.then(Commands.literal("role").then(players()
+                .then(Commands.argument("role", StringArgumentType.word())
+                        .suggests((c, b) -> SharedSuggestionProvider.suggest(Arrays.stream(com.andrey.litrpg.stats.Role.values()).map(x -> x.key), b))
+                        .executes(c -> {
+                            var r = parse(com.andrey.litrpg.stats.Role.values(), StringArgumentType.getString(c, "role"), x -> x.key);
+                            return each(c, (p, s) -> {
+                                s.setRole(r);
+                                s.setOffers(java.util.List.of());
+                            });
+                        }))));
+
         root.then(Commands.literal("style").then(players()
                 .then(Commands.argument("style", StringArgumentType.word())
                         .suggests((c, b) -> SharedSuggestionProvider.suggest(Arrays.stream(com.andrey.litrpg.stats.Style.values()).map(x -> x.key), b))

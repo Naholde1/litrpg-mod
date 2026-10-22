@@ -83,6 +83,18 @@ public final class Minions {
         return true;
     }
 
+    /** Подчинить моба на время: он становится прислужником и уходит, когда воля ослабнет. */
+    static void dominate(Mob mob, ServerPlayer owner, int ticks) {
+        mob.getPersistentData().putUUID(OWNER_TAG, owner.getUUID());
+        mob.getPersistentData().putLong(EXPIRE_TAG, owner.level().getGameTime() + ticks);
+        mob.setTarget(null);
+        mob.setCustomName(Component.literal("Подчинённый " + owner.getGameProfile().getName()).withStyle(ChatFormatting.LIGHT_PURPLE));
+        mob.setDropChance(EquipmentSlot.MAINHAND, 0f);
+        mob.targetSelector.removeAllGoals(g -> true);
+        mob.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(mob, Mob.class, 10, true, false,
+                e -> e instanceof Enemy && ownerOf(e) == null));
+    }
+
     private static void prepare(Mob mob, ServerPlayer owner, int lvl) {
         mob.setCustomName(Component.literal("Прислужник " + owner.getGameProfile().getName()).withStyle(ChatFormatting.AQUA));
         mob.setCustomNameVisible(false);

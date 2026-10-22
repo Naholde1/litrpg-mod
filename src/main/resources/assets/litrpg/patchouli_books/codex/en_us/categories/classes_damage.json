@@ -1,0 +1,6 @@
+{
+  "name": "Классы: бойцы",
+  "description": "Наносят урон: клинком, стрелой или чарами.",
+  "icon": "minecraft:iron_sword",
+  "sortnum": 5
+}

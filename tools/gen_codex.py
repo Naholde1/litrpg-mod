@@ -29,7 +29,11 @@ CATEGORIES = [
     ("start", "Начало пути", "Первые шаги в мире Системы.", "minecraft:compass"),
     ("mapworld", "Мир Системы", "Карта 10000×10000: земли народов, города, закон, поселения, чудеса света и Преисподняя.", "minecraft:filled_map"),
     ("races", "Расы", "Шесть рас, их бонусы и пассивные умения.", "minecraft:player_head"),
-    ("classes", "Классы и навыки", "Пять классов и двадцать пять навыков.", "litrpg:apprentice_staff"),
+    ("classes", "Классы и навыки", "Роли, выбор класса, панель навыков, заклинатели сфер и скрытые классы.", "litrpg:apprentice_staff"),
+    ("classes_tank", "Классы: танки", "Принимают удары на себя и держат врагов.", "minecraft:shield"),
+    ("classes_damage", "Классы: бойцы", "Наносят урон: клинком, стрелой или чарами.", "minecraft:iron_sword"),
+    ("classes_support", "Классы: поддержка", "Лечат, защищают и усиливают союзников.", "minecraft:golden_apple"),
+    ("classes_hidden", "Классы: скрытые", "Система предлагает их только избранным.", "minecraft:ender_eye"),
     ("combat", "Бой и уровни", "Как работают уровни, криты, уклонение и элитные монстры.", "minecraft:iron_sword"),
     ("professions", "Профессии", "Мирные ремёсла и их бонусы.", "minecraft:iron_pickaxe"),
     ("titles", "Титулы", "Награды Системы за достижения.", "minecraft:name_tag"),
@@ -291,7 +295,7 @@ ENTRIES = {
     "commands": [
         ("commands", "Команды", "minecraft:command_block", [
             text("Нужны права оператора (в одиночной игре — «Открыть для сети» → «Читы: вкл»).$(li)/litrpg info$(li)/litrpg level set @s 30$(li)/litrpg xp @s 5000$(li)/litrpg points @s 50$(li)/litrpg stat @s strength 40"),
-            text("$(li)/litrpg race @s elf$(li)/litrpg class set @s necromancer$(li)/litrpg class offer @s$(li)/litrpg style @s magic 500$(li)/litrpg origin reset @s$(li)/litrpg prof level @s miner 30$(li)/litrpg title give @s kingslayer$(li)/litrpg mana @s$(li)/litrpg cooldowns @s"),
+            text("$(li)/litrpg race @s elf$(li)/litrpg class set @s necromancer$(li)/litrpg role @s tank$(li)/litrpg class offer @s$(li)/litrpg style @s magic 500$(li)/litrpg origin reset @s$(li)/litrpg prof level @s miner 30$(li)/litrpg title give @s kingslayer$(li)/litrpg mana @s$(li)/litrpg cooldowns @s"),
             text("$(l)Подземелья и задания:$()$(li)/place structure litrpg:dungeon_crypt$(li)/locate structure litrpg:dungeon_mire$(li)/summon litrpg:minotaur$(li)/litrpg quest step @s 4$(li)/litrpg quest finish @s$(li)/litrpg quest refresh @s"),
             text("$(li)/litrpg spawn litrpg:goblin 25 champion$(li)/litrpg spawn minecraft:zombie 10 elite$(li)/litrpg respec @s$(li)/litrpg reset @s$(li)/litrpg codex @s$(li)/litrpg zone$(li)/litrpg bloodmoon"),
         ]),
@@ -432,32 +436,63 @@ def bestiary_entries():
 
 
 def class_entries():
-    import gen_lang
+    """Классы из tools/classes (gen_classes.py): общие страницы + по записи на класс, разложено по ролям."""
     import sys
     sys.path.insert(0, os.path.dirname(__file__))
-    root = os.path.join(os.path.dirname(__file__), '..', 'src', 'main', 'java', 'com', 'andrey', 'litrpg', 'stats', 'PlayerClass.java')
-    src = open(root, encoding='utf-8').read()
-    import re
-    entries = [("how", "Как получить класс", "minecraft:experience_bottle", [
-        text("До 10 уровня Система копит очки стиля: $(l)ближний бой, стрельба, магия, стойкость, скрытность, поддержка, природа, охота на нежить, огонь, ремесло$(). Прогресс виден во вкладке «Навыки».$(br2)На 10 уровне откроется окно с тремя классами, которые лучше всего подходят твоему стилю."),
-        text("$(l)Скрытые классы$() предлагаются только при особых условиях:$(li)$(5)Рыцарь смерти$() — погибнуть 3 раза и упокоить 30 мертвецов.$(li)$(5)Некромант$() — упокоить 60 мертвецов.$(li)$(5)Чернокнижник$() — побывать в Изнанке.$(br2)Окно выбора можно закрыть и вернуться к нему клавишей K."),
+    import gen_classes
+    from classes import dsl
+    roles = {'TANK': 'танк', 'DAMAGE': 'боец', 'SUPPORT': 'поддержка'}
+    stat_ru = {'STRENGTH': 'Сила', 'AGILITY': 'Ловкость', 'VITALITY': 'Выносливость', 'INTELLIGENCE': 'Интеллект', 'LUCK': 'Удача'}
+    general = [("how", "Как получить класс", "minecraft:experience_bottle", [
+        text("В начале пути, вместе с расой, выбирается $(l)роль$(): $(4)танк$(), $(c)боец$() или $(2)поддержка$(). На 10 уровне Система предложит $(l)пять классов$() этой роли.$(br2)Всего классов больше двухсот: 50 танков, 100 бойцов, 50 поддержек и скрытые."),
+        text("Оценивая, какой класс тебе подходит, Система смотрит на:$(li)стиль игры — ближний бой, стрельбу, магию, скрытность, лечение, игру в группе или в одиночку, торговлю, походы, ночные бои, воду, добычу руды, бой на грани смерти, зверей;$(li)куда вложены очки характеристик;$(li)расу, профессии и репутацию с народом класса."),
+        text("В окне выбора у каждого класса написано, $(l)почему$() Система его предложила.$(br2)Окно можно закрыть и вернуться к нему клавишей K. Роль даёт бонус: танку — здоровье и броню, бойцу — силу навыков и криты, поддержке — лечение и ману."),
+    ]), ("bar", "Панель навыков", "minecraft:book", [
+        text("У каждого класса $(l)восемь навыков$(): два открыты сразу на 10 уровне, остальные — на 14, 18, 23, 29, 36 и 45.$(br2)В бою работают только навыки на $(l)панели$() из шести ячеек: клавиши $(l)Z X C V B G$()."),
+        text("Сменить навыки на панели можно в окне персонажа (K → «Навыки»): нажмите навык, затем ячейку. ПКМ по ячейке — убрать. $(l)В бою$() менять нельзя.$(br2)У каждого класса есть $(l)черта$() — постоянный бонус, который растёт с уровнем."),
+        text("$(l)Приёмы серии.$() Некоторые навыки дают приёмы серии (золотые точки над панелью), а добивания тратят их: +35% урона за каждый. Серия гаснет через 10 секунд.$(br2)$(l)Цена кровью.$() Часть навыков стоит не ману, а долю здоровья."),
+    ]), ("invokers", "Заклинатели сфер", "minecraft:amethyst_shard", [
+        text("Четыре класса колдуют по-особому: $(l)Призыватель стихий$(), $(l)Рунный ткач$(), $(l)Целитель сфер$() и $(l)Чародей пустоты$().$(br2)Z, X, C призывают сферы — над вами держатся три последние, и каждая даёт усиление."),
+        text("V — $(l)Призыв$(): три сферы сплетаются в одно из $(l)десяти заклинаний$() (зависит от сочетания). Новое заклинание ложится на B, прежнее сдвигается на G.$(br2)Таблица сочетаний — в окне персонажа, вкладка «Навыки»."),
+    ]), ("hidden", "Скрытые классы", "minecraft:ender_eye", [
+        text("Скрытые классы Система предлагает пятым, только когда выполнено особое условие. Роль у них может быть любой.$(br2)Условия — в разделе «Классы: скрытые»."),
     ])]
-    for m in re.finditer(r'\n    ([A-Z_]+)\("([a-z_]+)", 0x[0-9A-F]+, \w+, \w+, w\([^)]*\),\s*"([a-z_]+)", "([a-z_]+)", "([a-z_]+)", "([a-z_]+)", "([a-z_]+)"\)', src):
-        key = m.group(2)
-        skills = m.groups()[2:]
-        rname, _, desc = gen_lang.CLASSES[key]
-        lv = [10, 13, 17, 22, 28]
+    by_role = {'TANK': [], 'DAMAGE': [], 'SUPPORT': [], 'HIDDEN': []}
+    icon = {'TANK': 'minecraft:shield', 'DAMAGE': 'minecraft:iron_sword', 'SUPPORT': 'minecraft:golden_apple', 'HIDDEN': 'minecraft:ender_eye'}
+    for key in dsl.ORDER:
+        c = dsl.CLASSES[key]
+        group = 'HIDDEN' if c.hidden else c.role
+        head = (f"$(l){roles[c.role].capitalize()}$(). {c.desc}$(br2)Рост: +1 {stat_ru[c.primary]} за уровень, +1 {stat_ru[c.secondary]} за 2 уровня."
+                f"$(br2)$(l){c.trait_name}$(): {c.trait_text()}.")
+        if c.hidden:
+            head = f"$(5)Как открыть:$() {c.hint}.$(br2)" + head
+        pages = [text(head, c.ru)]
+        if c.invoke:
+            sk = [(x[1], x[2]) for x in c.invoke['combos']]
+            sph = ', '.join(dsl.SKILLS[x].ru for x in c.invoke['spheres'])
+            pages.append(text(f"Сферы: $(l){sph}$(). Призыв — $(l){dsl.SKILLS[c.invoke['cast']].ru}$()."))
+        else:
+            sk = list(zip(c.skills, gen_classes.UNLOCK))
         items = []
-        for i, sk in enumerate(skills):
-            sname, _, sdesc = gen_lang.SKILLS[sk]
-            items.append(f"$(li)$(l){sname}$() ({lv[i]}) — {sdesc}")
-        # страница Patchouli вмещает немного текста — делим на две
-        entries.append((key, rname, "minecraft:book", [text(desc + "$(br2)" + "".join(items[:2])), text("".join(items[2:]))]))
-    return entries
+        for k, lv in sk:
+            s_ = dsl.SKILLS[k]
+            fl = s_.flavor or s_.raw or ''
+            items.append(f"$(li)$(l){s_.ru}$() ({lv}) — {fl}")
+        for i in range(0, len(items), 3):
+            pages.append(text(''.join(items[i:i + 3])))
+        by_role[group].append((key, c.ru, icon[group], pages))
+    for g in by_role:
+        by_role[g].sort(key=lambda e: e[1])
+    return general, by_role
 
 
 def main():
-    ENTRIES["classes"] = class_entries()
+    general, by_role = class_entries()
+    ENTRIES["classes"] = general
+    ENTRIES["classes_tank"] = by_role['TANK']
+    ENTRIES["classes_damage"] = by_role['DAMAGE']
+    ENTRIES["classes_support"] = by_role['SUPPORT']
+    ENTRIES["classes_hidden"] = by_role['HIDDEN']
     ENTRIES["mapworld"] = world_entries()
     ENTRIES["bestiary"] = ENTRIES["bestiary"] + bestiary_entries()
     if os.path.isdir(ASSETS):

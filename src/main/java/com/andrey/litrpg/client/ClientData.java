@@ -23,13 +23,14 @@ public class ClientData {
 
     public static void update(CompoundTag data, int[] cooldowns) {
         if (data != null) STATS.load(data);
-        for (int i = 0; i < COOLDOWN.length && i < cooldowns.length; i++) {
-            COOLDOWN[i] = cooldowns[i];
+        java.util.Arrays.fill(COOLDOWN, 0);
+        for (int i = 0; i + 1 < cooldowns.length; i += 2) {
+            if (cooldowns[i] >= 0 && cooldowns[i] < COOLDOWN.length) COOLDOWN[cooldowns[i]] = cooldowns[i + 1];
         }
         received = true;
         // окна выбора закрываются, если выбор уже сделан (например, командой)
         net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
-        if (mc.screen instanceof OriginScreen && STATS.hasOrigin()) {
+        if (mc.screen instanceof OriginScreen && STATS.hasOrigin() && (STATS.getRole() != null || STATS.hasClass())) {
             mc.setScreen(null);
         } else if (mc.screen instanceof ClassChoiceScreen && STATS.hasClass()) {
             mc.setScreen(null);

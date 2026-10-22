@@ -81,11 +81,11 @@ public class ServerEvents {
                     .append(Component.literal(player.getGameProfile().getName()).withStyle(ChatFormatting.GOLD))
                     .append("."));
             StatsManager.message(player, Component.literal("Убивай монстров, получай опыт и уровни. Каждый уровень даёт 3 очка характеристик."));
-            StatsManager.message(player, Component.literal("K — персонаж, M — карта, Z/X/C/V/B — навыки."));
+            StatsManager.message(player, Component.literal("K — персонаж, M — карта, Z/X/C/V/B/G — навыки."));
         }
         StatsManager.sync(player);
         StatsManager.broadcastRaces(player.server);
-        if (!s.hasOrigin()) StatsManager.openOriginScreen(player);
+        if (!s.hasOrigin() || s.getRole() == null && !s.hasClass()) StatsManager.openOriginScreen(player);
         else if (s.canChooseClass()) StatsManager.offerClasses(player);
     }
 
@@ -112,7 +112,7 @@ public class ServerEvents {
             }
             StatsManager.sync(player);
             PlayerStats s = StatsManager.get(player);
-            if (!s.hasOrigin()) StatsManager.openOriginScreen(player);
+            if (!s.hasOrigin() || s.getRole() == null && !s.hasClass()) StatsManager.openOriginScreen(player);
             else if (s.canChooseClass() && !s.getOffers().isEmpty()) StatsManager.offerClasses(player);
         }
     }

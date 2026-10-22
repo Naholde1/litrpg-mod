@@ -296,7 +296,8 @@ public final class RepEvents {
         int rep = s.getRep(f);
         boolean friendly = rep >= Faction.Tier.FRIENDLY.from;
         if (f == Faction.GOBLINS && s.gear().hasSet(com.andrey.litrpg.gear.GearSet.GOBLIN)) friendly = true;
-        if (f == Faction.UNDEAD && (s.getPlayerClass() == PlayerClass.NECROMANCER || s.getPlayerClass() == PlayerClass.DEATH_KNIGHT)
+        if (f == Faction.UNDEAD && (s.getPlayerClass() != null && s.getPlayerClass().styles.getOrDefault(com.andrey.litrpg.stats.Style.UNDEAD, 0) >= 3
+                && s.getPlayerClass().isHidden())
                 && rep >= 0) friendly = true;
         if (friendly) event.setCanceled(true);
     }

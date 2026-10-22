@@ -659,6 +659,7 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
         }
         StatsManager.message(p, Component.literal("Продано за " + GearData.coins(paid)).withStyle(ChatFormatting.YELLOW));
         if (paid >= 5) RepEvents.change(p, npc.faction, 1);
+        com.andrey.litrpg.stats.StatsManager.get(p).addStyle(com.andrey.litrpg.stats.Style.TRADE, Math.max(1, Math.min(10, paid / 4)));
         playSound(SoundEvents.VILLAGER_YES, 1f, 1f);
     }
 
@@ -685,7 +686,10 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
             }
         }
         ambientSoundTime = -getAmbientSoundInterval();
-        if (tradingPlayer instanceof ServerPlayer sp) RepEvents.change(sp, npc.faction, 2);
+        if (tradingPlayer instanceof ServerPlayer sp) {
+            RepEvents.change(sp, npc.faction, 2);
+            com.andrey.litrpg.stats.StatsManager.get(sp).addStyle(com.andrey.litrpg.stats.Style.TRADE, 6);
+        }
     }
 
     @Override public void notifyTradeUpdated(ItemStack stack) {}

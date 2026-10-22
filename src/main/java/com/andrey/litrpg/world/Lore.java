@@ -71,6 +71,7 @@ public final class Lore {
             double dx = p.getX() - poi.x(), dz = p.getZ() - poi.z();
             if (dx * dx + dz * dz > r * r) continue;
             if (!s.discover(poi.id())) continue;
+            s.addStyle(com.andrey.litrpg.stats.Style.EXPLORE, 15);
             int lv = map.levelAt(poi.x(), poi.z());
             int xp = (poi.type().equals("city") || poi.type().equals("wonder") ? 60 : 25) + lv * 6;
             p.connection.send(new ClientboundSetTitlesAnimationPacket(10, 50, 20));

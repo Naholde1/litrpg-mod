@@ -223,13 +223,18 @@ STYLES = {
     "tank": ("Стойкость", "Tanking"), "stealth": ("Скрытность", "Stealth"), "support": ("Поддержка", "Support"),
     "nature": ("Природа", "Nature"), "undead": ("Охота на нежить", "Undead hunting"), "fire": ("Огонь", "Fire"),
     "craft": ("Ремесло", "Crafting"),
+    "party": ("Игра в группе", "Party play"), "solo": ("Игра в одиночку", "Solo play"), "trade": ("Торговля", "Trading"),
+    "explore": ("Исследование", "Exploring"), "night": ("Ночные бои", "Night fighting"), "water": ("Вода", "Water"),
+    "mining": ("Добыча руды", "Mining"), "risk": ("Бой на грани", "Risk"), "beast": ("Звери", "Beasts"),
 }
 
 EXTRA_RU = {
     "zone.litrpg.abyss": "Бездна",
+    "key.litrpg.ability6": "Навык 6",
 }
 EXTRA_EN = {
     "zone.litrpg.abyss": "The Abyss",
+    "key.litrpg.ability6": "Skill 6",
 }
 
 
@@ -238,20 +243,7 @@ def main():
     en_path = os.path.join(LANG, 'en_us.json')
     ru = json.load(open(ru_path, encoding='utf-8'))
     en = json.load(open(en_path, encoding='utf-8'))
-    # старые ключи навыков и классов убираем, чтобы не копились
-    for d in (ru, en):
-        for k in [k for k in d if k.startswith('ability.litrpg.') or k.startswith('class.litrpg.')]:
-            del d[k]
-    for k, (rname, ename, desc) in CLASSES.items():
-        ru[f"class.litrpg.{k}"] = rname
-        ru[f"class.litrpg.{k}.desc"] = desc
-        en[f"class.litrpg.{k}"] = ename
-        en[f"class.litrpg.{k}.desc"] = desc
-    for k, (rname, ename, desc) in SKILLS.items():
-        ru[f"ability.litrpg.{k}"] = rname
-        ru[f"ability.litrpg.{k}.desc"] = desc
-        en[f"ability.litrpg.{k}"] = ename
-        en[f"ability.litrpg.{k}.desc"] = desc
+    # классы и навыки с 2.15 пишет tools/gen_classes.py
     for k, (rname, ename) in STYLES.items():
         ru[f"style.litrpg.{k}"] = rname
         en[f"style.litrpg.{k}"] = ename
@@ -259,7 +251,7 @@ def main():
     en.update(EXTRA_EN)
     json.dump(ru, open(ru_path, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
     json.dump(en, open(en_path, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
-    print(f"classes {len(CLASSES)}, skills {len(SKILLS)}")
+    print(f"styles {len(STYLES)}")
 
 
 if __name__ == '__main__':

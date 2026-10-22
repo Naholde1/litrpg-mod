@@ -1,0 +1,6 @@
+{
+  "name": "Классы: танки",
+  "description": "Принимают удары на себя и держат врагов.",
+  "icon": "minecraft:shield",
+  "sortnum": 4
+}

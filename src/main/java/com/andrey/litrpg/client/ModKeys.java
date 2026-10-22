@@ -16,5 +16,6 @@ public class ModKeys {
             new KeyMapping("key.litrpg.ability3", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_C, CATEGORY),
             new KeyMapping("key.litrpg.ability4", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, CATEGORY),
             new KeyMapping("key.litrpg.ability5", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, CATEGORY),
+            new KeyMapping("key.litrpg.ability6", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, CATEGORY),
     };
 }

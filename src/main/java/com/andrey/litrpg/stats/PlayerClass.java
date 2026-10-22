@@ -1,107 +1,142 @@
 package com.andrey.litrpg.stats;
 
-import java.util.EnumMap;
-import java.util.Map;
+import com.andrey.litrpg.ability.ClassData;
+import com.andrey.litrpg.gear.GearBonus;
+import com.andrey.litrpg.gear.Passive;
+import com.andrey.litrpg.rep.Faction;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
-import static com.andrey.litrpg.stats.Stat.*;
-import static com.andrey.litrpg.stats.Style.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
- * Классы. Выбираются на 10 уровне из трёх, которые Система подобрала
- * по стилю игры. Скрытые классы предлагаются только при особом условии.
+ * Класс персонажа. Все классы описаны данными (tools/gen_classes.py → litrpg_classes.json):
+ * роль, рост характеристик, стиль игры, восемь навыков с уровнями открытия, черта класса,
+ * а у скрытых — условия, при которых Система их предложит. У «заклинателей сфер» вместо
+ * списка навыков — три сферы, Призыв и таблица сочетаний (как у Инвокера).
  */
-public enum PlayerClass {
-    // ---- ближний бой ----
-    WARRIOR("warrior", 0xD9534F, STRENGTH, VITALITY, w(MELEE, 3, TANK, 2),
-            "charge", "war_cry", "slam", "iron_skin", "berserk"),
-    BERSERKER("berserker", 0xC0392B, STRENGTH, STRENGTH, w(MELEE, 4, FIRE, 1),
-            "blood_rage", "whirlwind", "rage_leap", "execute", "frenzy"),
-    GUARDIAN("guardian", 0x7F8C8D, VITALITY, STRENGTH, w(TANK, 4, MELEE, 1),
-            "shield_bash", "taunt", "shield_wall", "quake", "last_stand"),
-    PALADIN("paladin", 0xF4D03F, STRENGTH, VITALITY, w(MELEE, 2, TANK, 2, SUPPORT, 2, UNDEAD, 1),
-            "holy_strike", "aura_of_protection", "holy_light", "consecration", "divine_shield"),
-    DEATH_KNIGHT("death_knight", 0x5D6D7E, STRENGTH, VITALITY, w(MELEE, 2, UNDEAD, 3, TANK, 1),
-            "frost_strike", "death_grip", "aura_of_decay", "raise_dead", "army_of_darkness"),
-    GLADIATOR("gladiator", 0xCA6F1E, STRENGTH, AGILITY, w(MELEE, 3, TANK, 1, STEALTH, 1),
-            "net_throw", "lunge", "parry", "hamstring", "arena_fury"),
-    BARBARIAN("barbarian", 0xA04000, STRENGTH, VITALITY, w(MELEE, 3, NATURE, 2),
-            "throwing_axe", "roar", "rage_leap", "bloodletting", "ancestral_spirit"),
-    BLADEMASTER("blademaster", 0xE5E8E8, AGILITY, STRENGTH, w(MELEE, 2, STEALTH, 2),
-            "iai", "stance", "wind_dance", "sever", "thousand_cuts"),
-    MONK("monk", 0xF5B041, AGILITY, VITALITY, w(MELEE, 2, SUPPORT, 1, STEALTH, 1),
-            "palm_strike", "meditation", "swift_step", "chi_wave", "hundred_fists"),
-    // ---- ловкость и скрытность ----
-    ROGUE("rogue", 0x9B6BD6, AGILITY, STRENGTH, w(STEALTH, 3, MELEE, 1),
-            "eviscerate", "shadow_step", "poison_blade", "smoke_bomb", "blade_dance"),
-    ASSASSIN("assassin", 0x4A235A, AGILITY, LUCK, w(STEALTH, 4),
-            "death_mark", "poison_blade", "shadow_step", "vanish", "assassinate"),
-    DUELIST("duelist", 0xE74C3C, AGILITY, LUCK, w(STEALTH, 2, MELEE, 2),
-            "lunge", "feint", "riposte", "flurry", "heart_thrust"),
-    SHADOWBLADE("shadowblade", 0x2C3E50, AGILITY, INTELLIGENCE, w(STEALTH, 3, MAGIC, 1),
-            "shuriken", "shadow_step", "shadow_clone", "shadow_burst", "dance_of_shadows"),
-    // ---- стрелки ----
-    RANGER("ranger", 0x5BD16A, AGILITY, LUCK, w(RANGED, 3, NATURE, 1),
-            "volley", "poison_arrow", "leap_back", "hunters_mark", "arrow_rain"),
-    SNIPER("sniper", 0x839192, AGILITY, LUCK, w(RANGED, 4),
-            "aimed_shot", "piercing_arrow", "camouflage", "explosive_arrow", "headshot"),
-    BEASTMASTER("beastmaster", 0x8E6E3B, AGILITY, VITALITY, w(NATURE, 3, RANGED, 2),
-            "call_wolf", "pack", "beast_fury", "leap_back", "hunters_mark"),
-    ARBALEST("arbalest", 0x6E2C00, AGILITY, VITALITY, w(RANGED, 3, TANK, 1),
-            "heavy_bolt", "buckshot", "bear_trap", "leap_back", "barrage"),
-    // ---- маги ----
-    MAGE("mage", 0x5AA0F0, INTELLIGENCE, INTELLIGENCE, w(MAGIC, 4),
-            "mana_bolt", "fireball", "frost_nova", "blink", "meteor"),
-    PYROMANCER("pyromancer", 0xFF5722, INTELLIGENCE, LUCK, w(MAGIC, 2, FIRE, 3),
-            "fire_arrow", "fireball", "ring_of_fire", "fire_field", "meteor"),
-    CRYOMANCER("cryomancer", 0x85C1E9, INTELLIGENCE, VITALITY, w(MAGIC, 3, TANK, 1),
-            "ice_shard", "frost_nova", "ice_armor", "blizzard", "ice_prison"),
-    STORMCALLER("stormcaller", 0xF7DC6F, INTELLIGENCE, AGILITY, w(MAGIC, 3, RANGED, 1),
-            "spark", "chain_lightning", "lightning_strike", "blink", "thunderstorm"),
-    NECROMANCER("necromancer", 0x6C3483, INTELLIGENCE, VITALITY, w(MAGIC, 2, UNDEAD, 3),
-            "shadow_bolt", "raise_skeleton", "drain_life", "plague_cloud", "army_of_the_dead"),
-    WARLOCK("warlock", 0x7D3C98, INTELLIGENCE, LUCK, w(MAGIC, 3, STEALTH, 1),
-            "curse", "chaos_bolt", "summon_imp", "soul_siphon", "gates_of_darkness"),
-    DRUID("druid", 0x27AE60, INTELLIGENCE, VITALITY, w(NATURE, 3, SUPPORT, 1, MAGIC, 1),
-            "thorn_bolt", "healing_bloom", "bear_form", "entangle", "wrath_of_nature"),
-    SHAMAN("shaman", 0x1ABC9C, INTELLIGENCE, VITALITY, w(NATURE, 2, SUPPORT, 2, MAGIC, 1),
-            "spirit_lightning", "healing_totem", "fury_totem", "quake", "spirit_wolf"),
-    GEOMANCER("geomancer", 0x935116, INTELLIGENCE, VITALITY, w(MAGIC, 2, TANK, 2, CRAFT, 1),
-            "stone_bolt", "stoneskin", "quake", "earth_spikes", "rock_fall"),
-    SPELLBLADE("spellblade", 0x3498DB, INTELLIGENCE, STRENGTH, w(MELEE, 2, MAGIC, 2),
-            "enchanted_blade", "blink", "mana_strike", "arcane_shield", "blade_storm"),
-    // ---- поддержка ----
-    CLERIC("cleric", 0xF2D16B, INTELLIGENCE, VITALITY, w(SUPPORT, 3, UNDEAD, 1, MAGIC, 1),
-            "heal", "smite", "blessing", "purify", "sanctuary"),
-    BARD("bard", 0xEC7063, INTELLIGENCE, LUCK, w(SUPPORT, 3, NATURE, 1),
-            "song_of_valor", "lullaby", "song_of_healing", "dissonance", "ballad_of_heroes"),
-    INQUISITOR("inquisitor", 0xFDFEFE, INTELLIGENCE, STRENGTH, w(UNDEAD, 3, MAGIC, 1, MELEE, 1),
-            "smite", "chains_of_light", "purify", "holy_fire", "judgment"),
-    ALCHEMIST("alchemist", 0x58D68D, INTELLIGENCE, LUCK, w(CRAFT, 3, SUPPORT, 1, MAGIC, 1),
-            "acid_flask", "fire_flask", "elixir_of_might", "healing_flask", "grand_transmutation");
+public final class PlayerClass {
+    /** Сочетание сфер (по номерам сфер, отсортировано: «001») → навык. */
+    public record Combo(String pattern, String skill, int level) {}
+
+    public record Invoke(String[] spheres, String cast, List<Combo> combos) {
+        public Combo find(String pattern) {
+            for (Combo c : combos) if (c.pattern.equals(pattern)) return c;
+            return null;
+        }
+    }
+
+    private static final List<PlayerClass> ALL = new ArrayList<>();
+    private static final Map<String, PlayerClass> BY_KEY = new HashMap<>();
 
     public final String key;
     public final int color;
+    public final Role role;
     /** Растёт на 1 каждый уровень. */
     public final Stat primary;
     /** Растёт на 1 каждые 2 уровня. */
     public final Stat secondary;
     public final Map<Style, Integer> styles;
     public final String[] skills;
+    public final int[] unlock;
+    public final Map<GearBonus, Float> traitBonus;
+    public final Set<Passive> traitPassives;
+    public final Set<Race> races;
+    public final Set<Profession> profs;
+    public final Faction faction;
+    /** Условия скрытого класса ('counter:undead>=60'); пусто — обычный класс. */
+    public final List<String> hidden;
+    public final Invoke invoke;
+    private final int index;
 
-    PlayerClass(String key, int color, Stat primary, Stat secondary, Map<Style, Integer> styles, String... skills) {
-        this.key = key;
-        this.color = color;
-        this.primary = primary;
-        this.secondary = secondary;
-        this.styles = styles;
-        this.skills = skills;
+    private PlayerClass(JsonObject o, int index) {
+        this.index = index;
+        key = o.get("key").getAsString();
+        color = o.get("color").getAsInt();
+        role = Role.byKey(o.get("role").getAsString());
+        primary = Stat.valueOf(o.get("primary").getAsString());
+        secondary = Stat.valueOf(o.get("secondary").getAsString());
+        Map<Style, Integer> st = new EnumMap<>(Style.class);
+        for (var e : o.getAsJsonObject("styles").entrySet()) {
+            Style s = Style.byKey(e.getKey());
+            if (s != null) st.put(s, e.getValue().getAsInt());
+        }
+        styles = Collections.unmodifiableMap(st);
+        skills = strings(o.getAsJsonArray("skills"));
+        JsonArray ul = o.getAsJsonArray("unlock");
+        unlock = new int[ul.size()];
+        for (int i = 0; i < unlock.length; i++) unlock[i] = ul.get(i).getAsInt();
+        Map<GearBonus, Float> tb = new LinkedHashMap<>();
+        Set<Passive> tp = EnumSet.noneOf(Passive.class);
+        JsonObject trait = o.getAsJsonObject("trait");
+        for (var e : trait.getAsJsonObject("bonus").entrySet()) {
+            GearBonus b = GearBonus.byKey(e.getKey());
+            if (b != null) tb.put(b, e.getValue().getAsFloat());
+        }
+        for (JsonElement e : trait.getAsJsonArray("passives")) {
+            Passive p = Passive.byKey(e.getAsString());
+            if (p != null) tp.add(p);
+        }
+        traitBonus = Collections.unmodifiableMap(tb);
+        traitPassives = Collections.unmodifiableSet(tp);
+        Set<Race> rs = EnumSet.noneOf(Race.class);
+        if (o.has("races")) for (String r : strings(o.getAsJsonArray("races"))) {
+            Race race = Race.byKey(r);
+            if (race != null) rs.add(race);
+        }
+        races = Collections.unmodifiableSet(rs);
+        Set<Profession> ps = EnumSet.noneOf(Profession.class);
+        if (o.has("profs")) for (String r : strings(o.getAsJsonArray("profs"))) {
+            Profession p = Profession.byKey(r);
+            if (p != null) ps.add(p);
+        }
+        profs = Collections.unmodifiableSet(ps);
+        faction = o.has("faction") ? Faction.byKey(o.get("faction").getAsString()) : null;
+        hidden = o.has("hidden") ? List.of(strings(o.getAsJsonArray("hidden"))) : List.of();
+        if (o.has("invoke")) {
+            JsonObject iv = o.getAsJsonObject("invoke");
+            List<Combo> combos = new ArrayList<>();
+            for (JsonElement e : iv.getAsJsonArray("combos")) {
+                JsonArray a = e.getAsJsonArray();
+                combos.add(new Combo(a.get(0).getAsString(), a.get(1).getAsString(), a.get(2).getAsInt()));
+            }
+            invoke = new Invoke(strings(iv.getAsJsonArray("spheres")), iv.get("cast").getAsString(), List.copyOf(combos));
+        } else {
+            invoke = null;
+        }
     }
 
-    private static Map<Style, Integer> w(Object... pairs) {
-        Map<Style, Integer> m = new EnumMap<>(Style.class);
-        for (int i = 0; i < pairs.length; i += 2) m.put((Style) pairs[i], (Integer) pairs[i + 1]);
-        return m;
+    private static String[] strings(JsonArray a) {
+        String[] out = new String[a.size()];
+        for (int i = 0; i < out.length; i++) out[i] = a.get(i).getAsString();
+        return out;
     }
+
+    static {
+        int i = 0;
+        for (JsonElement e : ClassData.root().getAsJsonArray("classes")) {
+            PlayerClass c = new PlayerClass(e.getAsJsonObject(), i++);
+            ALL.add(c);
+            BY_KEY.put(c.key, c);
+        }
+    }
+
+    public int ordinal() { return index; }
+
+    public static PlayerClass[] values() { return ALL.toArray(new PlayerClass[0]); }
+
+    public static List<PlayerClass> all() { return Collections.unmodifiableList(ALL); }
+
+    public static PlayerClass byKey(String key) { return key == null ? null : BY_KEY.get(key); }
 
     /** Сколько очков характеристики класс дал к этому уровню. */
     public int growth(Stat s, int level) {
@@ -111,26 +146,65 @@ public enum PlayerClass {
         return v;
     }
 
-    /** Скрытый класс: предлагается только при выполнении условия. */
-    public boolean isHidden() {
-        return this == DEATH_KNIGHT || this == NECROMANCER || this == WARLOCK;
+    public boolean isHidden() { return !hidden.isEmpty(); }
+
+    public boolean isInvoker() { return invoke != null; }
+
+    /** Выполнены ли все условия скрытого класса. */
+    public boolean hiddenUnlocked(PlayerStats s) {
+        for (String cond : hidden) if (!check(s, cond)) return false;
+        return true;
     }
 
-    public boolean hiddenUnlocked(PlayerStats s) {
-        return switch (this) {
-            case DEATH_KNIGHT -> s.getCounter(Title.Counter.DEATHS) >= 3 && s.getCounter(Title.Counter.UNDEAD) >= 30;
-            case NECROMANCER -> s.getCounter(Title.Counter.UNDEAD) >= 60;
-            case WARLOCK -> s.getCounter(Title.Counter.REALM_VISITS) >= 1;
-            default -> true;
+    /** Условие вида 'counter:undead>=60', 'found>=15', 'race:demonkin', 'rep:undead>=300', 'style:night>=500', 'prof:miner>=20', 'title:x'. */
+    private static boolean check(PlayerStats s, String cond) {
+        String[] kv = cond.split(":", 2);
+        String type = kv[0];
+        String rest = kv.length > 1 ? kv[1] : "";
+        int ge = rest.indexOf(">=");
+        String name = ge >= 0 ? rest.substring(0, ge) : rest;
+        int need = ge >= 0 ? Integer.parseInt(rest.substring(ge + 2)) : 0;
+        if (type.startsWith("found>=")) return s.foundCount() >= Integer.parseInt(type.substring(7));
+        if (type.startsWith("level>=")) return s.getLevel() >= Integer.parseInt(type.substring(7));
+        return switch (type) {
+            case "counter" -> {
+                Title.Counter c = null;
+                for (Title.Counter x : Title.Counter.values()) if (x.key().equals(name)) c = x;
+                yield c != null && s.getCounter(c) >= need;
+            }
+            case "race" -> s.getRace() != null && s.getRace().key.equals(name);
+            case "rep" -> {
+                Faction f = Faction.byKey(name);
+                yield f != null && s.getRep(f) >= need;
+            }
+            case "style" -> {
+                Style st = Style.byKey(name);
+                yield st != null && s.getStyle(st) >= need;
+            }
+            case "prof" -> {
+                Profession p = Profession.byKey(name);
+                yield p != null && s.getProfLevel(p) >= need;
+            }
+            case "title" -> {
+                Title t = Title.byKey(name);
+                yield t != null && s.hasTitle(t);
+            }
+            default -> false;
         };
+    }
+
+    /** Уровень открытия навыка этого класса (999 — навыка в классе нет). */
+    public int unlockOf(String skill) {
+        for (int i = 0; i < skills.length; i++) if (skills[i].equals(skill)) return unlock[i];
+        if (invoke != null) {
+            for (Combo c : invoke.combos) if (c.skill.equals(skill)) return c.level;
+        }
+        return 999;
     }
 
     public String nameKey() { return "class.litrpg." + key; }
     public String descKey() { return "class.litrpg." + key + ".desc"; }
     public String hintKey() { return "class.litrpg." + key + ".hint"; }
-
-    public static PlayerClass byKey(String key) {
-        for (PlayerClass c : values()) if (c.key.equals(key)) return c;
-        return null;
-    }
+    public String traitKey() { return "class.litrpg." + key + ".trait"; }
+    public String traitDescKey() { return "class.litrpg." + key + ".trait.desc"; }
 }

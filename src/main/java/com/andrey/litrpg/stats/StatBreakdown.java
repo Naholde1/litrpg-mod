@@ -190,7 +190,7 @@ public final class StatBreakdown {
         v.add("Интеллект ×8", s.getStat(Stat.INTELLIGENCE) * 8);
         v.add("Уровень (+3 за уровень)", (s.getLevel() - 1) * 3);
         if (s.getPlayerClass() != null) {
-            int c = (s.getPlayerClass().primary == Stat.INTELLIGENCE ? 30 : 0) + (s.getPlayerClass() == PlayerClass.MAGE ? 20 : 0);
+            int c = (s.getPlayerClass().primary == Stat.INTELLIGENCE ? 30 : 0) + ("mage".equals(s.getPlayerClass().key) ? 20 : 0);
             v.add(cls(s), c);
         }
         v.add("Экипировка", Math.round(s.gear().get(GearBonus.MANA)));

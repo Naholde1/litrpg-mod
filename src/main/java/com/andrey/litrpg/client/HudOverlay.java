@@ -57,23 +57,31 @@ public class HudOverlay {
         party(g, font, y + 14);
     }
 
-    /** Панель навыков класса (снизу слева). */
+    /** Панель навыков (снизу слева): шесть ячеек, над ними — сферы заклинателя или приёмы серии. */
     private static void abilities(GuiGraphics g, Font font, PlayerStats s, int height) {
         int slot = 22;
-        int slots = s.getPlayerClass() == null ? Ability.NOVICE.length : Ability.SLOTS;
         int ax = 6;
         int ay = height - slot - 6;
+        var cls = s.getPlayerClass();
+        int accent = cls != null ? cls.color : 0x4FC3F7;
+        int slots = cls == null ? Ability.NOVICE.length : Ability.BAR;
         for (int i = 0; i < slots; i++) {
-            Ability a = Ability.forSlot(s.getPlayerClass(), i);
-            if (a == null) continue;
+            Ability a = s.barSkill(i);
             int sx = ax + i * (slot + 4);
-            int need = Ability.unlockLevel(s.getPlayerClass(), i);
+            String key = ModKeys.ABILITIES[i].getTranslatedKeyMessage().getString();
+            if (key.length() > 2) key = key.substring(0, 1);
+            g.drawString(font, key, sx + 1, ay - 9, 0xFFBBBBBB);
+            g.fill(sx - 1, ay - 1, sx + slot + 1, ay + slot + 1, 0xFF000000);
+            if (a == null) {
+                g.fill(sx, ay, sx + slot, ay + slot, 0x80202020);
+                UiKit.frame(g, sx, ay, slot, slot, 0xFF333333);
+                continue;
+            }
+            int need = Ability.unlockLevel(cls, a);
             boolean unlocked = s.getLevel() >= need;
-            int accent = s.getPlayerClass() != null ? s.getPlayerClass().color : 0x4FC3F7;
             int cd = ClientData.COOLDOWN[a.ordinal()];
             boolean enoughMana = s.getMana() >= a.manaCost();
 
-            g.fill(sx - 1, ay - 1, sx + slot + 1, ay + slot + 1, 0xFF000000);
             int bg = !unlocked ? 0xFF303030 : enoughMana ? 0xFF2A1E4A : 0xFF1C1C34;
             g.fill(sx, ay, sx + slot, ay + slot, bg);
             UiKit.frame(g, sx, ay, slot, slot, unlocked && cd <= 0 && enoughMana ? 0xFF000000 | accent : 0xFF444444);
@@ -82,20 +90,47 @@ public class HudOverlay {
             g.drawString(font, a.icon, sx + slot / 2 - font.width(a.icon) / 2, ay + 7, iconColor);
 
             if (unlocked && cd > 0) {
-                float frac = cd / (float) a.cooldown();
+                float frac = cd / (float) Math.max(1, a.cooldown());
                 int h = (int) (slot * Math.min(1f, frac));
                 g.fill(sx, ay + slot - h, sx + slot, ay + slot, 0xB0000000);
                 String sec = String.valueOf((cd + 19) / 20);
                 g.drawString(font, sec, sx + slot / 2 - font.width(sec) / 2, ay + 7, 0xFFFF6060);
             }
-            String key = ModKeys.ABILITIES[i].getTranslatedKeyMessage().getString();
-            if (key.length() > 2) key = key.substring(0, 1);
-            g.drawString(font, key, sx + 1, ay - 9, 0xFFBBBBBB);
             if (!unlocked) {
                 String lv = String.valueOf(need);
                 g.drawString(font, lv, sx + slot - font.width(lv) - 1, ay + slot - 8, 0xFFFF9800, false);
             }
         }
+        int top = ay - 20;
+        if (cls != null && cls.isInvoker()) {
+            // сферы заклинателя
+            var orbs = s.getOrbs();
+            for (int i = 0; i < 3; i++) {
+                int ox = ax + i * 12;
+                g.fill(ox, top, ox + 9, top + 9, 0xFF000000);
+                if (i < orbs.size()) {
+                    Ability sp = Ability.byKey(cls.invoke.spheres()[orbs.get(i)]);
+                    g.fill(ox + 1, top + 1, ox + 8, top + 8, orbColor(orbs.get(i)));
+                    if (sp != null) g.drawString(font, sp.icon, ox + 5 - font.width(sp.icon) / 2, top + 1, 0xFFFFFFFF, false);
+                } else {
+                    g.fill(ox + 1, top + 1, ox + 8, top + 8, 0xFF202028);
+                }
+            }
+        } else if (s.comboPoints() > 0) {
+            for (int i = 0; i < 5; i++) {
+                int ox = ax + i * 9;
+                g.fill(ox, top + 2, ox + 7, top + 7, 0xFF000000);
+                g.fill(ox + 1, top + 3, ox + 6, top + 6, i < s.comboPoints() ? 0xFFFFC23A : 0xFF3A3020);
+            }
+        }
+    }
+
+    private static int orbColor(int i) {
+        return switch (i) {
+            case 0 -> 0xFF4AA8FF;
+            case 1 -> 0xFFC86CFF;
+            default -> 0xFFFF8A2A;
+        };
     }
 
     /** Панель группы: имена, уровни, здоровье и мана товарищей. */

@@ -217,6 +217,20 @@ public class CombatEvents {
             case FROST -> target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 2), player);
             case BLEED -> target.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, 1), player);
             case LIFESTEAL -> player.heal(amount * 0.25f);
+            case STUN -> com.andrey.litrpg.ability.SkillEffects.stun(target, 10);
+            case MANA -> {
+                s.setMana(s.getMana() + 3 + s.getMaxMana() * 0.02);
+                StatsManager.syncMana(player);
+            }
+            case CHAIN -> {
+                for (LivingEntity e : player.level().getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(4),
+                        x -> x != target && com.andrey.litrpg.ability.AbilityHandler.isEnemy(player, x))) {
+                    e.hurt(player.damageSources().indirectMagic(player, player), amount * 0.4f);
+                    if (player.level() instanceof ServerLevel sl) {
+                        sl.sendParticles(ParticleTypes.ELECTRIC_SPARK, e.getX(), e.getY() + 1, e.getZ(), 8, 0.3, 0.4, 0.3, 0.1);
+                    }
+                }
+            }
             case ARCANE -> {
                 amount += 2 + s.getStat(Stat.INTELLIGENCE) * 0.35f;
                 if (player.level() instanceof ServerLevel sl) {

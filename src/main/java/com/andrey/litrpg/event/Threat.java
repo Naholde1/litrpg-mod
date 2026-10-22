@@ -70,6 +70,7 @@ public final class Threat {
         float k = 1f;
         PlayerClass c = StatsManager.get(p).getPlayerClass();
         if (c != null) k += 0.15f * c.styles.getOrDefault(Style.TANK, 0);
+        if (StatsManager.get(p).getRole() == com.andrey.litrpg.stats.Role.TANK) k += 0.5f;
         if (p.isBlocking() || p.getOffhandItem().getItem() instanceof net.minecraft.world.item.ShieldItem) k += 0.3f;
         return k;
     }

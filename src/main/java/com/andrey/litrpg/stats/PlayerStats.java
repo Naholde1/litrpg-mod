@@ -26,7 +26,16 @@ public class PlayerStats {
     private boolean welcomed = false;
 
     private Race race = null;
+    private Role role = null;
     private PlayerClass playerClass = null;
+    /** Панель навыков: ключи навыков по ячейкам (у заклинателя сфер — не используется). */
+    private final String[] bar = new String[Ability.BAR];
+    /** Сферы заклинателя (номера 0–2, до трёх) и два сплетённых заклинания. */
+    private final java.util.List<Integer> orbs = new java.util.ArrayList<>();
+    private final String[] invoked = new String[2];
+    /** Приёмы серии (не сохраняются). */
+    private int combo = 0;
+    private long comboTime = 0;
     private final Map<Profession, int[]> professions = new EnumMap<>(Profession.class); // {level, xp}
     private final Set<Title> titles = EnumSet.noneOf(Title.class);
     /** Открытые места Мира Системы (id из карты). */
@@ -56,8 +65,9 @@ public class PlayerStats {
     public boolean isWelcomed() { return welcomed; }
     public void setWelcomed(boolean w) { welcomed = w; }
 
+    /** Опыт до следующего уровня (с 2.15 — примерно вдвое медленнее, к сотому уровню — втрое). */
     public static int xpForNextLevel(int level) {
-        return 80 + (int) Math.round(55 * Math.pow(level, 1.75));
+        return 100 + (int) Math.round(90 * Math.pow(level, 1.85));
     }
 
     public int xpForNext() { return xpForNextLevel(level); }
@@ -151,7 +161,102 @@ public class PlayerStats {
     public Race getRace() { return race; }
     public PlayerClass getPlayerClass() { return playerClass; }
     public void setRace(Race r) { race = r; }
-    public void setPlayerClass(PlayerClass c) { playerClass = c; }
+    public Role getRole() { return role; }
+    public void setRole(Role r) { role = r; }
+
+    public void setPlayerClass(PlayerClass c) {
+        playerClass = c;
+        java.util.Arrays.fill(bar, null);
+        java.util.Arrays.fill(invoked, null);
+        orbs.clear();
+        combo = 0;
+        if (c != null) {
+            role = c.role;
+            fillBar();
+        }
+    }
+
+    // ---------- панель навыков ----------
+
+    /** Навык в ячейке панели: у новичка — его навыки, у заклинателя сфер — сферы, Призыв и два заклинания. */
+    public Ability barSkill(int slot) {
+        if (slot < 0 || slot >= Ability.BAR) return null;
+        PlayerClass c = playerClass;
+        if (c == null) return slot < Ability.NOVICE.length ? Ability.byKey(Ability.NOVICE[slot]) : null;
+        if (c.isInvoker()) {
+            if (slot < 3) return Ability.byKey(c.invoke.spheres()[slot]);
+            if (slot == 3) return Ability.byKey(c.invoke.cast());
+            return Ability.byKey(invoked[slot - 4]);
+        }
+        return Ability.byKey(bar[slot]);
+    }
+
+    public String getBar(int slot) { return bar[slot]; }
+
+    /** Поставить навык класса в ячейку (null — убрать). Навык уходит из прежней ячейки. */
+    public boolean setBar(int slot, String key) {
+        if (slot < 0 || slot >= Ability.BAR || playerClass == null || playerClass.isInvoker()) return false;
+        if (key != null) {
+            if (!isUnlocked(Ability.byKey(key))) return false;
+            for (int i = 0; i < bar.length; i++) if (key.equals(bar[i])) bar[i] = bar[slot];
+        }
+        bar[slot] = key;
+        return true;
+    }
+
+    /** Навык открыт: он есть у класса (или новичка) и уровень достаточен. */
+    public boolean isUnlocked(Ability a) {
+        return a != null && level >= Ability.unlockLevel(playerClass, a);
+    }
+
+    /** Разложить открытые навыки класса по пустым ячейкам. @return новые навыки, не поместившиеся на панель */
+    public java.util.List<Ability> fillBar() {
+        java.util.List<Ability> left = new java.util.ArrayList<>();
+        if (playerClass == null || playerClass.isInvoker()) return left;
+        for (String k : playerClass.skills) {
+            Ability a = Ability.byKey(k);
+            if (!isUnlocked(a) || java.util.Arrays.asList(bar).contains(k)) continue;
+            int free = -1;
+            for (int i = 0; i < bar.length && free < 0; i++) if (bar[i] == null) free = i;
+            if (free >= 0) bar[free] = k;
+            else left.add(a);
+        }
+        return left;
+    }
+
+    public java.util.List<Integer> getOrbs() { return orbs; }
+
+    public void addOrb(int sphere) {
+        orbs.add(sphere);
+        while (orbs.size() > 3) orbs.remove(0);
+    }
+
+    public String getInvoked(int i) { return invoked[i]; }
+
+    /** Положить сплетённое заклинание в первую ячейку, прежнее сдвинуть во вторую. */
+    public void pushInvoked(String key) {
+        if (key.equals(invoked[0])) return;
+        if (key.equals(invoked[1])) invoked[1] = invoked[0];
+        else invoked[1] = invoked[0];
+        invoked[0] = key;
+    }
+
+    // ---------- приёмы серии ----------
+
+    public int getCombo(long now) {
+        if (now - comboTime > 200) combo = 0; // серия гаснет через 10 с
+        return combo;
+    }
+
+    public void addCombo(int n, long now) {
+        combo = Math.min(5, getCombo(now) + n);
+        comboTime = now;
+    }
+
+    public void clearCombo() { combo = 0; }
+
+    /** Для интерфейса: приёмы серии как есть. */
+    public int comboPoints() { return combo; }
     /** Раса выбрана (выбирается при первом входе). */
     public boolean hasOrigin() { return race != null; }
     public boolean hasClass() { return playerClass != null; }
@@ -247,7 +352,16 @@ public class PlayerStats {
         tag.putDouble("mana", mana);
         tag.putBoolean("welcomed", welcomed);
         if (race != null) tag.putString("race", race.key);
+        if (role != null) tag.putString("role", role.key);
         if (playerClass != null) tag.putString("class", playerClass.key);
+        ListTag bl = new ListTag();
+        for (String b : bar) bl.add(StringTag.valueOf(b == null ? "" : b));
+        tag.put("bar", bl);
+        tag.putIntArray("orbs", orbs.stream().mapToInt(Integer::intValue).toArray());
+        ListTag il = new ListTag();
+        for (String b : invoked) il.add(StringTag.valueOf(b == null ? "" : b));
+        tag.put("invoked", il);
+        tag.putInt("combo", combo);
 
         CompoundTag prof = new CompoundTag();
         professions.forEach((p, d) -> prof.putIntArray(p.key, d.clone()));
@@ -292,7 +406,26 @@ public class PlayerStats {
         mana = tag.getDouble("mana");
         welcomed = tag.getBoolean("welcomed");
         race = Race.byKey(tag.getString("race"));
+        role = Role.byKey(tag.getString("role"));
         playerClass = PlayerClass.byKey(tag.getString("class"));
+        if (role == null && playerClass != null) role = playerClass.role;
+        java.util.Arrays.fill(bar, null);
+        ListTag bl = tag.getList("bar", Tag.TAG_STRING);
+        for (int i = 0; i < Math.min(bl.size(), bar.length); i++) {
+            String k = bl.getString(i);
+            bar[i] = k.isEmpty() || Ability.byKey(k) == null ? null : k;
+        }
+        orbs.clear();
+        for (int o : tag.getIntArray("orbs")) if (o >= 0 && o < 3) orbs.add(o);
+        java.util.Arrays.fill(invoked, null);
+        ListTag il = tag.getList("invoked", Tag.TAG_STRING);
+        for (int i = 0; i < Math.min(il.size(), invoked.length); i++) {
+            String k = il.getString(i);
+            invoked[i] = k.isEmpty() || Ability.byKey(k) == null ? null : k;
+        }
+        combo = tag.getInt("combo");
+        // персонажи до 2.15: навыки раскладываются на панель сами
+        if (playerClass != null && !tag.contains("bar")) fillBar();
 
         professions.clear();
         CompoundTag prof = tag.getCompound("professions");

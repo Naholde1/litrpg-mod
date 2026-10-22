@@ -50,7 +50,7 @@ public class ClientForgeEvents {
         Minimap.tick(mc);
 
         while (ModKeys.CHARACTER.consumeClick()) {
-            if (ClientData.received && !ClientData.STATS.hasOrigin()) mc.setScreen(new OriginScreen());
+            if (ClientData.received && (!ClientData.STATS.hasOrigin() || ClientData.STATS.getRole() == null && !ClientData.STATS.hasClass())) mc.setScreen(new OriginScreen());
             else if (ClientData.received && ClientData.STATS.canChooseClass() && !ClientData.STATS.getOffers().isEmpty()) mc.setScreen(new ClassChoiceScreen());
             else mc.setScreen(new CharacterScreen());
         }

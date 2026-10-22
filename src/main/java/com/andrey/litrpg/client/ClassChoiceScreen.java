@@ -16,15 +16,15 @@ import net.minecraft.sounds.SoundEvents;
 import java.util.List;
 import java.util.Map;
 
-/** Выбор класса на 10 уровне: три карточки, подобранные по стилю игры. */
+/** Выбор класса на 10 уровне: пять классов, подобранных Системой; справа — подробности выбранного. */
 public class ClassChoiceScreen extends SystemScreen {
-    private static final int CARD_W = 146;
-    private static final int CARD_H = 176;
+    private static final int TILE_W = 132;
+    private static final int TILE_H = 30;
     private PlayerClass selected;
     private boolean confirmHover;
 
     public ClassChoiceScreen() {
-        super(Component.literal("Выбор класса"), 470, 254);
+        super(Component.literal("Выбор класса"), 480, 262);
     }
 
     @Override
@@ -32,8 +32,8 @@ public class ClassChoiceScreen extends SystemScreen {
         UiKit.window(g, left, top, W, H, "◆ СИСТЕМА: ВЫБОР КЛАССА ◆", font);
         PlayerStats s = ClientData.STATS;
         List<PlayerClass> offers = s.getOffers();
+        if (selected == null && !offers.isEmpty()) selected = offers.get(0);
 
-        // стиль игрока
         StringBuilder sb = new StringBuilder("Твой стиль: ");
         List<Map.Entry<Style, Integer>> top3 = ClassOffers.topStyles(s, 3);
         if (top3.isEmpty()) sb.append("пока не определён");
@@ -41,74 +41,92 @@ public class ClassChoiceScreen extends SystemScreen {
             if (i > 0) sb.append(", ");
             sb.append(Component.translatable(top3.get(i).getKey().nameKey()).getString()).append(' ').append(top3.get(i).getValue()).append('%');
         }
-        g.drawString(font, sb.toString(), left + 12, top + 24, UiKit.MUTED, false);
-
-        String hovered = null;
-        for (int i = 0; i < offers.size(); i++) {
-            PlayerClass c = offers.get(i);
-            int cx = left + 10 + i * (CARD_W + 6);
-            int cy = top + 38;
-            boolean hov = UiKit.inside(mx, my, cx, cy, CARD_W, CARD_H);
-            boolean sel = c == selected;
-            g.fill(cx, cy, cx + CARD_W, cy + CARD_H, sel ? 0xF0183A52 : hov ? 0xE0122636 : 0xC00C1824);
-            UiKit.frame(g, cx, cy, CARD_W, CARD_H, sel || hov ? 0xFF000000 | c.color : UiKit.FRAME_DIM);
-            g.fill(cx + 1, cy + 1, cx + CARD_W - 1, cy + 3, 0xFF000000 | c.color);
-
-            int y = cy + 8;
-            String name = Component.translatable(c.nameKey()).getString();
-            g.drawString(font, Component.literal(name).withStyle(ChatFormatting.BOLD), cx + CARD_W / 2 - font.width(name) / 2 - 1, y,
-                    0xFF000000 | c.color, false);
-            y += 11;
-            if (c.isHidden()) {
-                String h = "★ СКРЫТЫЙ КЛАСС ★";
-                g.drawString(font, h, cx + CARD_W / 2 - font.width(h) / 2, y, 0xFFE0B0FF, false);
-                y += 11;
-            }
-            y += UiKit.wrapped(g, font, Component.translatable(c.descKey()), cx + 6, y, CARD_W - 12, UiKit.TEXT) + 4;
-            String growth = "+" + Component.translatable(c.primary.translationKey()).getString() + " за уровень";
-            g.drawString(font, growth, cx + 6, y, 0xFF9CFF9C, false);
-            y += 13;
-            for (int slot = 0; slot < Ability.SLOTS; slot++) {
-                Ability a = Ability.forSlot(c, slot);
-                if (a == null) continue;
-                String line = a.icon + " " + Component.translatable(a.nameKey()).getString();
-                String lv = String.valueOf(Ability.UNLOCK[slot]);
-                g.drawString(font, line, cx + 6, y, 0xFFE0D0FF, false);
-                g.drawString(font, lv, cx + CARD_W - 6 - font.width(lv), y, 0xFF7A8A96, false);
-                if (UiKit.inside(mx, my, cx + 4, y - 1, CARD_W - 8, 10)) {
-                    hovered = Component.translatable(a.nameKey()).getString() + " — " + Component.translatable(a.descKey()).getString()
-                            + "\n" + a.manaCost() + " маны, перезарядка " + String.format("%.0f", a.cooldown() / 20.0) + " с";
-                }
-                y += 11;
-            }
-            y += 4;
-            StringBuilder st = new StringBuilder();
-            c.styles.entrySet().stream().sorted(Map.Entry.<Style, Integer>comparingByValue().reversed()).limit(2).forEach(e -> {
-                if (st.length() > 0) st.append(", ");
-                st.append(Component.translatable(e.getKey().nameKey()).getString());
-            });
-            UiKit.wrapped(g, font, Component.literal("Стиль: " + st), cx + 6, y, CARD_W - 12, 0xFF7A8A96);
+        g.drawString(font, sb.toString(), left + 12, top + 22, UiKit.MUTED, false);
+        if (s.getRole() != null) {
+            String r = "Роль: " + s.getRole().title;
+            g.drawString(font, r, left + W - 12 - font.width(r), top + 22, 0xFF000000 | s.getRole().color, false);
         }
 
-        int bw = 160, bh = 20;
-        int bx = left + W / 2 - bw / 2, by = top + H - 30;
+        int x0 = left + 10, y0 = top + 36;
+        for (int i = 0; i < offers.size(); i++) {
+            PlayerClass c = offers.get(i);
+            int y = y0 + i * (TILE_H + 4);
+            boolean hov = UiKit.inside(mx, my, x0, y, TILE_W, TILE_H);
+            boolean sel = c == selected;
+            g.fill(x0, y, x0 + TILE_W, y + TILE_H, sel ? 0xF0183A52 : hov ? 0xE0122636 : 0xC00C1824);
+            UiKit.frame(g, x0, y, TILE_W, TILE_H, sel || hov ? 0xFF000000 | c.color : UiKit.FRAME_DIM);
+            g.fill(x0 + 1, y + 1, x0 + 3, y + TILE_H - 1, 0xFF000000 | c.color);
+            g.drawString(font, Component.translatable(c.nameKey()).withStyle(ChatFormatting.BOLD), x0 + 7, y + 5, 0xFF000000 | c.color, false);
+            String sub = c.isHidden() ? "★ скрытый класс" : c.role.title;
+            g.drawString(font, sub, x0 + 7, y + 17, c.isHidden() ? 0xFFE0B0FF : UiKit.MUTED, false);
+        }
+
+        if (selected != null) details(g, s, selected, x0 + TILE_W + 10, y0, mx, my);
+
+        int bw = 170, bh = 20;
+        int bx = left + 10, by = top + H - 30;
         boolean enabled = selected != null;
         confirmHover = enabled && UiKit.inside(mx, my, bx, by, bw, bh);
         g.fill(bx, by, bx + bw, by + bh, !enabled ? 0xFF2A2A2A : confirmHover ? 0xFF1F6F4A : 0xFF16503A);
         UiKit.frame(g, bx, by, bw, bh, !enabled ? 0xFF444444 : confirmHover ? 0xFF9CFFB0 : 0xFF4FC38A);
         String ok = enabled ? "ВЫБРАТЬ: " + Component.translatable(selected.nameKey()).getString() : "Выбери класс";
+        if (font.width(ok) > bw - 8) ok = "ВЫБРАТЬ";
         g.drawString(font, ok, bx + bw / 2 - font.width(ok) / 2, by + 6, enabled ? 0xFFFFFFFF : 0xFF888888, false);
         g.drawString(font, "Esc — решить позже (K)", left + W - 12 - font.width("Esc — решить позже (K)"), by + 6, 0xFF7A8A96, false);
+    }
 
-        if (hovered != null) g.renderTooltip(font, font.split(Component.literal(hovered), 200), mx, my);
+    private void details(GuiGraphics g, PlayerStats s, PlayerClass c, int x, int y, int mx, int my) {
+        int w = left + W - 10 - x;
+        g.fill(x - 5, y, x - 4, top + H - 36, UiKit.FRAME_DIM);
+        y += UiKit.wrapped(g, font, Component.translatable(c.descKey()), x, y, w, UiKit.TEXT) + 3;
+        String growth = "+1 " + Component.translatable(c.primary.translationKey()).getString() + " за уровень, +1 "
+                + Component.translatable(c.secondary.translationKey()).getString() + " за 2 уровня";
+        g.drawString(font, growth, x, y, 0xFF9CFF9C, false);
+        y += 11;
+        Component trait = Component.literal("✦ ").append(Component.translatable(c.traitKey())).append(": ")
+                .append(Component.translatable(c.traitDescKey()));
+        y += UiKit.wrapped(g, font, trait, x, y, w, 0xFFB8E0FF) + 3;
+        g.drawString(font, "Почему: " + String.join(", ", ClassOffers.reasons(s, c)), x, y, 0xFFFFD54F, false);
+        y += 13;
+        String hovered = null;
+        String[] list = c.isInvoker() ? combos(c) : c.skills;
+        int colW = w / 2;
+        for (int i = 0; i < list.length; i++) {
+            Ability a = Ability.byKey(list[i]);
+            if (a == null) continue;
+            int cx = x + (i % 2) * colW;
+            int cy = y + (i / 2) * 11;
+            String line = a.icon + " " + Component.translatable(a.nameKey()).getString();
+            String lv = String.valueOf(c.unlockOf(a.key) == 999 ? 10 : c.unlockOf(a.key));
+            while (font.width(line) > colW - 18 && line.length() > 4) line = line.substring(0, line.length() - 2) + "…";
+            g.drawString(font, line, cx, cy, 0xFFE0D0FF, false);
+            g.drawString(font, lv, cx + colW - 6 - font.width(lv), cy, 0xFF7A8A96, false);
+            if (UiKit.inside(mx, my, cx, cy - 1, colW - 4, 10)) {
+                hovered = Component.translatable(a.nameKey()).getString() + " — " + Component.translatable(a.descKey()).getString()
+                        + "\n" + (a.hpCost() > 0 ? Math.round(a.hpCost() * 100) + "% здоровья" : a.manaCost() + " маны")
+                        + ", перезарядка " + String.format("%.0f", a.cooldown() / 20.0) + " с";
+            }
+        }
+        if (c.isInvoker()) {
+            int cy = y + ((list.length + 1) / 2) * 11 + 2;
+            UiKit.wrapped(g, font, Component.literal("Заклинатель сфер: три сферы сплетаются в 10 заклинаний."), x, cy, w, UiKit.MUTED);
+        }
+        if (hovered != null) g.renderTooltip(font, font.split(Component.literal(hovered), 220), mx, my);
+    }
+
+    private static String[] combos(PlayerClass c) {
+        var cs = c.invoke.combos();
+        String[] out = new String[cs.size()];
+        for (int i = 0; i < out.length; i++) out[i] = cs.get(i).skill();
+        return out;
     }
 
     @Override
     protected boolean clickContent(double mx, double my, int button) {
         List<PlayerClass> offers = ClientData.STATS.getOffers();
+        int x0 = left + 10, y0 = top + 36;
         for (int i = 0; i < offers.size(); i++) {
-            int cx = left + 10 + i * (CARD_W + 6);
-            if (UiKit.inside(mx, my, cx, top + 38, CARD_W, CARD_H)) {
+            if (UiKit.inside(mx, my, x0, y0 + i * (TILE_H + 4), TILE_W, TILE_H)) {
                 selected = offers.get(i);
                 minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0f));
                 return true;

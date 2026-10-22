@@ -9,20 +9,20 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-/** Выбор класса из трёх предложенных Системой. */
+/** Выбор класса из предложенных Системой. */
 public class ChooseClassPacket {
-    private final int clazz;
+    private final String clazz;
 
-    public ChooseClassPacket(PlayerClass clazz) { this.clazz = clazz.ordinal(); }
-    public ChooseClassPacket(FriendlyByteBuf buf) { this.clazz = buf.readVarInt(); }
+    public ChooseClassPacket(PlayerClass clazz) { this.clazz = clazz.key; }
+    public ChooseClassPacket(FriendlyByteBuf buf) { this.clazz = buf.readUtf(64); }
 
-    public void encode(FriendlyByteBuf buf) { buf.writeVarInt(clazz); }
+    public void encode(FriendlyByteBuf buf) { buf.writeUtf(clazz, 64); }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ServerPlayer player = ctx.get().getSender();
-        if (player == null || clazz < 0 || clazz >= PlayerClass.values().length) return;
+        PlayerClass c = PlayerClass.byKey(clazz);
+        if (player == null || c == null) return;
         PlayerStats s = StatsManager.get(player);
-        PlayerClass c = PlayerClass.values()[clazz];
         if (!s.canChooseClass() || !s.getOffers().contains(c)) return;
         StatsManager.chooseClass(player, c, true);
     }

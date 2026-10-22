@@ -153,26 +153,28 @@ public class CharacterScreen extends SystemScreen {
 
     // ---------------- Навыки ----------------
 
+    /** Выбранная ячейка панели (-1 — нет) и выбранный навык из списка. */
+    private static int pickSlot = -1;
+    private static String pickSkill = null;
+
     private void skills(GuiGraphics g, PlayerStats s, int x, int y, int mx, int my) {
         PlayerClass cls = s.getPlayerClass();
-        int slots = cls == null ? Ability.NOVICE.length : Ability.SLOTS;
-        int rowH = cls == null ? 38 : 34;
+        if (cls != null) {
+            if (cls.isInvoker()) invokerSkills(g, s, cls, x, y, mx, my);
+            else classSkills(g, s, cls, x, y, mx, my);
+            return;
+        }
+        int slots = Ability.NOVICE.length;
+        int rowH = 38;
         for (int slot = 0; slot < slots; slot++) {
-            Ability a = Ability.forSlot(cls, slot);
+            Ability a = s.barSkill(slot);
             if (a == null) continue;
             int ry = y + slot * rowH;
-            int need = Ability.unlockLevel(cls, slot);
+            int need = Ability.unlockLevel(null, a);
             boolean unlocked = s.getLevel() >= need;
-            g.fill(x, ry, x + 28, ry + 28, unlocked ? 0xFF2A1E4A : 0xFF222222);
-            UiKit.frame(g, x, ry, 28, 28, unlocked ? UiKit.FRAME : UiKit.FRAME_DIM);
-            g.pose().pushPose();
-            g.pose().translate(x + 14, ry + 10, 0);
-            g.pose().scale(1.6f, 1.6f, 1f);
-            g.drawString(font, a.icon, -font.width(a.icon) / 2, -3, unlocked ? 0xFFFFFFFF : 0xFF666666, false);
-            g.pose().popPose();
+            skillIcon(g, a, x, ry, unlocked, false);
             String key = ModKeys.ABILITIES[slot].getTranslatedKeyMessage().getString();
             g.drawString(font, key, x + 2, ry + 19, UiKit.MUTED, false);
-
             String title = Component.translatable(a.nameKey()).getString();
             g.drawString(font, title, x + 36, ry, unlocked ? 0xFFE0D0FF : 0xFF777777, false);
             String meta = unlocked ? a.manaCost() + " MP • " + String.format("%.1f", a.cooldown() / 20.0) + " с"
@@ -180,7 +182,10 @@ public class CharacterScreen extends SystemScreen {
             g.drawString(font, meta, x + 36 + font.width(title) + 8, ry, unlocked ? 0xFF5AA0F0 : 0xFFFF9800, false);
             UiKit.wrapped(g, font, Component.translatable(a.descKey()), x + 36, ry + 11, W - 56, UiKit.MUTED);
         }
-        if (cls != null) return;
+        if (s.getRole() != null) {
+            String r = "Роль: " + s.getRole().title;
+            g.drawString(font, r, left + W - 12 - font.width(r), y, 0xFF000000 | s.getRole().color, false);
+        }
 
         // новичок: прогресс до выбора класса и стиль игры
         int ny = y + slots * rowH + 4;
@@ -203,6 +208,162 @@ public class CharacterScreen extends SystemScreen {
             UiKit.bar(g, x + 110, ry + 2, 150, 4, e.getValue() / 100f, 0xFF1A2340, 0xFF4FC3F7);
             g.drawString(font, e.getValue() + "%", x + 268, ry, UiKit.MUTED, false);
         }
+    }
+
+    private void skillIcon(GuiGraphics g, Ability a, int x, int y, boolean unlocked, boolean selected) {
+        g.fill(x, y, x + 28, y + 28, selected ? 0xFF4A3A10 : unlocked ? 0xFF2A1E4A : 0xFF222222);
+        UiKit.frame(g, x, y, 28, 28, selected ? UiKit.GOLD : unlocked ? UiKit.FRAME : UiKit.FRAME_DIM);
+        g.pose().pushPose();
+        g.pose().translate(x + 14, y + 10, 0);
+        g.pose().scale(1.6f, 1.6f, 1f);
+        g.drawString(font, a.icon, -font.width(a.icon) / 2, -3, unlocked ? 0xFFFFFFFF : 0xFF666666, false);
+        g.pose().popPose();
+    }
+
+    private Component skillTip(Ability a, int need, PlayerStats s) {
+        var t = Component.translatable(a.nameKey()).withStyle(ChatFormatting.LIGHT_PURPLE).copy()
+                .append(Component.literal("\n").append(Component.translatable(a.descKey())).withStyle(ChatFormatting.GRAY));
+        String cost = a.hpCost() > 0 ? Math.round(a.hpCost() * 100) + "% здоровья" : a.manaCost() + " маны";
+        t.append(Component.literal("\n" + cost + " • перезарядка " + String.format("%.1f", a.cooldown() / 20.0) + " с")
+                .withStyle(ChatFormatting.BLUE));
+        if (s.getLevel() < need) t.append(Component.literal("\nОткроется на уровне " + need).withStyle(ChatFormatting.GOLD));
+        return t;
+    }
+
+    /** Панель из шести ячеек и восемь навыков класса: клик по навыку, затем по ячейке (или наоборот). */
+    private void classSkills(GuiGraphics g, PlayerStats s, PlayerClass cls, int x, int y, int mx, int my) {
+        g.drawString(font, "Панель навыков", x, y, UiKit.GOLD, false);
+        String hint = pickSkill != null ? "Теперь выберите ячейку" : pickSlot >= 0 ? "Теперь выберите навык" : "ПКМ по ячейке — убрать";
+        g.drawString(font, hint, x + 92, y, UiKit.MUTED, false);
+        String role = s.getRole() != null ? "Роль: " + s.getRole().title : "";
+        g.drawString(font, role, left + W - 12 - font.width(role), y, s.getRole() != null ? 0xFF000000 | s.getRole().color : UiKit.MUTED, false);
+        int sy = y + 11;
+        for (int i = 0; i < Ability.BAR; i++) {
+            int sx = x + i * 34;
+            Ability a = s.barSkill(i);
+            boolean sel = pickSlot == i;
+            if (a != null) {
+                skillIcon(g, a, sx, sy, true, sel);
+            } else {
+                g.fill(sx, sy, sx + 28, sy + 28, sel ? 0xFF4A3A10 : 0x80202020);
+                UiKit.frame(g, sx, sy, 28, 28, sel ? UiKit.GOLD : UiKit.FRAME_DIM);
+            }
+            String key = ModKeys.ABILITIES[i].getTranslatedKeyMessage().getString();
+            g.drawString(font, key, sx + 2, sy + 19, 0xFFBBBBBB, false);
+            final int slot = i;
+            hits.add(new Hit(sx, sy, 28, 28, () -> clickSlot(slot)));
+            if (a != null && UiKit.inside(mx, my, sx, sy, 28, 28)) tooltip = skillTip(a, cls.unlockOf(a.key), s);
+        }
+        // черта класса
+        int tx = x + 6 * 34 + 6;
+        int tw = left + W - 12 - tx;
+        g.drawString(font, Component.literal("✦ ").append(Component.translatable(cls.traitKey())), tx, sy + 2, 0xFFB8E0FF, false);
+        UiKit.wrapped(g, font, Component.translatable(cls.traitDescKey()), tx, sy + 13, tw, UiKit.MUTED);
+
+        int ly = sy + 36;
+        g.fill(x - 2, ly - 3, left + W - 8, ly - 2, UiKit.FRAME_DIM);
+        int colW = (W - 24) / 2;
+        for (int i = 0; i < cls.skills.length; i++) {
+            Ability a = Ability.byKey(cls.skills[i]);
+            if (a == null) continue;
+            int cx = x + (i % 2) * colW;
+            int cy = ly + (i / 2) * 33;
+            int need = cls.unlock[i];
+            boolean unlocked = s.getLevel() >= need;
+            skillIcon(g, a, cx, cy, unlocked, a.key.equals(pickSkill));
+            String title = Component.translatable(a.nameKey()).getString();
+            g.drawString(font, title, cx + 32, cy + 2, unlocked ? 0xFFE0D0FF : 0xFF777777, false);
+            int on = -1;
+            for (int k = 0; k < Ability.BAR; k++) if (a.key.equals(s.getBar(k))) on = k;
+            String meta;
+            int mc;
+            if (!unlocked) {
+                meta = "откроется на " + need + " ур.";
+                mc = 0xFFFF9800;
+            } else if (on >= 0) {
+                meta = "на панели: " + ModKeys.ABILITIES[on].getTranslatedKeyMessage().getString();
+                mc = 0xFF9CFF9C;
+            } else {
+                meta = (a.hpCost() > 0 ? Math.round(a.hpCost() * 100) + "% HP" : a.manaCost() + " MP") + " • "
+                        + String.format("%.0f", a.cooldown() / 20.0) + " с";
+                mc = 0xFF5AA0F0;
+            }
+            g.drawString(font, meta, cx + 32, cy + 13, mc, false);
+            if (UiKit.inside(mx, my, cx, cy, colW - 4, 30)) tooltip = skillTip(a, need, s);
+            if (unlocked) hits.add(new Hit(cx, cy, colW - 4, 30, () -> clickSkill(a.key)));
+        }
+        g.drawString(font, "Менять навыки можно только вне боя.", x, top + H - 14, UiKit.MUTED, false);
+    }
+
+    private void clickSlot(int slot) {
+        if (pickSkill != null) {
+            ModNetwork.CHANNEL.sendToServer(new com.andrey.litrpg.network.SetBarPacket(slot, pickSkill));
+            pickSkill = null;
+            pickSlot = -1;
+        } else {
+            pickSlot = pickSlot == slot ? -1 : slot;
+        }
+    }
+
+    private void clickSkill(String key) {
+        if (pickSlot >= 0) {
+            ModNetwork.CHANNEL.sendToServer(new com.andrey.litrpg.network.SetBarPacket(pickSlot, key));
+            pickSlot = -1;
+            pickSkill = null;
+        } else {
+            pickSkill = key.equals(pickSkill) ? null : key;
+        }
+    }
+
+    /** Заклинатель сфер: сферы, Призыв и таблица сочетаний. */
+    private void invokerSkills(GuiGraphics g, PlayerStats s, PlayerClass cls, int x, int y, int mx, int my) {
+        g.drawString(font, "Сферы и Призыв", x, y, UiKit.GOLD, false);
+        int sy = y + 11;
+        for (int i = 0; i < 4; i++) {
+            Ability a = s.barSkill(i);
+            if (a == null) continue;
+            int sx = x + i * 34;
+            skillIcon(g, a, sx, sy, true, false);
+            g.drawString(font, ModKeys.ABILITIES[i].getTranslatedKeyMessage().getString(), sx + 2, sy + 19, 0xFFBBBBBB, false);
+            if (UiKit.inside(mx, my, sx, sy, 28, 28)) tooltip = skillTip(a, 10, s);
+        }
+        int tx = x + 4 * 34 + 6;
+        int tw = left + W - 12 - tx;
+        UiKit.wrapped(g, font, Component.literal("Сферы (Z, X, C): над вами держатся три последние, каждая даёт усиление. "
+                + "V сплетает их в заклинание — оно ложится на B, прежнее уходит на G."), tx, sy, tw, UiKit.MUTED);
+        int ly = sy + 50;
+        g.fill(x - 2, ly - 3, left + W - 8, ly - 2, UiKit.FRAME_DIM);
+        int colW = (W - 24) / 2;
+        var combos = cls.invoke.combos();
+        for (int i = 0; i < combos.size(); i++) {
+            var c = combos.get(i);
+            Ability a = Ability.byKey(c.skill());
+            if (a == null) continue;
+            int cx = x + (i % 2) * colW;
+            int cy = ly + (i / 2) * 26;
+            boolean unlocked = s.getLevel() >= c.level();
+            for (int k = 0; k < 3; k++) {
+                int sp = c.pattern().charAt(k) - '0';
+                Ability sa = Ability.byKey(cls.invoke.spheres()[sp]);
+                int ox = cx + k * 11;
+                g.fill(ox, cy + 4, ox + 10, cy + 14, 0xFF000000);
+                g.fill(ox + 1, cy + 5, ox + 9, cy + 13, unlocked ? orbColor(sp) : 0xFF333333);
+                if (sa != null) g.drawString(font, sa.icon, ox + 5 - font.width(sa.icon) / 2, cy + 5, 0xFFFFFFFF, false);
+            }
+            String title = a.icon + " " + Component.translatable(a.nameKey()).getString();
+            g.drawString(font, title, cx + 38, cy + 1, unlocked ? 0xFFE0D0FF : 0xFF777777, false);
+            String meta = unlocked ? a.manaCost() + " MP • " + String.format("%.0f", a.cooldown() / 20.0) + " с" : "с " + c.level() + " ур.";
+            g.drawString(font, meta, cx + 38, cy + 11, unlocked ? 0xFF5AA0F0 : 0xFFFF9800, false);
+            if (UiKit.inside(mx, my, cx, cy, colW - 4, 24)) tooltip = skillTip(a, c.level(), s);
+        }
+    }
+
+    private static int orbColor(int i) {
+        return switch (i) {
+            case 0 -> 0xFF4AA8FF;
+            case 1 -> 0xFFC86CFF;
+            default -> 0xFFFF8A2A;
+        };
     }
 
     // ---------------- Профессии ----------------
@@ -477,6 +638,14 @@ public class CharacterScreen extends SystemScreen {
 
     @Override
     protected boolean clickContent(double mx, double my, int button) {
+        if (button == 1 && tab == 1 && ClientData.STATS.hasClass()) {
+            for (int i = 0; i < Ability.BAR; i++) {
+                if (UiKit.inside(mx, my, left + 10 + i * 34, top + 44 + 11, 28, 28)) {
+                    ModNetwork.CHANNEL.sendToServer(new com.andrey.litrpg.network.SetBarPacket(i, null));
+                    return true;
+                }
+            }
+        }
         for (Hit h : hits) {
             if (UiKit.inside(mx, my, h.x, h.y, h.w, h.h)) {
                 minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0f));

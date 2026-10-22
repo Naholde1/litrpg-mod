@@ -17,11 +17,16 @@ public class SyncStatsPacket {
 
     public SyncStatsPacket(PlayerStats stats, long now) {
         this.data = stats.saveForSync();
-        Ability[] all = Ability.values();
-        this.cooldownLeft = new int[all.length];
-        for (Ability a : all) {
-            cooldownLeft[a.ordinal()] = (int) Math.max(0, stats.getCooldownEnd(a) - now);
+        // только идущие перезарядки: пары (номер навыка, тики)
+        java.util.List<Integer> list = new java.util.ArrayList<>();
+        for (Ability a : Ability.values()) {
+            int left = (int) Math.max(0, stats.getCooldownEnd(a) - now);
+            if (left > 0) {
+                list.add(a.ordinal());
+                list.add(left);
+            }
         }
+        this.cooldownLeft = list.stream().mapToInt(Integer::intValue).toArray();
     }
 
     public SyncStatsPacket(FriendlyByteBuf buf) {

@@ -10,7 +10,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "$(li)/litrpg race @s elf$(li)/litrpg class set @s necromancer$(li)/litrpg class offer @s$(li)/litrpg style @s magic 500$(li)/litrpg origin reset @s$(li)/litrpg prof level @s miner 30$(li)/litrpg title give @s kingslayer$(li)/litrpg mana @s$(li)/litrpg cooldowns @s"
+      "text": "$(li)/litrpg race @s elf$(li)/litrpg class set @s necromancer$(li)/litrpg role @s tank$(li)/litrpg class offer @s$(li)/litrpg style @s magic 500$(li)/litrpg origin reset @s$(li)/litrpg prof level @s miner 30$(li)/litrpg title give @s kingslayer$(li)/litrpg mana @s$(li)/litrpg cooldowns @s"
     },
     {
       "type": "patchouli:text",

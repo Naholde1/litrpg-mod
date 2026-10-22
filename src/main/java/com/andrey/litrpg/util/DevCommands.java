@@ -296,6 +296,77 @@ public final class DevCommands {
                     LitRPG.LOGGER.info("[dev] service {} {} at {} -> money {}", a[1], a[2], npc.blockPosition(), com.andrey.litrpg.npc.Wallet.total(p));
                     continue;
                 }
+                if (line.startsWith("devcast ")) {
+                    // devcast <ячейка> — применить навык с панели от лица Dev
+                    var p = server.getPlayerList().getPlayerByName("Dev");
+                    if (p == null) continue;
+                    int slot = Integer.parseInt(line.substring(8).trim());
+                    var st = com.andrey.litrpg.stats.StatsManager.get(p);
+                    var a = st.barSkill(slot);
+                    double hp = p.getHealth();
+                    double mana = st.getMana();
+                    var foes = p.serverLevel().getEntitiesOfClass(net.minecraft.world.entity.Mob.class, p.getBoundingBox().inflate(20),
+                            m -> com.andrey.litrpg.ability.AbilityHandler.isEnemy(p, m));
+                    foes.sort(java.util.Comparator.comparingDouble(m -> m.distanceToSqr(p)));
+                    if (!foes.isEmpty()) p.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, foes.get(0).getEyePosition());
+                    com.andrey.litrpg.ability.AbilityHandler.tryUse(p, slot);
+                    LitRPG.LOGGER.info("[dev] cast {} {} hp {}->{} mana {}->{} combo={} orbs={} invoked={}/{}", slot,
+                            a == null ? "-" : a.key, hp, p.getHealth(), mana, st.getMana(), st.comboPoints(), st.getOrbs(),
+                            st.getInvoked(0), st.getInvoked(1));
+                    continue;
+                }
+                if (line.startsWith("devoffers")) {
+                    // devoffers — показать, что Система предложит Dev и почему
+                    var p = server.getPlayerList().getPlayerByName("Dev");
+                    if (p == null) continue;
+                    var st = com.andrey.litrpg.stats.StatsManager.get(p);
+                    var list = com.andrey.litrpg.stats.ClassOffers.generate(st, p.getRandom());
+                    for (var c : list) {
+                        LitRPG.LOGGER.info("[dev] offer {} role={} score={} {}", c.key, c.role,
+                                String.format("%.3f", com.andrey.litrpg.stats.ClassOffers.score(st, c)),
+                                com.andrey.litrpg.stats.ClassOffers.reasons(st, c));
+                    }
+                    continue;
+                }
+                if (line.startsWith("devskills ")) {
+                    // devskills <с> <по> — применить навыки с номерами [с, по) от лица Dev и записать сбои
+                    var p = server.getPlayerList().getPlayerByName("Dev");
+                    if (p == null) continue;
+                    String[] a = line.split(" ");
+                    int from = Integer.parseInt(a[1]), to = Math.min(Integer.parseInt(a[2]), com.andrey.litrpg.ability.Ability.count());
+                    int ok = 0, no = 0, fail = 0;
+                    StringBuilder bad = new StringBuilder();
+                    for (int i = from; i < to; i++) {
+                        var ab = com.andrey.litrpg.ability.Ability.byId(i);
+                        var near = p.serverLevel().getEntitiesOfClass(net.minecraft.world.entity.Mob.class, p.getBoundingBox().inflate(20),
+                                m -> com.andrey.litrpg.ability.AbilityHandler.isEnemy(p, m));
+                        near.sort(java.util.Comparator.comparingDouble(m -> m.distanceToSqr(p)));
+                        if (!near.isEmpty()) p.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, near.get(0).getEyePosition());
+                        try {
+                            if (com.andrey.litrpg.ability.AbilityHandler.devExecute(p, ab)) ok++;
+                            else { no++; bad.append(ab.key).append(' '); }
+                        } catch (Throwable t) {
+                            fail++;
+                            LitRPG.LOGGER.error("[dev] skill {} failed", ab.key, t);
+                        }
+                        p.setHealth(p.getMaxHealth());
+                    }
+                    LitRPG.LOGGER.info("[dev] skills {}..{} ok={} declined={} failed={} declined: {}", from, to, ok, no, fail, bad);
+                    continue;
+                }
+                if (line.equals("devbar")) {
+                    var p = server.getPlayerList().getPlayerByName("Dev");
+                    if (p == null) continue;
+                    var st = com.andrey.litrpg.stats.StatsManager.get(p);
+                    StringBuilder b = new StringBuilder();
+                    for (int i = 0; i < com.andrey.litrpg.ability.Ability.BAR; i++) {
+                        var a = st.barSkill(i);
+                        b.append(i).append('=').append(a == null ? "-" : a.key).append(' ');
+                    }
+                    LitRPG.LOGGER.info("[dev] bar class={} role={} lvl={} {}", st.getPlayerClass() == null ? "-" : st.getPlayerClass().key,
+                            st.getRole(), st.getLevel(), b);
+                    continue;
+                }
                 if (line.equals("devwho")) {
                     // где Dev, держит ли его Печать подземелья и что у него в инвентаре
                     var p = server.getPlayerList().getPlayerByName("Dev");

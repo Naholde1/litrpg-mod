@@ -70,7 +70,8 @@ public final class GearEvents {
     public static void onTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END || !(event.player instanceof ServerPlayer p) || p.tickCount % 10 != 0) return;
         List<ItemStack> eq = equipped(p);
-        int sig = StatsManager.get(p).getLevel();
+        PlayerStats ps = StatsManager.get(p);
+        int sig = ps.getLevel() * 31 + java.util.Objects.hash(ps.getPlayerClass() == null ? "" : ps.getPlayerClass().key, ps.getRole());
         // подпись снаряжения: предмет и его свойства Системы (износ и прочий NBT не вызывают пересчёта)
         for (ItemStack st : eq) {
             if (st.isEmpty()) {
@@ -102,6 +103,14 @@ public final class GearEvents {
             }
         }
         g.setPieces.forEach((set, n) -> set.apply(g, n));
+        // черта класса и бонус роли
+        var cls = s.getPlayerClass();
+        if (cls != null) {
+            float lv = 1 + s.getLevel() / 25f;
+            cls.traitBonus.forEach((b, v) -> g.add(b, b.percent ? v : v * lv));
+            g.passives.addAll(cls.traitPassives);
+        }
+        if (s.getRole() != null) s.getRole().apply(g, s.getLevel());
         // наборы из шаблонов: считаются разные предметы набора
         setItems.forEach((id, items) -> {
             g.dataSets.put(id, items.size());
