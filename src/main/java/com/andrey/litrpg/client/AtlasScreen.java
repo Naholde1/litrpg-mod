@@ -51,20 +51,9 @@ public class AtlasScreen extends Screen {
             int x = px(p.x()), z = pz(p.z());
             if (Math.abs(mx - x) <= 3 && Math.abs(my - z) <= 3) {
                 String kind = switch (p.type()) {
-                    case "city" -> "город";
-                    case "dungeon" -> "подземелье";
-                    case "wonder" -> "чудо света";
-                    case "village" -> "деревня";
-                    case "farm" -> "хутор";
                     case "hamlet" -> "придорожный хутор";
-                    case "fishing" -> "рыбацкий посёлок";
-                    case "lumber" -> "лесопилка";
-                    case "caravan" -> "стоянка караванщиков";
-                    case "outpost" -> "застава";
-                    case "ruins" -> "руины";
                     case "pirates" -> "пиратский корабль — опасно!";
-                    case "camp" -> "лагерь";
-                    default -> p.type();
+                    default -> com.andrey.litrpg.world.Lore.kind(p.type()).toLowerCase();
                 };
                 tip.add(Component.literal(p.name()).withStyle(s -> s.withColor(0xFFE8B0)));
                 tip.add(Component.literal(kind + " • X " + p.x() + ", Z " + p.z()).withStyle(s -> s.withColor(0xB0A080)));

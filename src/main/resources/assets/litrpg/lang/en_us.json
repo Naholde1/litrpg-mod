@@ -1020,5 +1020,14 @@
   "entity.litrpg.grimlock": "Grimlock",
   "item.litrpg.grimlock_spawn_egg": "Grimlock Spawn Egg",
   "entity.litrpg.mimic": "Mimic",
-  "item.litrpg.mimic_spawn_egg": "Mimic Spawn Egg"
+  "item.litrpg.mimic_spawn_egg": "Mimic Spawn Egg",
+  "biome.litrpg.arcadia_highlands": "Arcadian Highlands",
+  "biome.litrpg.fang_peaks": "Fang Peaks",
+  "biome.litrpg.ash_peaks": "Ash Ridges",
+  "biome.litrpg.ash_shore": "Black Shore",
+  "biome.litrpg.bone_ridges": "Dust Ridges",
+  "biome.litrpg.frontier_peaks": "Frontier Crags",
+  "biome.litrpg.clearing": "Clearing",
+  "biome.litrpg.clearing_snow": "Snowy Clearing",
+  "biome.litrpg.clearing_ash": "Scorched Clearing"
 }

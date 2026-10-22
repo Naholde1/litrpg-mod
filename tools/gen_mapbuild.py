@@ -6,6 +6,7 @@
 Запуск (после gen_world.py): python tools/gen_mapbuild.py, затем python tools/gen_world.py --art
 """
 import json
+from collections import Counter
 import math
 import os
 import random
@@ -443,7 +444,7 @@ class Planner:
         self.world = World(dict(data, flats=flats))
         self.taken = [(c['x'], c['z'], FIT.get(c['id'], {}).get('flat', c['flat']) + 50) for c in data['cities']]
 
-    def ok(self, x, z, r, terr=None):
+    def ok(self, x, z, r, terr=None, maxh=150):
         if max(abs(x), abs(z)) > 4300:
             return None
         for tx, tz, tr in self.taken:
@@ -452,7 +453,7 @@ class Planner:
         hs = []
         for dx, dz in ((0, 0), (r, 0), (-r, 0), (0, r), (0, -r), (r * 0.7, r * 0.7), (-r * 0.7, -r * 0.7), (r * 0.7, -r * 0.7), (-r * 0.7, r * 0.7)):
             h, _, t, w = self.world.sample(x + dx, z + dz)
-            if w != 0 or h < 64.5 or h > 150:
+            if w != 0 or h < 64.5 or h > maxh:
                 return None
             hs.append(h)
         if max(hs) - min(hs) > 16:
@@ -464,13 +465,13 @@ class Planner:
                 return None
         return int(round(sum(hs) / len(hs)))
 
-    def find(self, x, z, r, terr=None, search=420):
+    def find(self, x, z, r, terr=None, search=420, maxh=150):
         for d in range(0, search, 16):
             n = max(1, int(2 * math.pi * d / 24))
             for k in range(n):
                 a = 2 * math.pi * k / n
                 px, pz = x + math.cos(a) * d, z + math.sin(a) * d
-                y = self.ok(px, pz, r, terr)
+                y = self.ok(px, pz, r, terr, maxh)
                 if y is not None:
                     return int(px), int(pz), y
         return None
@@ -816,6 +817,70 @@ def main():
         if spot:
             put_poi(plan, MP.ruins(i), f'ruins_{i}', 'ruins', 'Древние руины', *spot, 14)
 
+    # ---------------- места литРПГ: обелиски, башни магов, гнёзда, избушки, арены, звёзды ----------------
+    import mapbuild_lore as LO
+    lore = Counter()
+    ob_names = ['Обелиск Рассвета', 'Обелиск Шёпота', 'Обелиск Перекрёстка', 'Обелиск Зари', 'Обелиск Сумерек', 'Обелиск Странника',
+                'Обелиск Предела', 'Обелиск Бури', 'Обелиск Эха', 'Обелиск Памяти', 'Обелиск Пепла', 'Обелиск Инея', 'Обелиск Клыка',
+                'Обелиск Топей']
+    k = 0
+    orng = random.Random(9)
+    for c in data['cities']:
+        a = orng.random() * 2 * math.pi
+        d = FIT.get(c['id'], {}).get('flat', c['flat']) + orng.uniform(260, 420)
+        spot = plan.find(c['x'] + math.cos(a) * d, c['z'] + math.sin(a) * d, 13, search=260)
+        if spot:
+            put_poi(plan, LO.obelisk(k), f'obelisk_{k}', 'obelisk', ob_names[k % len(ob_names)], *spot, 13)
+            k += 1
+    for (x, z) in ((-1700, 1500), (1500, -1900), (2300, 800), (-2300, -1300)):
+        spot = plan.find(x, z, 13, search=300)
+        if spot:
+            put_poi(plan, LO.obelisk(k), f'obelisk_{k}', 'obelisk', ob_names[k % len(ob_names)], *spot, 13)
+            k += 1
+    lore['obelisk'] = k
+    for i, (x, z, title, npc, terr) in enumerate([
+            (-760, -720, 'Башня Звездочёта', 'litrpg:human_mage', None),
+            (-2450, -950, 'Обсерватория Лунного Ока', 'litrpg:elf_moonsage', ['elves', 'wild']),
+            (1650, -1500, 'Башня Затворника', 'litrpg:human_mage', None),
+            (3500, -300, 'Шпиль Чернокнижника', 'litrpg:demon_cultist', ['deadlands', 'wild']),
+            (-250, -3250, 'Башня Архимага Ольвена', 'litrpg:human_mage', None)]):
+        spot = plan.find(x, z, 14, terr, search=320)
+        if spot:
+            put_poi(plan, LO.mage_tower(i, npc), f'magetower_{i}', 'magetower', title, *spot, 14)
+            lore['magetower'] += 1
+    for i, (x, z, title, terr) in enumerate([
+            (2350, -2050, 'Гнездо виверн Железных пиков', ['dwarves', 'wild']),
+            (900, -3650, 'Ледяное гнездо', ['frost', 'wild']),
+            (-1500, -2450, 'Гнездо на Клыкастой скале', None),
+            (3300, 1900, 'Гнездо Красных каньонов', ['orcs', 'wild'])]):
+        spot = plan.find(x, z, 22, terr, search=360, maxh=205)
+        if spot:
+            put_poi(plan, LO.wyvern_nest(i), f'nest_{i}', 'nest', title, *spot, 22)
+            lore['nest'] += 1
+    for i, (x, z, title, terr) in enumerate([
+            (-300, 3300, 'Избушка Бабы Гнилохвостки', ['goblins', 'wild']),
+            (650, 3650, 'Избушка на курьих ножках', ['goblins', 'wild']),
+            (-3350, 350, 'Избушка Лесной Ведьмы', ['elves', 'wild']),
+            (-1050, 2050, 'Изба Старой Ворожеи', None)]):
+        spot = plan.find(x, z, 13, terr, search=320)
+        if spot:
+            put_poi(plan, LO.witch_hut(i), f'witch_{i}', 'witch', title, *spot, 17)
+            lore['witch'] += 1
+    for i, (x, z, title, terr) in enumerate([
+            (-480, 560, 'Арена Испытаний', None),
+            (2550, 2900, 'Кровавая Арена Орды', ['orcs', 'wild']),
+            (1850, -420, 'Арена Пограничья', None)]):
+        spot = plan.find(x, z, 30, terr, search=360)
+        if spot:
+            put_poi(plan, LO.arena(i), f'arena_{i}', 'arena', title, *spot, 30)
+            lore['arena'] += 1
+    for i, (x, z) in enumerate([(-1800, 1200), (1300, 2300), (-2200, -2000), (2700, -900)]):
+        spot = plan.find(x, z, 14, search=320)
+        if spot:
+            put_poi(plan, LO.fallen_star(i), f'star_{i}', 'star', 'Упавшая звезда', *spot, 14)
+            lore['star'] += 1
+    print('места литРПГ:', dict(lore))
+
     # ---------------- пиратские корабли в открытом море ----------------
     import mapbuild_pirates as MPI
     sx, sz, sr, _ = data['seas'][0]
@@ -892,7 +957,6 @@ def main():
         print('сюжетные места', cid_, ', '.join(sorted(m)))
     print('мастерских:', len(WORKSHOPS))
     json.dump(data, open(MAP_JSON, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-    from collections import Counter
     print(Counter(p['type'] for p in POIS), f'{len(TILES)} tiles')
 
 

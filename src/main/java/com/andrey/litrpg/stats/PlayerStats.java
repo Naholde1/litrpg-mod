@@ -29,6 +29,8 @@ public class PlayerStats {
     private PlayerClass playerClass = null;
     private final Map<Profession, int[]> professions = new EnumMap<>(Profession.class); // {level, xp}
     private final Set<Title> titles = EnumSet.noneOf(Title.class);
+    /** Открытые места Мира Системы (id из карты). */
+    private final Set<String> found = new java.util.HashSet<>();
     private final Map<Title.Counter, Integer> counters = new EnumMap<>(Title.Counter.class);
     /** Очки стиля игры до выбора класса. */
     private final Map<Style, Integer> styles = new EnumMap<>(Style.class);
@@ -214,6 +216,11 @@ public class PlayerStats {
 
     public Set<Title> getTitles() { return titles; }
     public boolean hasTitle(Title t) { return titles.contains(t); }
+
+    /** @return true, если место открыто впервые */
+    public boolean discover(String id) { return found.add(id); }
+
+    public int foundCount() { return found.size(); }
     public void addTitle(Title t) { titles.add(t); }
     public void removeTitle(Title t) { titles.remove(t); }
 
@@ -264,6 +271,9 @@ public class PlayerStats {
         reputation.forEach((f, v) -> rep.putInt(f.key, v));
         tag.put("rep", rep);
         tag.put("quests", quests.save());
+        ListTag fl = new ListTag();
+        for (String f : found) fl.add(StringTag.valueOf(f));
+        tag.put("found", fl);
         return tag;
     }
 
@@ -291,6 +301,10 @@ public class PlayerStats {
             int[] d = prof.getIntArray(k);
             if (p != null && d.length == 2) professions.put(p, d.clone());
         }
+
+        found.clear();
+        ListTag fl = tag.getList("found", Tag.TAG_STRING);
+        for (int i = 0; i < fl.size(); i++) found.add(fl.getString(i));
 
         titles.clear();
         ListTag tl = tag.getList("titles", Tag.TAG_STRING);

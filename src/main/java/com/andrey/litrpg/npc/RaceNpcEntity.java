@@ -1,5 +1,7 @@
 package com.andrey.litrpg.npc;
 
+import com.andrey.litrpg.LitRPG;
+
 import com.andrey.litrpg.entity.ManaBoltEntity;
 import com.andrey.litrpg.gear.GearData;
 import com.andrey.litrpg.gear.GearBonus;
@@ -76,6 +78,10 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
     private int chatterCooldown = 2 + (int) (Math.random() * 12);
     @Nullable private Player tradingPlayer;
     @Nullable private MerchantOffers offers;
+    /** Ключи штучных товаров текущего списка сделок (null — обычный товар). */
+    private final java.util.List<String> offerKeys = new java.util.ArrayList<>();
+    /** Когда продана штучная вещь сокровищницы: ключ → игровое время. */
+    private CompoundTag sold = new CompoundTag();
     @Nullable private final ServerBossEvent bossEvent;
     private int spellCooldown = 60;
 
@@ -510,11 +516,7 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
             // слух — всегда; торговля — если есть занятие и житель не держит зла
             com.andrey.litrpg.city.Gossip.talk(sp, this);
             if (job != null && !player.isShiftKeyDown() && StatsManager.get(sp).getRep(npc.faction) >= Faction.Tier.NEUTRAL.from) {
-                offers = NpcTrades.offers(this, StatsManager.get(sp).getRep(npc.faction));
-                if (!offers.isEmpty()) {
-                    setTradingPlayer(player);
-                    openTradingScreen(player, getDisplayName(), 1);
-                }
+                startTrade(sp);
             }
             return InteractionResult.CONSUME;
         }
@@ -572,10 +574,32 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
             sell(sp, held, rep);
             return InteractionResult.CONSUME;
         }
-        offers = NpcTrades.offers(this, rep);
-        setTradingPlayer(player);
-        openTradingScreen(player, getDisplayName(), 1);
+        startTrade(sp);
         return InteractionResult.CONSUME;
+    }
+
+    /** Список сделок под игрока (репутация, уровень, что уже раскуплено) и окно с отношением и скидкой в заголовке. */
+    private void startTrade(ServerPlayer sp) {
+        int rep = StatsManager.get(sp).getRep(npc.faction);
+        long now = level().getGameTime();
+        offers = NpcTrades.offers(this, rep, StatsManager.get(sp).getLevel(),
+                k -> sold.contains(k) && now - sold.getLong(k) < NpcTrades.RESTOCK, offerKeys);
+        if (offers.isEmpty()) return;
+        Faction.Tier tier = Faction.Tier.of(rep);
+        int d = NpcTrades.discountPercent(rep);
+        // коротко, чтобы влезло в окно: имя без ремесла и скидка цветом отношения (подробности — в окне персонажа)
+        String name = getName().getString();
+        if (name.indexOf(',') > 0) name = name.substring(0, name.indexOf(','));
+        Component title = Component.literal(name + " ").append(Component.literal(d == 0 ? "±0%" : d > 0 ? "−" + d + "%" : "+" + (-d) + "%")
+                .withStyle(tier.color));
+        if (!net.minecraftforge.fml.loading.FMLLoader.isProduction()) {
+            LitRPG.LOGGER.info("[dev] trade {}: {} offers, tier {}, last: {}", name, offers.size(), tier,
+                    offers.stream().skip(Math.max(0, offers.size() - 6)).map(o -> o.getResult().getHoverName().getString() + " "
+                            + com.andrey.litrpg.gear.GearData.coins(o.getCostA().getCount() * (o.getCostA().is(com.andrey.litrpg.registry.ModItems.GOLD_COIN.get()) ? 81 : 9))
+                            + (o.isOutOfStock() ? " (распродано)" : "")).toList());
+        }
+        setTradingPlayer(sp);
+        openTradingScreen(sp, title, 1);
     }
 
     private String greeting(ServerPlayer p) {
@@ -596,9 +620,7 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
             StatsManager.message(sp, Component.literal(getName().getString() + ": «Мы не торгуем с такими, как ты».").withStyle(ChatFormatting.RED));
             return;
         }
-        offers = NpcTrades.offers(this, rep);
-        setTradingPlayer(sp);
-        openTradingScreen(sp, getDisplayName(), 1);
+        startTrade(sp);
     }
 
     /** Скупка: предметы Системы и жетоны народов за монеты. */
@@ -640,6 +662,14 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
     @Override
     public void notifyTrade(MerchantOffer offer) {
         offer.increaseUses();
+        int i = offers == null ? -1 : offers.indexOf(offer);
+        if (i >= 0 && i < offerKeys.size() && offerKeys.get(i) != null) {
+            // штучная вещь сокровищницы — до нового завоза её нет
+            sold.putLong(offerKeys.get(i), level().getGameTime());
+            for (String k : java.util.List.copyOf(sold.getAllKeys())) {
+                if (level().getGameTime() - sold.getLong(k) >= NpcTrades.RESTOCK) sold.remove(k);
+            }
+        }
         ambientSoundTime = -getAmbientSoundInterval();
         if (tradingPlayer instanceof ServerPlayer sp) RepEvents.change(sp, npc.faction, 2);
     }
@@ -689,6 +719,7 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
         if (!pname.isEmpty()) tag.putString("PName", pname);
         if (!storyName.isEmpty()) tag.putString("SName", storyName);
         if (job != null) tag.putString("Job", job.name());
+        if (!sold.isEmpty()) tag.put("Sold", sold);
         if (hasRestriction()) {
             tag.putInt("HomeX", getRestrictCenter().getX());
             tag.putInt("HomeY", getRestrictCenter().getY());
@@ -702,6 +733,7 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
         if (tag.contains("Craft")) setCraft(Craft.byKey(tag.getString("Craft")));
         female = tag.getBoolean("Female");
         pname = tag.getString("PName");
+        sold = tag.getCompound("Sold");
         storyName = tag.getString("SName");
         job = tag.contains("Job") ? Job.byKey(tag.getString("Job")) : null;
         if (tag.contains("HomeX")) {

@@ -61,7 +61,7 @@ public final class RepEvents {
         if (before != after) {
             StatsManager.message(p, Component.literal("Отношение народа «" + f.title + "»: ")
                     .append(Component.literal(after.title).withStyle(after.color)));
-            if (after == Faction.Tier.REVERED) {
+            if (after.ordinal() >= Faction.Tier.REVERED.ordinal() && before.ordinal() < Faction.Tier.REVERED.ordinal()) {
                 com.andrey.litrpg.stats.Title t = switch (f) {
                     case ELVES -> com.andrey.litrpg.stats.Title.ELF_FRIEND;
                     case DWARVES -> com.andrey.litrpg.stats.Title.DWARF_FRIEND;

@@ -24,7 +24,7 @@ public final class LootRolls {
     public static List<ItemStack> coinStacks(int copper) {
         List<ItemStack> out = new ArrayList<>();
         int g = copper / 81, s = copper % 81 / 9, c = copper % 9;
-        if (g > 0) out.add(new ItemStack(com.andrey.litrpg.registry.ModItems.GOLD_COIN.get(), Math.min(64, g)));
+        for (; g > 0; g -= 64) out.add(new ItemStack(com.andrey.litrpg.registry.ModItems.GOLD_COIN.get(), Math.min(64, g)));
         if (s > 0) out.add(new ItemStack(com.andrey.litrpg.registry.ModItems.SILVER_COIN.get(), s));
         if (c > 0) out.add(new ItemStack(com.andrey.litrpg.registry.ModItems.COPPER_COIN.get(), c));
         return out;

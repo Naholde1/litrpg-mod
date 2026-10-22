@@ -20,16 +20,20 @@ public record MapShape(DensityFunction input, String mode) implements DensityFun
 
     /** Плотность на блок от поверхности (1.0 — на глубине 24 блока). */
     private static final double K = 1.0 / 24.0;
+    /** Буфер на поток: плотность считается миллионы раз при генерации — без лишних массивов. */
+    private static final ThreadLocal<double[]> HW = ThreadLocal.withInitial(() -> new double[2]);
 
     @Override
     public double compute(FunctionContext ctx) {
-        double d = input.compute(ctx);
         int x = ctx.blockX(), y = ctx.blockY(), z = ctx.blockZ();
         WorldMap map = WorldMap.get();
-        if (mode.equals("nether")) return nether(map, d, x, y, z);
-        double[] hw = new double[2];
+        if (mode.charAt(0) == 'n') return nether(map, input.compute(ctx), x, y, z);
+        double[] hw = HW.get();
         map.sample(x, z, hw);
         double t = (hw[0] - y) * K;
+        // карта управляет рельефом целиком (города, площадки, Край Мира) — дорогой ванильный шум не нужен
+        if (hw[1] >= 0.999) return t;
+        double d = input.compute(ctx);
         return d + (t - d) * hw[1];
     }
 

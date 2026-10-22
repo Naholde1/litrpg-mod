@@ -17,49 +17,71 @@ import java.util.List;
 
 /**
  * Ассортимент торговцев рас. Валюта — монеты Системы. Чем выше репутация,
- * тем больше товаров открыто и тем ниже цены. Предметы снаряжения
+ * тем больше товаров открыто и тем ниже цены (плавно, от ×2 при ненависти до ×0.6
+ * при превознесении), тем дороже торговец скупает добычу. С «Уважения» у мастеров и
+ * торговцев открывается сокровищница: эпические, а с «Почтения» — легендарные вещи
+ * уровня игрока, по одной штуке (новая партия через 3 дня). Обычные предметы
  * генерируются один раз на торговца (по его UUID), так что ассортимент постоянный.
  */
 public final class NpcTrades {
     private NpcTrades() {}
 
-    /** Множитель цены от репутации. */
+    /** Множитель цены от репутации: 2.0 при −1000, 1.2 при 0, 0.6 при 1000 — каждое очко чуть выгоднее. */
     public static float repPriceMult(int rep) {
-        return switch (Faction.Tier.of(rep)) {
-            case HATED, HOSTILE -> 2.0f;
-            case UNFRIENDLY -> 1.5f;
-            case NEUTRAL -> 1.2f;
-            case FRIENDLY -> 1.0f;
-            case HONORED -> 0.85f;
-            case REVERED -> 0.7f;
-        };
+        rep = Math.max(-1000, Math.min(1000, rep));
+        return rep < 0 ? 1.2f - rep / 1000f * 0.8f : 1.2f - rep / 1000f * 0.6f;
     }
+
+    /** Скидка (минус — наценка) в процентах против обычной цены — для заголовка окна торговли. */
+    public static int discountPercent(int rep) {
+        return Math.round((1f - repPriceMult(rep)) * 100f);
+    }
+
+    /** Через сколько тиков торговец снова завозит вещи сокровищницы (3 игровых дня). */
+    public static final long RESTOCK = 72000;
 
     public static boolean isToken(ItemStack st) {
         return st.is(ModItems.ELF_TOKEN.get()) || st.is(ModItems.DWARF_TOKEN.get()) || st.is(ModItems.ORC_TOKEN.get())
                 || st.is(ModItems.BEAST_TOKEN.get()) || st.is(ModItems.DEMON_TOKEN.get());
     }
 
-    /** Товар: что продаётся, базовая цена в меди, с какой ступени отношения доступен. */
-    private record Ware(ItemStack stack, int copper, Faction.Tier from) {}
+    /** Товар: что продаётся, базовая цена в меди, с какой ступени отношения доступен; key — у штучных вещей сокровищницы. */
+    private record Ware(ItemStack stack, int copper, Faction.Tier from, String key) {
+        Ware(ItemStack stack, int copper, Faction.Tier from) {
+            this(stack, copper, from, null);
+        }
+    }
 
-    public static MerchantOffers offers(RaceNpcEntity npc, int rep) {
+    /**
+     * Товары для игрока с этой репутацией и уровнем. В keys кладётся ключ штучного товара
+     * (или null) для каждой сделки — по нему торговец помнит, что вещь уже купили.
+     */
+    public static MerchantOffers offers(RaceNpcEntity npc, int rep, int playerLevel, java.util.function.Predicate<String> soldOut,
+                                        List<String> keys) {
         RandomSource rnd = RandomSource.create(npc.getUUID().getLeastSignificantBits());
         Faction.Tier tier = Faction.Tier.of(rep);
         float mult = repPriceMult(rep);
         MerchantOffers out = new MerchantOffers();
-        for (Ware w : wares(npc, rnd)) {
+        keys.clear();
+        List<Ware> all = new java.util.ArrayList<>(wares(npc, rnd));
+        all.addAll(treasury(npc, playerLevel));
+        for (Ware w : all) {
             if (tier.ordinal() < w.from.ordinal()) continue;
             int price = Math.max(1, Math.round(w.copper * mult));
             ItemStack[] cost = price(price);
-            out.add(new MerchantOffer(cost[0], cost[1], w.stack.copy(), 99, 0, 0f));
+            boolean unique = w.key != null;
+            out.add(new MerchantOffer(cost[0], cost[1], w.stack.copy(), unique && soldOut.test(w.key) ? 1 : 0, unique ? 1 : 99, 0, 0f));
+            keys.add(w.key);
         }
         return out;
     }
 
-    /** Цена в монетах: до двух стопок (золото + серебро или серебро + медь). */
+    /** Цена в монетах: до двух стопок (золото + серебро или серебро + медь; дороже 64 золотых — две стопки золота). */
     private static ItemStack[] price(int copper) {
         int g = copper / 81, s = copper % 81 / 9, c = copper % 9;
+        if (g > 64) {
+            return new ItemStack[]{new ItemStack(ModItems.GOLD_COIN.get(), 64), new ItemStack(ModItems.GOLD_COIN.get(), Math.min(64, g - 64))};
+        }
         if (g > 0) {
             return new ItemStack[]{new ItemStack(ModItems.GOLD_COIN.get(), Math.min(64, g)),
                     s > 0 ? new ItemStack(ModItems.SILVER_COIN.get(), s) : ItemStack.EMPTY};
@@ -272,6 +294,86 @@ public final class NpcTrades {
             case GLASS -> List.of(item(Items.GLASS, 16, 6, N), item(Items.GLASS_PANE, 16, 4, N), item(Items.RED_STAINED_GLASS, 8, 7, N),
                     item(Items.BLACK_STAINED_GLASS, 8, 7, N), item(Items.GLASS_BOTTLE, 6, 3, N), item(Items.TINTED_GLASS, 4, 12, F));
         };
+    }
+
+    /**
+     * Сокровищница: лучшие вещи ремесла или народа. «Уважение» — первая вещь эпической,
+     * «Почтение» — все эпические и первая легендарной, «Превознесение» — все легендарные.
+     * Уровень вещей — под игрока (ступенями по 5), не ниже уровня мастерской.
+     */
+    private static List<Ware> treasury(RaceNpcEntity npc, int playerLevel) {
+        String[] ids = treasuryIds(npc);
+        List<Ware> out = new java.util.ArrayList<>();
+        int base = switch (npc.npcType().race) {
+            case DEMONKIN -> 30;
+            case DWARF, ORC -> 22;
+            case BEASTKIN, ELF -> 20;
+            default -> 16;
+        };
+        int lv = Math.min(60, Math.max(base, playerLevel / 5 * 5));
+        Faction.Tier H = Faction.Tier.HONORED, R = Faction.Tier.REVERED, X = Faction.Tier.EXALTED;
+        for (int i = 0; i < ids.length; i++) {
+            if (!ModItems.TEMPLATE_ITEMS.containsKey(ids[i])) continue;
+            out.add(treasure(npc, ids[i], lv, Rarity.EPIC, i == 0 ? H : R, "e" + i));
+            out.add(treasure(npc, ids[i], lv + 2, Rarity.LEGENDARY, i == 0 ? R : X, "l" + i));
+        }
+        return out;
+    }
+
+    private static Ware treasure(RaceNpcEntity npc, String id, int lv, Rarity rarity, Faction.Tier from, String key) {
+        // своя случайность на вещь и ступень уровня: ассортимент не скачет от каждого открытия окна
+        RandomSource r = RandomSource.create(npc.getUUID().getMostSignificantBits() ^ id.hashCode() * 31L ^ lv * 1009L ^ key.hashCode());
+        Ware w = gear(id, lv, rarity, r, from);
+        return new Ware(w.stack, Math.round(w.copper * 0.55f), from, key + ":" + id + ":" + lv);
+    }
+
+    private static String[] treasuryIds(RaceNpcEntity npc) {
+        String set = switch (npc.npcType().race) {
+            case ELF -> "elven";
+            case DWARF -> "dwarven";
+            case ORC -> "orcish";
+            case BEASTKIN -> "beast";
+            case DEMONKIN -> "demonic";
+            default -> "knight";
+        };
+        String weapon = switch (npc.npcType().race) {
+            case ELF -> "elven_blade";
+            case DWARF -> "dwarven_hammer";
+            case ORC -> "orc_cleaver";
+            case BEASTKIN -> "beast_claws";
+            case DEMONKIN -> "demon_blade";
+            default -> "knight_sword";
+        };
+        if (npc.npcType().isArtisan() && npc.craft() != null) {
+            return switch (npc.craft()) {
+                case BLACKSMITH -> new String[]{"gloves_smith", set + "_helmet", "bracelet_obsidian"};
+                case ARMORER -> new String[]{set + "_chestplate", set + "_helmet", set + "_leggings", set + "_boots"};
+                case WEAPONSMITH -> new String[]{weapon, "knight_sword", "dwarven_axe", "elven_staff"};
+                case JEWELER -> new String[]{"ring_storm", "amulet_shadow", "amulet_firstlight", "bracelet_storm", "charm_stardust"};
+                case TAILOR -> new String[]{"cloak_archmage", "cloak_night", "mage_chestplate", "mage_helmet"};
+                case LEATHERWORKER -> new String[]{"belt_treasure", "gloves_assassin", "cloak_wolfhide"};
+                case FLETCHER -> new String[]{"bracelet_archer", "ring_archer", "hunter_helmet", "gloves_archer"};
+                case HEALER -> new String[]{"cloak_paladin", "amulet_light", "charm_bell"};
+                case ALCHEMIST -> new String[]{"belt_flasks", "amulet_manakeeper", "bracelet_focus"};
+                case SCRIBE -> new String[]{"amulet_scholar", "bracelet_mage", "gloves_mage"};
+                case BANKER -> new String[]{"ring_merchant", "charm_coin", "belt_treasure"};
+                case MINER -> new String[]{"gloves_miner", "ring_miner", "dwarven_helmet"};
+                case HERBALIST -> new String[]{"belt_alchemist", "charm_acorn"};
+                case STABLEMASTER -> new String[]{"charm_horseshoe", "belt_runner"};
+                case FISHMONGER -> new String[]{"charm_shell", "amulet_wind"};
+                default -> new String[0];
+            };
+        }
+        if (npc.npcType().role != NpcType.Role.TRADER) return new String[0];
+        String trinket = switch (npc.npcType().race) {
+            case ELF -> "cloak_shadow";
+            case DWARF -> "belt_titan";
+            case ORC -> "amulet_warlord";
+            case BEASTKIN -> "bracelet_fangs";
+            case DEMONKIN -> "charm_phoenix_feather";
+            default -> "cloak_guard";
+        };
+        return new String[]{set + "_chestplate", weapon, trinket};
     }
 
     /** Есть ли у жителя товар (у воинов, стражи и вождей торговли нет). */

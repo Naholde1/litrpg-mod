@@ -48,7 +48,8 @@ public enum Faction {
         NEUTRAL("Нейтралитет", -50, ChatFormatting.YELLOW),
         FRIENDLY("Дружелюбие", 50, ChatFormatting.GREEN),
         HONORED("Уважение", 250, ChatFormatting.AQUA),
-        REVERED("Почтение", 600, ChatFormatting.LIGHT_PURPLE);
+        REVERED("Почтение", 600, ChatFormatting.LIGHT_PURPLE),
+        EXALTED("Превознесение", 900, ChatFormatting.GOLD);
 
         public final String title;
         public final int from;

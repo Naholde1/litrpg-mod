@@ -36,7 +36,11 @@ public final class WorldMap {
         public Profile profile;
         public String[] biomes;
         public int[] weights;
+        /** Пояс высот рельефа карты, где растёт биом (как на атласе: долы внизу, пики наверху). */
+        public int[] hmin, hmax;
         public int weightSum;
+        /** Биом берега (пляж земли). */
+        public String shore;
     }
 
     public record City(String id, String name, String faction, int x, int z, int y, int r, int level, String guard, String desc,
@@ -332,7 +336,10 @@ public final class WorldMap {
     }
 
     /** Поселения, внутри которых не растёт лес мира (деревья и грибы не лезут во дворы). */
-    private static final java.util.Set<String> SETTLEMENTS = java.util.Set.of("village", "hamlet", "farm", "lumber", "fishing", "caravan", "outpost", "camp");
+    private static final java.util.Set<String> SETTLEMENTS = java.util.Set.of("village", "hamlet", "farm", "lumber", "fishing", "caravan", "outpost", "camp",
+            "obelisk", "magetower", "nest", "witch", "arena", "star");
+    /** Места литРПГ: под ними поляна (без леса), но не «обжитой» биом. */
+    public static final java.util.Set<String> LORE = java.util.Set.of("obelisk", "magetower", "nest", "witch", "arena", "star");
     private final Map<Long, List<Poi>> settleGrid = new HashMap<>();
 
     /** Поселение, на площадке которого точка (или null). */
@@ -485,11 +492,17 @@ public final class WorldMap {
                 JsonArray bs = o.getAsJsonArray("biomes");
                 t.biomes = new String[bs.size()];
                 t.weights = new int[bs.size()];
+                t.hmin = new int[bs.size()];
+                t.hmax = new int[bs.size()];
                 for (int i = 0; i < bs.size(); i++) {
-                    t.biomes[i] = bs.get(i).getAsJsonArray().get(0).getAsString();
-                    t.weights[i] = bs.get(i).getAsJsonArray().get(1).getAsInt();
+                    JsonArray b = bs.get(i).getAsJsonArray();
+                    t.biomes[i] = b.get(0).getAsString();
+                    t.weights[i] = b.get(1).getAsInt();
+                    t.hmin[i] = b.size() > 2 ? b.get(2).getAsInt() : -999;
+                    t.hmax[i] = b.size() > 3 ? b.get(3).getAsInt() : 999;
                     t.weightSum += t.weights[i];
                 }
+                t.shore = str(o, "shore", null);
                 territories.add(t);
             }
             wild = profile(root.getAsJsonObject("wild").getAsJsonObject("profile"));

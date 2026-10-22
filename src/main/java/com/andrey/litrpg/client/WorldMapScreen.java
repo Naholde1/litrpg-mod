@@ -1,133 +1,179 @@
 package com.andrey.litrpg.client;
 
-import com.andrey.litrpg.LitRPG;
+import com.andrey.litrpg.client.map.MapCache;
 import com.andrey.litrpg.entity.LitBoss;
-import com.mojang.blaze3d.platform.NativeImage;
+import com.andrey.litrpg.world.map.WorldMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Карта мира: всё, что загружено вокруг игрока.
- * ПКМ — поставить/убрать метку, колесо — масштаб.
+ * Карта мира в духе JourneyMap: всё разведанное (память карты хранится на диске),
+ * ЛКМ — тянуть, колесо — масштаб, ПКМ — метка, Пробел — к себе, Tab — атлас.
+ * В Мире Системы — города, подземелья, чудеса и поселения с названиями.
  */
 public class WorldMapScreen extends Screen {
-    private static final ResourceLocation TEX_ID = LitRPG.id("dynamic/world_map");
-
-    private DynamicTexture texture;
-    private int radius;
-    private int size;
-    private int originX, originZ;
-    private float zoom = 1.0f;
-
-    private int mapX, mapY, mapDraw;
+    private double centerX, centerZ;
+    /** Пикселей экрана на блок. */
+    private double scale = 1.0;
+    private boolean dragging;
+    private Button shapeBtn, showBtn;
 
     public WorldMapScreen() {
         super(Component.literal("Карта мира"));
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player != null) {
+            centerX = mc.player.getX();
+            centerZ = mc.player.getZ();
+        }
     }
 
     @Override
     protected void init() {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.level == null) return;
-        if (texture == null) {
-            int view = mc.options.getEffectiveRenderDistance();
-            radius = Mth.clamp((view + 1) * 16, 64, 320);
-            size = radius * 2;
-            originX = Mth.floor(mc.player.getX()) - radius;
-            originZ = Mth.floor(mc.player.getZ()) - radius;
-            texture = new DynamicTexture(size, size, true);
-            NativeImage img = texture.getPixels();
-            if (img != null) {
-                int py = Mth.floor(mc.player.getY());
-                for (int row = 0; row < size; row++) {
-                    for (int col = 0; col < size; col++) {
-                        img.setPixelRGBA(col, row, MapColors.columnColor(mc.level, originX + col, originZ + row, py));
-                    }
-                }
-            }
-            texture.upload();
-            mc.getTextureManager().register(TEX_ID, texture);
-        }
-        layout();
+        shapeBtn = addRenderableWidget(Button.builder(shapeText(), b -> {
+            Minimap.round = !Minimap.round;
+            Minimap.save();
+            b.setMessage(shapeText());
+        }).bounds(width - 136, 4, 130, 16).build());
+        showBtn = addRenderableWidget(Button.builder(showText(), b -> {
+            Minimap.toggle();
+            b.setMessage(showText());
+        }).bounds(width - 270, 4, 130, 16).build());
     }
 
-    private void layout() {
-        int base = Math.min(width, height) - 50;
-        mapDraw = (int) (base * zoom);
-        mapX = width / 2 - mapDraw / 2;
-        mapY = height / 2 - mapDraw / 2 + 6;
+    private static Component shapeText() {
+        return Component.literal("Мини-карта: " + (Minimap.round ? "круглая" : "квадратная"));
+    }
+
+    private static Component showText() {
+        return Component.literal("Мини-карта: " + (Minimap.enabled ? "видна" : "скрыта"));
+    }
+
+    private int sx(double wx) {
+        return (int) Math.floor(width / 2.0 + (wx - centerX) * scale);
+    }
+
+    private int sz(double wz) {
+        return (int) Math.floor(height / 2.0 + (wz - centerZ) * scale);
+    }
+
+    private double wx(double sx) {
+        return centerX + (sx - width / 2.0) / scale;
+    }
+
+    private double wz(double sy) {
+        return centerZ + (sy - height / 2.0) / scale;
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        renderBackground(g);
+    public void render(GuiGraphics g, int mouseX, int mouseY, float pt) {
         Minecraft mc = Minecraft.getInstance();
-        if (texture == null || mc.player == null || mc.level == null) {
-            super.render(g, mouseX, mouseY, partialTick);
+        g.fill(0, 0, width, height, 0xFF0E1014);
+        if (mc.player == null || mc.level == null) {
+            super.render(g, mouseX, mouseY, pt);
             return;
         }
-        String title = "КАРТА — " + dimensionName(mc);
-        g.drawString(font, title, width / 2 - font.width(title) / 2, 8, 0xFF8FE3FF);
+        int top = 24, bottom = height - 16;
+        g.enableScissor(0, top, width, bottom);
+        // сетка-подложка: неразведанное
+        int step = (int) Math.max(16, 64 * scale);
+        for (int gx = Math.floorMod(sx(0), step); gx < width; gx += step) g.fill(gx, top, gx + 1, bottom, 0xFF161A20);
+        for (int gz = Math.floorMod(sz(0), step); gz < height; gz += step) g.fill(0, gz, width, gz + 1, 0xFF161A20);
+        // области памяти карты
+        int R = MapCache.REGION;
+        int rx0 = Math.floorDiv((int) Math.floor(wx(0)), R), rx1 = Math.floorDiv((int) Math.floor(wx(width)), R);
+        int rz0 = Math.floorDiv((int) Math.floor(wz(top)), R), rz1 = Math.floorDiv((int) Math.floor(wz(bottom)), R);
+        for (int rz = rz0; rz <= rz1; rz++) {
+            for (int rx = rx0; rx <= rx1; rx++) {
+                MapCache.Region r = MapCache.region(rx, rz);
+                if (r == null) continue;
+                int x0 = sx(rx * R), x1 = sx(rx * R + R), z0 = sz(rz * R), z1 = sz(rz * R + R);
+                g.blit(r.texture(), x0, z0, x1 - x0, z1 - z0, 0, 0, R, R, R, R);
+            }
+        }
 
-        g.enableScissor(0, 22, width, height - 14);
-        g.fill(mapX - 2, mapY - 2, mapX + mapDraw + 2, mapY + mapDraw + 2, 0xFF7F5FD0);
-        g.blit(TEX_ID, mapX, mapY, mapDraw, mapDraw, 0, 0, size, size, size, size);
-
-        float scale = mapDraw / (float) size;
-
+        List<Component> tip = new ArrayList<>();
+        // места Мира Системы
+        if (Minimap.systemWorld(mc) && !MapCache.caveLayer()) {
+            for (WorldMap.Poi p : WorldMap.get().pois) {
+                if (p.type().startsWith("nether") || p.type().equals("spawn")) continue;
+                boolean big = !java.util.Set.of("village", "farm", "hamlet", "fishing", "lumber", "caravan", "outpost", "ruins", "camp").contains(p.type());
+                if (!big && scale < 0.25) continue;
+                int x = sx(p.x()), z = sz(p.z());
+                if (x < -40 || z < top - 20 || x > width + 40 || z > bottom + 20) continue;
+                Minimap.poiIcon(g, p.type(), x, z);
+                if (p.type().equals("city") || scale >= 1.0 && big) {
+                    String n = p.name();
+                    g.drawString(font, n, x - font.width(n) / 2, z + 7, p.type().equals("city") ? 0xFFFFE0A0 : 0xFFE0C0FF);
+                }
+                if (Math.abs(mouseX - x) <= 4 && Math.abs(mouseY - z) <= 4) {
+                    tip.add(Component.literal(p.name()).withStyle(s -> s.withColor(0xFFE8B0)));
+                    tip.add(Component.literal("X " + p.x() + ", Z " + p.z()).withStyle(s -> s.withColor(0xB0A080)));
+                }
+            }
+        }
+        // существа рядом
         for (Entity e : mc.level.entitiesForRendering()) {
-            if (e == mc.player) continue;
-            int color;
-            int s;
-            if (e instanceof LitBoss) { color = 0xFFE040FB; s = 4; }
-            else if (e instanceof Player) { color = 0xFF4FC3F7; s = 3; }
-            else if (e instanceof Enemy) { color = 0xFFFF3B30; s = 1; }
-            else continue;
-            int ex = mapX + (int) ((e.getX() - originX) * scale);
-            int ez = mapY + (int) ((e.getZ() - originZ) * scale);
-            g.fill(ex - s, ez - s, ex + s, ez + s, color);
+            if (e == mc.player || e.isInvisible()) continue;
+            int x = sx(e.getX()), z = sz(e.getZ());
+            if (e instanceof Player) Minimap.arrow(g.pose().last().pose(), x, z, e.getYRot(), 0.8f, 0xFF4FC3F7);
+            else if (e instanceof LitBoss) g.fill(x - 3, z - 3, x + 3, z + 3, 0xFFE040FB);
+            else if (e instanceof Enemy && !(e instanceof com.andrey.litrpg.entity.wild.WildMob w && w.isDormant())) g.fill(x - 1, z - 1, x + 2, z + 2, 0xFFFF4A3D);
         }
-
+        // метки
         for (Waypoints.Waypoint w : Waypoints.forCurrentDimension()) {
-            int wx = mapX + (int) ((w.x() - originX) * scale);
-            int wz = mapY + (int) ((w.z() - originZ) * scale);
-            g.fill(wx - 3, wz - 3, wx + 3, wz + 3, 0xFF000000);
-            g.fill(wx - 2, wz - 2, wx + 2, wz + 2, 0xFFFFD54F);
-            g.drawString(font, w.name(), wx + 5, wz - 4, 0xFFFFD54F);
+            int x = sx(w.x()), z = sz(w.z());
+            g.fill(x - 3, z - 3, x + 4, z + 4, 0xFF000000);
+            g.fill(x - 2, z - 2, x + 3, z + 3, 0xFFFFD54F);
+            g.drawString(font, w.name(), x + 6, z - 4, 0xFFFFD54F);
         }
-
-        int px = mapX + (int) ((mc.player.getX() - originX) * scale);
-        int pz = mapY + (int) ((mc.player.getZ() - originZ) * scale);
-        Minimap.drawPlayerArrow(g, px, pz, mc.player.getYRot());
+        Minimap.arrow(g.pose().last().pose(), sx(Mth.lerp(pt, mc.player.xo, mc.player.getX())), sz(Mth.lerp(pt, mc.player.zo, mc.player.getZ())),
+                mc.player.getYRot(), 1.1f, 0xFFFFFFFF);
         g.disableScissor();
 
-        // координаты под курсором
-        if (mouseX >= mapX && mouseX < mapX + mapDraw && mouseY >= mapY && mouseY < mapY + mapDraw) {
-            int wx = originX + (int) ((mouseX - mapX) / scale);
-            int wz = originZ + (int) ((mouseY - mapY) / scale);
-            String c = "X: " + wx + "  Z: " + wz;
-            g.drawString(font, c, mouseX + 10, mouseY + 4, 0xFFFFFFFF);
+        // рамка и заголовок
+        g.fill(0, 0, width, top, 0xF0161210);
+        g.fill(0, top - 1, width, top, 0xFF8A6428);
+        g.fill(0, bottom, width, height, 0xF0161210);
+        g.fill(0, bottom, width, bottom + 1, 0xFF8A6428);
+        String title = "КАРТА — " + dimensionName(mc) + (MapCache.caveLayer() ? " • пещеры" : "");
+        g.drawString(font, title, 8, 8, 0xFFF0D080);
+        String sc = scale >= 1 ? "1:" + (int) scale : (int) Math.round(1 / scale) + ":1";
+        g.drawString(font, "масштаб " + sc, 12 + font.width(title), 8, 0xFF9A8A6A);
+
+        // координаты и биом под курсором
+        if (mouseY > top && mouseY < bottom) {
+            int x = (int) Math.floor(wx(mouseX)), z = (int) Math.floor(wz(mouseY));
+            String c = "X " + x + "  Z " + z;
+            if (mc.level.hasChunk(x >> 4, z >> 4)) {
+                c += "  •  " + mc.level.getBiome(new BlockPos(x, mc.player.getBlockY(), z)).unwrapKey()
+                        .map(k -> Component.translatable("biome." + k.location().getNamespace() + "." + k.location().getPath()).getString()).orElse("");
+            }
+            if (Minimap.systemWorld(mc)) c += "  •  земли ур. " + WorldMap.get().levelAt(x, z);
+            g.drawString(font, c, 8, bottom + 4, 0xFFE8E8E8);
         }
+        String help = "ЛКМ — двигать • колесо — масштаб • ПКМ — метка • Пробел — к себе • Tab — атлас • N — масштаб мини-карты";
+        g.drawString(font, help, width - font.width(help) - 8, bottom + 4, 0xFF8A8070);
 
-        String help = "ПКМ — метка  •  колесо — масштаб  •  Tab — атлас всего мира";
-        g.drawString(font, help, width / 2 - font.width(help) / 2, height - 12, 0xFF999999);
-
-        super.render(g, mouseX, mouseY, partialTick);
+        super.render(g, mouseX, mouseY, pt);
+        if (!tip.isEmpty()) g.renderComponentTooltip(font, tip, mouseX, mouseY);
     }
 
     private static String dimensionName(Minecraft mc) {
         String id = mc.level.dimension().location().toString();
         return switch (id) {
             case "minecraft:overworld" -> "Верхний мир";
-            case "minecraft:the_nether" -> "Незер";
+            case "minecraft:the_nether" -> "Преисподняя";
             case "minecraft:the_end" -> "Энд";
             case "litrpg:shadow_realm" -> "Изнанка";
             default -> id;
@@ -136,24 +182,43 @@ public class WorldMapScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 1 && texture != null && mouseX >= mapX && mouseX < mapX + mapDraw
-                && mouseY >= mapY && mouseY < mapY + mapDraw) {
-            float scale = mapDraw / (float) size;
-            int wx = originX + (int) ((mouseX - mapX) / scale);
-            int wz = originZ + (int) ((mouseY - mapY) / scale);
-            int removeRadius = Math.max(4, (int) (6 / scale));
-            if (!Waypoints.removeNear(wx, wz, removeRadius)) {
-                Waypoints.add(wx, wz);
-            }
+        if (super.mouseClicked(mouseX, mouseY, button)) return true;
+        if (mouseY < 24 || mouseY > height - 16) return false;
+        if (button == 0) {
+            dragging = true;
             return true;
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        if (button == 1) {
+            int x = (int) Math.floor(wx(mouseX)), z = (int) Math.floor(wz(mouseY));
+            if (!Waypoints.removeNear(x, z, Math.max(4, (int) (6 / scale)))) Waypoints.add(x, z);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        dragging = false;
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dx, double dy) {
+        if (dragging && button == 0) {
+            centerX -= dx / scale;
+            centerZ -= dy / scale;
+            return true;
+        }
+        return super.mouseDragged(mouseX, mouseY, button, dx, dy);
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        zoom = Mth.clamp(zoom + (float) delta * 0.25f, 0.5f, 4.0f);
-        layout();
+        // масштаб вокруг курсора
+        double bx = wx(mouseX), bz = wz(mouseY);
+        scale = Mth.clamp(scale * (delta > 0 ? 1.25 : 0.8), 1 / 16.0, 8.0);
+        centerX = bx - (mouseX - width / 2.0) / scale;
+        centerZ = bz - (mouseY - height / 2.0) / scale;
         return true;
     }
 
@@ -167,16 +232,12 @@ public class WorldMapScreen extends Screen {
             minecraft.setScreen(new AtlasScreen());
             return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
-    }
-
-    @Override
-    public void removed() {
-        super.removed();
-        if (texture != null) {
-            Minecraft.getInstance().getTextureManager().release(TEX_ID);
-            texture = null;
+        if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE && minecraft.player != null) {
+            centerX = minecraft.player.getX();
+            centerZ = minecraft.player.getZ();
+            return true;
         }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override

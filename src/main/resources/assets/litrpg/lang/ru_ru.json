@@ -1027,5 +1027,14 @@
   "entity.litrpg.grimlock": "Слепой пещерник",
   "item.litrpg.grimlock_spawn_egg": "Яйцо призыва: Слепой пещерник",
   "entity.litrpg.mimic": "Мимик",
-  "item.litrpg.mimic_spawn_egg": "Яйцо призыва: Мимик"
+  "item.litrpg.mimic_spawn_egg": "Яйцо призыва: Мимик",
+  "biome.litrpg.arcadia_highlands": "Нагорья Аркадии",
+  "biome.litrpg.fang_peaks": "Клыкастые вершины",
+  "biome.litrpg.ash_peaks": "Пепельные хребты",
+  "biome.litrpg.ash_shore": "Чёрный берег",
+  "biome.litrpg.bone_ridges": "Хребты Праха",
+  "biome.litrpg.frontier_peaks": "Пограничные кряжи",
+  "biome.litrpg.clearing": "Поляна",
+  "biome.litrpg.clearing_snow": "Заснеженная поляна",
+  "biome.litrpg.clearing_ash": "Выжженная поляна"
 }

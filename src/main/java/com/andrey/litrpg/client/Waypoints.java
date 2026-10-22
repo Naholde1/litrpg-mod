@@ -21,7 +21,7 @@ public class Waypoints {
     }
 
     /** Ключ мира: имя одиночного мира или адрес сервера. */
-    private static String worldKey() {
+    public static String worldKey() {
         Minecraft mc = Minecraft.getInstance();
         if (mc.getSingleplayerServer() != null) {
             return "sp:" + mc.getSingleplayerServer().getWorldData().getLevelName();

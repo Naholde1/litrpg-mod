@@ -2,7 +2,7 @@
   "name": "Твари регионов",
   "icon": "minecraft:spawner",
   "category": "litrpg:mapworld",
-  "sortnum": 9,
+  "sortnum": 10,
   "pages": [
     {
       "type": "patchouli:text",

@@ -39,39 +39,47 @@ TERRITORIES = [
     dict(id='kingdom', name='Королевство Аркадия', faction='kingdom', color=0xE8C766, level_bonus=0,
          seeds=[[0, 0, 1450], [700, -1150, 750], [-1000, 1150, 750], [1100, 650, 600], [-1100, -350, 600]],
          profile=P(70, 12, 320, 0.0, 0.62),
-         biomes=[['litrpg:arcadia_fields', 3], ['litrpg:royal_meadow', 2], ['litrpg:oak_dales', 3]], cold=False),
+         biomes=[['litrpg:arcadia_fields', 3, 0, 73], ['litrpg:royal_meadow', 2, 69, 80], ['litrpg:oak_dales', 3],
+                 ['litrpg:arcadia_highlands', 4, 78, 999]], shore='minecraft:beach', cold=False),
     dict(id='elves', name='Сильвендар', faction='elves', color=0x7BC86A, level_bonus=0,
          seeds=[[-2800, -350, 1250], [-2300, -1350, 800], [-3550, 650, 750]],
          profile=P(74, 16, 260, 0.0, 0.55),
-         biomes=[['litrpg:sylvan_wildwood', 4], ['litrpg:moon_grove', 3], ['litrpg:silver_glade', 2]], cold=False),
+         biomes=[['litrpg:sylvan_wildwood', 4], ['litrpg:moon_grove', 3, 76, 999], ['litrpg:silver_glade', 3, 0, 74]],
+         shore='litrpg:silver_glade', cold=False),
     dict(id='dwarves', name='Подгорье Кхазад', faction='dwarves', color=0xB08A5A, level_bonus=0,
          seeds=[[2700, -2550, 1250], [3700, -1700, 700], [1700, -3300, 700]],
          profile=P(104, 40, 230, 1.3, 0.62),
-         biomes=[['litrpg:iron_peaks', 4], ['litrpg:ore_slopes', 3], ['litrpg:dwarf_vales', 2]], cold=True),
+         biomes=[['litrpg:iron_peaks', 4, 172, 999], ['litrpg:ore_slopes', 3, 122, 185], ['litrpg:dwarf_vales', 3, 0, 134]],
+         shore='minecraft:stony_shore', cold=True),
     dict(id='orcs', name='Степи Орды', faction='orcs', color=0xD07A3A, level_bonus=0,
          seeds=[[2900, 2600, 1250], [3800, 1500, 650], [1900, 3550, 700]],
          profile=P(73, 16, 210, 0.3, 0.6),
-         biomes=[['litrpg:scorched_steppe', 4], ['litrpg:red_canyons', 2], ['litrpg:dust_wastes', 2]], cold=False),
+         biomes=[['litrpg:scorched_steppe', 4, 0, 100], ['litrpg:red_canyons', 4, 93, 999], ['litrpg:dust_wastes', 3, 0, 86]],
+         shore='litrpg:dust_wastes', cold=False),
     dict(id='beastkin', name='Земли Клыка', faction='beastkin', color=0x9A7A50, level_bonus=0,
          seeds=[[-2600, -3050, 1050], [-1300, -3500, 700], [-3600, -2200, 700]],
          profile=P(82, 24, 250, 0.25, 0.55),
-         biomes=[['litrpg:fang_taiga', 4], ['litrpg:snow_hunt', 3]], cold=True),
+         biomes=[['litrpg:fang_taiga', 4, 0, 104], ['litrpg:snow_hunt', 3, 90, 112], ['litrpg:fang_peaks', 4, 106, 999]],
+         shore='minecraft:snowy_beach', cold=True),
     dict(id='demonkin', name='Пепельные Пустоши', faction='demonkin', color=0x9A3040, level_bonus=6,
          seeds=[[-2850, 2950, 1200], [-3700, 1900, 700], [-1800, 3800, 650]],
          profile=P(70, 16, 200, 0.12, 0.6),
-         biomes=[['litrpg:ash_wastes', 4], ['litrpg:charred_forest', 3], ['litrpg:smolder_craters', 2]], cold=False),
+         biomes=[['litrpg:ash_wastes', 4, 0, 88], ['litrpg:charred_forest', 3, 73, 90], ['litrpg:smolder_craters', 3, 0, 74],
+                 ['litrpg:ash_peaks', 4, 86, 999]], shore='litrpg:ash_shore', cold=False),
     dict(id='goblins', name='Гоблинские Топи', faction='goblins', color=0x5E8A3A, level_bonus=2,
          seeds=[[150, 3400, 900], [-850, 3750, 600], [900, 3800, 500]],
          profile=P(64.5, 3, 150, 0.0, 0.82),
-         biomes=[['litrpg:rot_swamp', 3], ['litrpg:goblin_mangroves', 2]], cold=False),
+         biomes=[['litrpg:rot_swamp', 3, 64, 999], ['litrpg:goblin_mangroves', 3, 0, 66]], shore='litrpg:goblin_mangroves', cold=False),
     dict(id='frost', name='Ледяной Предел', faction=None, color=0xCFE8F5, level_bonus=6,
          seeds=[[200, -3950, 1050], [1350, -4050, 700], [-700, -4100, 500]],
          profile=P(92, 32, 250, 0.6, 0.55),
-         biomes=[['litrpg:frozen_reach', 3], ['litrpg:glacier_spikes', 2], ['litrpg:frost_peaks', 2]], cold=True),
+         biomes=[['litrpg:frozen_reach', 3, 0, 126], ['litrpg:glacier_spikes', 2, 100, 160], ['litrpg:frost_peaks', 4, 148, 999]],
+         shore='minecraft:snowy_beach', cold=True),
     dict(id='deadlands', name='Мёртвые Земли', faction=None, color=0x7A7A70, level_bonus=6,
          seeds=[[3950, 250, 720], [3400, -750, 520], [4100, 900, 450]],
          profile=P(76, 18, 220, 0.2, 0.55),
-         biomes=[['litrpg:blight', 3], ['litrpg:bone_wastes', 2]], cold=False),
+         biomes=[['litrpg:blight', 3], ['litrpg:bone_wastes', 3, 0, 88], ['litrpg:bone_ridges', 4, 100, 999]],
+         shore='litrpg:bone_wastes', cold=False),
 ]
 
 WILD = dict(id='wild', name='Пограничье', profile=P(76, 22, 280, 0.25, 0.35))
@@ -150,6 +158,7 @@ BIOMES = {
     'arcadia_fields': ('Златые поля', 'Golden Fields', 'sunflower_plains', dict(grass=0x9DC855, foliage=0x8CB848)),
     'royal_meadow': ('Королевские луга', 'Royal Meadows', 'meadow', dict(temperature=0.7)),
     'oak_dales': ('Дубравы Аркадии', 'Arcadian Oak Dales', 'forest', dict()),
+    'arcadia_highlands': ('Нагорья Аркадии', 'Arcadian Highlands', 'meadow', dict(surface='ore_slopes', grass=0x8CC060)),
     # Эльфы
     'sylvan_wildwood': ('Пуща Сильвендара', 'Sylvan Wildwood', 'dark_forest',
                         dict(grass=0x5FBF6A, foliage=0x4FBF5A, fog=0xB8E8D0, water=0x3FD8C8, particle=('minecraft:spore_blossom_air', 0.004))),
@@ -166,6 +175,7 @@ BIOMES = {
     # Зверолюды
     'fang_taiga': ('Клыкастая тайга', 'Fang Taiga', 'old_growth_spruce_taiga', dict()),
     'snow_hunt': ('Снежные угодья', 'Snowy Hunting Grounds', 'snowy_taiga', dict()),
+    'fang_peaks': ('Клыкастые вершины', 'Fang Peaks', 'grove', dict(surface='snow')),
     # Демониды
     'ash_wastes': ('Пепельная пустошь', 'Ash Wastes', 'desert',
                    dict(surface='ash', fog=0x5A4A48, sky=0x7A4A40, water=0x5A3A30, grass=0x6A6050, foliage=0x5A5040,
@@ -176,6 +186,12 @@ BIOMES = {
     'smolder_craters': ('Тлеющие кратеры', 'Smoldering Craters', 'badlands',
                         dict(surface='crater', fog=0x6A3020, sky=0x8A3A20, particle=('minecraft:lava', 0.0015), rain=False,
                              strip_veg=True, lava=True)),
+    'ash_peaks': ('Пепельные хребты', 'Ash Ridges', 'stony_peaks',
+                  dict(surface='ash_peaks', fog=0x4A3A3A, sky=0x6A3A30, particle=('minecraft:white_ash', 0.04), rain=False, strip_veg=True,
+                       music='minecraft:music.nether.basalt_deltas')),
+    'ash_shore': ('Чёрный берег', 'Black Shore', 'beach',
+                  dict(surface='ash_shore', fog=0x5A4A48, sky=0x7A4A40, water=0x5A3A30, rain=False, strip_veg=True,
+                       particle=('minecraft:white_ash', 0.02))),
     # Гоблины
     'rot_swamp': ('Гнилые топи', 'Rotting Mire', 'swamp', dict(water=0x4A5A2A, fog=0x8A9A70, surface='mud')),
     'goblin_mangroves': ('Мангровые заросли', 'Goblin Mangroves', 'mangrove_swamp', dict(surface='mud')),
@@ -188,12 +204,15 @@ BIOMES = {
                dict(surface='blight', grass=0x8A8A6A, foliage=0x7A7A5A, fog=0x9A9A90, sky=0x8A8A88, strip_veg=True,
                     particle=('minecraft:ash', 0.01))),
     'bone_wastes': ('Костяные пустоши', 'Bone Wastes', 'desert', dict(surface='sand', fog=0xB8B0A0, sky=0xA0A098)),
+    'bone_ridges': ('Хребты Праха', 'Dust Ridges', 'stony_peaks',
+                    dict(surface='bone_ridges', fog=0xA8A498, sky=0x9A9890, strip_veg=True, particle=('minecraft:ash', 0.012))),
     # Пограничье (дикие земли)
     'frontier_plains': ('Пограничные равнины', 'Frontier Plains', 'plains', dict()),
     'frontier_woods': ('Пограничные леса', 'Frontier Woods', 'forest', dict()),
     'frontier_hills': ('Пограничные холмы', 'Frontier Hills', 'windswept_hills', dict()),
     'frontier_taiga': ('Северное пограничье', 'Northern Frontier', 'taiga', dict()),
     'frontier_savanna': ('Южное пограничье', 'Southern Frontier', 'savanna', dict()),
+    'frontier_peaks': ('Пограничные кряжи', 'Frontier Crags', 'stony_peaks', dict(surface='peaks')),
     # Особые
     'world_wall': ('Край Мира', 'World\'s Edge', 'stony_peaks', dict(surface='peaks', fog=0xC8D0E0)),
     'city_lands': ('Городские земли', 'City Lands', 'plains', dict(strip_veg=True, no_monsters=True)),
@@ -203,6 +222,11 @@ BIOMES = {
     'city_steppe': ('Город степей', 'Steppe City', 'savanna', dict(strip_veg=True, no_monsters=True, surface='steppe', grass=0xBFA858)),
     'city_snow': ('Северный город', 'Northern City', 'snowy_taiga', dict(strip_veg=True, no_monsters=True)),
     'city_grove': ('Город-роща', 'Grove City', 'forest', dict(strip_veg=True, no_monsters=True, grass=0x5FBF6A, foliage=0x4FBF5A)),
+    # поляны под местами литРПГ (обелиски, башни, избушки, арены): лес не прорастает сквозь постройки
+    'clearing': ('Поляна', 'Clearing', 'plains', dict(no_trees=True)),
+    'clearing_snow': ('Заснеженная поляна', 'Snowy Clearing', 'snowy_plains', dict(no_trees=True)),
+    'clearing_ash': ('Выжженная поляна', 'Scorched Clearing', 'desert', dict(no_trees=True, surface='ash', fog=0x5A4A48, sky=0x7A4A40,
+                                                                         rain=False, particle=('minecraft:white_ash', 0.02))),
     'emerald_bay': ('Изумрудный залив', 'Emerald Bay', 'lukewarm_ocean', dict(water=0x2FD8A8, water_fog=0x0A5A48)),
     'silver_lake': ('Серебряное озеро', 'Silver Lake', 'river', dict(water=0x5AB8E8)),
 }
@@ -334,6 +358,14 @@ SURFACE_RULES = {
                                 blk("minecraft:basalt", axis="y")), blk("minecraft:blackstone")),
     'mud': seq(cond(FLOOR, seq(cond(noise(0.0), blk("minecraft:mud")), blk("minecraft:grass_block", snowy="false"))),
                cond(UNDER, blk("minecraft:mud"))),
+    'ash_peaks': seq(cond(FLOOR, seq(cond(noise(0.35), blk("minecraft:basalt", axis="y")), cond(noise(-0.3, 0.1), blk("minecraft:tuff")),
+                                     cond(noise(-1, -0.7), blk("minecraft:magma_block")), blk("minecraft:blackstone"))),
+                     cond(UNDER, blk("minecraft:blackstone"))),
+    'ash_shore': surface_group(seq(cond(noise(0.25), blk("minecraft:gravel")), cond(noise(-0.5, 0.0), blk("minecraft:basalt", axis="y")),
+                                   blk("minecraft:blackstone")), blk("minecraft:blackstone")),
+    'bone_ridges': seq(cond(FLOOR, seq(cond(noise(0.3), blk("minecraft:gravel")), cond(noise(-0.2, 0.3), blk("minecraft:calcite")),
+                                       cond(noise(-1, -0.75), blk("minecraft:bone_block", axis="y")), blk("minecraft:tuff"))),
+                       cond(UNDER, blk("minecraft:tuff"))),
     'snow': surface_group(blk("minecraft:snow_block"), seq(cond(noise(0.2), blk("minecraft:packed_ice")), blk("minecraft:dirt"))),
     'blight': surface_group(seq(cond(noise(0.3), blk("minecraft:gravel")), cond(noise(-0.2, 0.3), blk("minecraft:coarse_dirt")),
                                 cond(noise(-1, -0.5), blk("minecraft:podzol", snowy="false")), blk("minecraft:grass_block", snowy="false")),
@@ -388,6 +420,8 @@ def biome_json(bid, analog, opt):
         feats[VEG_STEPS] = [f for f in feats[VEG_STEPS] if not any(k in f for k in ('tree', 'flower', 'grass', 'cactus', 'bamboo', 'sugar', 'pumpkin', 'melon', 'berry'))]
         if bid in ('blight', 'ash_wastes', 'charred_forest', 'smolder_craters'):
             feats[VEG_STEPS].append('minecraft:patch_dead_bush_badlands')
+    if opt.get('no_trees'):
+        feats[VEG_STEPS] = [f for f in feats[VEG_STEPS] if not any(k in f for k in ('tree', 'bamboo', 'huge', 'cactus', 'bush'))]
     if opt.get('columns'):
         feats[VEG_STEPS].append('litrpg:charred_columns')
     if bid.startswith('city_'):
@@ -538,7 +572,7 @@ def write_worldgen(data):
     mine = ['litrpg:' + b for b in BIOMES]
     tagdir = os.path.join(DATA, 'litrpg', 'tags', 'worldgen', 'biome')
     write_json(os.path.join(tagdir, 'map_overworld.json'), {"replace": False, "values": mine + [
-        "minecraft:river", "minecraft:frozen_river", "minecraft:beach", "minecraft:snowy_beach",
+        "minecraft:river", "minecraft:frozen_river", "minecraft:beach", "minecraft:snowy_beach", "minecraft:stony_shore",
         "minecraft:lush_caves", "minecraft:dripstone_caves", "minecraft:deep_dark"]})
     write_json(os.path.join(tagdir, 'map_nether.json'), {"replace": False, "values": [
         "minecraft:nether_wastes", "minecraft:soul_sand_valley", "minecraft:crimson_forest", "minecraft:warped_forest", "minecraft:basalt_deltas"]})
@@ -660,6 +694,47 @@ LABELS = {'deadlands': (3950, 750), 'goblins': (250, 3850), 'dwarves': (2900, -3
           'kingdom': (0, -500), 'orcs': (3000, 2150)}
 
 
+# цвет биома на атласе (то же, что растёт в мире: TerritoryBiomeSource.biomeId)
+MAP_TINT = {
+    'arcadia_fields': (222, 200, 110), 'royal_meadow': (190, 205, 120), 'oak_dales': (135, 165, 90), 'arcadia_highlands': (175, 180, 140),
+    'sylvan_wildwood': (90, 150, 95), 'moon_grove': (150, 195, 165), 'silver_glade': (215, 175, 190),
+    'iron_peaks': (225, 225, 230), 'ore_slopes': (160, 150, 135), 'dwarf_vales': (120, 145, 105),
+    'scorched_steppe': (205, 170, 95), 'red_canyons': (200, 110, 70), 'dust_wastes': (230, 205, 150),
+    'fang_taiga': (95, 125, 95), 'snow_hunt': (215, 225, 225), 'fang_peaks': (235, 240, 245),
+    'ash_wastes': (120, 100, 95), 'charred_forest': (95, 75, 65), 'smolder_craters': (160, 70, 45), 'ash_peaks': (70, 60, 62),
+    'ash_shore': (60, 55, 55),
+    'rot_swamp': (110, 125, 70), 'goblin_mangroves': (85, 115, 70),
+    'frozen_reach': (230, 238, 245), 'glacier_spikes': (190, 220, 240), 'frost_peaks': (245, 248, 252),
+    'blight': (150, 150, 125), 'bone_wastes': (215, 205, 180), 'bone_ridges': (175, 170, 160),
+    'frontier_plains': (200, 200, 140), 'frontier_woods': (140, 165, 105), 'frontier_hills': (160, 160, 130),
+    'frontier_taiga': (120, 140, 110), 'frontier_savanna': (200, 180, 115), 'frontier_peaks': (200, 200, 205),
+    'world_wall': (205, 205, 210),
+}
+
+
+def biome_at(x, z, h, t):
+    """Наземный биом — та же логика, что в TerritoryBiomeSource.biomeId (без городов, воды и пещер)."""
+    hh = h + 8 * (vn(x, z, 70, 611) - 0.5)
+    if t < 0:
+        if hh > 168: return 'frontier_peaks'
+        if hh > 110: return 'frontier_hills'
+        if z < -1900 + 300 * (vn(x, z, 600, 502) - 0.5): return 'frontier_taiga'
+        if z > 1900 + 300 * (vn(x, z, 600, 503) - 0.5): return 'frontier_savanna'
+        return 'frontier_plains' if vn(x, z, 380, 501) < 0.45 else 'frontier_woods'
+    bs = TERRITORIES[t]['biomes']
+    n = vn(x, z, 420, 300 + t) * 0.8 + vn(x, z, 120, 330 + t) * 0.2
+    ok = [b for b in bs if (b[2] if len(b) > 2 else -999) <= hh <= (b[3] if len(b) > 3 else 999)]
+    if not ok:
+        ok = [min(bs, key=lambda b: max(0, (b[2] if len(b) > 2 else -999) - hh, hh - (b[3] if len(b) > 3 else 999)))]
+        return ok[0][0].split(':')[1]
+    pick = int(n * sum(b[1] for b in ok))
+    for b in ok:
+        pick -= b[1]
+        if pick < 0:
+            return b[0].split(':')[1]
+    return ok[-1][0].split(':')[1]
+
+
 def render_art(world, size=512):
     """Карта-свиток: пергамент, территории, рельеф, вода, дороги, города."""
     k = 10000 / size
@@ -684,7 +759,14 @@ def render_art(world, size=512):
             if t >= 0:
                 tc = TERRITORIES[t]['color']
                 tcol = ((tc >> 16) & 255, (tc >> 8) & 255, tc & 255)
-                base = tuple(int(base[i] * 0.62 + tcol[i] * 0.38) for i in range(3))
+                base = tuple(int(base[i] * 0.66 + tcol[i] * 0.34) for i in range(3))
+            # краска биома: что растёт на этом месте в мире
+            if max(abs(x), abs(z)) > world.wall0 + 170 + 70 * (vn(x, z, 90, 79) - 0.5):
+                bt = MAP_TINT['world_wall']
+            else:
+                bt = MAP_TINT.get(biome_at(x, z, h, t))
+            if bt:
+                base = tuple(int(base[i] * 0.55 + bt[i] * 0.45) for i in range(3))
             # бумага: пятна
             n = vn(x, z, 600, 5) * 0.08 + vn(x, z, 90, 6) * 0.05
             base = tuple(int(c * (0.94 + n)) for c in base)
@@ -736,7 +818,9 @@ def render_art(world, size=512):
     # поселения и подземелья — значки
     icons = {'village': ((120, 80, 40), 1), 'farm': ((150, 120, 40), 1), 'dungeon': ((150, 20, 20), 2), 'wonder': ((150, 40, 160), 2),
              'camp': ((90, 60, 30), 1), 'fishing': ((40, 80, 130), 1), 'lumber': ((60, 100, 40), 1), 'caravan': ((170, 120, 30), 1),
-             'outpost': ((80, 80, 80), 1), 'settlement': ((90, 60, 30), 1), 'hamlet': ((140, 100, 50), 1), 'pirates': ((20, 20, 20), 2)}
+             'outpost': ((80, 80, 80), 1), 'settlement': ((90, 60, 30), 1), 'hamlet': ((140, 100, 50), 1), 'pirates': ((20, 20, 20), 2),
+             'obelisk': ((110, 40, 170), 1), 'magetower': ((90, 60, 200), 2), 'nest': ((170, 90, 30), 2), 'witch': ((60, 110, 40), 1),
+             'arena': ((180, 50, 30), 2), 'star': ((200, 120, 230), 1)}
     for poi in world.d['pois']:
         col, r = icons.get(poi['type'], ((60, 60, 60), 1))
         x, z = to_px(poi['x'], poi['z'])

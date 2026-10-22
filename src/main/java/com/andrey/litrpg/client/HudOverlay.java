@@ -13,7 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 
 public class HudOverlay {
-    private static final int MAP_SIZE = 96;
+    private static final int MAP_SIZE = 100;
 
     public static void render(ForgeGui gui, GuiGraphics g, float partialTick, int width, int height) {
         Minecraft mc = Minecraft.getInstance();
@@ -26,10 +26,7 @@ public class HudOverlay {
 
         // --- мини-карта (если не стоит Xaero's Minimap) ---
         if (Minimap.enabled) {
-            Minimap.render(g, x, y, MAP_SIZE);
-            String coords = Mth.floor(mc.player.getX()) + " " + Mth.floor(mc.player.getY()) + " " + Mth.floor(mc.player.getZ());
-            g.drawString(font, coords, x + MAP_SIZE / 2 - font.width(coords) / 2, y + MAP_SIZE + 4, 0xFFE0E0E0);
-            y += MAP_SIZE + 16;
+            y += Minimap.render(g, x + 6, y + 8, MAP_SIZE, partialTick) + 8;
         }
 
         // --- панель уровня ---

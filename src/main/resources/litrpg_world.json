@@ -48,17 +48,28 @@
    "biomes": [
     [
      "litrpg:arcadia_fields",
-     3
+     3,
+     0,
+     73
     ],
     [
      "litrpg:royal_meadow",
-     2
+     2,
+     69,
+     80
     ],
     [
      "litrpg:oak_dales",
      3
+    ],
+    [
+     "litrpg:arcadia_highlands",
+     4,
+     78,
+     999
     ]
    ],
+   "shore": "minecraft:beach",
    "cold": false
   },
   {
@@ -98,13 +109,18 @@
     ],
     [
      "litrpg:moon_grove",
-     3
+     3,
+     76,
+     999
     ],
     [
      "litrpg:silver_glade",
-     2
+     3,
+     0,
+     74
     ]
    ],
+   "shore": "litrpg:silver_glade",
    "cold": false
   },
   {
@@ -140,17 +156,24 @@
    "biomes": [
     [
      "litrpg:iron_peaks",
-     4
+     4,
+     172,
+     999
     ],
     [
      "litrpg:ore_slopes",
-     3
+     3,
+     122,
+     185
     ],
     [
      "litrpg:dwarf_vales",
-     2
+     3,
+     0,
+     134
     ]
    ],
+   "shore": "minecraft:stony_shore",
    "cold": true
   },
   {
@@ -186,17 +209,24 @@
    "biomes": [
     [
      "litrpg:scorched_steppe",
-     4
+     4,
+     0,
+     100
     ],
     [
      "litrpg:red_canyons",
-     2
+     4,
+     93,
+     999
     ],
     [
      "litrpg:dust_wastes",
-     2
+     3,
+     0,
+     86
     ]
    ],
+   "shore": "litrpg:dust_wastes",
    "cold": false
   },
   {
@@ -232,13 +262,24 @@
    "biomes": [
     [
      "litrpg:fang_taiga",
-     4
+     4,
+     0,
+     104
     ],
     [
      "litrpg:snow_hunt",
-     3
+     3,
+     90,
+     112
+    ],
+    [
+     "litrpg:fang_peaks",
+     4,
+     106,
+     999
     ]
    ],
+   "shore": "minecraft:snowy_beach",
    "cold": true
   },
   {
@@ -274,17 +315,30 @@
    "biomes": [
     [
      "litrpg:ash_wastes",
-     4
+     4,
+     0,
+     88
     ],
     [
      "litrpg:charred_forest",
-     3
+     3,
+     73,
+     90
     ],
     [
      "litrpg:smolder_craters",
-     2
+     3,
+     0,
+     74
+    ],
+    [
+     "litrpg:ash_peaks",
+     4,
+     86,
+     999
     ]
    ],
+   "shore": "litrpg:ash_shore",
    "cold": false
   },
   {
@@ -320,13 +374,18 @@
    "biomes": [
     [
      "litrpg:rot_swamp",
-     3
+     3,
+     64,
+     999
     ],
     [
      "litrpg:goblin_mangroves",
-     2
+     3,
+     0,
+     66
     ]
    ],
+   "shore": "litrpg:goblin_mangroves",
    "cold": false
   },
   {
@@ -362,17 +421,24 @@
    "biomes": [
     [
      "litrpg:frozen_reach",
-     3
+     3,
+     0,
+     126
     ],
     [
      "litrpg:glacier_spikes",
-     2
+     2,
+     100,
+     160
     ],
     [
      "litrpg:frost_peaks",
-     2
+     4,
+     148,
+     999
     ]
    ],
+   "shore": "minecraft:snowy_beach",
    "cold": true
   },
   {
@@ -412,9 +478,18 @@
     ],
     [
      "litrpg:bone_wastes",
-     2
+     3,
+     0,
+     88
+    ],
+    [
+     "litrpg:bone_ridges",
+     4,
+     100,
+     999
     ]
    ],
+   "shore": "litrpg:bone_wastes",
    "cold": false
   }
  ],
@@ -4194,6 +4269,237 @@
    61
   ],
   [
+   -496,
+   112,
+   15,
+   73,
+   40
+  ],
+  [
+   -2336,
+   -368,
+   15,
+   74,
+   40
+  ],
+  [
+   3072,
+   -2736,
+   17,
+   136,
+   120
+  ],
+  [
+   2448,
+   2464,
+   15,
+   83,
+   66
+  ],
+  [
+   -2192,
+   -2944,
+   17,
+   91,
+   46
+  ],
+  [
+   -2976,
+   2512,
+   18,
+   74,
+   54
+  ],
+  [
+   -144,
+   2176,
+   18,
+   80,
+   42
+  ],
+  [
+   368,
+   -2880,
+   17,
+   102,
+   49
+  ],
+  [
+   2640,
+   -384,
+   17,
+   80,
+   64
+  ],
+  [
+   -1712,
+   1488,
+   17,
+   92,
+   48
+  ],
+  [
+   1520,
+   -1904,
+   16,
+   112,
+   80
+  ],
+  [
+   2288,
+   768,
+   15,
+   71,
+   40
+  ],
+  [
+   -2304,
+   -1312,
+   15,
+   70,
+   40
+  ],
+  [
+   -768,
+   -720,
+   16,
+   75,
+   40
+  ],
+  [
+   -2464,
+   -960,
+   16,
+   74,
+   44
+  ],
+  [
+   1648,
+   -1504,
+   16,
+   99,
+   54
+  ],
+  [
+   3488,
+   -304,
+   16,
+   84,
+   48
+  ],
+  [
+   -256,
+   -3264,
+   16,
+   120,
+   75
+  ],
+  [
+   2344,
+   -2040,
+   25,
+   122,
+   120
+  ],
+  [
+   952,
+   -3416,
+   24,
+   81,
+   59
+  ],
+  [
+   -1512,
+   -2440,
+   24,
+   92,
+   63
+  ],
+  [
+   3288,
+   1896,
+   24,
+   76,
+   65
+  ],
+  [
+   -304,
+   3296,
+   17,
+   65,
+   40
+  ],
+  [
+   640,
+   3648,
+   17,
+   66,
+   40
+  ],
+  [
+   -3344,
+   336,
+   18,
+   67,
+   40
+  ],
+  [
+   -1040,
+   2064,
+   18,
+   84,
+   40
+  ],
+  [
+   -480,
+   560,
+   33,
+   69,
+   40
+  ],
+  [
+   2544,
+   2880,
+   33,
+   85,
+   63
+  ],
+  [
+   1888,
+   -432,
+   33,
+   101,
+   84
+  ],
+  [
+   -1792,
+   1200,
+   17,
+   79,
+   48
+  ],
+  [
+   1296,
+   2288,
+   17,
+   93,
+   47
+  ],
+  [
+   -2208,
+   -2000,
+   17,
+   94,
+   40
+  ],
+  [
+   2688,
+   -912,
+   17,
+   83,
+   40
+  ],
+  [
    -2400,
    -2992,
    14,
@@ -6093,6 +6399,336 @@
    "x": 1104,
    "z": -2976,
    "y": 123,
+   "r": 17,
+   "extra": ""
+  },
+  {
+   "type": "obelisk",
+   "id": "obelisk_0",
+   "name": "Обелиск Рассвета",
+   "x": -496,
+   "z": 112,
+   "y": 73,
+   "r": 15,
+   "extra": ""
+  },
+  {
+   "type": "obelisk",
+   "id": "obelisk_1",
+   "name": "Обелиск Шёпота",
+   "x": -2336,
+   "z": -368,
+   "y": 74,
+   "r": 15,
+   "extra": ""
+  },
+  {
+   "type": "obelisk",
+   "id": "obelisk_2",
+   "name": "Обелиск Перекрёстка",
+   "x": 3072,
+   "z": -2736,
+   "y": 136,
+   "r": 17,
+   "extra": ""
+  },
+  {
+   "type": "obelisk",
+   "id": "obelisk_3",
+   "name": "Обелиск Зари",
+   "x": 2448,
+   "z": 2464,
+   "y": 83,
+   "r": 15,
+   "extra": ""
+  },
+  {
+   "type": "obelisk",
+   "id": "obelisk_4",
+   "name": "Обелиск Сумерек",
+   "x": -2192,
+   "z": -2944,
+   "y": 91,
+   "r": 17,
+   "extra": ""
+  },
+  {
+   "type": "obelisk",
+   "id": "obelisk_5",
+   "name": "Обелиск Странника",
+   "x": -2976,
+   "z": 2512,
+   "y": 74,
+   "r": 18,
+   "extra": ""
+  },
+  {
+   "type": "obelisk",
+   "id": "obelisk_6",
+   "name": "Обелиск Предела",
+   "x": -144,
+   "z": 2176,
+   "y": 80,
+   "r": 18,
+   "extra": ""
+  },
+  {
+   "type": "obelisk",
+   "id": "obelisk_7",
+   "name": "Обелиск Бури",
+   "x": 368,
+   "z": -2880,
+   "y": 102,
+   "r": 17,
+   "extra": ""
+  },
+  {
+   "type": "obelisk",
+   "id": "obelisk_8",
+   "name": "Обелиск Эха",
+   "x": 2640,
+   "z": -384,
+   "y": 80,
+   "r": 17,
+   "extra": ""
+  },
+  {
+   "type": "obelisk",
+   "id": "obelisk_9",
+   "name": "Обелиск Памяти",
+   "x": -1712,
+   "z": 1488,
+   "y": 92,
+   "r": 17,
+   "extra": ""
+  },
+  {
+   "type": "obelisk",
+   "id": "obelisk_10",
+   "name": "Обелиск Пепла",
+   "x": 1520,
+   "z": -1904,
+   "y": 112,
+   "r": 16,
+   "extra": ""
+  },
+  {
+   "type": "obelisk",
+   "id": "obelisk_11",
+   "name": "Обелиск Инея",
+   "x": 2288,
+   "z": 768,
+   "y": 71,
+   "r": 15,
+   "extra": ""
+  },
+  {
+   "type": "obelisk",
+   "id": "obelisk_12",
+   "name": "Обелиск Клыка",
+   "x": -2304,
+   "z": -1312,
+   "y": 70,
+   "r": 15,
+   "extra": ""
+  },
+  {
+   "type": "magetower",
+   "id": "magetower_0",
+   "name": "Башня Звездочёта",
+   "x": -768,
+   "z": -720,
+   "y": 75,
+   "r": 16,
+   "extra": ""
+  },
+  {
+   "type": "magetower",
+   "id": "magetower_1",
+   "name": "Обсерватория Лунного Ока",
+   "x": -2464,
+   "z": -960,
+   "y": 74,
+   "r": 16,
+   "extra": ""
+  },
+  {
+   "type": "magetower",
+   "id": "magetower_2",
+   "name": "Башня Затворника",
+   "x": 1648,
+   "z": -1504,
+   "y": 99,
+   "r": 16,
+   "extra": ""
+  },
+  {
+   "type": "magetower",
+   "id": "magetower_3",
+   "name": "Шпиль Чернокнижника",
+   "x": 3488,
+   "z": -304,
+   "y": 84,
+   "r": 16,
+   "extra": ""
+  },
+  {
+   "type": "magetower",
+   "id": "magetower_4",
+   "name": "Башня Архимага Ольвена",
+   "x": -256,
+   "z": -3264,
+   "y": 120,
+   "r": 16,
+   "extra": ""
+  },
+  {
+   "type": "nest",
+   "id": "nest_0",
+   "name": "Гнездо виверн Железных пиков",
+   "x": 2344,
+   "z": -2040,
+   "y": 122,
+   "r": 25,
+   "extra": ""
+  },
+  {
+   "type": "nest",
+   "id": "nest_1",
+   "name": "Ледяное гнездо",
+   "x": 952,
+   "z": -3416,
+   "y": 81,
+   "r": 24,
+   "extra": ""
+  },
+  {
+   "type": "nest",
+   "id": "nest_2",
+   "name": "Гнездо на Клыкастой скале",
+   "x": -1512,
+   "z": -2440,
+   "y": 92,
+   "r": 24,
+   "extra": ""
+  },
+  {
+   "type": "nest",
+   "id": "nest_3",
+   "name": "Гнездо Красных каньонов",
+   "x": 3288,
+   "z": 1896,
+   "y": 76,
+   "r": 24,
+   "extra": ""
+  },
+  {
+   "type": "witch",
+   "id": "witch_0",
+   "name": "Избушка Бабы Гнилохвостки",
+   "x": -304,
+   "z": 3296,
+   "y": 65,
+   "r": 17,
+   "extra": ""
+  },
+  {
+   "type": "witch",
+   "id": "witch_1",
+   "name": "Избушка на курьих ножках",
+   "x": 640,
+   "z": 3648,
+   "y": 66,
+   "r": 17,
+   "extra": ""
+  },
+  {
+   "type": "witch",
+   "id": "witch_2",
+   "name": "Избушка Лесной Ведьмы",
+   "x": -3344,
+   "z": 336,
+   "y": 67,
+   "r": 18,
+   "extra": ""
+  },
+  {
+   "type": "witch",
+   "id": "witch_3",
+   "name": "Изба Старой Ворожеи",
+   "x": -1040,
+   "z": 2064,
+   "y": 84,
+   "r": 18,
+   "extra": ""
+  },
+  {
+   "type": "arena",
+   "id": "arena_0",
+   "name": "Арена Испытаний",
+   "x": -480,
+   "z": 560,
+   "y": 69,
+   "r": 33,
+   "extra": ""
+  },
+  {
+   "type": "arena",
+   "id": "arena_1",
+   "name": "Кровавая Арена Орды",
+   "x": 2544,
+   "z": 2880,
+   "y": 85,
+   "r": 33,
+   "extra": ""
+  },
+  {
+   "type": "arena",
+   "id": "arena_2",
+   "name": "Арена Пограничья",
+   "x": 1888,
+   "z": -432,
+   "y": 101,
+   "r": 33,
+   "extra": ""
+  },
+  {
+   "type": "star",
+   "id": "star_0",
+   "name": "Упавшая звезда",
+   "x": -1792,
+   "z": 1200,
+   "y": 79,
+   "r": 17,
+   "extra": ""
+  },
+  {
+   "type": "star",
+   "id": "star_1",
+   "name": "Упавшая звезда",
+   "x": 1296,
+   "z": 2288,
+   "y": 93,
+   "r": 17,
+   "extra": ""
+  },
+  {
+   "type": "star",
+   "id": "star_2",
+   "name": "Упавшая звезда",
+   "x": -2208,
+   "z": -2000,
+   "y": 94,
+   "r": 17,
+   "extra": ""
+  },
+  {
+   "type": "star",
+   "id": "star_3",
+   "name": "Упавшая звезда",
+   "x": 2688,
+   "z": -912,
+   "y": 83,
    "r": 17,
    "extra": ""
   },
@@ -14480,6 +15116,384 @@
    "cz": -187,
    "template": "litrpg:map/ruins_15",
    "y": 119
+  },
+  {
+   "dim": "overworld",
+   "cx": -32,
+   "cz": 6,
+   "template": "litrpg:map/obelisk_0",
+   "y": 67
+  },
+  {
+   "dim": "overworld",
+   "cx": -147,
+   "cz": -24,
+   "template": "litrpg:map/obelisk_1",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": 191,
+   "cz": -172,
+   "template": "litrpg:map/obelisk_2",
+   "y": 130
+  },
+  {
+   "dim": "overworld",
+   "cx": 152,
+   "cz": 153,
+   "template": "litrpg:map/obelisk_3",
+   "y": 77
+  },
+  {
+   "dim": "overworld",
+   "cx": -138,
+   "cz": -185,
+   "template": "litrpg:map/obelisk_4",
+   "y": 85
+  },
+  {
+   "dim": "overworld",
+   "cx": -187,
+   "cz": 156,
+   "template": "litrpg:map/obelisk_5",
+   "y": 68
+  },
+  {
+   "dim": "overworld",
+   "cx": -10,
+   "cz": 135,
+   "template": "litrpg:map/obelisk_6",
+   "y": 74
+  },
+  {
+   "dim": "overworld",
+   "cx": 22,
+   "cz": -181,
+   "template": "litrpg:map/obelisk_7",
+   "y": 96
+  },
+  {
+   "dim": "overworld",
+   "cx": 164,
+   "cz": -25,
+   "template": "litrpg:map/obelisk_8",
+   "y": 74
+  },
+  {
+   "dim": "overworld",
+   "cx": -108,
+   "cz": 92,
+   "template": "litrpg:map/obelisk_9",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 94,
+   "cz": -120,
+   "template": "litrpg:map/obelisk_10",
+   "y": 106
+  },
+  {
+   "dim": "overworld",
+   "cx": 142,
+   "cz": 47,
+   "template": "litrpg:map/obelisk_11",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -145,
+   "cz": -83,
+   "template": "litrpg:map/obelisk_12",
+   "y": 64
+  },
+  {
+   "dim": "overworld",
+   "cx": -49,
+   "cz": -46,
+   "template": "litrpg:map/magetower_0",
+   "y": 71
+  },
+  {
+   "dim": "overworld",
+   "cx": -155,
+   "cz": -61,
+   "template": "litrpg:map/magetower_1",
+   "y": 70
+  },
+  {
+   "dim": "overworld",
+   "cx": 102,
+   "cz": -95,
+   "template": "litrpg:map/magetower_2",
+   "y": 95
+  },
+  {
+   "dim": "overworld",
+   "cx": 217,
+   "cz": -20,
+   "template": "litrpg:map/magetower_3",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": -17,
+   "cz": -205,
+   "template": "litrpg:map/magetower_4",
+   "y": 116
+  },
+  {
+   "dim": "overworld",
+   "cx": 145,
+   "cz": -129,
+   "template": "litrpg:map/nest_0_0_0",
+   "y": 116
+  },
+  {
+   "dim": "overworld",
+   "cx": 145,
+   "cz": -127,
+   "template": "litrpg:map/nest_0_0_1",
+   "y": 116
+  },
+  {
+   "dim": "overworld",
+   "cx": 147,
+   "cz": -129,
+   "template": "litrpg:map/nest_0_1_0",
+   "y": 116
+  },
+  {
+   "dim": "overworld",
+   "cx": 147,
+   "cz": -127,
+   "template": "litrpg:map/nest_0_1_1",
+   "y": 116
+  },
+  {
+   "dim": "overworld",
+   "cx": 58,
+   "cz": -215,
+   "template": "litrpg:map/nest_1_0_0",
+   "y": 75
+  },
+  {
+   "dim": "overworld",
+   "cx": 58,
+   "cz": -213,
+   "template": "litrpg:map/nest_1_0_1",
+   "y": 75
+  },
+  {
+   "dim": "overworld",
+   "cx": 60,
+   "cz": -215,
+   "template": "litrpg:map/nest_1_1_0",
+   "y": 75
+  },
+  {
+   "dim": "overworld",
+   "cx": 60,
+   "cz": -213,
+   "template": "litrpg:map/nest_1_1_1",
+   "y": 75
+  },
+  {
+   "dim": "overworld",
+   "cx": -96,
+   "cz": -154,
+   "template": "litrpg:map/nest_2_0_0",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": -96,
+   "cz": -152,
+   "template": "litrpg:map/nest_2_0_1",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": -94,
+   "cz": -154,
+   "template": "litrpg:map/nest_2_1_0",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": -94,
+   "cz": -152,
+   "template": "litrpg:map/nest_2_1_1",
+   "y": 86
+  },
+  {
+   "dim": "overworld",
+   "cx": 204,
+   "cz": 117,
+   "template": "litrpg:map/nest_3_0_0",
+   "y": 70
+  },
+  {
+   "dim": "overworld",
+   "cx": 204,
+   "cz": 119,
+   "template": "litrpg:map/nest_3_0_1",
+   "y": 70
+  },
+  {
+   "dim": "overworld",
+   "cx": 206,
+   "cz": 117,
+   "template": "litrpg:map/nest_3_1_0",
+   "y": 70
+  },
+  {
+   "dim": "overworld",
+   "cx": 206,
+   "cz": 119,
+   "template": "litrpg:map/nest_3_1_1",
+   "y": 70
+  },
+  {
+   "dim": "overworld",
+   "cx": -20,
+   "cz": 205,
+   "template": "litrpg:map/witch_0",
+   "y": 61
+  },
+  {
+   "dim": "overworld",
+   "cx": 39,
+   "cz": 227,
+   "template": "litrpg:map/witch_1",
+   "y": 62
+  },
+  {
+   "dim": "overworld",
+   "cx": -210,
+   "cz": 20,
+   "template": "litrpg:map/witch_2",
+   "y": 63
+  },
+  {
+   "dim": "overworld",
+   "cx": -66,
+   "cz": 128,
+   "template": "litrpg:map/witch_3",
+   "y": 80
+  },
+  {
+   "dim": "overworld",
+   "cx": -32,
+   "cz": 33,
+   "template": "litrpg:map/arena_0_0_0",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -32,
+   "cz": 35,
+   "template": "litrpg:map/arena_0_0_1",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -30,
+   "cz": 33,
+   "template": "litrpg:map/arena_0_1_0",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": -30,
+   "cz": 35,
+   "template": "litrpg:map/arena_0_1_1",
+   "y": 65
+  },
+  {
+   "dim": "overworld",
+   "cx": 157,
+   "cz": 178,
+   "template": "litrpg:map/arena_1_0_0",
+   "y": 81
+  },
+  {
+   "dim": "overworld",
+   "cx": 157,
+   "cz": 180,
+   "template": "litrpg:map/arena_1_0_1",
+   "y": 81
+  },
+  {
+   "dim": "overworld",
+   "cx": 159,
+   "cz": 178,
+   "template": "litrpg:map/arena_1_1_0",
+   "y": 81
+  },
+  {
+   "dim": "overworld",
+   "cx": 159,
+   "cz": 180,
+   "template": "litrpg:map/arena_1_1_1",
+   "y": 81
+  },
+  {
+   "dim": "overworld",
+   "cx": 116,
+   "cz": -29,
+   "template": "litrpg:map/arena_2_0_0",
+   "y": 97
+  },
+  {
+   "dim": "overworld",
+   "cx": 116,
+   "cz": -27,
+   "template": "litrpg:map/arena_2_0_1",
+   "y": 97
+  },
+  {
+   "dim": "overworld",
+   "cx": 118,
+   "cz": -29,
+   "template": "litrpg:map/arena_2_1_0",
+   "y": 97
+  },
+  {
+   "dim": "overworld",
+   "cx": 118,
+   "cz": -27,
+   "template": "litrpg:map/arena_2_1_1",
+   "y": 97
+  },
+  {
+   "dim": "overworld",
+   "cx": -113,
+   "cz": 74,
+   "template": "litrpg:map/star_0",
+   "y": 69
+  },
+  {
+   "dim": "overworld",
+   "cx": 80,
+   "cz": 142,
+   "template": "litrpg:map/star_1",
+   "y": 83
+  },
+  {
+   "dim": "overworld",
+   "cx": -139,
+   "cz": -126,
+   "template": "litrpg:map/star_2",
+   "y": 84
+  },
+  {
+   "dim": "overworld",
+   "cx": 167,
+   "cz": -58,
+   "template": "litrpg:map/star_3",
+   "y": 73
   },
   {
    "dim": "overworld",

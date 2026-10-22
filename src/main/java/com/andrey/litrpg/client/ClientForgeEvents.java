@@ -58,7 +58,8 @@ public class ClientForgeEvents {
             mc.setScreen(new WorldMapScreen());
         }
         while (ModKeys.MINIMAP.consumeClick()) {
-            Minimap.enabled = !Minimap.enabled;
+            if (net.minecraft.client.gui.screens.Screen.hasShiftDown()) Minimap.toggle();
+            else Minimap.cycleZoom();
         }
         for (int i = 0; i < ModKeys.ABILITIES.length; i++) {
             while (ModKeys.ABILITIES[i].consumeClick()) {
@@ -84,6 +85,10 @@ public class ClientForgeEvents {
                     mc.setScreen(new CharacterScreen());
                 } else if (what.equals("atlas")) {
                     mc.setScreen(new AtlasScreen());
+                } else if (what.equals("map")) {
+                    mc.setScreen(new WorldMapScreen());
+                } else if (what.equals("zoom")) {
+                    Minimap.cycleZoom();
                 } else if (what.equals("close")) {
                     mc.setScreen(null);
                 }
@@ -106,5 +111,6 @@ public class ClientForgeEvents {
         ClientData.received = false;
         ClientData.party = java.util.List.of();
         Waypoints.clearLoaded();
+        com.andrey.litrpg.client.map.MapCache.reset();
     }
 }

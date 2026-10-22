@@ -448,7 +448,10 @@ class City(Build):
             hx, hz = x1 - 1, z0 + 1
             for y in range(top, top + (z1 - z0) // 2 + 3):
                 self.set(hx, y, hz, self.st['chimney'])
-            self.set(hx, top + (z1 - z0) // 2 + 3, hz, 'minecraft:campfire', lit='true', signal_fire='false', facing='north', waterlogged='false')
+            # дымит каждая третья труба: сотни дымков в большом городе съедали до пятой части кадра
+            # (без self.rnd — чтобы не сдвинуть случайность остальной застройки)
+            lit = 'true' if (hx * 7 + hz * 13) % 3 == 0 else 'false'
+            self.set(hx, top + (z1 - z0) // 2 + 3, hz, 'minecraft:campfire', lit=lit, signal_fire='false', facing='north', waterlogged='false')
 
     # ---------- башни и стены ----------
     def round_tower(self, cx, cz, r, h, roof_block='minecraft:dark_prismarine', top_light=True, base=None):

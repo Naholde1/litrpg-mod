@@ -102,6 +102,51 @@ public final class DevCommands {
         LitRPG.LOGGER.info("[dev] render {}px in {} ms", size, System.currentTimeMillis() - t0);
     }
 
+    /** Карта биомов на настоящей поверхности: свой цвет на каждый биом + подсчёт «чужих» биомов на поверхности. */
+    private static void biomes(MinecraftServer server, int size) {
+        var level = server.overworld();
+        var gen = level.getChunkSource().getGenerator();
+        var rs = level.getChunkSource().randomState();
+        var img = new java.awt.image.BufferedImage(size, size, java.awt.image.BufferedImage.TYPE_INT_RGB);
+        String[][] ids = new String[size][size];
+        int[][] hs = new int[size][size];
+        java.util.stream.IntStream.range(0, size).parallel().forEach(py -> {
+            for (int px = 0; px < size; px++) {
+                int x = -5000 + px * 10000 / size, z = -5000 + py * 10000 / size;
+                int y = gen.getBaseHeight(x, z, net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE_WG, level, rs);
+                hs[py][px] = y;
+                ids[py][px] = level.getUncachedNoiseBiome(x >> 2, (y - 1) >> 2, z >> 2).unwrapKey().map(k -> k.location().getPath()).orElse("?");
+            }
+        });
+        java.util.Map<String, Integer> count = new java.util.TreeMap<>();
+        StringBuilder legend = new StringBuilder();
+        java.util.Map<String, Integer> pal = new java.util.HashMap<>();
+        for (int py = 0; py < size; py++) {
+            for (int px = 0; px < size; px++) {
+                String id = ids[py][px];
+                count.merge(id, 1, Integer::sum);
+                int col = pal.computeIfAbsent(id, k -> java.awt.Color.HSBtoRGB((k.hashCode() & 1023) / 1023f, 0.55f + (k.hashCode() >> 10 & 3) * 0.12f, 0.95f));
+                double shade = 1 + Math.max(-0.3, Math.min(0.3, (hs[py][px] - hs[Math.max(0, py - 1)][Math.max(0, px - 1)]) * 0.05));
+                int r = (int) Math.min(255, ((col >> 16) & 255) * shade), g = (int) Math.min(255, ((col >> 8) & 255) * shade), b = (int) Math.min(255, (col & 255) * shade);
+                img.setRGB(px, py, (r << 16) | (g << 8) | b);
+            }
+        }
+        for (var e : count.entrySet()) legend.append(e.getKey()).append(' ').append(e.getValue()).append(' ').append(String.format("%06X", pal.get(e.getKey()) & 0xFFFFFF)).append('\n');
+        try {
+            Files.createDirectories(Path.of("dump"));
+            javax.imageio.ImageIO.write(img, "png", Path.of("dump", "biomes.png").toFile());
+            Files.writeString(Path.of("dump", "biomes.txt"), legend.toString());
+            StringBuilder grid = new StringBuilder();
+            for (int py = 0; py < size; py++) {
+                for (int px = 0; px < size; px++) grid.append(ids[py][px]).append(':').append(hs[py][px]).append(px + 1 < size ? "," : "\n");
+            }
+            Files.writeString(Path.of("dump", "biomes_grid.txt"), grid.toString());
+        } catch (Exception e) {
+            LitRPG.LOGGER.error("biomes failed", e);
+        }
+        LitRPG.LOGGER.info("[dev] biomes done");
+    }
+
     /** Проверка площадок: настоящий рельеф (без загрузки чанков) под каждой площадкой против её высоты. */
     private static void terrain(MinecraftServer server) {
         var level = server.overworld();
@@ -157,6 +202,11 @@ public final class DevCommands {
                     double[] r = com.andrey.litrpg.world.map.WorldMap.get().compute(Double.parseDouble(a[1]), Double.parseDouble(a[2]));
                     LitRPG.LOGGER.info("[dev] map {} {} -> H={} W={} T={} water={} level={}", a[1], a[2], r[0], r[1], r[2], r[3],
                             com.andrey.litrpg.world.map.WorldMap.get().levelAt(Double.parseDouble(a[1]), Double.parseDouble(a[2])));
+                    continue;
+                }
+                if (line.startsWith("devbiomes")) {
+                    String[] a = line.split(" ");
+                    biomes(server, a.length > 1 ? Integer.parseInt(a[1]) : 300);
                     continue;
                 }
                 if (line.equals("devterrain")) {
