@@ -1,7 +1,9 @@
 """
 Подземелья: 10 тематических данжей с хранителями.
-Каждое — вход на поверхности, лестница вниз, залы с монстрами и сундуками
-и большая арена с Печатью подземелья (block litrpg:boss_altar), которая
+Каждое — вход на поверхности, лестница вниз и своё устройство (tools/dungeon_plans.py:
+обвалы и тайник, пещеры, гнёзда, казармы и яма с кольями, топь на мостках, настоящий лабиринт,
+катакомбы с тайной библиотекой, ледяная расселина, лавовая река и огненные ловушки, зал испытания)
+и арена под механики хранителя с Печатью подземелья (block litrpg:boss_altar), которая
 призывает босса. Генерирует .nbt-шаблоны, worldgen JSON и таблицы добычи.
 Запуск: python tools/gen_dungeons.py
 """
@@ -12,6 +14,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from gen_structures import Build, TInt, ROOT  # noqa: E402
+from dungeon_plans import Plans  # noqa: E402
 
 SX, SY, SZ = 41, 32, 41
 G = 17          # уровень пола поверхности внутри шаблона (совпадает с землёй)
@@ -36,41 +39,17 @@ def pick(b, opts, x, y, z):
     return opts[i]
 
 
-class Dungeon(Build):
+class Dungeon(Build, Plans):
     def __init__(self, theme):
         super().__init__(SX, SY, SZ, theme.key)
         self.t = theme
         self.seed = sum(ord(c) for c in theme.key) * 7919
+        self.open_cells = set()
+        self.keep = set()
+        self.no_light = set()
 
-    # ---------- примитивы ----------
     def wallb(self, x, y, z):
         self.set(x, y, z, pick(self, self.t.wall, x, y, z))
-
-    def room(self, x1, z1, x2, z2, h, floor=None, ceil=None):
-        """Комната: стены, пол, потолок; внутри — воздух. Пол на высоте F-1, воздух F..F+h-1."""
-        y1, y2 = F - 1, F + h
-        for x in range(x1, x2 + 1):
-            for z in range(z1, z2 + 1):
-                edge = x in (x1, x2) or z in (z1, z2)
-                self.set(x, F - 2, z, pick(self, self.t.wall, x, F - 2, z))
-                self.set(x, y1, z, pick(self, floor or self.t.floor, x, y1, z) if not edge else pick(self, self.t.wall, x, y1, z))
-                self.set(x, y2, z, pick(self, ceil or self.t.ceil, x, y2, z))
-                for y in range(F, y2):
-                    if edge:
-                        self.wallb(x, y, z)
-                    else:
-                        self.set(x, y, z, 'minecraft:air')
-
-    def opening(self, x1, z1, x2, z2, h=4):
-        """Проход сквозь стены (воздух) — дверные проёмы и коридоры."""
-        for x in range(x1, x2 + 1):
-            for z in range(z1, z2 + 1):
-                for y in range(F, F + h):
-                    self.set(x, y, z, 'minecraft:air')
-
-    def corridor(self, x1, z1, x2, z2, h=4):
-        """Коридор с толстыми стенами (прямоугольник, внутри воздух)."""
-        self.room(x1 - 1, z1 - 1, x2 + 1, z2 + 1, h)
 
     def light_at(self, x, yc, z, chain=0):
         """Светильник в потолке на высоте yc: фонарь висит под ним (на цепи), блок света — встраивается."""
@@ -89,21 +68,9 @@ class Dungeon(Build):
         else:
             self.set(x, y, z, l)
 
-    def ceiling_lights(self, x1, z1, x2, z2, h, step=4):
-        for x in range(x1 + 2, x2 - 1, step):
-            for z in range(z1 + 2, z2 - 1, step):
-                self.light_at(x, F + h, z)
-
     def mob(self, x, z, kind, y=None, lvl=None):
         eid = kind if ':' in kind else 'minecraft:' + kind
         self.entities.append((x, F if y is None else y, z, eid, {'ForgeData': {'litrpg_dlvl': TInt(lvl or self.t.level)}}))
-
-    def mobs_in(self, x1, z1, x2, z2, n):
-        kinds = self.t.mobs
-        for i in range(n):
-            x = x1 + 1 + (i * 5 + self.seed) % max(1, x2 - x1 - 1)
-            z = z1 + 1 + (i * 3 + self.seed // 7) % max(1, z2 - z1 - 1)
-            self.mob(x, z, kinds[i % len(kinds)], lvl=self.t.level - 2 + i % 3)
 
     def chest_at(self, x, z, facing='north', y=None):
         self.chest(x, F if y is None else y, z, 'litrpg:chests/dungeon_' + self.t.key, facing)
@@ -116,72 +83,20 @@ class Dungeon(Build):
             for z in range(12, 28):
                 for y in range(14, G):
                     self.wallb(x, y, z)
-        # коридоры (сначала — залы потом перекроют их стены)
-        self.corridor(9, 5, 15, 7)                     # прихожая -> запад
-        self.corridor(9, 8, 11, 12)
-        self.corridor(5, 25, 7, 30)                    # запад -> юго-запад
-        self.corridor(14, 34, 17, 36)                  # юго-запад -> арена
-        self.corridor(26, 5, 26, 7)                    # прихожая -> восток
-        self.corridor(32, 12, 34, 17)                  # восток -> арена
-        # залы
-        self.room(15, 1, 25, 11, 5)                    # прихожая (сюда ведёт лестница)
-        self.room(0, 13, 12, 25, 5)                    # западный зал
-        self.room(0, 30, 14, 40, 5)                    # юго-западный зал
-        self.room(27, 0, 40, 12, 5)                    # восточный зал
-        self.room(17, 17, 40, 40, 11, floor=t.kw.get('arena_floor'))   # арена
-        # проходы
-        self.opening(9, 5, 15, 7)
-        self.opening(9, 5, 11, 13)
-        self.opening(5, 25, 7, 30)
-        self.opening(14, 34, 17, 36)
-        self.opening(25, 5, 27, 7)
-        self.opening(32, 12, 34, 17)
-        # лестница с поверхности
-        self.staircase()
-        # свет
-        self.ceiling_lights(15, 1, 25, 11, 5)
-        self.ceiling_lights(0, 13, 12, 25, 5)
-        self.ceiling_lights(0, 30, 14, 40, 5)
-        self.ceiling_lights(27, 0, 40, 12, 5)
-        for x, z in ((24, 24), (32, 24), (24, 32), (32, 32), (28, 20), (28, 37), (20, 28), (37, 28)):
-            self.light_at(x, F + 11, z, chain=2)
-        # светильники в стенах арены и залов
+        self.solid()
+        getattr(self, 'plan_' + t.key)()
+        if (28, 28) not in self.open_cells:
+            self.arena_box()
+        self.altar()
+        self.floor_all()
+        self.lights()
+        # светильники в стенах арены
         wl = t.kw.get('wall_light', 'minecraft:ochre_froglight')
         for i in range(19, 40, 4):
             for (x, z) in ((i, 17), (i, 40), (17, i), (40, i)):
                 if self.blocks.get((x, F + 5, z), ('',))[0] != 'minecraft:air':
                     self.set(x, F + 5, z, wl)
-        for (x1, z1, x2, z2) in ((15, 1, 25, 11), (0, 13, 12, 25), (0, 30, 14, 40), (27, 0, 40, 12)):
-            for x in range(x1 + 2, x2 - 1, 5):
-                for z in (z1, z2):
-                    if self.blocks.get((x, F + 3, z), ('',))[0] != 'minecraft:air':
-                        self.set(x, F + 3, z, wl)
-        # арена: колонны, печать, награда
-        for x, z in ((21, 21), (35, 21), (21, 35), (35, 35)):
-            for y in range(F, F + 11):
-                self.set(x, y, z, pick(self, t.accent, x, y, z))
-        ax, az = 28, 28
-        self.set(ax, F, az, 'litrpg:boss_altar')
-        self.nbt[(ax, F, az)] = {'id': 'litrpg:boss_altar', 'Dungeon': t.key}
-        for dx in range(-2, 3):
-            for dz in range(-2, 3):
-                if abs(dx) == 2 or abs(dz) == 2:
-                    self.set(ax + dx, F - 1, az + dz, pick(self, t.accent, ax + dx, 0, az + dz))
-        self.chest_at(28, 38, 'north')
-        self.chest_at(27, 38, 'north')
-        # сундуки в залах
-        self.chest_at(1, 14, 'east')
-        self.chest_at(1, 39, 'east')
-        self.chest_at(39, 1, 'west')
-        # монстры
-        self.mobs_in(1, 14, 11, 24, 4)
-        self.mobs_in(1, 31, 13, 39, 4)
-        self.mobs_in(28, 1, 39, 11, 3)
-        self.mobs_in(16, 2, 24, 7, 2)
-        # оформление темы
-        fn = getattr(self, 'deco_' + t.key, None)
-        if fn:
-            fn()
+        self.staircase()
         self.surface()
 
     def staircase(self):
@@ -247,14 +162,7 @@ class Dungeon(Build):
                 self.wallb(x, y, z)
             self.post_light(x, G + 3, z)
 
-    # ---------- темы ----------
-    def deco_ruins(self):
-        for x, z in ((3, 16), (9, 22), (5, 33), (11, 37)):
-            self.set(x, F, z, 'minecraft:cobblestone')
-            self.set(x, F + 1, z, 'minecraft:cobblestone_wall', up='true', north='none', south='none', east='none', west='none', waterlogged='false')
-        for x in range(18, 40, 3):
-            self.set(x, F + 10, 18, 'minecraft:cobweb')
-
+    # ---------- поверхность по темам ----------
     def top_ruins(self):
         self.top_default()
         for x in range(14, 27):
@@ -269,15 +177,6 @@ class Dungeon(Build):
         self.set(16, G, 22, 'minecraft:mossy_cobblestone')
         self.set(24, G, 21, 'minecraft:mossy_cobblestone_slab', type='bottom', waterlogged='false')
 
-    def deco_rotgrove(self):
-        for x in range(18, 40, 2):
-            for z in range(18, 40, 5):
-                if (x + z) % 3 == 0:
-                    self.set(x, F + 10, z, 'minecraft:hanging_roots', waterlogged='false')
-        for x, z in ((3, 15), (8, 20), (4, 34), (12, 38), (30, 4), (37, 9), (20, 22), (36, 37)):
-            self.set(x, F, z, 'minecraft:brown_mushroom' if (x + z) % 2 else 'minecraft:red_mushroom')
-        self.set(28, F + 10, 28, 'minecraft:spore_blossom')
-
     def top_rotgrove(self):
         self.top_default()
         for tx, tz, h in ((15, 14, 7), (25, 25, 6), (14, 25, 5)):
@@ -290,29 +189,12 @@ class Dungeon(Build):
                 if (x * 7 + z * 3) % 11 == 0:
                     self.set(x, G, z, 'minecraft:brown_mushroom')
 
-    def deco_spider_nest(self):
-        for x in range(0, 41):
-            for z in range(0, 41):
-                for y in (F + 3, F + 4, F + 8, F + 9):
-                    if self.blocks.get((x, y, z), ('',))[0] == 'minecraft:air' and (x * 31 + z * 17 + y * 7) % 9 == 0:
-                        self.set(x, y, z, 'minecraft:cobweb')
-        # яйца-коконы
-        for x, z in ((24, 24), (32, 33), (23, 34), (34, 23)):
-            self.set(x, F, z, 'minecraft:white_wool')
-            self.set(x, F + 1, z, 'minecraft:cobweb')
-
     def top_spider_nest(self):
         self.top_default()
         for x in range(13, 28):
             for z in range(12, 28):
                 if (x * 13 + z * 7) % 8 == 0:
                     self.set(x, G, z, 'minecraft:cobweb')
-
-    def deco_goblin_fort(self):
-        for x, z in ((3, 23), (10, 15), (2, 37), (38, 10), (30, 2)):
-            self.set(x, F, z, 'minecraft:hay_block', axis='y')
-            self.set(x + 1, F, z, 'minecraft:barrel', facing='up', open='false')
-        self.set(28, F + 1, 22, 'minecraft:campfire', lit='true', signal_fire='false', facing='north', waterlogged='false')
 
     def top_goblin_fort(self):
         # частокол
@@ -333,16 +215,6 @@ class Dungeon(Build):
         self.arch(18, 22, 19, 4, 'minecraft:spruce_log', 'minecraft:spruce_planks')
         for kind, x, z in (('litrpg:goblin', 16, 16), ('litrpg:goblin', 24, 23), ('litrpg:goblin_shaman', 24, 15)):
             self.entities.append((x, G, z, kind, {}))
-
-    def deco_mire(self):
-        for x in range(1, 40):
-            for z in range(1, 40):
-                if self.blocks.get((x, F, z), ('',))[0] == 'minecraft:air' and (x * 5 + z * 11) % 13 == 0:
-                    self.set(x, F - 1, z, 'minecraft:water', level='0')
-        for x, z in ((4, 18), (8, 36), (34, 6)):
-            self.set(x, F, z, 'minecraft:cauldron')
-        for x in range(18, 40, 4):
-            self.set(x, F + 10, 30, 'minecraft:vine', north='false', south='true', east='false', west='false', up='true')
 
     def top_mire(self):
         # хижина ведьмы на сваях
@@ -371,17 +243,6 @@ class Dungeon(Build):
                 if (x * 3 + z * 5) % 7 == 0 and self.blocks.get((x, G, z), ('',))[0] == 'minecraft:air':
                     self.set(x, G - 1, z, 'minecraft:water', level='0')
 
-    def deco_labyrinth(self):
-        # лабиринт в западном и юго-западном залах
-        for (x1, z1, x2, z2) in ((1, 14, 11, 24), (1, 31, 13, 39)):
-            for x in range(x1 + 1, x2, 2):
-                for z in range(z1 + 1, z2):
-                    if (x * 7 + z * 3) % 5 != 0:
-                        for y in range(F, F + 5):
-                            self.set(x, y, z, pick(self, self.t.wall, x, y, z))
-        for x, z in ((24, 22), (32, 22), (24, 34), (32, 34)):
-            self.set(x, F, z, 'minecraft:skeleton_skull', rotation=str((x + z) % 16))
-
     def top_labyrinth(self):
         self.top_default()
         for x, z in ((14, 13), (26, 13), (14, 26), (26, 26)):
@@ -390,18 +251,6 @@ class Dungeon(Build):
             self.set(x, G + 7, z, 'minecraft:orange_terracotta')
         for x in range(15, 26):
             self.set(x, G, 26, 'minecraft:sandstone_wall', up='true', north='none', south='none', east='low', west='low', waterlogged='false')
-
-    def deco_crypt(self):
-        # саркофаги
-        for (x, z) in ((3, 16), (3, 20), (8, 16), (8, 20), (3, 33), (8, 33), (3, 37), (8, 37)):
-            self.set(x, F, z, 'minecraft:polished_deepslate')
-            self.set(x, F, z + 1, 'minecraft:polished_deepslate')
-            self.set(x, F + 1, z, 'minecraft:deepslate_tile_slab', type='bottom', waterlogged='false')
-            self.set(x, F + 1, z + 1, 'minecraft:deepslate_tile_slab', type='bottom', waterlogged='false')
-        for x in range(18, 40, 3):
-            self.set(x, F + 10, 39, 'minecraft:cobweb')
-        for x, z in ((25, 25), (31, 31), (25, 31), (31, 25)):
-            self.set(x, F, z, 'minecraft:candle', candles='3', lit='true', waterlogged='false')
 
     def top_crypt(self):
         # мавзолей
@@ -418,14 +267,6 @@ class Dungeon(Build):
         self.set(17, G, 14, 'minecraft:skeleton_skull', rotation='8')
         self.set(23, G, 14, 'minecraft:skeleton_skull', rotation='8')
 
-    def deco_frost_citadel(self):
-        for x in range(18, 40, 2):
-            for z in (18, 39):
-                self.set(x, F + 10, z, 'minecraft:ice')
-        for x, z in ((23, 24), (33, 25), (25, 33), (33, 32)):
-            for y in range(F, F + 3):
-                self.set(x, y, z, 'minecraft:blue_ice')
-
     def top_frost_citadel(self):
         self.top_default()
         for (x, z, h) in ((14, 13, 9), (26, 13, 11), (14, 26, 8), (26, 26, 10), (20, 25, 12)):
@@ -439,17 +280,6 @@ class Dungeon(Build):
                 if self.blocks.get((x, G, z), ('',))[0] == 'minecraft:air':
                     self.set(x, G, z, 'minecraft:snow', layers='1')
 
-    def deco_crucible(self):
-        # лавовые каналы под решётками
-        for x in range(19, 39):
-            for z in (24, 32):
-                self.set(x, F - 1, z, 'minecraft:lava', level='0')
-                self.set(x, F, z, 'minecraft:iron_bars', north='false', south='false', east='true', west='true', waterlogged='false')
-        for x, z in ((24, 27), (32, 29)):
-            self.set(x, F, z, 'minecraft:anvil', facing='north')
-        for x, z in ((3, 15), (10, 23), (3, 38), (38, 3)):
-            self.set(x, F, z, 'minecraft:blast_furnace', facing='east', lit='true')
-
     def top_crucible(self):
         # кратер с лавой и обсидиановым входом
         for x in range(13, 28):
@@ -462,21 +292,8 @@ class Dungeon(Build):
                     self.set(x, G - 1, z, 'minecraft:magma_block')
         self.arch(18, 22, 13, 5, 'minecraft:obsidian', 'minecraft:crying_obsidian')
 
-    def deco_nether_heart(self):
-        self.deco_crucible()
-
     def top_nether_heart(self):
         self.top_crucible()
-
-    def deco_ash_citadel(self):
-        for x in range(18, 40):
-            for z in range(18, 40):
-                if (x + z) % 9 == 0 and (x, F, z) in self.blocks and self.blocks[(x, F, z)][0] == 'minecraft:air' and abs(x - 28) + abs(z - 28) > 4:
-                    self.set(x, F - 1, z, 'minecraft:soul_soil')
-                    self.set(x, F, z, 'minecraft:soul_fire')
-        for x, z in ((24, 24), (32, 24), (24, 32), (32, 32)):
-            for y in range(F, F + 4):
-                self.set(x, y, z, 'minecraft:crying_obsidian' if y == F + 3 else 'minecraft:polished_blackstone_bricks')
 
     def top_ash_citadel(self):
         # врата Пепла
@@ -492,6 +309,8 @@ class Dungeon(Build):
         for x, z in ((15, 14), (25, 14), (15, 25), (25, 25)):
             self.set(x, G + 5, z, 'minecraft:netherrack')
             self.set(x, G + 6, z, 'minecraft:fire', age='0', north='false', south='false', east='false', west='false', up='false')
+
+
 
 
 THEMES = [

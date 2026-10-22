@@ -5433,6 +5433,26 @@
    "extra": "ash_citadel"
   },
   {
+   "type": "dungeon",
+   "id": "raid_khazdarum",
+   "name": "Глубины Кхаз-Дарума",
+   "x": 3360,
+   "z": -3728,
+   "y": 121,
+   "r": 52,
+   "extra": "khazdarum"
+  },
+  {
+   "type": "dungeon",
+   "id": "raid_abyss_spire",
+   "name": "Шпиль Бездны",
+   "x": -4022,
+   "z": 1548,
+   "y": 68,
+   "r": 37,
+   "extra": "abyss_spire"
+  },
+  {
    "type": "village",
    "id": "village_0",
    "name": "Деревня Ольховка",
@@ -11650,6 +11670,76 @@
    "cx": -267,
    "cz": 109,
    "template": "litrpg:dungeon_ash_citadel",
+   "y": 63
+  },
+  {
+   "dim": "overworld",
+   "cx": 207,
+   "cz": -235,
+   "template": "litrpg:map/raid_khazdarum_0_0",
+   "y": 101
+  },
+  {
+   "dim": "overworld",
+   "cx": 207,
+   "cz": -233,
+   "template": "litrpg:map/raid_khazdarum_0_1",
+   "y": 101
+  },
+  {
+   "dim": "overworld",
+   "cx": 209,
+   "cz": -235,
+   "template": "litrpg:map/raid_khazdarum_1_0",
+   "y": 101
+  },
+  {
+   "dim": "overworld",
+   "cx": 209,
+   "cz": -233,
+   "template": "litrpg:map/raid_khazdarum_1_1",
+   "y": 101
+  },
+  {
+   "dim": "overworld",
+   "cx": 211,
+   "cz": -235,
+   "template": "litrpg:map/raid_khazdarum_2_0",
+   "y": 101
+  },
+  {
+   "dim": "overworld",
+   "cx": 211,
+   "cz": -233,
+   "template": "litrpg:map/raid_khazdarum_2_1",
+   "y": 101
+  },
+  {
+   "dim": "overworld",
+   "cx": -253,
+   "cz": 95,
+   "template": "litrpg:map/raid_abyss_spire_0_0",
+   "y": 63
+  },
+  {
+   "dim": "overworld",
+   "cx": -253,
+   "cz": 97,
+   "template": "litrpg:map/raid_abyss_spire_0_1",
+   "y": 63
+  },
+  {
+   "dim": "overworld",
+   "cx": -251,
+   "cz": 95,
+   "template": "litrpg:map/raid_abyss_spire_1_0",
+   "y": 63
+  },
+  {
+   "dim": "overworld",
+   "cx": -251,
+   "cz": 97,
+   "template": "litrpg:map/raid_abyss_spire_1_1",
    "y": 63
   },
   {
@@ -20388,6 +20478,16 @@
     -4252,
     80,
     1764
+   ],
+   "raid_khazdarum": [
+    3360,
+    121,
+    -3728
+   ],
+   "raid_abyss_spire": [
+    -4022,
+    68,
+    1548
    ]
   }
  },

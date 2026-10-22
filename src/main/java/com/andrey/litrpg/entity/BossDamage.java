@@ -39,7 +39,7 @@ public final class BossDamage {
 
     /** Примерное здоровье бойца (не танка) на этом уровне. */
     public static float unit(int level) {
-        return 24f + 3.2f * level;
+        return 20f + 2.6f * level;
     }
 
     public static DamageSource source(LivingEntity boss) {

@@ -154,6 +154,20 @@ public class ModItems {
             () -> new ForgeSpawnEggItem(ModEntities.FLAME_LORD, 0x3A1A10, 0xFF7A20, new Item.Properties()));
     public static final RegistryObject<Item> ARCHDEMON_SPAWN_EGG = ITEMS.register("archdemon_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.ARCHDEMON, 0x5A0C14, 0xFF4020, new Item.Properties()));
+    public static final RegistryObject<Item> BRONZEBEARD_SPAWN_EGG = ITEMS.register("bronzebeard_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.BRONZEBEARD, 0x7A5228, 0xFFB040, new Item.Properties()));
+    public static final RegistryObject<Item> GHAZ_SPAWN_EGG = ITEMS.register("ghaz_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.GHAZ, 0x5A3E34, 0xC02040, new Item.Properties()));
+    public static final RegistryObject<Item> TORBALD_SPAWN_EGG = ITEMS.register("torbald_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.TORBALD, 0x3E4A44, 0x80FFB0, new Item.Properties()));
+    public static final RegistryObject<Item> SOL_TWIN_SPAWN_EGG = ITEMS.register("sol_twin_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.SOL_TWIN, 0xE8C060, 0xFFF0A0, new Item.Properties()));
+    public static final RegistryObject<Item> LUNA_TWIN_SPAWN_EGG = ITEMS.register("luna_twin_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.LUNA_TWIN, 0xA8B8D0, 0x6A9AE0, new Item.Properties()));
+    public static final RegistryObject<Item> CHRONOPHAGE_SPAWN_EGG = ITEMS.register("chronophage_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.CHRONOPHAGE, 0x3A2E4A, 0xFFE080, new Item.Properties()));
+    public static final RegistryObject<Item> XALATHAR_SPAWN_EGG = ITEMS.register("xalathar_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.XALATHAR, 0x3A1A4A, 0xC02040, new Item.Properties()));
     // ---- подземелья ----
     public static final RegistryObject<Item> RELIC = ITEMS.register("relic",
             () -> new net.minecraft.world.item.BlockItem(ModBlocks.RELIC.get(), new Item.Properties().rarity(Rarity.RARE)));

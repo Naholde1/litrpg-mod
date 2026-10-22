@@ -64,7 +64,7 @@ public final class Gossip {
         int dist = (int) Math.round(bestD / 50) * 50;
         return switch (want) {
             case "dungeon" -> {
-                Dungeon d = Dungeon.byKey(best.extra());
+                Dungeon d = Dungeon.byPoi(best.extra());
                 yield "Слыхал? На " + dir + "е, шагов за " + dist + ", есть " + (d != null ? "подземелье «" + d.title + "» (опасность — ур. " + d.level + ")"
                         : "проклятое подземелье") + ". Хранитель там лютый.";
             }

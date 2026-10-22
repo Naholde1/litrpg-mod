@@ -14,7 +14,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "$(l)Подземелья и задания:$()$(li)/place structure litrpg:dungeon_crypt$(li)/locate structure litrpg:dungeon_mire$(li)/summon litrpg:minotaur$(li)/litrpg quest step @s 4$(li)/litrpg quest finish @s$(li)/litrpg quest refresh @s"
+      "text": "$(l)Подземелья и задания:$()$(li)/place structure litrpg:dungeon_crypt$(li)/place template litrpg:raid_khazdarum$(li)/locate structure litrpg:dungeon_mire$(li)/summon litrpg:minotaur$(li)/litrpg quest step @s 4$(li)/litrpg quest finish @s$(li)/litrpg quest refresh @s"
     },
     {
       "type": "patchouli:text",

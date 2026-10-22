@@ -78,6 +78,13 @@ public class LitRPG {
         event.put(ModEntities.FROST_GIANT.get(), com.andrey.litrpg.entity.boss.FrostGiantEntity.createAttributes().build());
         event.put(ModEntities.FLAME_LORD.get(), com.andrey.litrpg.entity.boss.FlameLordEntity.createAttributes().build());
         event.put(ModEntities.ARCHDEMON.get(), com.andrey.litrpg.entity.boss.ArchdemonEntity.createAttributes().build());
+        event.put(ModEntities.BRONZEBEARD.get(), com.andrey.litrpg.entity.raid.BronzebeardEntity.createAttributes().build());
+        event.put(ModEntities.GHAZ.get(), com.andrey.litrpg.entity.raid.GhazEntity.createAttributes().build());
+        event.put(ModEntities.TORBALD.get(), com.andrey.litrpg.entity.raid.TorbaldEntity.createAttributes().build());
+        event.put(ModEntities.SOL_TWIN.get(), com.andrey.litrpg.entity.raid.TwinEntity.createAttributes().build());
+        event.put(ModEntities.LUNA_TWIN.get(), com.andrey.litrpg.entity.raid.TwinEntity.createAttributes().build());
+        event.put(ModEntities.CHRONOPHAGE.get(), com.andrey.litrpg.entity.raid.ChronophageEntity.createAttributes().build());
+        event.put(ModEntities.XALATHAR.get(), com.andrey.litrpg.entity.raid.XalatharEntity.createAttributes().build());
         event.put(ModEntities.STONE_TROLL.get(), com.andrey.litrpg.entity.Creatures.StoneTroll.attributes().build());
         event.put(ModEntities.FROST_WRAITH.get(), com.andrey.litrpg.entity.Creatures.FrostWraith.attributes().build());
         event.put(ModEntities.FOREST_WISP.get(), com.andrey.litrpg.entity.Creatures.ForestWisp.attributes().build());

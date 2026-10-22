@@ -931,9 +931,16 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
         return true;
     }
 
+    /** Для dev-команды devboss. */
+    public String debugState() {
+        return String.format("hp=%.0f/%.0f party=%.1f barrier=%.0f phase=%d relics=%d/%d zones=%d immune=%s stagger=%d fight=%ds enrage=%d target=%s home=%s",
+                getHealth(), getMaxHealth(), partyScale, barrier, phase, relicsAlive(), relics.size(), zones.size(), immune, stagger,
+                fightTicks / 20, enrageStacks(), getTarget() == null ? "-" : getTarget().getName().getString(), home);
+    }
+
     /** Идёт ли бой (хранитель кого-то атакует). */
     public boolean inCombat() {
-        return engaged && getTarget() != null;
+        return engaged;
     }
 
     @Override

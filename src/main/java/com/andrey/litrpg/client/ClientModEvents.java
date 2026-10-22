@@ -46,12 +46,19 @@ public class ClientModEvents {
         event.registerEntityRenderer(ModEntities.GRAVE_KNIGHT.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "grave_knight"));
         event.registerEntityRenderer(ModEntities.RAT.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "rat"));
         event.registerEntityRenderer(ModEntities.RAT_KING.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "rat_king"));
+        event.registerEntityRenderer(ModEntities.BRONZEBEARD.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "bronzebeard"));
+        event.registerEntityRenderer(ModEntities.GHAZ.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "ghaz"));
+        event.registerEntityRenderer(ModEntities.TORBALD.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "torbald"));
+        event.registerEntityRenderer(ModEntities.SOL_TWIN.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "sol_twin"));
+        event.registerEntityRenderer(ModEntities.LUNA_TWIN.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "luna_twin"));
+        event.registerEntityRenderer(ModEntities.CHRONOPHAGE.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "chronophage"));
+        event.registerEntityRenderer(ModEntities.XALATHAR.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "xalathar"));
         ModEntities.WILD.forEach((id, t) -> event.registerEntityRenderer(t.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, id)));
         com.andrey.litrpg.npc.NpcRegistry.TYPES.values().forEach(t ->
                 event.registerEntityRenderer(t.get(), com.andrey.litrpg.client.render.NpcRenderer::new));
     }
 
-    public static final String[] BOSS_MODELS = {"ruin_golem", "rotting_ent", "spider_queen", "swamp_hag", "minotaur", "frost_giant", "flame_lord", "archdemon", "stone_troll", "frost_wraith", "forest_wisp", "ash_imp", "bog_lurker", "sand_scorpion", "grave_knight", "rat", "rat_king"};
+    public static final String[] BOSS_MODELS = {"ruin_golem", "rotting_ent", "spider_queen", "swamp_hag", "minotaur", "frost_giant", "flame_lord", "archdemon", "stone_troll", "frost_wraith", "forest_wisp", "ash_imp", "bog_lurker", "sand_scorpion", "grave_knight", "rat", "rat_king", "bronzebeard", "ghaz", "torbald", "sol_twin", "luna_twin", "chronophage", "xalathar"};
 
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {

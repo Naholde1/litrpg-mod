@@ -728,6 +728,28 @@ def main():
         plan.take(ox + 20, oz + 20, 24)
         print(f'подземелье {titles[key]} ур.{lvl}: ({ox + 20}, {oz + 20}) y={y}, уровень места {plan.world.level(ox + 20, oz + 20)}')
 
+    # ---------------- большие подземелья (рейды, 2.16) ----------------
+    import gen_raids as GR
+    for name, title, anchor_city, lvl, terr, fn in (
+            ('khazdarum', 'Глубины Кхаз-Дарума', 'khazad', 33, ['dwarves', 'frost', 'wild'], GR.khazdarum),
+            ('abyss_spire', 'Шпиль Бездны', 'ashgrad', 60, ['demonkin', 'wild'], GR.spire)):
+        rb, ground = fn()
+        rb.G = ground
+        a = cities[anchor_city]
+        rr = max(rb.size[0], rb.size[2]) // 2 + 4
+        spot = None
+        for tol, tr in ((2, terr), (4, terr), (6, None), (12, None)):
+            spot = plan.find_level(a['x'], a['z'], lvl, rr, tr, tol=tol)
+            if spot:
+                break
+        if not spot:
+            print('!! нет места для рейда', title)
+            continue
+        x, z, y = spot
+        cx, cz = put_poi(plan, rb, 'raid_' + name, 'dungeon', title, x, z, y, rr, extra=name)
+        ANCHORS.setdefault('world', {})['raid_' + name] = [cx, y, cz]
+        print(f'рейд {title} ур.{lvl}: ({cx}, {cz}) y={y}, уровень места {plan.world.level(cx, cz)}')
+
     # ---------------- деревни и лагеря ----------------
     rnd = random.Random(42)
     vill = [(520, 260), (-620, -420), (-1000, 480), (330, -880), (980, -360), (-420, 1060), (-260, -1100), (1150, -980),

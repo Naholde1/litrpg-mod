@@ -394,6 +394,18 @@ public final class DevCommands {
                     dump(server);
                     continue;
                 }
+                if (line.startsWith("devboss")) {
+                    // хранители вокруг Dev: здоровье, щит, фаза, узлы силы, зоны, неистовство; и здоровье/роль Dev
+                    var p = server.getPlayerList().getPlayerByName("Dev");
+                    if (p == null) continue;
+                    var st = com.andrey.litrpg.stats.StatsManager.get(p);
+                    LitRPG.LOGGER.info("[dev] Dev hp={}/{} armor={} role={} lvl={} mode={}", (int) p.getHealth(), (int) p.getMaxHealth(), p.getArmorValue(),
+                            st.getRole(), st.getLevel(), p.gameMode.getGameModeForPlayer());
+                    for (var b : p.serverLevel().getEntitiesOfClass(com.andrey.litrpg.entity.BossBase.class, p.getBoundingBox().inflate(64))) {
+                        LitRPG.LOGGER.info("[dev]   boss {} {}", b.bossId(), b.debugState());
+                    }
+                    continue;
+                }
                 if (line.startsWith("devmobs")) {
                     // мобы вокруг Dev: вид, уровень, ранг, расстояние, состояние (для проверки бестиария)
                     var p = server.getPlayerList().getPlayerByName("Dev");

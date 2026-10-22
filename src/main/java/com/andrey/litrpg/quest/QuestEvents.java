@@ -329,7 +329,7 @@ public final class QuestEvents {
         // в «Мире Системы» подземелья стоят на карте — координаты известны заранее
         if (com.andrey.litrpg.world.map.SystemWorld.is(level) || level.dimension() == net.minecraft.world.level.Level.NETHER) {
             for (var poi : com.andrey.litrpg.world.map.WorldMap.get().pois) {
-                if (!poi.extra().equals(d.key) || !poi.type().endsWith("dungeon")) continue;
+                if (!poi.extra().equals(d.poiKey()) || !poi.type().endsWith("dungeon")) continue;
                 boolean nether = poi.type().startsWith("nether");
                 int dx = poi.x() - p.getBlockX(), dz = poi.z() - p.getBlockZ();
                 int dist = (int) Math.sqrt((double) dx * dx + (double) dz * dz);

@@ -3633,5 +3633,19 @@
   "block.litrpg.relic": "Узел силы",
   "block.litrpg.seal_door": "Рунная преграда",
   "death.attack.litrpg.boss": "%1$s пал от руки %2$s",
-  "death.attack.litrpg.boss.player": "%1$s пал от руки %2$s"
+  "death.attack.litrpg.boss.player": "%1$s пал от руки %2$s",
+  "entity.litrpg.bronzebeard": "Бронзобород, Механический страж",
+  "item.litrpg.bronzebeard_spawn_egg": "Яйцо призыва: Бронзобород, Механический страж",
+  "entity.litrpg.ghaz": "Гхаз, Глубинный Червь",
+  "item.litrpg.ghaz_spawn_egg": "Яйцо призыва: Гхаз, Глубинный Червь",
+  "entity.litrpg.torbald": "Торбальд Проклятый, Король-под-Горой",
+  "item.litrpg.torbald_spawn_egg": "Яйцо призыва: Торбальд Проклятый, Король-под-Горой",
+  "entity.litrpg.sol_twin": "Сол, Близнец Рассвета",
+  "item.litrpg.sol_twin_spawn_egg": "Яйцо призыва: Сол, Близнец Рассвета",
+  "entity.litrpg.luna_twin": "Луна, Близнец Сумерек",
+  "item.litrpg.luna_twin_spawn_egg": "Яйцо призыва: Луна, Близнец Сумерек",
+  "entity.litrpg.chronophage": "Хронофаг, Пожиратель Времени",
+  "item.litrpg.chronophage_spawn_egg": "Яйцо призыва: Хронофаг, Пожиратель Времени",
+  "entity.litrpg.xalathar": "Ксал'Атар, Глаз Бездны",
+  "item.litrpg.xalathar_spawn_egg": "Яйцо призыва: Ксал'Атар, Глаз Бездны"
 }

@@ -47,7 +47,27 @@ public enum Dungeon {
             Faction.BEASTKIN, 120, Faction.DEMONKIN, -300),
     NETHER_HEART("nether_heart", "Сердце Преисподней", 50, "flame_lord", 0xE04020,
             "Раскалённое сердце Преисподней под городом демонидов. Здесь первородное пламя рождает своих владык.",
-            Faction.DWARVES, 60, Faction.PIGLINS, 40, Faction.DEMONKIN, -40);
+            Faction.DWARVES, 60, Faction.PIGLINS, 40, Faction.DEMONKIN, -40),
+
+    // ---- большие подземелья (рейды): несколько хранителей подряд, за каждым — рунная преграда ----
+    KHAZ_FORGE("khaz_forge", "Глубины Кхаз-Дарума: Кузня", 32, "bronzebeard", 0xD8A040,
+            "Затерянный холд дварфов. У входа ещё стучит механический страж, охраняя погасшие горны.",
+            Faction.DWARVES, 60, Faction.KINGDOM, 20),
+    KHAZ_DEEP("khaz_deep", "Глубины Кхаз-Дарума: Нора", 33, "ghaz", 0x8A6A5A,
+            "Глубже — нора червя, прогрызшего холд насквозь.",
+            Faction.DWARVES, 70),
+    KHAZ_THRONE("khaz_throne", "Глубины Кхаз-Дарума: Трон", 35, "torbald", 0x80FFB0,
+            "Тронный зал. Король-под-Горой не отдал своё золото даже смерти.",
+            Faction.DWARVES, 150, Faction.KINGDOM, 40, Faction.UNDEAD, -100),
+    SPIRE_TWINS("spire_twins", "Шпиль Бездны: Зал Близнецов", 58, "sol_twin", 0xFFE070,
+            "Нижний ярус Шпиля, павшего с неба. Его стерегут близнецы света и тьмы.",
+            Faction.KINGDOM, 60, Faction.ELVES, 60),
+    SPIRE_TIME("spire_time", "Шпиль Бездны: Часовня", 60, "chronophage", 0xC8A0FF,
+            "Средний ярус: время здесь течёт вспять, и кто-то им питается.",
+            Faction.ELVES, 80, Faction.DWARVES, 40),
+    SPIRE_EYE("spire_eye", "Шпиль Бездны: Око", 62, "xalathar", 0xC02040,
+            "Вершина Шпиля. Отсюда Бездна смотрит на мир.",
+            Faction.KINGDOM, 150, Faction.ELVES, 150, Faction.DWARVES, 150, Faction.ORCS, 120, Faction.BEASTKIN, 150);
 
     public final String key;
     public final String title;
@@ -67,8 +87,26 @@ public enum Dungeon {
         for (int i = 0; i + 1 < rep.length; i += 2) this.rep.put((Faction) rep[i], (Integer) rep[i + 1]);
     }
 
+    /** Большое подземелье, в которое входит этот хранитель (null — обычное). */
+    public String raid() {
+        if (key.startsWith("khaz_")) return "khazdarum";
+        if (key.startsWith("spire_")) return "abyss_spire";
+        return null;
+    }
+
+    /** Ключ места на карте (у больших подземелий — общий для всех хранителей). */
+    public String poiKey() {
+        return raid() != null ? raid() : key;
+    }
+
     public ResourceKey<Structure> structure() {
-        return ResourceKey.create(Registries.STRUCTURE, LitRPG.id("dungeon_" + key));
+        return ResourceKey.create(Registries.STRUCTURE, LitRPG.id(raid() != null ? "raid_" + raid() : "dungeon_" + key));
+    }
+
+    /** Подземелье по ключу места на карте (у больших — первый хранитель). */
+    public static Dungeon byPoi(String extra) {
+        for (Dungeon d : values()) if (d.poiKey().equals(extra)) return d;
+        return null;
     }
 
     public static Dungeon byKey(String key) {

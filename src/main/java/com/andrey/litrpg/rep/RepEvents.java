@@ -290,6 +290,8 @@ public final class RepEvents {
         if (!(event.getNewTarget() instanceof ServerPlayer p)) return;
         LivingEntity mob = event.getEntity();
         if (mob.getPersistentData().getBoolean(PROVOKED_TAG)) return;
+        // хранители и их свита не смотрят на репутацию
+        if (mob instanceof com.andrey.litrpg.entity.BossBase || mob.getPersistentData().hasUUID(com.andrey.litrpg.entity.BossBase.MINION_TAG)) return;
         Faction f = factionOf(mob);
         if (f == null || f == Faction.KINGDOM) return;
         PlayerStats s = StatsManager.get(p);

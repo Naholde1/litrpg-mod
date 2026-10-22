@@ -58,7 +58,7 @@ public class AtlasScreen extends Screen {
                 tip.add(Component.literal(p.name()).withStyle(s -> s.withColor(0xFFE8B0)));
                 tip.add(Component.literal(kind + " • X " + p.x() + ", Z " + p.z()).withStyle(s -> s.withColor(0xB0A080)));
                 if (p.type().equals("dungeon")) {
-                    var d = com.andrey.litrpg.world.Dungeon.byKey(p.extra());
+                    var d = com.andrey.litrpg.world.Dungeon.byPoi(p.extra());
                     if (d != null) tip.add(Component.literal("Уровень " + d.level).withStyle(s -> s.withColor(0xFF8060)));
                 }
             }

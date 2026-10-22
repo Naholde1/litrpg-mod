@@ -73,6 +73,35 @@ public class ModEntities {
             () -> EntityType.Builder.<com.andrey.litrpg.entity.boss.ArchdemonEntity>of(com.andrey.litrpg.entity.boss.ArchdemonEntity::new, MobCategory.MONSTER)
                     .sized(1.6f, 4.2f).fireImmune().clientTrackingRange(10).build("archdemon"));
 
+    // ---- хранители больших подземелий (2.16) ----
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.raid.BronzebeardEntity>> BRONZEBEARD = ENTITY_TYPES.register("bronzebeard",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.raid.BronzebeardEntity>of(com.andrey.litrpg.entity.raid.BronzebeardEntity::new, MobCategory.MONSTER)
+                    .sized(1.8f, 4.0f).clientTrackingRange(10).build("bronzebeard"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.raid.GhazEntity>> GHAZ = ENTITY_TYPES.register("ghaz",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.raid.GhazEntity>of(com.andrey.litrpg.entity.raid.GhazEntity::new, MobCategory.MONSTER)
+                    .sized(2.4f, 5.0f).clientTrackingRange(10).build("ghaz"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.raid.TorbaldEntity>> TORBALD = ENTITY_TYPES.register("torbald",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.raid.TorbaldEntity>of(com.andrey.litrpg.entity.raid.TorbaldEntity::new, MobCategory.MONSTER)
+                    .sized(1.4f, 3.2f).clientTrackingRange(10).build("torbald"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.raid.TwinEntity>> SOL_TWIN = ENTITY_TYPES.register("sol_twin",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.raid.TwinEntity>of(com.andrey.litrpg.entity.raid.TwinEntity::new, MobCategory.MONSTER)
+                    .sized(0.9f, 3.0f).fireImmune().clientTrackingRange(10).build("sol_twin"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.raid.TwinEntity>> LUNA_TWIN = ENTITY_TYPES.register("luna_twin",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.raid.TwinEntity>of(com.andrey.litrpg.entity.raid.TwinEntity::new, MobCategory.MONSTER)
+                    .sized(0.9f, 3.0f).clientTrackingRange(10).build("luna_twin"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.raid.ChronophageEntity>> CHRONOPHAGE = ENTITY_TYPES.register("chronophage",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.raid.ChronophageEntity>of(com.andrey.litrpg.entity.raid.ChronophageEntity::new, MobCategory.MONSTER)
+                    .sized(1.2f, 3.8f).clientTrackingRange(10).build("chronophage"));
+
+    public static final RegistryObject<EntityType<com.andrey.litrpg.entity.raid.XalatharEntity>> XALATHAR = ENTITY_TYPES.register("xalathar",
+            () -> EntityType.Builder.<com.andrey.litrpg.entity.raid.XalatharEntity>of(com.andrey.litrpg.entity.raid.XalatharEntity::new, MobCategory.MONSTER)
+                    .sized(3.0f, 4.2f).clientTrackingRange(10).build("xalathar"));
+
     public static final RegistryObject<EntityType<com.andrey.litrpg.entity.BossProjectile>> BOSS_PROJECTILE = ENTITY_TYPES.register("boss_projectile",
             () -> EntityType.Builder.<com.andrey.litrpg.entity.BossProjectile>of(com.andrey.litrpg.entity.BossProjectile::new, MobCategory.MISC)
                     .sized(0.4f, 0.4f).clientTrackingRange(6).updateInterval(5).build("boss_projectile"));

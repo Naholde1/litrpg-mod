@@ -67,6 +67,14 @@ public class BossAltarBlockEntity extends BlockEntity {
     /** Подземелье вокруг Печати (кешируется: поворот шаблона узнаётся по залам). */
     private AABB inside;
     private Vec3 landing;
+    /** Границы подземелья относительно Печати (из шаблона): x1 y1 z1 x2 y2 z2. */
+    private int[] box;
+    /** Ступень большого подземелья: после победы открываются рунные преграды этой ступени. */
+    private int stage = -1;
+    /** Печать держит только на арене и только пока хранитель пробуждён (большие подземелья). */
+    private boolean arenaOnly;
+    /** Открытые после победы рунные преграды (закроются, когда хранитель вернётся и рядом никого). */
+    private final List<BlockPos> doors = new ArrayList<>();
 
     public BossAltarBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlocks.BOSS_ALTAR_BE.get(), pos, state);
@@ -105,7 +113,7 @@ public class BossAltarBlockEntity extends BlockEntity {
             }
         }
 
-        if (!be.cleared() && be.bounds(sl)) {
+        if (!be.cleared() && (!be.arenaOnly || be.bossId != null) && be.bounds(sl)) {
             for (ServerPlayer p : sl.getEntitiesOfClass(ServerPlayer.class, be.inside,
                     p -> p.isAlive() && !p.isCreative() && !p.isSpectator())) {
                 DungeonSeal.seal(p, be, be.inside, be.landing);
@@ -118,6 +126,10 @@ public class BossAltarBlockEntity extends BlockEntity {
             // хранитель исчез без гибели (например, выгружен вдали) — ждём, вдруг вернётся
             if (now % 200 != 0) return;
             be.bossId = null;
+        }
+        if (now >= be.readyAt && !be.doors.isEmpty()
+                && sl.getEntitiesOfClass(Player.class, new AABB(pos).inflate(64, 32, 64), p -> !p.isSpectator()).isEmpty()) {
+            be.closeDoors(sl);
         }
         if (now < be.readyAt) return;
         if (now % 20 == 0) {
@@ -177,6 +189,7 @@ public class BossAltarBlockEntity extends BlockEntity {
         if (level instanceof ServerLevel sl) {
             DungeonSeal.release(sl, worldPosition);
             releaseFallen(sl);
+            if (stage >= 0) openDoors(sl);
         }
     }
 
@@ -196,6 +209,20 @@ public class BossAltarBlockEntity extends BlockEntity {
 
     private boolean bounds(ServerLevel sl) {
         if (inside != null) return true;
+        if (box != null && box.length == 6) {
+            // шаблон мог лечь повёрнутым — берём границы, общие для всех поворотов
+            int m = 0;
+            for (int i : new int[]{0, 2, 3, 5}) m = Math.max(m, Math.abs(box[i]));
+            if (arenaOnly) {
+                inside = new AABB(worldPosition.getX() + box[0], worldPosition.getY() + box[1], worldPosition.getZ() + box[2],
+                        worldPosition.getX() + box[3] + 1, worldPosition.getY() + box[4], worldPosition.getZ() + box[5] + 1);
+            } else {
+                inside = new AABB(worldPosition.getX() - m, worldPosition.getY() + box[1], worldPosition.getZ() - m,
+                        worldPosition.getX() + m + 1, worldPosition.getY() + box[4], worldPosition.getZ() + m + 1);
+            }
+            landing = Vec3.atBottomCenterOf(worldPosition.above());
+            return true;
+        }
         if (!sl.isAreaLoaded(worldPosition, 30)) return false;
         Rotation rot = Rotation.NONE;
         for (Rotation r : Rotation.values()) {
@@ -215,6 +242,55 @@ public class BossAltarBlockEntity extends BlockEntity {
         BlockPos l = worldPosition.offset(new BlockPos(-8, 0, -24).rotate(rot));
         landing = new Vec3(l.getX() + 0.5, l.getY(), l.getZ() + 0.5);
         return true;
+    }
+
+    /** В шаблоне границы записаны списком чисел. */
+    private static int[] boxFromList(CompoundTag tag) {
+        if (!tag.contains("Box", Tag.TAG_LIST)) return null;
+        ListTag l = tag.getList("Box", Tag.TAG_INT);
+        if (l.size() != 6) return null;
+        int[] b = new int[6];
+        for (int i = 0; i < 6; i++) b[i] = l.getInt(i);
+        return b;
+    }
+
+    /** Рунные преграды этой ступени рассыпаются — путь дальше открыт. */
+    private void openDoors(ServerLevel sl) {
+        int n = 0;
+        for (BlockPos p : BlockPos.betweenClosed(worldPosition.offset(-56, -24, -56), worldPosition.offset(56, 40, 56))) {
+            BlockState st = sl.getBlockState(p);
+            if (st.is(ModBlocks.SEAL_DOOR.get()) && st.getValue(SealDoorBlock.STAGE) == stage) {
+                doors.add(p.immutable());
+                sl.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+                if (n++ % 4 == 0) sl.sendParticles(ParticleTypes.ENCHANT, p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5, 20, 0.5, 0.5, 0.5, 0.5);
+            }
+        }
+        setChanged();
+        if (n > 0) {
+            sl.playSound(null, worldPosition, SoundEvents.BEACON_DEACTIVATE, SoundSource.BLOCKS, 2f, 0.7f);
+            for (ServerPlayer p : sl.getEntitiesOfClass(ServerPlayer.class, new AABB(worldPosition).inflate(56, 32, 56))) {
+                p.sendSystemMessage(Component.literal("◆ Рунная преграда пала — путь дальше открыт.").withStyle(ChatFormatting.AQUA));
+            }
+        }
+    }
+
+    private void closeDoors(ServerLevel sl) {
+        BlockState st = ModBlocks.SEAL_DOOR.get().defaultBlockState().setValue(SealDoorBlock.STAGE, Math.max(0, stage));
+        for (BlockPos p : doors) if (sl.getBlockState(p).isAir()) sl.setBlock(p, st, 3);
+        doors.clear();
+        setChanged();
+    }
+
+    public int stage() {
+        return stage;
+    }
+
+    public boolean arenaOnly() {
+        return arenaOnly;
+    }
+
+    public boolean awake() {
+        return bossId != null;
     }
 
     // ---------- сундук павших ----------
@@ -299,6 +375,10 @@ public class BossAltarBlockEntity extends BlockEntity {
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putString("Dungeon", dungeon);
+        if (box != null) tag.putIntArray("Box", box);
+        tag.putInt("Stage", stage);
+        tag.putBoolean("ArenaOnly", arenaOnly);
+        tag.put("Doors", new LongArrayTag(doors.stream().mapToLong(BlockPos::asLong).toArray()));
         tag.putLong("ReadyAt", readyAt);
         if (bossId != null) tag.putUUID("BossId", bossId);
         ListTag items = new ListTag();
@@ -311,6 +391,11 @@ public class BossAltarBlockEntity extends BlockEntity {
     public void load(CompoundTag tag) {
         super.load(tag);
         dungeon = tag.getString("Dungeon");
+        box = tag.contains("Box", Tag.TAG_INT_ARRAY) ? tag.getIntArray("Box") : boxFromList(tag);
+        stage = tag.contains("Stage") ? tag.getInt("Stage") : -1;
+        arenaOnly = tag.getBoolean("ArenaOnly");
+        doors.clear();
+        for (long l : tag.getLongArray("Doors")) doors.add(BlockPos.of(l));
         readyAt = tag.getLong("ReadyAt");
         bossId = tag.hasUUID("BossId") ? tag.getUUID("BossId") : null;
         fallen.clear();

@@ -184,7 +184,7 @@ public class LichEntity extends BossBase implements RangedAttackMob {
     public void performRangedAttack(LivingEntity target, float power) {
         if (isCasting()) return;
         int shots = phase > 0 ? 3 : 2;
-        for (int i = 0; i < shots; i++) shoot(BossProjectile.Kind.SHADOW, i == 0 ? target : randomOther(), 0.28f, 1.3f, 3f);
+        for (int i = 0; i < shots; i++) shoot(BossProjectile.Kind.SHADOW, i == 0 ? target : randomOther(), 0.2f, 1.3f, 3f);
         this.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
         this.playSound(SoundEvents.EVOKER_CAST_SPELL, 1.2f, 0.7f);
     }

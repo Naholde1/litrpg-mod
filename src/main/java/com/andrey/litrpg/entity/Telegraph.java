@@ -22,12 +22,12 @@ import java.util.function.Predicate;
 public final class Telegraph {
     public enum Shape { CIRCLE, RING, CONE, LINE }
 
-    public static final DustParticleOptions RED = new DustParticleOptions(new Vector3f(1f, 0.15f, 0.1f), 1.4f);
-    public static final DustParticleOptions ORANGE = new DustParticleOptions(new Vector3f(1f, 0.55f, 0.1f), 1.4f);
-    public static final DustParticleOptions PURPLE = new DustParticleOptions(new Vector3f(0.7f, 0.2f, 1f), 1.4f);
-    public static final DustParticleOptions BLUE = new DustParticleOptions(new Vector3f(0.35f, 0.75f, 1f), 1.4f);
-    public static final DustParticleOptions GREEN = new DustParticleOptions(new Vector3f(0.45f, 1f, 0.2f), 1.4f);
-    public static final DustParticleOptions GOLD = new DustParticleOptions(new Vector3f(1f, 0.85f, 0.2f), 1.6f);
+    public static final DustParticleOptions RED = new DustParticleOptions(new Vector3f(1f, 0.15f, 0.1f), 2.4f);
+    public static final DustParticleOptions ORANGE = new DustParticleOptions(new Vector3f(1f, 0.55f, 0.1f), 2.4f);
+    public static final DustParticleOptions PURPLE = new DustParticleOptions(new Vector3f(0.7f, 0.2f, 1f), 2.4f);
+    public static final DustParticleOptions BLUE = new DustParticleOptions(new Vector3f(0.35f, 0.75f, 1f), 2.4f);
+    public static final DustParticleOptions GREEN = new DustParticleOptions(new Vector3f(0.45f, 1f, 0.2f), 2.4f);
+    public static final DustParticleOptions GOLD = new DustParticleOptions(new Vector3f(1f, 0.85f, 0.2f), 2.6f);
 
     final Shape shape;
     Vec3 center;
@@ -100,13 +100,13 @@ public final class Telegraph {
         float urgency = 1f - (float) left / Math.max(1, total);
         switch (shape) {
             case CIRCLE, RING -> {
-                circle(sl, r1, y, (int) (r1 * 5) + 8);
-                if (shape == Shape.RING) circle(sl, r2, y, (int) (r2 * 5) + 6);
-                else circle(sl, r1 * urgency, y, (int) (r1 * 3 * urgency) + 3);
+                circle(sl, r1, y, (int) (r1 * 9) + 10);
+                if (shape == Shape.RING) circle(sl, r2, y, (int) (r2 * 9) + 8);
+                else circle(sl, r1 * urgency, y, (int) (r1 * 6 * urgency) + 4);
             }
             case CONE -> {
                 double a0 = Math.atan2(dir.z, dir.x), half = Math.toRadians(r2);
-                int n = (int) (r1 * 4);
+                int n = (int) (r1 * 6);
                 for (int i = 0; i <= n; i++) {
                     double t = r1 * i / n;
                     for (double a : new double[]{a0 - half, a0 + half}) {
@@ -123,7 +123,7 @@ public final class Telegraph {
             }
             case LINE -> {
                 Vec3 side = new Vec3(-dir.z, 0, dir.x).scale(r2);
-                int n = (int) (r1 * 2.5);
+                int n = (int) (r1 * 4);
                 for (int i = 0; i <= n; i++) {
                     Vec3 p = center.add(dir.scale(r1 * i / n));
                     sl.sendParticles(color, p.x + side.x, y, p.z + side.z, 1, 0, 0, 0, 0);

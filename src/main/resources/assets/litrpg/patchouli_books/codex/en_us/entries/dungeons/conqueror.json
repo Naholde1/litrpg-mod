@@ -2,7 +2,7 @@
   "name": "Регалии Покорителя",
   "icon": "litrpg:baalzar_horn",
   "category": "litrpg:dungeons",
-  "sortnum": 11,
+  "sortnum": 13,
   "pages": [
     {
       "type": "patchouli:text",

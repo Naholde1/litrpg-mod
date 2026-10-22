@@ -71,7 +71,11 @@ public final class BossFight {
             return;
         }
         if (!(e.getEntity() instanceof ServerPlayer p) || RELEASED.remove(p.getUUID())) return;
-        if (p.isCreative() || p.isSpectator() || fightAt(p.serverLevel(), p.position()) == null) return;
+        if (p.isCreative() || p.isSpectator()) return;
+        if (fightAt(p.serverLevel(), p.position()) == null) {
+            LitRPG.LOGGER.info("[bossfight] {} died outside boss fight", p.getName().getString());
+            return;
+        }
         e.setCanceled(true);
         p.setHealth(1f);
         p.clearFire();

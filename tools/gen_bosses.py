@@ -814,8 +814,179 @@ def rat_king():
     return _rat('rat_king', 'rat_king_fur', 0xFF3020, 2.1, crown=True)
 
 
+# ======================= хранители больших подземелий (2.16) =======================
+
+def bronzebeard():
+    """Бронзобород — механический страж дварфов: печь в груди, трубы с паром, молот-кузнец."""
+    leg = Part('leg_l', 'root', (6, 14, 0), [
+        Cube(2, 6, -4, 8, 9, 8, 'bronze'),
+        Cube(1, 0, -6, 10, 6, 11, 'bronze_dark', decals=[('front', 1, 1, 8, 1, 0xFFB040, True)]),
+    ], anim=[A('walk', 'x', 0.6)])
+    body = Part('body', 'root', (0, 14, 0), [
+        Cube(-10, 14, -6, 20, 7, 12, 'bronze_dark'),
+        Cube(-13, 21, -8, 26, 16, 15, 'bronze', decals=[
+            ('front', 9, 4, 8, 7, 0x2A1A10, False), ('front', 10, 5, 6, 5, 0xFF7A20, True), ('front', 11, 6, 4, 3, 0xFFE070, True),
+            ('front', 2, 2, 3, 3, 0xD8A040, False), ('front', 21, 2, 3, 3, 0xD8A040, False)]),
+        Cube(-9, 37, 3, 4, 10, 4, 'bronze_dark'), Cube(5, 37, 3, 4, 10, 4, 'bronze_dark'),
+        Cube(-9, 47, 3, 4, 2, 4, 'steam'), Cube(5, 47, 3, 4, 2, 4, 'steam'),
+    ], anim=[A('idle', 'x', 0.02, 0.1)])
+    head = Part('head', 'body', (0, 37, -3), [
+        Cube(-5, 36, -10, 10, 8, 9, 'bronze', decals=[('front', 2, 3, 6, 1, 0x60E8FF, True)]),
+        Cube(-7, 30, -11, 14, 7, 3, 'beard_metal'),
+        Cube(-5, 26, -10, 10, 4, 2, 'beard_metal'),
+        Cube(-6, 44, -8, 12, 2, 7, 'bronze_dark'),
+    ], anim=[A('look', 'y', 0.7), A('look', 'x', 0.4)])
+    arm = Part('arm_l', 'body', (16, 35, 0), [
+        Cube(13, 22, -5, 8, 14, 10, 'bronze'),
+        Cube(12, 13, -6, 10, 9, 12, 'bronze_dark', decals=[('front', 2, 3, 6, 2, 0xFFB040, True)]),
+    ], anim=[A('walk', 'x', 0.5, phase=math.pi), A('attack', 'x', 1.8), A('cast', 'x', -2.6), A('cast2', 'z', -1.0)])
+    arm_r = mirror(arm, 'arm_r')
+    hammer = Part('hammer', 'arm_r', (-17, 14, 0), [
+        Cube(-18, -6, -1, 2, 24, 2, 'wood'),
+        Cube(-23, -14, -5, 12, 9, 10, 'bronze_dark', decals=[('front', 4, 3, 4, 3, 0xFF8A30, True)]),
+    ])
+    return dict(name='bronzebeard', scale=1.15, shadow=1.3, parts=[leg, mirror(leg, 'leg_r'), body, head, arm, arm_r, hammer])
+
+
+def ghaz():
+    """Гхаз, Глубинный Червь — вставшее на дыбы тело из колец, пасть с тремя рядами зубов."""
+    s0 = Part('seg0', 'root', (0, 6, 6), [Cube(-10, 0, 0, 20, 12, 14, 'worm_skin')], anim=[A('idle', 'y', 0.06, 0.08)])
+    s1 = Part('seg1', 'seg0', (0, 10, 2), [Cube(-9, 10, -4, 18, 12, 14, 'worm_skin')], rot=(-25, 0, 0), anim=[A('idle', 'z', 0.08, 0.1)])
+    s2 = Part('seg2', 'seg1', (0, 20, -2), [Cube(-8, 20, -8, 16, 12, 13, 'worm_plate')], rot=(-15, 0, 0), anim=[A('idle', 'z', -0.1, 0.1, 1)])
+    head = Part('head', 'seg2', (0, 30, -6), [
+        Cube(-9, 30, -16, 18, 14, 14, 'worm_skin', decals=[('front', 3, 3, 12, 8, 0x3A0A0E, False), ('front', 5, 5, 8, 4, 0x8A1A1A, True)]
+             + [('front', 3 + i * 2, 10, 1, 2, 0xE8E0C8, False) for i in range(6)] + [('front', 3 + i * 2, 2, 1, 2, 0xE8E0C8, False) for i in range(6)]),
+        Cube(-11, 40, -12, 4, 6, 4, 'worm_plate'), Cube(7, 40, -12, 4, 6, 4, 'worm_plate'),
+        Cube(-3, 44, -10, 6, 4, 6, 'worm_plate'),
+    ], anim=[A('look', 'y', 0.5), A('look', 'x', 0.4), A('attack', 'x', 0.8), A('cast', 'x', -0.6)])
+    tail = Part('tail', 'seg0', (0, 4, 18), [Cube(-7, 0, 14, 14, 9, 14, 'worm_skin'), Cube(-4, 0, 28, 8, 6, 8, 'worm_plate')],
+                anim=[A('idle', 'y', 0.25, 0.12)])
+    return dict(name='ghaz', scale=1.3, shadow=1.6, parts=[s0, s1, s2, head, tail])
+
+
+def torbald():
+    """Торбальд Проклятый, Король-под-Горой: дух дварфа в проклятом золоте, корона, двуручная секира."""
+    leg = Part('leg_l', 'root', (4, 10, 0), [Cube(1, 0, -4, 6, 10, 8, 'king_armor')], anim=[A('walk', 'x', 0.6)])
+    body = Part('body', 'root', (0, 10, 0), [
+        Cube(-9, 10, -6, 18, 16, 12, 'king_armor', decals=[('front', 7, 4, 4, 4, 0x80FFB0, True)]),
+        Cube(-10, 8, -7, 20, 4, 14, 'gold'),
+        Cube(-12, 20, -2, 24, 8, 10, 'cape_green'),
+    ], anim=[A('idle', 'x', 0.03, 0.1)])
+    head = Part('head', 'body', (0, 26, -2), [
+        Cube(-5, 26, -8, 10, 9, 9, 'ghost_skin', decals=eyes(10, 4, 0x80FFB0, gap=2, size=(2, 1))),
+        Cube(-6, 17, -9, 12, 10, 3, 'beard_ghost'),
+        Cube(-6, 35, -8, 12, 3, 10, 'gold', decals=[('front', 2, 0, 1, 2, 0x40FF80, True), ('front', 9, 0, 1, 2, 0x40FF80, True)]),
+        Cube(-6, 38, -8, 2, 3, 2, 'gold'), Cube(4, 38, -8, 2, 3, 2, 'gold'), Cube(-1, 38, -8, 2, 4, 2, 'gold'),
+    ], anim=[A('look', 'y'), A('look', 'x', 0.5)])
+    arm = Part('arm_l', 'body', (11, 24, 0), [
+        Cube(9, 12, -4, 6, 13, 8, 'king_armor'),
+        Cube(8, 20, -5, 8, 6, 10, 'gold'),
+    ], anim=[A('walk', 'x', 0.5, phase=math.pi), A('attack', 'x', 2.0), A('cast', 'x', -2.4), A('cast2', 'z', -1.0)])
+    arm_r = mirror(arm, 'arm_r')
+    axe = Part('axe', 'arm_r', (-12, 12, 0), [
+        Cube(-13, -4, -1, 2, 30, 2, 'bone_dark'),
+        Cube(-21, 16, -1, 8, 10, 2, 'cursed_steel', decals=[('front', 1, 1, 1, 8, 0x80FFB0, True)]),
+        Cube(-11, 16, -1, 5, 8, 2, 'cursed_steel'),
+    ])
+    return dict(name='torbald', scale=1.2, shadow=1.0, parts=[leg, mirror(leg, 'leg_r'), body, head, arm, arm_r, axe])
+
+
+def _twin(name, armor, trim, halo, eye, blade):
+    leg = Part('leg_l', 'root', (3, 14, 0), [Cube(1, 0, -3, 5, 14, 6, armor)], anim=[A('walk', 'x', 0.6)])
+    body = Part('body', 'root', (0, 14, 0), [
+        Cube(-6, 14, -4, 12, 16, 8, armor, decals=[('front', 4, 6, 4, 4, eye, True)]),
+        Cube(-7, 12, -5, 14, 3, 10, trim),
+        Cube(-8, 26, -5, 16, 4, 10, trim),
+    ], anim=[A('idle', 'x', 0.03, 0.1)])
+    head = Part('head', 'body', (0, 30, 0), [
+        Cube(-4, 30, -4, 8, 8, 8, armor, decals=eyes(8, 3, eye, gap=2, size=(2, 1))),
+        Cube(-6, 29, 4, 12, 12, 1, halo),
+    ], anim=[A('look', 'y'), A('look', 'x', 0.5)])
+    arm = Part('arm_l', 'body', (8, 28, 0), [Cube(6, 14, -2, 4, 14, 4, armor), Cube(6, 24, -3, 5, 4, 6, trim)],
+               anim=[A('walk', 'x', 0.5, phase=math.pi), A('attack', 'x', 2.0), A('cast', 'x', -2.6), A('cast2', 'z', -1.2)])
+    arm_r = mirror(arm, 'arm_r')
+    sword = Part('sword', 'arm_r', (-8, 14, 0), [Cube(-9, -10, -1, 2, 24, 1, blade), Cube(-11, 13, -2, 6, 1, 3, trim)])
+    return dict(name=name, scale=1.25, shadow=0.8, parts=[leg, mirror(leg, 'leg_r'), body, head, arm, arm_r, sword])
+
+
+def sol_twin():
+    return _twin('sol_twin', 'sol_armor', 'gold', 'sun_halo', 0xFFF0A0, 'sun_blade')
+
+
+def luna_twin():
+    return _twin('luna_twin', 'luna_armor', 'luna_trim', 'moon_halo', 0xA0E0FF, 'moon_blade')
+
+
+def chronophage():
+    """Хронофаг, Пожиратель Времени: парящий балахон, песочные часы в груди, стрелки-клинки."""
+    body = Part('body', 'root', (0, 10, 0), [
+        Cube(-7, 2, -5, 14, 20, 10, 'chrono_robe'),
+        Cube(-8, 22, -6, 16, 8, 12, 'chrono_robe', decals=[('front', 6, 1, 4, 6, 0xFFE080, True)]),
+        Cube(-3, 18, -7, 6, 10, 2, 'hourglass'),
+    ], anim=[A('bob', 'y', 1.4, 0.1), A('idle', 'x', 0.04, 0.1)])
+    head = Part('head', 'body', (0, 30, 0), [
+        Cube(-5, 30, -5, 10, 10, 10, 'chrono_robe', decals=[('front', 2, 2, 6, 6, 0x0A0810, False)] + eyes(10, 5, 0xFFE080, gap=2, size=(1, 1))),
+        Cube(-6, 38, -5, 12, 3, 11, 'chrono_robe'),
+    ], anim=[A('look', 'y'), A('look', 'x', 0.5)])
+    arm = Part('arm_l', 'body', (9, 28, 0), [Cube(7, 12, -2, 4, 16, 4, 'chrono_robe'), Cube(8, -2, -1, 2, 14, 1, 'clock_hand')],
+               rot=(-15, 0, 0), anim=[A('idle', 'x', 0.15, 0.1), A('attack', 'x', 1.8), A('cast', 'x', -2.4), A('cast2', 'z', -1.2)])
+    ring = Part('ring', 'body', (0, 26, 0), [
+        Cube(-13, 25, -1, 2, 2, 2, 'hourglass'), Cube(11, 25, -1, 2, 2, 2, 'hourglass'),
+        Cube(-1, 25, -13, 2, 2, 2, 'hourglass'), Cube(-1, 25, 11, 2, 2, 2, 'hourglass'),
+    ], anim=[A('spin', 'y', 1.0, 0.06)])
+    return dict(name='chronophage', scale=1.3, shadow=0.6, parts=[body, head, arm, mirror(arm, 'arm_r'), ring])
+
+
+def xalathar():
+    """Ксал'Атар, Глаз Бездны: парящий глаз, веко, щупальца."""
+    eye = Part('eye', 'root', (0, 30, 0), [
+        Cube(-12, 18, -12, 24, 24, 24, 'void_flesh', decals=[
+            ('front', 5, 5, 14, 14, 0xE8E0D0, False), ('front', 8, 8, 8, 8, 0xC02040, True), ('front', 10, 10, 4, 4, 0x100008, False),
+            ('front', 11, 11, 1, 1, 0xFFFFFF, True)]),
+        Cube(-14, 38, -10, 28, 4, 20, 'void_plate'),
+        Cube(-14, 16, -10, 28, 4, 20, 'void_plate'),
+    ], anim=[A('bob', 'y', 2.0, 0.08), A('look', 'y', 0.8), A('look', 'x', 0.6), A('cast', 'x', -0.3)])
+    parts = [eye]
+    for i, (x, z) in enumerate(((-8, -6), (8, -6), (-8, 6), (8, 6), (0, 9))):
+        t = Part(f'tent{i}', 'eye', (x, 18, z), [
+            Cube(x - 2, 6, z - 2, 4, 12, 4, 'void_flesh'),
+            Cube(x - 1, -4, z - 1, 3, 10, 3, 'void_flesh', decals=[('front', 1, 2, 1, 1, 0xC060FF, True)]),
+        ], anim=[A('idle', 'x', 0.35, 0.12, i * 1.3), A('idle', 'z', 0.25, 0.1, i * 0.7)])
+        parts.append(t)
+    return dict(name='xalathar', scale=1.4, shadow=1.0, parts=parts)
+
+
+RAID_MATS = {
+    'bronze': m_metal(0xB07A3A, 0xE8B870, 0x6A4418),
+    'bronze_dark': m_metal(0x7A5228, 0xB07A3A, 0x3E2A12),
+    'beard_metal': m_hair(0xC88A40, 0x7A5228),
+    'steam': m_glow(0xE8F0F8, 0x8A98A8),
+    'worm_skin': m_skin(0x8A6A5A, 0x5A3E34, spots=0x3E2A22, spot_chance=0.2),
+    'worm_plate': m_chitin(0x5A4A40, 0xA88A70, band=3),
+    'king_armor': m_metal(0x3E4A44, 0x7A9A88, 0x1E2622),
+    'ghost_skin': m_glow(0x8AE0B0, 0x3A8A6A),
+    'beard_ghost': m_hair(0xB0F0D0, 0x5AA088),
+    'cape_green': m_cloth(0x1E4A30, 0x0E2418, tatter=True),
+    'cursed_steel': m_metal(0x4A5A54, 0x9AD8B8, 0x1E2A26, rivets=False),
+    'sol_armor': m_metal(0xE8C060, 0xFFF4C0, 0x9A7020, rivets=False),
+    'sun_halo': m_glow(0xFFE070, 0xFF9A30),
+    'sun_blade': m_glow(0xFFF8D0, 0xFFC040),
+    'luna_armor': m_metal(0xA8B8D0, 0xE8F0FF, 0x5A6A88, rivets=False),
+    'luna_trim': m_metal(0x5A6A9A, 0xA8B8E8, 0x2A3458, rivets=False),
+    'moon_halo': m_glow(0xD0E8FF, 0x6A9AE0),
+    'moon_blade': m_glow(0xE0F4FF, 0x80B8FF),
+    'chrono_robe': m_cloth(0x3A2E4A, 0x1E1628, tatter=True),
+    'hourglass': m_glow(0xFFE8A0, 0xC89A40),
+    'clock_hand': m_metal(0xD8C890, 0xFFF8D0, 0x8A7A4A, rivets=False),
+    'void_flesh': m_skin(0x3A1A4A, 0x1E0A28, spots=0x6A2A8A, spot_chance=0.18),
+    'void_plate': m_chitin(0x1A1024, 0x5A3A7A, band=4),
+}
+MATS.update(RAID_MATS)
+
+
 MODELS = [ruin_golem, rotting_ent, spider_queen, swamp_hag, minotaur, frost_giant, flame_lord, archdemon,
-          stone_troll, frost_wraith, forest_wisp, ash_imp, bog_lurker, sand_scorpion, grave_knight, rat, rat_king]
+          stone_troll, frost_wraith, forest_wisp, ash_imp, bog_lurker, sand_scorpion, grave_knight, rat, rat_king,
+          bronzebeard, ghaz, torbald, sol_twin, luna_twin, chronophage, xalathar]
 
 
 # ======================= развёртка и рисование =======================
@@ -1067,6 +1238,13 @@ NAMES = {
     'grave_knight': ('Могильный рыцарь', 'Grave Knight'),
     'rat': ('Крыса', 'Rat'),
     'rat_king': ('Крысиный король', 'Rat King'),
+    'bronzebeard': ('Бронзобород, Механический страж', 'Bronzebeard the Construct'),
+    'ghaz': ('Гхаз, Глубинный Червь', 'Ghaz the Deep Worm'),
+    'torbald': ('Торбальд Проклятый, Король-под-Горой', 'Torbald the Accursed'),
+    'sol_twin': ('Сол, Близнец Рассвета', 'Sol, Twin of Dawn'),
+    'luna_twin': ('Луна, Близнец Сумерек', 'Luna, Twin of Dusk'),
+    'chronophage': ('Хронофаг, Пожиратель Времени', 'Chronophage the Time-Eater'),
+    'xalathar': ("Ксал'Атар, Глаз Бездны", "Xal'athar, Eye of the Abyss"),
 }
 
 

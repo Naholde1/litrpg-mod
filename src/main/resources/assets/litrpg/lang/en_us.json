@@ -3626,5 +3626,19 @@
   "block.litrpg.relic": "Power Node",
   "block.litrpg.seal_door": "Rune Barrier",
   "death.attack.litrpg.boss": "%1$s was crushed by %2$s",
-  "death.attack.litrpg.boss.player": "%1$s was crushed by %2$s"
+  "death.attack.litrpg.boss.player": "%1$s was crushed by %2$s",
+  "entity.litrpg.bronzebeard": "Bronzebeard the Construct",
+  "item.litrpg.bronzebeard_spawn_egg": "Bronzebeard the Construct Spawn Egg",
+  "entity.litrpg.ghaz": "Ghaz the Deep Worm",
+  "item.litrpg.ghaz_spawn_egg": "Ghaz the Deep Worm Spawn Egg",
+  "entity.litrpg.torbald": "Torbald the Accursed",
+  "item.litrpg.torbald_spawn_egg": "Torbald the Accursed Spawn Egg",
+  "entity.litrpg.sol_twin": "Sol, Twin of Dawn",
+  "item.litrpg.sol_twin_spawn_egg": "Sol, Twin of Dawn Spawn Egg",
+  "entity.litrpg.luna_twin": "Luna, Twin of Dusk",
+  "item.litrpg.luna_twin_spawn_egg": "Luna, Twin of Dusk Spawn Egg",
+  "entity.litrpg.chronophage": "Chronophage the Time-Eater",
+  "item.litrpg.chronophage_spawn_egg": "Chronophage the Time-Eater Spawn Egg",
+  "entity.litrpg.xalathar": "Xal'athar, Eye of the Abyss",
+  "item.litrpg.xalathar_spawn_egg": "Xal'athar, Eye of the Abyss Spawn Egg"
 }
