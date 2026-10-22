@@ -623,7 +623,7 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
         startTrade(sp);
     }
 
-    /** Скупка: предметы Системы и жетоны народов за монеты. */
+    /** Скупка: предметы Системы, жетоны народов и ценная добыча (трофеи, камни, свитки) за монеты. */
     private void sell(ServerPlayer p, ItemStack held, int rep) {
         int price;
         GearData d = GearData.get(held);
@@ -631,8 +631,15 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
             price = d.value();
         } else if (NpcTrades.isToken(held)) {
             price = 20 * held.getCount();
+        } else if (com.andrey.litrpg.gear.SellPrices.unit(held) > 0) {
+            price = com.andrey.litrpg.gear.SellPrices.stack(held);
+            if (price < 1) {
+                StatsManager.message(p, Component.literal(getName().getString() + ": «За такую мелочь и медяка не дам. Принеси побольше».")
+                        .withStyle(ChatFormatting.GRAY));
+                return;
+            }
         } else {
-            StatsManager.message(p, Component.literal(getName().getString() + ": «Это мне не нужно. Неси снаряжение Системы или жетоны народов».")
+            StatsManager.message(p, Component.literal(getName().getString() + ": «Это мне не нужно. Неси снаряжение Системы, трофеи с чудовищ или ценности».")
                     .withStyle(ChatFormatting.GRAY));
             return;
         }
@@ -644,7 +651,7 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
             if (!p.getInventory().add(c)) p.drop(c, false);
         }
         StatsManager.message(p, Component.literal("Продано за " + GearData.coins(paid)).withStyle(ChatFormatting.YELLOW));
-        RepEvents.change(p, npc.faction, 1);
+        if (paid >= 5) RepEvents.change(p, npc.faction, 1);
         playSound(SoundEvents.VILLAGER_YES, 1f, 1f);
     }
 

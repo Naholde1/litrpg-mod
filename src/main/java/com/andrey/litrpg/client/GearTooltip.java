@@ -29,7 +29,10 @@ public final class GearTooltip {
     public static void onTooltip(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
         GearData d = GearData.get(stack);
-        if (d == null) return;
+        if (d == null) {
+            sellLine(stack, event.getToolTip());
+            return;
+        }
         List<Component> tip = event.getToolTip();
         int at = Math.min(1, tip.size());
         java.util.List<Component> lines = new java.util.ArrayList<>();
@@ -86,6 +89,17 @@ public final class GearTooltip {
             lines.add(Component.literal("«" + GearGen.lore(d.unique) + "»").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
         }
         tip.addAll(at, lines);
+    }
+
+    /** Добыча, которую скупают торговцы: цена стопки (и штуки) — Shift+ПКМ по торговцу. */
+    private static void sellLine(ItemStack stack, List<Component> tip) {
+        float unit = com.andrey.litrpg.gear.SellPrices.unit(stack);
+        if (unit <= 0) return;
+        int total = com.andrey.litrpg.gear.SellPrices.stack(stack);
+        String s = "Цена: " + (total < 1 ? "меньше медяка" : GearData.coins(total));
+        if (stack.getCount() > 1 && unit >= 1) s += " (штука — " + GearData.coins(Math.round(unit)) + ")";
+        tip.add(Math.min(1, tip.size()), Component.literal(s).withStyle(ChatFormatting.YELLOW));
+        tip.add(Math.min(2, tip.size()), Component.literal("Shift+ПКМ по торговцу — продать").withStyle(ChatFormatting.DARK_GRAY));
     }
 
     private static String fmt(GearBonus b, float v) {
