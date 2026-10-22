@@ -296,6 +296,19 @@ public final class DevCommands {
                     LitRPG.LOGGER.info("[dev] service {} {} at {} -> money {}", a[1], a[2], npc.blockPosition(), com.andrey.litrpg.npc.Wallet.total(p));
                     continue;
                 }
+                if (line.equals("devwho")) {
+                    // где Dev, держит ли его Печать подземелья и что у него в инвентаре
+                    var p = server.getPlayerList().getPlayerByName("Dev");
+                    if (p == null) continue;
+                    StringBuilder inv = new StringBuilder();
+                    for (int i = 0; i < p.getInventory().getContainerSize(); i++) {
+                        var s = p.getInventory().getItem(i);
+                        if (!s.isEmpty()) inv.append(i).append('=').append(s.getHoverName().getString()).append(' ');
+                    }
+                    LitRPG.LOGGER.info("[dev] who {} alive={} sealed={} inv: {}", p.blockPosition(), p.isAlive(),
+                            com.andrey.litrpg.world.DungeonSeal.sealed(p), inv);
+                    continue;
+                }
                 if (line.equals("devthreat")) {
                     var p = server.getPlayerList().getPlayerByName("Dev");
                     if (p == null) continue;
