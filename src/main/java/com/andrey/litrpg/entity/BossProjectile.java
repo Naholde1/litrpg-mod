@@ -86,6 +86,8 @@ public class BossProjectile extends ThrowableItemProjectile {
 
     private static final EntityDataAccessor<Integer> KIND = SynchedEntityData.defineId(BossProjectile.class, EntityDataSerializers.INT);
     private float damage = 6f;
+    /** Сила в долях «единицы» хранителя ({@link BossDamage}); 0 — обычный урон {@link #damage}. */
+    private float power = 0f;
     private int life = 0;
 
     public BossProjectile(EntityType<? extends BossProjectile> type, Level level) {
@@ -144,9 +146,19 @@ public class BossProjectile extends ThrowableItemProjectile {
         Entity e = hit.getEntity();
         if (isFriend(e)) return;
         if (e instanceof LivingEntity le && kind().splash <= 0) {
-            le.hurt(damageSources().mobProjectile(this, getOwner() instanceof LivingEntity o ? o : null), damage);
+            strike(le);
             effect(le);
         }
+    }
+
+    public BossProjectile power(float power) {
+        this.power = power;
+        return this;
+    }
+
+    private void strike(LivingEntity le) {
+        if (power > 0 && getOwner() instanceof BossBase b) b.hit(le, power);
+        else le.hurt(damageSources().mobProjectile(this, getOwner() instanceof LivingEntity o ? o : null), damage);
     }
 
     private boolean isFriend(Entity e) {
@@ -198,7 +210,7 @@ public class BossProjectile extends ThrowableItemProjectile {
             LivingEntity owner = getOwner() instanceof LivingEntity o ? o : null;
             for (LivingEntity le : sl.getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(k.splash),
                     e -> !isFriend(e) && e.position().distanceTo(p) <= k.splash + 0.5)) {
-                le.hurt(damageSources().mobProjectile(this, owner), damage);
+                strike(le);
                 effect(le);
             }
             sl.sendParticles(k == Kind.ROCK ? k.trail() : k == Kind.BOMB ? ParticleTypes.LARGE_SMOKE : ParticleTypes.LAVA, p.x, p.y, p.z, 24, k.splash * 0.4, 0.3, k.splash * 0.4, 0.1);
@@ -225,6 +237,7 @@ public class BossProjectile extends ThrowableItemProjectile {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putFloat("Damage", damage);
+        tag.putFloat("Power", power);
         tag.putInt("Kind", kind().ordinal());
     }
 
@@ -232,6 +245,7 @@ public class BossProjectile extends ThrowableItemProjectile {
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         damage = tag.getFloat("Damage");
+        power = tag.getFloat("Power");
         entityData.set(KIND, tag.getInt("Kind"));
     }
 }

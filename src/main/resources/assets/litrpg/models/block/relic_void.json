@@ -1,0 +1,7 @@
+{
+ "parent": "minecraft:block/cube_column",
+ "textures": {
+  "side": "litrpg:block/relic_void",
+  "end": "litrpg:block/relic_void_top"
+ }
+}

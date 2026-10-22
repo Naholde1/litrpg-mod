@@ -3629,5 +3629,9 @@
   "class.litrpg.void_invoker": "Чародей пустоты",
   "class.litrpg.void_invoker.desc": "Заклинатель сфер тьмы: Тень, Яд и Пустота сплетаются в разрывы, коллапсы и ядовитые вихри.",
   "class.litrpg.void_invoker.trait": "Шёпот бездны",
-  "class.litrpg.void_invoker.trait.desc": "+8% силы навыков, +4% уклонения"
+  "class.litrpg.void_invoker.trait.desc": "+8% силы навыков, +4% уклонения",
+  "block.litrpg.relic": "Узел силы",
+  "block.litrpg.seal_door": "Рунная преграда",
+  "death.attack.litrpg.boss": "%1$s пал от руки %2$s",
+  "death.attack.litrpg.boss.player": "%1$s пал от руки %2$s"
 }

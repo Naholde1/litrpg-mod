@@ -107,6 +107,12 @@ public class CombatEvents {
         DamageSource src = event.getSource();
         float amount = event.getAmount();
 
+        // урон хранителей: роль, броня и щит (BossDamage)
+        if (src.is(com.andrey.litrpg.entity.BossDamage.BOSS)) {
+            amount = com.andrey.litrpg.entity.BossDamage.mitigate(target, src, amount);
+            event.setAmount(amount);
+        }
+
         // ---------- игрок получает урон ----------
         if (target instanceof ServerPlayer victim) {
             PlayerStats vs = StatsManager.get(victim);
@@ -132,6 +138,7 @@ public class CombatEvents {
         if (!(src.getEntity() instanceof ServerPlayer player) || target instanceof Player) return;
         PlayerStats s = StatsManager.get(player);
         amount *= outgoingMult(s.getLevel(), MobLevels.getLevel(target));
+        if (s.getRole() != null) amount *= s.getRole().damageMult();
 
         boolean melee = src.getDirectEntity() == player;
         boolean arrow = src.getDirectEntity() instanceof AbstractArrow;

@@ -24,6 +24,17 @@ public class ModBlocks {
                     .strength(-1.0f, 3600000.0f).noLootTable().sound(SoundType.DEEPSLATE_BRICKS)
                     .lightLevel(s -> 9).pushReaction(PushReaction.BLOCK)));
 
+    /** Узел силы хранителя (ломается за пару секунд, не выпадает). */
+    public static final RegistryObject<Block> RELIC = BLOCKS.register("relic",
+            () -> new com.andrey.litrpg.block.RelicBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE)
+                    .strength(2.0f, 1200.0f).noLootTable().sound(SoundType.AMETHYST).lightLevel(s -> 12)));
+
+    /** Рунная преграда большого подземелья. Неразрушима. */
+    public static final RegistryObject<Block> SEAL_DOOR = BLOCKS.register("seal_door",
+            () -> new com.andrey.litrpg.block.SealDoorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_CYAN)
+                    .strength(-1.0f, 3600000.0f).noLootTable().sound(SoundType.DEEPSLATE_BRICKS).lightLevel(s -> 7)
+                    .pushReaction(PushReaction.BLOCK)));
+
     @SuppressWarnings("ConstantConditions")
     public static final RegistryObject<BlockEntityType<BossAltarBlockEntity>> BOSS_ALTAR_BE = BLOCK_ENTITIES.register("boss_altar",
             () -> BlockEntityType.Builder.of(BossAltarBlockEntity::new, BOSS_ALTAR.get()).build(null));

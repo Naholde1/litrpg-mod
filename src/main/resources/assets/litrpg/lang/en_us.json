@@ -3622,5 +3622,9 @@
   "class.litrpg.void_invoker": "Void Invoker",
   "class.litrpg.void_invoker.desc": "Заклинатель сфер тьмы: Тень, Яд и Пустота сплетаются в разрывы, коллапсы и ядовитые вихри.",
   "class.litrpg.void_invoker.trait": "Шёпот бездны",
-  "class.litrpg.void_invoker.trait.desc": "+8% силы навыков, +4% уклонения"
+  "class.litrpg.void_invoker.trait.desc": "+8% силы навыков, +4% уклонения",
+  "block.litrpg.relic": "Power Node",
+  "block.litrpg.seal_door": "Rune Barrier",
+  "death.attack.litrpg.boss": "%1$s was crushed by %2$s",
+  "death.attack.litrpg.boss.player": "%1$s was crushed by %2$s"
 }

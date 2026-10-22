@@ -1,0 +1,16 @@
+{
+ "variants": {
+  "stage=0": {
+   "model": "litrpg:block/seal_door"
+  },
+  "stage=1": {
+   "model": "litrpg:block/seal_door"
+  },
+  "stage=2": {
+   "model": "litrpg:block/seal_door"
+  },
+  "stage=3": {
+   "model": "litrpg:block/seal_door"
+  }
+ }
+}

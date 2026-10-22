@@ -1,10 +1,14 @@
 package com.andrey.litrpg.entity.boss;
 
 import com.andrey.litrpg.entity.BossBase;
+import com.andrey.litrpg.entity.BossDamage;
 import com.andrey.litrpg.entity.BossProjectile;
-import com.andrey.litrpg.util.Scheduler;
-import net.minecraft.core.particles.BlockParticleOption;
+import com.andrey.litrpg.entity.Telegraph;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.BossEvent;
@@ -15,112 +19,194 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CampfireBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
- * Имир, Ледяной великан (ур. 38). Ледяная нова, волна ледяных шипов,
- * глыбы льда и стужа, призывающая зимних стрелков. Во второй фазе —
- * буран над всей ареной, в третьей — ледяная броня.
+ * Имир, Ледяной великан (ур. 38). Идея: «держись у огня». На арене копится Стужа: каждые 5 с +1,
+ * на 10 — заморозка и тяжёлый урон. Сбросить Стужу можно только у горящего костра. Ледяное дыхание
+ * Имира гасит костры — их нужно разжигать заново (огниво, огненный заряд). Сердца стужи (узлы силы)
+ * каждые 30 с одевают его в ледяной щит.
  */
 public class FrostGiantEntity extends BossBase {
-    private int blizzard = 0;
+    private final Map<UUID, Integer> chill = new HashMap<>();
+    private int blizzard;
 
     public FrostGiantEntity(EntityType<? extends Monster> type, Level level) {
         super(type, level, BossEvent.BossBarColor.BLUE);
-        var ice = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.PACKED_ICE.defaultBlockState());
-        skill("Ледяная нова", 180, 30, 2)
-                .when(t -> distanceTo(t) < 8)
-                .during(left -> { if (left % 4 == 0) ring(ParticleTypes.SNOWFLAKE, position(), 7, 36); })
-                .act(t -> {
-                    aoe(position(), 7.5, 18f, e -> {
-                        e.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 2));
-                        e.setTicksFrozen(e.getTicksRequiredToFreeze() + 140);
-                        knockFrom(e, position(), 0.8, 0.3);
-                    });
-                    burst(ice, position().add(0, 0.5, 0), 120, 4, 0.2);
-                    burst(ParticleTypes.SNOWFLAKE, position().add(0, 1, 0), 80, 4, 0.1);
-                    sound(SoundEvents.GLASS_BREAK, 2f, 0.5f);
+        skill("Ледяное дыхание", 260, 30, 2).first(140)
+                .begin(t -> {
+                    Vec3 d = dirTo(t);
+                    cone(position(), d, 16, 35, 30, 0.7f).color(Telegraph.BLUE)
+                            .then(e -> addChill(e, 3))
+                            .fx(c -> {
+                                int out = douseFires(c, d, 16, 35);
+                                burst(ParticleTypes.SNOWFLAKE, c.add(d.scale(6)).add(0, 1.5, 0), 120, 4, 0.1);
+                                sound(SoundEvents.POWDER_SNOW_STEP, 3f, 0.4f);
+                                if (out > 0) shoutAll("Дыхание Имира погасило костров: " + out + ". Разожгите их снова!");
+                            });
                 });
-        skill("Ледяные шипы", 140, 20, 1)
-                .act(t -> {
-                    Vec3 dir = t.position().subtract(position()).multiply(1, 0, 1).normalize();
-                    Set<UUID> hit = new HashSet<>();
-                    for (int i = 1; i <= 18; i++) {
-                        final Vec3 p = position().add(dir.scale(i * 1.1));
-                        Scheduler.later(i, () -> {
-                            if (!isAlive()) return;
-                            burst(ice, p.add(0, 0.6, 0), 14, 0.3, 0.1);
-                            burst(ParticleTypes.SNOWFLAKE, p.add(0, 1, 0), 6, 0.2, 0.05);
-                            for (LivingEntity e : enemiesAround(p, 1.6)) {
-                                if (hit.add(e.getUUID())) {
-                                    e.hurt(damageSources().mobAttack(this), 20f);
-                                    e.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 3));
-                                    e.push(0, 0.9, 0);
-                                    e.hurtMarked = true;
-                                }
-                            }
-                        });
+        skill("Ледяная нова", 220, 34, 2).first(80)
+                .begin(t -> circle(position(), 7.5, 34, 0.6f).color(Telegraph.BLUE).then(e -> addChill(e, 2))
+                        .fx(c -> {
+                            burst(ParticleTypes.SNOWFLAKE, c.add(0, 1, 0), 100, 4, 0.2);
+                            sound(SoundEvents.GLASS_BREAK, 2f, 0.5f);
+                        }));
+        skill("Ледяные шипы", 200, 24, 1).first(180)
+                .begin(t -> {
+                    for (LivingEntity e : fighters()) {
+                        if (e == getTarget()) continue;
+                        line(position(), dirTo(e), 22, 1.3, 24, 0.7f).color(Telegraph.BLUE).then(x -> addChill(x, 1))
+                                .fx(c -> sound(SoundEvents.AMETHYST_CLUSTER_BREAK, 2f, 0.5f));
                     }
-                    sound(SoundEvents.AMETHYST_BLOCK_BREAK, 2f, 0.5f);
                 });
-        skill("Глыба льда", 100, 15, 1)
-                .when(t -> distanceTo(t) > 6)
+        skill("Сокрушение льдом", 130, 18, 1).first(50)
+                .when(t -> distanceTo(t) < 6)
+                .begin(t -> cone(position(), dirTo(t), 6, 35, 18, 1.0f).then(e -> BossDamage.sunder(e, 1))
+                        .fx(c -> sound(SoundEvents.ANVIL_LAND, 1.5f, 0.4f)));
+        skill("Глыба льда", 120, 14, 1).silent()
+                .act(t -> shoot(BossProjectile.Kind.ICE, randomOther(), 0.4f, 1.1f, 2f));
+        skill("Буран", 600, 40, 2).fromPhase(1).first(200)
                 .act(t -> {
-                    int n = phase > 1 ? 3 : 1;
-                    for (int i = 0; i < n; i++) shoot(BossProjectile.Kind.ICE, t, 16f, 1.2f, i == 0 ? 1f : 8f);
-                    sound(SoundEvents.SNOW_GOLEM_SHOOT, 1.5f, 0.4f);
-                });
-        skill("Зов зимы", 400, 30, 2)
-                .act(t -> {
-                    summon(EntityType.STRAY, 3, 6, 36, null);
-                    sound(SoundEvents.POLAR_BEAR_WARNING, 2f, 0.6f);
-                });
-        skill("Буран", 320, 40, 2).fromPhase(1)
-                .during(left -> burst(ParticleTypes.SNOWFLAKE, position().add(0, 4, 0), 10, 6, 0.05))
-                .act(t -> {
-                    blizzard = 200;
-                    sound(SoundEvents.ELYTRA_FLYING, 1.5f, 0.4f);
+                    blizzard = 20 * 15;
+                    shoutAll("Буран! 15 с Стужа копится вдвое быстрее — держитесь у костров.");
+                    sound(SoundEvents.ELYTRA_FLYING, 2f, 0.4f);
                 });
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, 1000.0)
-                .add(Attributes.ATTACK_DAMAGE, 24.0)
+                .add(Attributes.ATTACK_DAMAGE, 20.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.26)
-                .add(Attributes.ARMOR, 16.0)
-                .add(Attributes.ARMOR_TOUGHNESS, 6.0)
+                .add(Attributes.ARMOR, 14.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0)
                 .add(Attributes.FOLLOW_RANGE, 48.0)
-                .add(Attributes.ATTACK_KNOCKBACK, 2.0);
+                .add(Attributes.ATTACK_KNOCKBACK, 1.5);
     }
 
     @Override public int getBossLevel() { return 38; }
-    @Override public int getXpReward() { return 4500; }
+    @Override public int getXpReward() { return 4800; }
 
     @Override
     protected float toughness() {
-        return 2.0f;
+        return 2.2f;
     }
 
     @Override
     protected float[] phaseThresholds() {
         return new float[]{0.6f, 0.3f};
+    }
+
+    @Override
+    protected List<String> intro() {
+        return List.of("Стужа: каждые 5 с +1. На 10 — вы замерзаете. Сбросить Стужу можно у ГОРЯЩЕГО костра.",
+                "«Ледяное дыхание» гасит костры. Разжигайте их огнивом или огненным зарядом.",
+                "Сердца стужи (ледяные узлы) каждые 30 с дают Имиру щит. Разбейте их.",
+                "Огонь бьёт Имира почти вдвое, кирки колют лёд, холод его не берёт.");
+    }
+
+    @Override
+    protected float weaponMult(BossDamage.Weapon w, DamageSource src) {
+        return switch (w) {
+            case FIRE -> 1.8f;
+            case PICKAXE -> 1.3f;
+            case FROST -> 0f;
+            default -> 1f;
+        };
+    }
+
+    private void addChill(LivingEntity e, int n) {
+        int v = chill.getOrDefault(e.getUUID(), 0) + n;
+        if (v >= 10) {
+            chill.put(e.getUUID(), 0);
+            hit(e, 0.7f);
+            e.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 80, 6));
+            e.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 80, 4));
+            e.setTicksFrozen(e.getTicksRequiredToFreeze() + 100);
+            burst(ParticleTypes.SNOWFLAKE, e.position().add(0, 1, 0), 40, 0.5, 0.05);
+            tip(e, "Вы замёрзли!", ChatFormatting.AQUA);
+            return;
+        }
+        chill.put(e.getUUID(), v);
+        if (e instanceof ServerPlayer p) {
+            p.displayClientMessage(Component.literal("❄ Стужа: " + v + "/10" + (v >= 7 ? " — к костру!" : ""))
+                    .withStyle(v >= 7 ? ChatFormatting.RED : ChatFormatting.AQUA), true);
+        }
+        e.setTicksFrozen(Math.min(e.getTicksRequiredToFreeze() - 1, v * 14));
+    }
+
+    private boolean nearFire(LivingEntity e) {
+        for (BlockPos p : BlockPos.betweenClosed(e.blockPosition().offset(-3, -1, -3), e.blockPosition().offset(3, 2, 3))) {
+            BlockState st = level().getBlockState(p);
+            if (st.getBlock() instanceof CampfireBlock && st.getValue(CampfireBlock.LIT)) return true;
+        }
+        return e.isOnFire();
+    }
+
+    /** Погасить костры в конусе дыхания. */
+    private int douseFires(Vec3 c, Vec3 dir, double len, double half) {
+        int n = 0;
+        BlockPos o = BlockPos.containing(c);
+        int r = (int) len;
+        for (BlockPos p : BlockPos.betweenClosed(o.offset(-r, -2, -r), o.offset(r, 4, r))) {
+            BlockState st = level().getBlockState(p);
+            if (!(st.getBlock() instanceof CampfireBlock) || !st.getValue(CampfireBlock.LIT)) continue;
+            Vec3 to = Vec3.atCenterOf(p).subtract(c);
+            double d = Math.sqrt(to.x * to.x + to.z * to.z);
+            if (d > len || d > 0.5 && (to.x * dir.x + to.z * dir.z) / d < Math.cos(Math.toRadians(half))) continue;
+            level().setBlock(p, st.setValue(CampfireBlock.LIT, false), 3);
+            n++;
+        }
+        return n;
+    }
+
+    @Override
+    protected void bossTick() {
+        if (getTarget() == null) return;
+        int every = blizzard > 0 ? 50 : 100;
+        if (blizzard > 0) {
+            blizzard--;
+            if (blizzard % 4 == 0) burst(ParticleTypes.SNOWFLAKE, arena().add(0, 4, 0), 50, 12, 0.08);
+        }
+        if (fightTicks % 20 == 0) {
+            for (LivingEntity e : fighters()) {
+                if (nearFire(e)) {
+                    int v = chill.getOrDefault(e.getUUID(), 0);
+                    if (v > 0) {
+                        chill.put(e.getUUID(), Math.max(0, v - 2));
+                        e.setTicksFrozen(0);
+                        if (e instanceof ServerPlayer p) {
+                            p.displayClientMessage(Component.literal("🔥 Тепло: Стужа " + Math.max(0, v - 2) + "/10").withStyle(ChatFormatting.GOLD), true);
+                        }
+                    }
+                } else if (fightTicks % every == 0) {
+                    addChill(e, 1);
+                }
+            }
+        }
+        if (fightTicks > 0 && fightTicks % 600 == 0) {
+            int hearts = relicsAlive();
+            if (hearts > 0) {
+                setBarrier(getMaxHealth() * 0.08f * hearts);
+                shoutAll("Сердца стужи одели Имира в лёд (" + hearts + "). Разбейте сердца!");
+                sound(SoundEvents.GLASS_PLACE, 2f, 0.4f);
+            }
+        }
+    }
+
+    @Override
+    protected void onRelicBroken(int alive) {
+        shoutAll("Сердце стужи разбито. Осталось: " + alive);
+        stagger(60, null);
     }
 
     @Override
@@ -130,29 +216,7 @@ public class FrostGiantEntity extends BossBase {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, true));
-        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.6));
-        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 16.0f));
-        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, false));
-    }
-
-    @Override
-    protected void customServerAiStep() {
-        super.customServerAiStep();
-        if (blizzard > 0) {
-            blizzard--;
-            if (blizzard % 4 == 0) burst(ParticleTypes.SNOWFLAKE, position().add(0, 3, 0), 40, 9, 0.08);
-            if (blizzard % 20 == 0) {
-                for (LivingEntity e : enemiesAround(18)) {
-                    e.hurt(damageSources().freeze(), 4f);
-                    e.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 30, 1));
-                    e.setTicksFrozen(Math.min(e.getTicksRequiredToFreeze() + 60, e.getTicksFrozen() + 40));
-                }
-            }
-        }
+        meleeGoals(1.0);
     }
 
     @Override
@@ -161,8 +225,7 @@ public class FrostGiantEntity extends BossBase {
             shout("Зима... приходит за всеми.");
         } else {
             shout("Лёд... крепче стали!");
-            addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 20 * 600, 1));
-            summon(EntityType.STRAY, 2, 6, 36, null);
+            summon(EntityType.STRAY, 3, 6, 36, null);
         }
         sound(SoundEvents.POLAR_BEAR_WARNING, 3f, 0.4f);
     }
@@ -170,6 +233,7 @@ public class FrostGiantEntity extends BossBase {
     @Override
     protected void onReset() {
         blizzard = 0;
+        chill.clear();
     }
 
     @Override

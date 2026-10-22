@@ -1,0 +1,31 @@
+{
+ "variants": {
+  "kind=soul": {
+   "model": "litrpg:block/relic_soul"
+  },
+  "kind=frost": {
+   "model": "litrpg:block/relic_frost"
+  },
+  "kind=fire": {
+   "model": "litrpg:block/relic_fire"
+  },
+  "kind=nature": {
+   "model": "litrpg:block/relic_nature"
+  },
+  "kind=web": {
+   "model": "litrpg:block/relic_web"
+  },
+  "kind=rune": {
+   "model": "litrpg:block/relic_rune"
+  },
+  "kind=time": {
+   "model": "litrpg:block/relic_time"
+  },
+  "kind=gold": {
+   "model": "litrpg:block/relic_gold"
+  },
+  "kind=void": {
+   "model": "litrpg:block/relic_void"
+  }
+ }
+}

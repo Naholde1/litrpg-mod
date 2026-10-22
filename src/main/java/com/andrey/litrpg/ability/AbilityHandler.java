@@ -559,7 +559,7 @@ public class AbilityHandler {
         float b = base(s, a);
         float dmg = b * a.power;
         boolean heals = a.element == Element.HOLY || a.element == Element.NATURE || a.power < 0;
-        float healAmount = b * Math.abs(a.power) * 0.6f;
+        float healAmount = b * Math.abs(a.power) * 0.6f * healMult(s);
         int ticks = Math.max(1, a.duration / 20);
         ParticleOptions part = particle(a.element);
         Scheduler.repeat(1, 20, ticks, i -> {
@@ -593,7 +593,7 @@ public class AbilityHandler {
             }
             bad.forEach(ally::removeEffect);
             ally.clearFire();
-            ally.heal(base(s, a) * 0.25f);
+            ally.heal(base(s, a) * 0.25f * healMult(s));
         }
         float dmg = base(s, a) * a.power;
         for (LivingEntity e : enemiesAround(p, p.getBoundingBox().inflate(a.radius))) {
@@ -683,7 +683,7 @@ public class AbilityHandler {
     }
 
     private static boolean heal(ServerPlayer p, PlayerStats s, Ability a) {
-        float amount = base(s, a) * a.power * 0.8f;
+        float amount = base(s, a) * a.power * 0.8f * healMult(s);
         boolean any = false;
         for (LivingEntity ally : alliesAround(p, a.radius)) {
             if (ally.getHealth() < ally.getMaxHealth()) any = true;
@@ -767,8 +767,14 @@ public class AbilityHandler {
 
     // ================= новые виды (2.15) =================
 
-    private static float healMult(PlayerStats s) {
-        return s.getRole() == com.andrey.litrpg.stats.Role.SUPPORT ? 1.25f : 1f;
+    /** Лечение союзников: настоящий лекарь — только поддержка; гибриды (паладин, друид-боец) лечат вполсилы. */
+    public static float healMult(PlayerStats s) {
+        if (s.getRole() == null) return 1f;
+        return switch (s.getRole()) {
+            case SUPPORT -> 2.2f;
+            case DAMAGE -> 0.55f;
+            case TANK -> 0.45f;
+        };
     }
 
     /** Луч: урон всем на линии до первого блока. */

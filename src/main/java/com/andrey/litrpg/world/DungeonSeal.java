@@ -104,7 +104,7 @@ public final class DungeonSeal {
     public static void onTick(TickEvent.PlayerTickEvent e) {
         if (e.phase != TickEvent.Phase.END || !(e.player instanceof ServerPlayer p)) return;
         Seal s = SEALS.get(p.getUUID());
-        if (s == null || !p.isAlive()) return;
+        if (s == null || !p.isAlive() || com.andrey.litrpg.entity.BossFight.isSpirit(p)) return;
         if (p.isCreative() || p.isSpectator()) {
             drop(p.getUUID());
             return;

@@ -38,8 +38,8 @@ import java.util.WeakHashMap;
 
 /**
  * Агр по урону (таблица угрозы, как в MMO). Каждый моб помнит, кто и сколько ему навредил:
- * урон даёт угрозу, лечение союзников в бою — половину, танки (стражи, воины, паладины)
- * и поднятый щит — больше. Моб бьёт того, у кого угроза выше, а сменить цель его заставит
+ * урон даёт угрозу, лечение союзников в бою — половину (делится между всеми врагами), роль танка — ×5
+ * (как стойки танков в WoW), поднятый щит — чуть больше. Моб бьёт того, у кого угроза выше, а сменить цель его заставит
  * только тот, кто перебьёт текущую угрозу на 10% вблизи или на 30% издалека.
  * «Насмешка», «Боевой клич» и «Рёв» сразу делают тебя первым в списке.
  */
@@ -64,13 +64,17 @@ public final class Threat {
         return !(m instanceof WildMob w && w.spec().temper == Species.Temper.SCAVENGER);
     }
 
-    /** Множитель угрозы атакующего: танки и щит держат врагов на себе. */
-    private static float mult(LivingEntity who) {
+    /**
+     * Множитель угрозы атакующего (как стойки танков в WoW): роль танка — ×5, сверху немного за «танковость»
+     * класса и поднятый щит. Бойцы и лекари — ×1: чтобы сорвать агр с танка, бойцу нужно бить
+     * в разы сильнее его (а урон танка роль и так режет).
+     */
+    public static float mult(LivingEntity who) {
         if (!(who instanceof ServerPlayer p)) return 1f;
         float k = 1f;
         PlayerClass c = StatsManager.get(p).getPlayerClass();
-        if (c != null) k += 0.15f * c.styles.getOrDefault(Style.TANK, 0);
-        if (StatsManager.get(p).getRole() == com.andrey.litrpg.stats.Role.TANK) k += 0.5f;
+        if (StatsManager.get(p).getRole() == com.andrey.litrpg.stats.Role.TANK) k = 5f;
+        if (c != null) k += 0.2f * c.styles.getOrDefault(Style.TANK, 0);
         if (p.isBlocking() || p.getOffhandItem().getItem() instanceof net.minecraft.world.item.ShieldItem) k += 0.3f;
         return k;
     }
@@ -94,10 +98,13 @@ public final class Threat {
     /** Лечение в бою: мобы, которые дерутся с вылеченными, злятся на лекаря. */
     public static void healed(ServerPlayer healer, LivingEntity ally, float amount) {
         if (amount <= 0) return;
+        // как в WoW: половина исцелённого, поделённая между всеми врагами в бою
+        List<Mob> angry = new ArrayList<>();
         for (Mob m : healer.serverLevel().getEntitiesOfClass(Mob.class, ally.getBoundingBox().inflate(32))) {
             Table t = TABLES.get(m);
-            if (t != null && (t.threat.containsKey(ally.getUUID()) || m.getTarget() == ally)) add(m, healer, amount * 0.5f);
+            if (t != null && (t.threat.containsKey(ally.getUUID()) || m.getTarget() == ally)) angry.add(m);
         }
+        for (Mob m : angry) add(m, healer, amount * 0.5f * mult(healer) / angry.size());
     }
 
     /** Провокация: моб бросает всё и бьёт провокатора, а тот становится первым в таблице. */

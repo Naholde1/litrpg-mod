@@ -1,97 +1,89 @@
 package com.andrey.litrpg.entity.boss;
 
 import com.andrey.litrpg.entity.BossBase;
+import com.andrey.litrpg.entity.BossDamage;
 import com.andrey.litrpg.entity.BossProjectile;
+import com.andrey.litrpg.entity.Telegraph;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.List;
+
 /**
- * Королева Арахна (ур. 14). Опутывает паутиной, плюётся ядом, прыгает
- * на добычу и выводит паучат. Под конец боя проливает кислотный дождь.
+ * Королева Арахна (ур. 14). Идея: логово. Коконы с яйцами (узлы силы) выводят паучат, пока их не разобьют.
+ * Дважды за бой Королева уходит под своды — неуязвима, пока жив её выводок, а сверху льётся кислота.
+ * Кокон из паутины запирает союзника — его надо вырезать. Огонь жжёт паутину и Королеву.
  */
 public class SpiderQueenEntity extends BossBase {
-    private int leapTicks = 0;
+    private int ceiling;
+    private Vec3 ground;
 
     public SpiderQueenEntity(EntityType<? extends Monster> type, Level level) {
         super(type, level, BossEvent.BossBarColor.PURPLE);
-        skill("Паутина", 90, 10, 1).silent()
-                .when(t -> distanceTo(t) > 3)
+        skill("Ядовитый укус", 110, 16, 1).first(40)
+                .when(t -> distanceTo(t) < 5)
+                .begin(t -> cone(position(), dirTo(t), 5, 40, 16, 0.8f)
+                        .then(e -> {
+                            e.addEffect(new MobEffectInstance(MobEffects.POISON, 120, 1));
+                            BossDamage.sunder(e, 1);
+                        }).fx(c -> sound(SoundEvents.SPIDER_HURT, 1.5f, 0.4f)));
+        skill("Ядовитый плевок", 90, 12, 1).silent()
                 .act(t -> {
-                    shoot(BossProjectile.Kind.WEB, t, 4f, 1.3f, 1f);
-                    sound(SoundEvents.SPIDER_AMBIENT, 1.2f, 0.6f);
+                    LivingEntity o = randomOther();
+                    shoot(BossProjectile.Kind.POISON, o, 0.35f, 1.2f, 2f);
+                    sound(SoundEvents.LLAMA_SPIT, 1.3f, 0.6f);
                 });
-        skill("Ядовитый плевок", 120, 14, 1)
+        skill("Прыжок охотницы", 200, 6, 1).first(100)
                 .act(t -> {
-                    for (int i = 0; i < 3; i++) shoot(BossProjectile.Kind.POISON, t, 7f, 1.2f, 6f + i * 4f);
-                    sound(SoundEvents.LLAMA_SPIT, 1.4f, 0.5f);
+                    LivingEntity o = randomOther();
+                    Vec3 at = o.position();
+                    circle(at, 3.5, 22, 0.6f).color(Telegraph.PURPLE)
+                            .then(e -> e.addEffect(new MobEffectInstance(MobEffects.POISON, 80, 1)))
+                            .fx(c -> {
+                                teleportTo(c.x, c.y, c.z);
+                                burst(ParticleTypes.CLOUD, c, 20, 1.5, 0.05);
+                                sound(SoundEvents.SPIDER_DEATH, 1f, 0.5f);
+                            });
+                    tip(o, "Королева прыгает на вас — отбегите!", net.minecraft.ChatFormatting.RED);
                 });
-        skill("Выводок", 320, 30, 2)
-                .during(left -> { if (left % 6 == 0) burst(ParticleTypes.ITEM_SLIME, position().add(0, 0.5, 0), 10, 1.2, 0.05); })
+        skill("Кокон", 300, 20, 2).first(160)
                 .act(t -> {
-                    summon(EntityType.CAVE_SPIDER, phase > 0 ? 4 : 3, 7, 13, null);
-                    sound(SoundEvents.TURTLE_EGG_HATCH, 1.5f, 0.7f);
-                });
-        skill("Прыжок охотницы", 150, 8, 1)
-                .when(t -> distanceTo(t) > 5 && distanceTo(t) < 18 && onGround())
-                .act(t -> {
-                    Vec3 d = t.position().subtract(position());
-                    Vec3 h = new Vec3(d.x, 0, d.z).normalize().scale(Math.min(d.horizontalDistance() * 0.13, 1.7));
-                    setDeltaMovement(h.x, 0.85, h.z);
-                    hasImpulse = true;
-                    leapTicks = 1;
-                    sound(SoundEvents.SPIDER_STEP, 2f, 0.5f);
-                });
-        skill("Кислотный дождь", 280, 30, 2).fromPhase(1)
-                .during(left -> { if (left % 5 == 0) for (LivingEntity e : enemiesAround(20)) ring(ParticleTypes.ITEM_SLIME, e.position(), 2.5, 14); })
-                .act(t -> {
-                    for (LivingEntity e : enemiesAround(20)) {
-                        AreaEffectCloud cloud = new AreaEffectCloud(level(), e.getX(), e.getY(), e.getZ());
-                        cloud.setOwner(this);
-                        cloud.setRadius(2.8f);
-                        cloud.setDuration(120);
-                        cloud.setParticle(ParticleTypes.ITEM_SLIME);
-                        cloud.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 2));
-                        level().addFreshEntity(cloud);
-                    }
-                    sound(SoundEvents.WEATHER_RAIN, 1.5f, 0.6f);
+                    LivingEntity o = randomOther();
+                    entomb(o, Blocks.COBWEB.defaultBlockState(), 200, 0.09f, false);
+                    shoutAll(o.getName().getString() + " в коконе! Вырежьте паутину (меч рубит её быстро).");
+                    sound(SoundEvents.SPIDER_STEP, 2f, 0.4f);
                 });
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 780.0)
-                .add(Attributes.ATTACK_DAMAGE, 13.0)
+                .add(Attributes.MAX_HEALTH, 820.0)
+                .add(Attributes.ATTACK_DAMAGE, 10.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.32)
-                .add(Attributes.ARMOR, 10.0)
+                .add(Attributes.ARMOR, 6.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.9)
                 .add(Attributes.FOLLOW_RANGE, 40.0);
     }
 
     @Override public int getBossLevel() { return 14; }
-    @Override public int getXpReward() { return 1200; }
+    @Override public int getXpReward() { return 1300; }
 
     @Override
     public MobType getMobType() {
@@ -100,38 +92,88 @@ public class SpiderQueenEntity extends BossBase {
 
     @Override
     protected float[] phaseThresholds() {
-        return new float[]{0.4f};
+        return new float[]{0.66f, 0.33f};
     }
 
     @Override
-    protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.1, true));
-        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.7));
-        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 16.0f));
-        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, false));
+    protected List<String> intro() {
+        return List.of("Коконы с яйцами (узлы силы) каждые 20 с выводят паучат — разбейте их.",
+                "Дважды Королева уходит под своды: неуязвима, пока жив выводок. Перебейте паучат, уклоняясь от кислоты.",
+                "«Кокон» — союзник в паутине. Вырежьте его, иначе задохнётся.",
+                "Огонь бьёт Королеву почти вдвое.");
     }
 
     @Override
-    protected void customServerAiStep() {
-        super.customServerAiStep();
-        if (leapTicks > 0 && ++leapTicks > 5 && onGround()) {
-            leapTicks = 0;
-            aoe(position(), 3.2, 12f, e -> e.addEffect(new MobEffectInstance(MobEffects.POISON, 80, 1)));
-            burst(ParticleTypes.CLOUD, position(), 20, 1.5, 0.05);
-            sound(SoundEvents.SPIDER_DEATH, 1f, 0.5f);
-        } else if (leapTicks > 60) {
-            leapTicks = 0;
+    protected float weaponMult(BossDamage.Weapon w, DamageSource src) {
+        return switch (w) {
+            case FIRE -> 1.8f;
+            case SWORD -> 1.15f;
+            default -> 1f;
+        };
+    }
+
+    @Override
+    protected void bossTick() {
+        if (tickCount % 400 == 0 && getTarget() != null && ceiling <= 0) {
+            int sacs = 0;
+            for (BlockPos p : liveRelics()) {
+                summonAt(EntityType.CAVE_SPIDER, Vec3.atBottomCenterOf(p.above()), 1, 10, 13, null);
+                sacs++;
+            }
+            if (sacs > 0) shoutAll("Коконы лопаются — паучата! (коконов: " + sacs + ")");
         }
+        if (ceiling > 0) {
+            ceiling--;
+            setDeltaMovement(Vec3.ZERO);
+            getNavigation().stop();
+            boolean brood = !minions().isEmpty();
+            if (ceiling % 30 == 0) {
+                for (int i = 0; i < 4; i++) circle(randomSpot(15), 2.5, 30, 0.45f).color(Telegraph.GREEN)
+                        .fx(c -> burst(ParticleTypes.ITEM_SLIME, c.add(0, 0.5, 0), 20, 1, 0.1));
+            }
+            if (!brood || ceiling <= 0) descend();
+        }
+    }
+
+    private void climb() {
+        ground = position();
+        BlockPos b = blockPosition();
+        int up = 0;
+        while (up < 9 && level().getBlockState(b.above(up + 3)).isAir()) up++;
+        setNoGravity(true);
+        teleportTo(getX(), getY() + up, getZ());
+        immune = "Королева под сводами — убейте её выводок!";
+        ceiling = 20 * 25;
+        summon(EntityType.CAVE_SPIDER, 4, 12, 14, null);
+        summon(EntityType.SPIDER, 2, 12, 14, null);
+        shout("Мои дети... пожрут вас!");
+        shoutAll("Королева ушла под своды. Перебейте выводок — тогда она спустится.");
+        sound(SoundEvents.SPIDER_AMBIENT, 2f, 0.4f);
+    }
+
+    private void descend() {
+        ceiling = 0;
+        immune = null;
+        setNoGravity(false);
+        if (ground != null) teleportTo(ground.x, ground.y, ground.z);
+        circle(position(), 4, 1, 0.5f).fx(c -> burst(ParticleTypes.CLOUD, c, 30, 2, 0.05));
+        stagger(60, "Королева рухнула вниз — бейте!");
     }
 
     @Override
     protected void onPhase(int phase) {
-        shout("Мои дети... пожрут вас!");
-        addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 20 * 600, 0));
-        summon(EntityType.SPIDER, 2, 7, 14, null);
+        climb();
+    }
+
+    @Override
+    protected void onReset() {
+        if (ceiling > 0) descend();
+        stagger = 0;
+    }
+
+    @Override
+    protected void registerGoals() {
+        meleeGoals(1.1);
     }
 
     @Override
@@ -144,6 +186,19 @@ public class SpiderQueenEntity extends BossBase {
     @Override
     public boolean canBeAffected(MobEffectInstance effect) {
         return effect.getEffect() != MobEffects.POISON && super.canBeAffected(effect);
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt("Ceiling", ceiling);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        ceiling = tag.getInt("Ceiling");
+        if (ceiling > 0) immune = "Королева под сводами — убейте её выводок!";
     }
 
     @Override protected SoundEvent getAmbientSound() { return SoundEvents.SPIDER_AMBIENT; }

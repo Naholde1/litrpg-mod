@@ -1,8 +1,11 @@
 package com.andrey.litrpg.entity.boss;
 
 import com.andrey.litrpg.entity.BossBase;
+import com.andrey.litrpg.entity.BossDamage;
 import com.andrey.litrpg.entity.BossProjectile;
+import com.andrey.litrpg.entity.Telegraph;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.BossEvent;
@@ -13,76 +16,76 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Snowball;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Игнис, Владыка пламени (ур. 45). Огненные залпы, метеоритный дождь
- * с предупреждающими кругами, огненное кольцо и призыв ифритов (ифриты —
- * ванильные всполохи). Во второй фазе раскаляется: жжёт всех рядом.
+ * Игнис, Владыка пламени (ур. 45). Идеи: «пол — это лава» и «остуди его».
+ * Каждые 45 с Прилив магмы заливает арену — выживут только те, кто стоит на обсидиановых островах.
+ * Игнис раскаляется (+8% урона каждые 10 с); снежки и холод сбивают жар. Метеор надо принять вдвоём,
+ * иначе он ударит по всем.
  */
 public class FlameLordEntity extends BossBase {
-    private final List<Vec3> marks = new ArrayList<>();
+    private int heat;
 
     public FlameLordEntity(EntityType<? extends Monster> type, Level level) {
         super(type, level, BossEvent.BossBarColor.RED);
-        skill("Огненный залп", 80, 12, 1).silent()
+        skill("Огненный залп", 90, 12, 1).silent()
                 .act(t -> {
-                    int n = phase > 0 ? 5 : 3;
-                    for (int i = 0; i < n; i++) shoot(BossProjectile.Kind.FIRE, t, 14f, 1.3f, 3f + i * 4f);
+                    for (int i = 0; i < 3; i++) shoot(BossProjectile.Kind.FIRE, randomOther(), 0.3f, 1.3f, 4f);
                     sound(SoundEvents.BLAZE_SHOOT, 1.5f, 0.6f);
                 });
-        skill("Метеоритный дождь", 260, 36, 2)
-                .during(left -> {
-                    if (left == 35) {
-                        marks.clear();
-                        for (LivingEntity e : enemiesAround(26)) {
-                            for (int i = 0; i < 3; i++) {
-                                marks.add(e.position().add((random.nextDouble() - 0.5) * 5, 0, (random.nextDouble() - 0.5) * 5));
-                            }
-                        }
-                    }
-                    if (left % 4 == 0) for (Vec3 m : marks) ring(ParticleTypes.FLAME, m, 2.5, 14);
-                })
+        skill("Сокрушающий жар", 130, 18, 1).first(50)
+                .when(t -> distanceTo(t) < 6)
+                .begin(t -> cone(position(), dirTo(t), 6, 40, 18, 1.0f).color(Telegraph.ORANGE)
+                        .then(e -> {
+                            e.setSecondsOnFire(6);
+                            BossDamage.sunder(e, 1);
+                        }).fx(c -> burst(ParticleTypes.FLAME, c.add(getLookAngle().scale(3)).add(0, 1, 0), 60, 2, 0.1)));
+        skill("Прилив магмы", 900, 20, 2).first(300)
                 .act(t -> {
-                    for (Vec3 m : marks) {
-                        BossProjectile p = new BossProjectile(level(), this, BossProjectile.Kind.METEOR, 22f);
-                        p.setPos(m.x + (random.nextDouble() - 0.5), m.y + 16, m.z + (random.nextDouble() - 0.5));
-                        p.shoot(0, -1, 0, 0.9f, 0);
-                        level().addFreshEntity(p);
-                    }
-                    marks.clear();
-                    sound(SoundEvents.GHAST_SHOOT, 2f, 0.4f);
+                    circle(arena(), 30, 100, 1.3f).color(Telegraph.ORANGE).spare(this::onIsland)
+                            .then(e -> e.setSecondsOnFire(8))
+                            .fx(c -> {
+                                for (int i = 0; i < 12; i++) burst(ParticleTypes.LAVA, randomSpot(18).add(0, 0.5, 0), 20, 2, 0.2);
+                                sound(SoundEvents.LAVA_EXTINGUISH, 3f, 0.4f);
+                            });
+                    shout("Пусть пол станет огнём!");
+                    shoutAll("ПРИЛИВ МАГМЫ через 5 с! Встаньте на обсидиан — на острова арены!");
+                    sound(SoundEvents.LAVA_AMBIENT, 3f, 0.5f);
                 });
-        skill("Огненное кольцо", 200, 26, 2)
-                .when(t -> distanceTo(t) < 9)
-                .during(left -> { if (left % 3 == 0) ring(ParticleTypes.FLAME, position(), 8, 40); })
+        skill("Метеор", 360, 20, 2).first(200)
                 .act(t -> {
-                    aoe(position(), 8.5, 20f, e -> {
-                        e.setSecondsOnFire(6);
-                        knockFrom(e, position(), 1.2, 0.5);
-                    });
-                    for (int r = 2; r <= 8; r += 2) ring(ParticleTypes.FLAME, position(), r, r * 8);
-                    burst(ParticleTypes.LAVA, position().add(0, 1, 0), 30, 3, 0.2);
-                    sound(SoundEvents.FIRECHARGE_USE, 2f, 0.5f);
+                    var at = randomSpot(12);
+                    circle(at, 3.2, 90, 1.6f).color(Telegraph.GOLD).soak(2).then(e -> e.setSecondsOnFire(5))
+                            .fx(c -> {
+                                burst(ParticleTypes.EXPLOSION_EMITTER, c.add(0, 0.5, 0), 1, 0, 0);
+                                soundAt(c, SoundEvents.GENERIC_EXPLODE, 2.5f, 0.6f);
+                            });
+                    shoutAll("Падает метеор! Двое или больше — встаньте в золотой круг, разделите удар!");
                 });
-        skill("Призыв ифритов", 380, 30, 2)
+        skill("Огненное кольцо", 280, 30, 2).first(150)
+                .begin(t -> donut(position(), 3.5, 15, 30, 0.6f).color(Telegraph.ORANGE).then(e -> e.setSecondsOnFire(4))
+                        .fx(c -> ring(ParticleTypes.FLAME, c, 9, 60)));
+        skill("Призыв ифритов", 600, 30, 2).fromPhase(1).first(100)
                 .act(t -> {
-                    summon(EntityType.BLAZE, 2, 4, 43, null);
+                    summon(EntityType.BLAZE, 3, 5, 43, null);
                     sound(SoundEvents.BLAZE_AMBIENT, 2f, 0.6f);
                 });
+    }
+
+    private boolean onIsland(LivingEntity e) {
+        for (int d = 1; d <= 3; d++) {
+            BlockState st = level().getBlockState(e.blockPosition().below(d));
+            if (st.is(Blocks.OBSIDIAN) || st.is(Blocks.CRYING_OBSIDIAN)) return true;
+            if (!st.isAir()) return false;
+        }
+        return false;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -90,42 +93,72 @@ public class FlameLordEntity extends BossBase {
                 .add(Attributes.MAX_HEALTH, 1000.0)
                 .add(Attributes.ATTACK_DAMAGE, 22.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.27)
-                .add(Attributes.ARMOR, 18.0)
+                .add(Attributes.ARMOR, 14.0)
                 .add(Attributes.ARMOR_TOUGHNESS, 6.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0)
                 .add(Attributes.FOLLOW_RANGE, 48.0);
     }
 
     @Override public int getBossLevel() { return 45; }
-    @Override public int getXpReward() { return 6500; }
+    @Override public int getXpReward() { return 6800; }
 
     @Override
     protected float toughness() {
-        return 2.3f;
+        return 2.6f;
+    }
+
+    @Override
+    protected List<String> intro() {
+        return List.of("«Прилив магмы»: через 5 с после крика весь пол сожжёт. Стойте на обсидиане (острова арены).",
+                "Игнис раскаляется: +8% урона каждые 10 с. Каждый снежок в него сбивает жар. Холод бьёт его вдвое.",
+                "«Метеор» (золотой круг) — встаньте в него вдвоём и больше, иначе он ударит по всем.",
+                "Огонь его не ранит.");
+    }
+
+    @Override
+    protected float weaponMult(BossDamage.Weapon w, DamageSource src) {
+        return switch (w) {
+            case FROST -> 2.0f;
+            case FIRE -> 0f;
+            default -> 1f;
+        };
+    }
+
+    @Override
+    protected float powerMult() {
+        return 1f + 0.08f * heat;
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        if (source.getDirectEntity() instanceof Snowball && !level().isClientSide) {
+            if (heat > 0) {
+                heat--;
+                burst(ParticleTypes.CLOUD, position().add(0, 1.5, 0), 12, 0.5, 0.05);
+                sound(SoundEvents.FIRE_EXTINGUISH, 1f, 1.2f);
+                tip(source.getEntity(), "Жар Игниса: " + heat, net.minecraft.ChatFormatting.AQUA);
+            }
+            return super.hurt(source, Math.max(amount, 2f));
+        }
+        return super.hurt(source, amount);
+    }
+
+    @Override
+    protected void bossTick() {
+        if (tickCount % 4 == 0) burst(ParticleTypes.FLAME, position().add(0, 1.2, 0), 2 + heat / 2, 0.6, 0.02);
+        if (getTarget() != null && fightTicks > 0 && fightTicks % 200 == 0 && heat < 20) {
+            heat++;
+            if (heat % 3 == 0) shoutAll("Жар Игниса: " + heat + " (+" + heat * 8 + "% урона). Остудите его снежками!");
+        }
+        if (phase > 0 && tickCount % 20 == 0) {
+            hitAll(position(), 4.5, 0.08f, e -> e.setSecondsOnFire(3));
+            ring(ParticleTypes.SMALL_FLAME, position(), 4, 20);
+        }
     }
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, true));
-        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.6));
-        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 20.0f));
-        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, false));
-    }
-
-    @Override
-    protected void customServerAiStep() {
-        super.customServerAiStep();
-        if (tickCount % 4 == 0) burst(ParticleTypes.FLAME, position().add(0, 1.2, 0), 3, 0.6, 0.02);
-        if (phase > 0 && tickCount % 20 == 0) {
-            for (LivingEntity e : enemiesAround(4.5)) {
-                e.hurt(damageSources().inFire(), 4f);
-                e.setSecondsOnFire(3);
-            }
-            ring(ParticleTypes.SMALL_FLAME, position(), 4, 20);
-        }
+        meleeGoals(1.0);
     }
 
     @Override
@@ -137,10 +170,27 @@ public class FlameLordEntity extends BossBase {
     }
 
     @Override
+    protected void onReset() {
+        heat = 0;
+    }
+
+    @Override
     public boolean doHurtTarget(net.minecraft.world.entity.Entity target) {
         boolean hit = super.doHurtTarget(target);
         if (hit) target.setSecondsOnFire(5);
         return hit;
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt("Heat", heat);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        heat = tag.getInt("Heat");
     }
 
     @Override public boolean isOnFire() { return false; }

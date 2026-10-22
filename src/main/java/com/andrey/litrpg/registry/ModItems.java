@@ -155,6 +155,10 @@ public class ModItems {
     public static final RegistryObject<Item> ARCHDEMON_SPAWN_EGG = ITEMS.register("archdemon_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.ARCHDEMON, 0x5A0C14, 0xFF4020, new Item.Properties()));
     // ---- подземелья ----
+    public static final RegistryObject<Item> RELIC = ITEMS.register("relic",
+            () -> new net.minecraft.world.item.BlockItem(ModBlocks.RELIC.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> SEAL_DOOR = ITEMS.register("seal_door",
+            () -> new net.minecraft.world.item.BlockItem(ModBlocks.SEAL_DOOR.get(), new Item.Properties().rarity(Rarity.EPIC)));
     public static final RegistryObject<Item> BOSS_ALTAR = ITEMS.register("boss_altar",
             () -> new net.minecraft.world.item.BlockItem(ModBlocks.BOSS_ALTAR.get(), new Item.Properties().rarity(Rarity.EPIC)));
     public static final RegistryObject<Item> DIVINE_SPARK = ITEMS.register("divine_spark",
