@@ -155,12 +155,6 @@
     "weight": 5,
     "minCount": 1,
     "maxCount": 1
-   },
-   {
-    "type": "litrpg:sand_scorpion",
-    "weight": 25,
-    "minCount": 1,
-    "maxCount": 2
    }
   ],
   "underground_water_creature": [

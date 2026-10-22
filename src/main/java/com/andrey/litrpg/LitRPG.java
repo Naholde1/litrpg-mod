@@ -88,6 +88,9 @@ public class LitRPG {
         event.put(ModEntities.RAT.get(), com.andrey.litrpg.entity.RatEntity.attributes(false).build());
         event.put(ModEntities.RAT_KING.get(), com.andrey.litrpg.entity.RatEntity.attributes(true).build());
         com.andrey.litrpg.npc.NpcRegistry.attributes(event);
+        for (var s : com.andrey.litrpg.entity.wild.Species.all()) {
+            event.put(ModEntities.WILD.get(s.id).get(), com.andrey.litrpg.entity.wild.WildMob.attributes(s).build());
+        }
     }
 
     private void registerSpawnPlacements(SpawnPlacementRegisterEvent event) {

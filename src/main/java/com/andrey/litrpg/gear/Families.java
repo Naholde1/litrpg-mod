@@ -31,7 +31,8 @@ public final class Families {
         if (t.getMobType() == MobType.ARTHROPOD) pct += g.get(GearBonus.DMG_ARTHROPOD);
         if (t instanceof AbstractIllager || t instanceof Raider) pct += g.get(GearBonus.DMG_ILLAGER);
         if (t instanceof GoblinEntity) pct += g.get(GearBonus.DMG_GOBLIN);
-        if (t instanceof Animal || t instanceof net.minecraft.world.entity.animal.Wolf) pct += g.get(GearBonus.DMG_BEAST);
+        if (t instanceof Animal || t instanceof net.minecraft.world.entity.animal.Wolf
+                || t instanceof com.andrey.litrpg.entity.wild.WildMob w && w.spec().beast) pct += g.get(GearBonus.DMG_BEAST);
         if (isNether(t)) pct += g.get(GearBonus.DMG_NETHER);
         if (t instanceof LitBoss || MobLevels.getRank(t) != MobLevels.Rank.NORMAL) pct += g.get(GearBonus.DMG_ELITE);
         if (t instanceof RaceNpcEntity || t instanceof AbstractVillager || t instanceof AbstractIllager) pct += g.get(GearBonus.DMG_HUMANOID);

@@ -93,6 +93,13 @@ public class CombatEvents {
         }
     }
 
+    /** Сильные твари с запасом прочности сверх 1024 ед. здоровья получают урон, делённый на него. */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onToughHurt(LivingHurtEvent event) {
+        float tough = event.getEntity().getPersistentData().getFloat(MobLevels.TOUGH_TAG);
+        if (tough > 1f) event.setAmount(event.getAmount() / tough);
+    }
+
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onHurt(LivingHurtEvent event) {
         LivingEntity target = event.getEntity();

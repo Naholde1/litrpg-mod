@@ -30,7 +30,7 @@ public class DataBossRenderer<T extends net.minecraft.world.entity.Mob> extends 
             @Override
             public void render(PoseStack pose, MultiBufferSource buffers, int light, T entity, float limbSwing, float limbAmount,
                                float partialTick, float age, float yaw, float pitch) {
-                if (entity.isInvisible()) return;
+                if (entity.isInvisible() || entity instanceof Animated an && an.awakeAnim(partialTick) < 0.5f) return;
                 VertexConsumer vc = buffers.getBuffer(RenderType.eyes(glow));
                 boolean casting = entity instanceof Animated a && a.isCasting();
                 float pulse = casting ? 1f : 0.85f + 0.15f * (float) Math.sin(age * 0.15f);
@@ -41,6 +41,13 @@ public class DataBossRenderer<T extends net.minecraft.world.entity.Mob> extends 
 
     public static ModelLayerLocation layer(String name) {
         return new ModelLayerLocation(LitRPG.id(name), "main");
+    }
+
+    /** Притворщики (мимик, пугало) не выдают себя табличкой с именем. */
+    @Override
+    protected boolean shouldShowName(T entity) {
+        if (entity instanceof Animated a && a.awakeAnim(1f) < 0.5f) return false;
+        return super.shouldShowName(entity);
     }
 
     @Override

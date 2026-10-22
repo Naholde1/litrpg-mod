@@ -8,6 +8,11 @@ public interface Animated {
     /** Плавная анимация подготовки на клиенте (0..1). */
     float castAnim(float partialTick);
 
+    /** Проснулся ли (маскировка: мимик-сундук, пугало, трясинник): 0 — притворяется, 1 — живой. */
+    default float awakeAnim(float partialTick) {
+        return 1f;
+    }
+
     default boolean isCasting() {
         return castPose() > 0;
     }

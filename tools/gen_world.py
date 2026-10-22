@@ -209,22 +209,11 @@ BIOMES = {
 
 SURFACES = {}  # группа -> список биомов (заполняется ниже)
 
-# Сколько мобов: монстры в своих краях (добавляются к ванильным)
+# Сколько мобов: монстры в своих краях (добавляются к ванильным). Существ мода расселяет WildSpawner
+# (entity/wild, данные — tools/bestiary_data.py): по уровню зоны, земле и времени суток.
 REGION_MOBS = {
-    'iron_peaks': [('litrpg:stone_troll', 18, 1, 2)], 'ore_slopes': [('litrpg:stone_troll', 14, 1, 1)],
-    'frost_peaks': [('litrpg:frost_wraith', 20, 1, 2)], 'frozen_reach': [('litrpg:frost_wraith', 15, 1, 2)],
-    'glacier_spikes': [('litrpg:frost_wraith', 15, 1, 2)],
-    'sylvan_wildwood': [('litrpg:forest_wisp', 20, 1, 3)], 'moon_grove': [('litrpg:forest_wisp', 15, 1, 2)],
-    'ash_wastes': [('litrpg:ash_imp', 40, 2, 4)], 'charred_forest': [('litrpg:ash_imp', 30, 1, 3)],
-    'smolder_craters': [('litrpg:ash_imp', 40, 2, 4), ('minecraft:magma_cube', 20, 1, 3)],
-    'rot_swamp': [('litrpg:bog_lurker', 30, 1, 2), ('litrpg:goblin', 40, 2, 4)],
-    'goblin_mangroves': [('litrpg:bog_lurker', 25, 1, 2), ('litrpg:goblin', 40, 2, 4), ('litrpg:goblin_shaman', 10, 1, 1)],
-    'dust_wastes': [('litrpg:sand_scorpion', 30, 1, 2)], 'red_canyons': [('litrpg:sand_scorpion', 25, 1, 2)],
-    'scorched_steppe': [('litrpg:sand_scorpion', 15, 1, 1)],
-    'blight': [('litrpg:grave_knight', 25, 1, 2), ('litrpg:skeleton_warden', 15, 1, 1)],
-    'bone_wastes': [('litrpg:grave_knight', 25, 1, 2), ('minecraft:husk', 40, 2, 4)],
-    'frontier_hills': [('litrpg:stone_troll', 6, 1, 1)], 'frontier_woods': [('litrpg:goblin', 15, 2, 3)],
-    'world_wall': [('litrpg:stone_troll', 30, 1, 2), ('litrpg:frost_wraith', 20, 1, 2)],
+    'smolder_craters': [('minecraft:magma_cube', 20, 1, 3)],
+    'bone_wastes': [('minecraft:husk', 40, 2, 4)],
 }
 
 

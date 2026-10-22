@@ -315,6 +315,12 @@ public final class CityQuests {
         if (c.r.nextBoolean()) o.add(() -> deliverFar(c, Craft.INNKEEPER, "Письмо трактирщику", "Отнеси это письмо трактирщику в %s. Там ждут вестей."));
         o.add(() -> defend(c));
         o.add(() -> huntNear(c));
+        o.add(() -> huntSpecies(c));
+        // охотничьи ремёсла чаще просят добыть зверя
+        if (craft == Craft.LEATHERWORKER || craft == Craft.FLETCHER || craft == Craft.BUTCHER || craft == Craft.WEAPONSMITH) {
+            o.add(() -> huntSpecies(c));
+            o.add(() -> huntSpecies(c));
+        }
         return o;
     }
 
@@ -394,24 +400,30 @@ public final class CityQuests {
         if (poi == null) return null;
         int L = Math.max(c.level, WorldMap.get().levelAt(poi.x(), poi.z()));
         String spec, title, text;
-        int k = c.r.nextInt(3);
+        int k = c.r.nextInt(4);
         if (L < 7) {
             spec = k == 0 ? "minecraft:zombie*4,minecraft:skeleton*2" : k == 1 ? "minecraft:spider*3,minecraft:zombie*3"
-                    : "litrpg:rat*5,litrpg:rat_king@Король крыс!";
-            title = k == 2 ? "Крысиное нашествие" : "Мертвецы у околицы";
-            text = k == 2 ? "Крысы заполонили амбары в %s. Местные боятся выходить из домов." : "По ночам к %s выходят мертвецы. Помоги отбиться!";
+                    : k == 2 ? "litrpg:rat*5,litrpg:rat_king@Король крыс!" : "litrpg:jelly*4,litrpg:jelly@Студень-Обжора!";
+            title = k == 2 ? "Крысиное нашествие" : k == 3 ? "Студни в погребах" : "Мертвецы у околицы";
+            text = k == 2 ? "Крысы заполонили амбары в %s. Местные боятся выходить из домов."
+                    : k == 3 ? "В погребах %s расплодились студни и жрут припасы. Выгони их — только не руби слишком мелко."
+                    : "По ночам к %s выходят мертвецы. Помоги отбиться!";
         } else if (L < 16) {
             spec = k == 0 ? "litrpg:outlaw_thug*4,litrpg:outlaw_thug@Атаман Ржавый Нож!" : k == 1 ? "litrpg:goblin*5,litrpg:goblin_shaman*1"
-                    : "minecraft:wolf*4,minecraft:zombie*2";
-            title = k == 0 ? "Разбойники грабят хутор" : k == 1 ? "Гоблинский набег" : "Нападение на скот";
+                    : k == 2 ? "litrpg:dire_wolf*3,litrpg:dire_wolf@Вожак Седая Грива!" : "litrpg:scarecrow*3,litrpg:scarecrow@Соломенный Жнец!";
+            title = k == 0 ? "Разбойники грабят хутор" : k == 1 ? "Гоблинский набег" : k == 2 ? "Лютоволки у овчарни" : "Пугала ожили";
             text = k == 0 ? "Разбойники повадились грабить %s. Прогони их — и атамана тоже." : k == 1
-                    ? "Гоблины совершают набеги на %s. Проучи их, пока не сожгли всё дотла." : "Звери и мертвецы режут скот у %s. Защити селян.";
+                    ? "Гоблины совершают набеги на %s. Проучи их, пока не сожгли всё дотла."
+                    : k == 2 ? "Стая лютоволков режет скот у %s. Убей вожака — и стая уйдёт."
+                    : "На полях у %s пугала по ночам сходят с шестов. Селяне боятся жать хлеб. Огонь им не по нраву.";
         } else {
             spec = k == 0 ? "litrpg:outlaw_cultist*3,litrpg:outlaw_thug*2,litrpg:outlaw_cultist@Проповедник Пепла!"
-                    : k == 1 ? "litrpg:grave_knight*2,minecraft:skeleton*4" : "litrpg:stone_troll*1,litrpg:goblin*4";
-            title = k == 0 ? "Сектанты у околицы" : k == 1 ? "Восставшие рыцари" : "Тролль у моста";
+                    : k == 1 ? "litrpg:grave_knight*2,minecraft:skeleton*4" : k == 2 ? "litrpg:stone_troll*1,litrpg:goblin*4"
+                    : "litrpg:ghoul*4,litrpg:barrow_wight@Курганный король!";
+            title = k == 0 ? "Сектанты у околицы" : k == 1 ? "Восставшие рыцари" : k == 2 ? "Тролль у моста" : "Курган проснулся";
             text = k == 0 ? "Сектанты Пепла проповедуют у %s и уводят людей. Останови их." : k == 1
-                    ? "У %s из старых курганов встали мёртвые рыцари. Упокой их." : "У %s завёлся тролль с гоблинами. Селяне в ужасе.";
+                    ? "У %s из старых курганов встали мёртвые рыцари. Упокой их." : k == 2 ? "У %s завёлся тролль с гоблинами. Селяне в ужасе."
+                    : "Возле %s раскопали древний курган — и из него полезли гули. Их король всё ещё в короне.";
         }
         Quest q = base(c, title, String.format(text, poi.name()));
         q.type = Quest.Type.FIGHT;
@@ -444,6 +456,43 @@ public final class CityQuests {
         q.py = poi.y();
         q.pz = poi.z();
         reward(c, q, 1.3f);
+        return q;
+    }
+
+    /** Уровень окрестностей поселения мастера (без учёта уровня игрока). */
+    private static int localLevel(Ctx c) {
+        if (c.city != null) return c.city.level();
+        if (!SystemWorld.isOverworld(c.npc.level())) return 1;
+        return WorldMap.get().levelAt(c.homeId.isEmpty() ? c.npc.getX() : c.hx, c.homeId.isEmpty() ? c.npc.getZ() : c.hz);
+    }
+
+    /** Охота на вид бестиария, что водится в окрестных землях чуть выше уровня поселения. */
+    private static Quest huntSpecies(Ctx c) {
+        if (!SystemWorld.isOverworld(c.npc.level())) return null;
+        WorldMap map = WorldMap.get();
+        int hx = c.homeId.isEmpty() ? c.npc.getBlockX() : c.hx, hz = c.homeId.isEmpty() ? c.npc.getBlockZ() : c.hz;
+        WorldMap.Territory terr = map.territory(map.territoryAt(hx, hz));
+        String land = terr == null ? "wild" : terr.id;
+        int base = c.city != null ? c.city.level() : map.levelAt(hx, hz);
+        List<com.andrey.litrpg.entity.wild.Species> pool = new ArrayList<>();
+        for (com.andrey.litrpg.entity.wild.Species s : com.andrey.litrpg.entity.wild.Species.all()) {
+            if (s.temper == com.andrey.litrpg.entity.wild.Species.Temper.TIMID || s.place == com.andrey.litrpg.entity.wild.Species.Place.UNDER) continue;
+            if (!s.lands.contains(land)) continue;
+            if (s.level < base + 1 || s.level > Math.max(base, c.level) + 12) continue;
+            pool.add(s);
+        }
+        if (pool.isEmpty()) return null;
+        com.andrey.litrpg.entity.wild.Species s = pool.get(c.r.nextInt(pool.size()));
+        int n = Math.max(2, Math.min(8, (s.groupMin + s.groupMax) * 2 - (s.level > 35 ? 3 : 0)));
+        String where = terr == null ? "в Пограничье" : "в землях «" + terr.name + "»";
+        Quest q = base(c, "Охота на " + s.plural, "Вокруг развелось " + s.plural + " — путникам житья нет. Убей " + n + " "
+                + "(их уровень — около " + s.level + "). Ищи " + where + ", подальше от дорог."
+                + (s.time == com.andrey.litrpg.entity.wild.Species.Time.NIGHT ? " Выходят они только ночью." : "")
+                + (s.time == com.andrey.litrpg.entity.wild.Species.Time.DAY ? " Охотятся они днём." : ""));
+        q.type = Quest.Type.KILL;
+        q.target = "species:" + s.id;
+        q.need = n;
+        reward(c, q, 1.0f + Math.max(0, s.level - c.level) * 0.04f);
         return q;
     }
 
@@ -516,6 +565,8 @@ public final class CityQuests {
     }
 
     private static Quest hunt(Ctx c, QuestTarget t, int count, String title, String desc) {
+        // у каждого вида своя полоса уровней: вокруг Гхар'Дума зомби уже не водятся — просим добыть местного зверя
+        if (localLevel(c) > t.maxLevel - 3) return huntSpecies(c);
         Quest q = base(c, title, desc);
         q.type = Quest.Type.KILL;
         q.target = t.key;

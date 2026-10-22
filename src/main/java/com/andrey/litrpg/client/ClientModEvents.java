@@ -46,6 +46,7 @@ public class ClientModEvents {
         event.registerEntityRenderer(ModEntities.GRAVE_KNIGHT.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "grave_knight"));
         event.registerEntityRenderer(ModEntities.RAT.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "rat"));
         event.registerEntityRenderer(ModEntities.RAT_KING.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, "rat_king"));
+        ModEntities.WILD.forEach((id, t) -> event.registerEntityRenderer(t.get(), ctx -> new com.andrey.litrpg.client.render.DataBossRenderer<>(ctx, id)));
         com.andrey.litrpg.npc.NpcRegistry.TYPES.values().forEach(t ->
                 event.registerEntityRenderer(t.get(), com.andrey.litrpg.client.render.NpcRenderer::new));
     }
@@ -55,6 +56,10 @@ public class ClientModEvents {
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
         for (String name : BOSS_MODELS) {
+            event.registerLayerDefinition(com.andrey.litrpg.client.render.DataBossRenderer.layer(name),
+                    () -> com.andrey.litrpg.client.model.DataModel.createLayer(name));
+        }
+        for (String name : ModEntities.WILD.keySet()) {
             event.registerLayerDefinition(com.andrey.litrpg.client.render.DataBossRenderer.layer(name),
                     () -> com.andrey.litrpg.client.model.DataModel.createLayer(name));
         }

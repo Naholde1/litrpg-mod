@@ -94,7 +94,12 @@ public final class Quest {
         return switch (type) {
             case KILL -> {
                 QuestTarget t = QuestTarget.byKey(target);
-                yield "Убито " + (t == null ? target : t.plural) + ": " + Math.min(have, need) + "/" + need;
+                String who = t != null ? t.plural : target;
+                if (target.startsWith("species:")) {
+                    var sp = com.andrey.litrpg.entity.wild.Species.get(target.substring(8));
+                    if (sp != null) who = sp.plural;
+                }
+                yield "Убито " + who + ": " + Math.min(have, need) + "/" + need;
             }
             case BOSS -> "Победите хранителя подземелья";
             case COLLECT -> {

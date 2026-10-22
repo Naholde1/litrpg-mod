@@ -172,12 +172,6 @@
     "maxCount": 4
    },
    {
-    "type": "litrpg:grave_knight",
-    "weight": 25,
-    "minCount": 1,
-    "maxCount": 2
-   },
-   {
     "type": "minecraft:husk",
     "weight": 40,
     "minCount": 2,

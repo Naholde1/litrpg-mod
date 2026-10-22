@@ -174,12 +174,6 @@
     "weight": 80,
     "minCount": 4,
     "maxCount": 4
-   },
-   {
-    "type": "litrpg:ash_imp",
-    "weight": 40,
-    "minCount": 2,
-    "maxCount": 4
    }
   ],
   "underground_water_creature": [

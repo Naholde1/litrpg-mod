@@ -156,12 +156,6 @@
     "weight": 5,
     "minCount": 1,
     "maxCount": 1
-   },
-   {
-    "type": "litrpg:stone_troll",
-    "weight": 18,
-    "minCount": 1,
-    "maxCount": 2
    }
   ],
   "underground_water_creature": [

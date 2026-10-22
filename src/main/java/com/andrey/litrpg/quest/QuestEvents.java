@@ -72,7 +72,9 @@ public final class QuestEvents {
                 QuestTarget t = QuestTarget.byKey(q.target);
                 // охота «у деревни»: считаются только твари рядом с местом
                 if (q.hasPos && q.rad > 0 && dead.distanceToSqr(q.px + 0.5, dead.getY(), q.pz + 0.5) > (double) q.rad * q.rad) continue;
-                if (t != null && t.matches(dead)) {
+                boolean match = t != null ? t.matches(dead) : q.target.startsWith("species:")
+                        && dead instanceof com.andrey.litrpg.entity.wild.WildMob w && w.spec().id.equals(q.target.substring(8));
+                if (match) {
                     q.have++;
                     changed = true;
                     if (!q.isComplete()) {

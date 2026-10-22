@@ -148,18 +148,6 @@
     "weight": 5,
     "minCount": 1,
     "maxCount": 1
-   },
-   {
-    "type": "litrpg:stone_troll",
-    "weight": 30,
-    "minCount": 1,
-    "maxCount": 2
-   },
-   {
-    "type": "litrpg:frost_wraith",
-    "weight": 20,
-    "minCount": 1,
-    "maxCount": 2
    }
   ],
   "underground_water_creature": [

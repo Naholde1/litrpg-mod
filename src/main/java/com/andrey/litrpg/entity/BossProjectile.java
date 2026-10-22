@@ -37,7 +37,10 @@ public class BossProjectile extends ThrowableItemProjectile {
         ICE(0.01f, 0),
         FIRE(0.0f, 1.5),
         SHADOW(0.0f, 0),
-        METEOR(0.06f, 3.5);
+        METEOR(0.06f, 3.5),
+        BOMB(0.05f, 2.5),
+        CRYSTAL(0.0f, 0),
+        QUILL(0.0f, 0);
 
         public final float gravity;
         /** Радиус удара по области при попадании (0 — только в цель). */
@@ -58,6 +61,9 @@ public class BossProjectile extends ThrowableItemProjectile {
                 case FIRE -> Items.FIRE_CHARGE;
                 case SHADOW -> Items.ECHO_SHARD;
                 case METEOR -> Items.MAGMA_BLOCK;
+                case BOMB -> Items.TNT;
+                case CRYSTAL -> Items.AMETHYST_SHARD;
+                case QUILL -> Items.ARROW;
             };
         }
 
@@ -71,6 +77,9 @@ public class BossProjectile extends ThrowableItemProjectile {
                 case FIRE -> ParticleTypes.FLAME;
                 case SHADOW -> ParticleTypes.SCULK_SOUL;
                 case METEOR -> ParticleTypes.LAVA;
+                case BOMB -> ParticleTypes.SMOKE;
+                case CRYSTAL -> ParticleTypes.END_ROD;
+                case QUILL -> ParticleTypes.CRIT;
             };
         }
     }
@@ -143,6 +152,7 @@ public class BossProjectile extends ThrowableItemProjectile {
     private boolean isFriend(Entity e) {
         Entity owner = getOwner();
         if (e == owner) return true;
+        if (owner instanceof com.andrey.litrpg.entity.wild.WildMob && e instanceof com.andrey.litrpg.entity.wild.WildMob) return true;
         return owner instanceof BossBase b && (b.isMinion(e) || e instanceof BossBase);
     }
 
@@ -168,6 +178,9 @@ public class BossProjectile extends ThrowableItemProjectile {
                 le.setTicksFrozen(Math.min(le.getTicksRequiredToFreeze() + 120, le.getTicksFrozen() + 160));
             }
             case FIRE, METEOR -> le.setSecondsOnFire(5);
+            case BOMB -> le.setDeltaMovement(le.getDeltaMovement().add(0, 0.4, 0));
+            case CRYSTAL -> le.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 1));
+            case QUILL -> le.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 0));
             case SHADOW -> {
                 le.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, 1));
                 le.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 60, 0));
@@ -188,8 +201,8 @@ public class BossProjectile extends ThrowableItemProjectile {
                 le.hurt(damageSources().mobProjectile(this, owner), damage);
                 effect(le);
             }
-            sl.sendParticles(k == Kind.ROCK ? k.trail() : ParticleTypes.LAVA, p.x, p.y, p.z, 24, k.splash * 0.4, 0.3, k.splash * 0.4, 0.1);
-            sl.sendParticles(ParticleTypes.EXPLOSION, p.x, p.y + 0.3, p.z, k == Kind.METEOR ? 3 : 1, 0.5, 0.2, 0.5, 0);
+            sl.sendParticles(k == Kind.ROCK ? k.trail() : k == Kind.BOMB ? ParticleTypes.LARGE_SMOKE : ParticleTypes.LAVA, p.x, p.y, p.z, 24, k.splash * 0.4, 0.3, k.splash * 0.4, 0.1);
+            sl.sendParticles(ParticleTypes.EXPLOSION, p.x, p.y + 0.3, p.z, k == Kind.METEOR || k == Kind.BOMB ? 3 : 1, 0.5, 0.2, 0.5, 0);
         }
         sl.sendParticles(k.trail(), p.x, p.y, p.z, 14, 0.3, 0.3, 0.3, 0.08);
         SoundEvent s = switch (k) {
@@ -200,7 +213,9 @@ public class BossProjectile extends ThrowableItemProjectile {
             case ICE -> SoundEvents.GLASS_BREAK;
             case FIRE -> SoundEvents.FIRECHARGE_USE;
             case SHADOW -> SoundEvents.SCULK_SHRIEKER_SHRIEK;
-            case METEOR -> SoundEvents.GENERIC_EXPLODE;
+            case METEOR, BOMB -> SoundEvents.GENERIC_EXPLODE;
+            case CRYSTAL -> SoundEvents.AMETHYST_CLUSTER_BREAK;
+            case QUILL -> SoundEvents.ARROW_HIT;
         };
         sl.playSound(null, p.x, p.y, p.z, s, SoundSource.HOSTILE, k == Kind.SHADOW ? 0.4f : 1f, 0.9f + random.nextFloat() * 0.2f);
         discard();

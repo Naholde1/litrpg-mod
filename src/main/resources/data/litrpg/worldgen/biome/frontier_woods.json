@@ -184,12 +184,6 @@
     "weight": 5,
     "minCount": 1,
     "maxCount": 1
-   },
-   {
-    "type": "litrpg:goblin",
-    "weight": 15,
-    "minCount": 2,
-    "maxCount": 3
    }
   ],
   "underground_water_creature": [

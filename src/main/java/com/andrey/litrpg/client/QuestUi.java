@@ -76,7 +76,13 @@ public final class QuestUi {
             case CITY -> q.giver + (q.placeName.isEmpty() ? "" : " • " + q.placeName);
             case CHAIN -> "★ Сюжет" + (q.placeName.isEmpty() ? "" : " • " + q.placeName);
         };
-        g.drawString(font, q.title, x + 7, ty, sourceColor(q), false);
+        // заголовок и метка не налезают друг на друга: метку ужимаем до трети ширины, заголовок — до остатка
+        int tagMax = w / 3;
+        if (font.width(tag) > tagMax) tag = font.plainSubstrByWidth(tag, tagMax - 6) + "…";
+        String title = q.title;
+        int titleMax = w - 20 - font.width(tag);
+        if (font.width(title) > titleMax) title = font.plainSubstrByWidth(title, titleMax - 6) + "…";
+        g.drawString(font, title, x + 7, ty, sourceColor(q), false);
         g.drawString(font, tag, x + w - 6 - font.width(tag), ty, UiKit.MUTED, false);
         ty += 11;
         if (desc) {

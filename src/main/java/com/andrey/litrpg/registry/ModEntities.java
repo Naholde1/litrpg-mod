@@ -113,7 +113,18 @@ public class ModEntities {
             () -> EntityType.Builder.<com.andrey.litrpg.entity.RatEntity>of((t, l) -> new com.andrey.litrpg.entity.RatEntity(t, l, true), MobCategory.CREATURE)
                     .sized(1.0f, 0.8f).clientTrackingRange(8).build("rat_king"));
 
+    /** Существа бестиария (tools/gen_bestiary.py → /litrpg_bestiary.json): по одному типу на вид. */
+    public static final java.util.Map<String, RegistryObject<EntityType<com.andrey.litrpg.entity.wild.WildMob>>> WILD = new java.util.LinkedHashMap<>();
+
     static {
         com.andrey.litrpg.npc.NpcRegistry.init();
+        for (com.andrey.litrpg.entity.wild.Species s : com.andrey.litrpg.entity.wild.Species.all()) {
+            WILD.put(s.id, ENTITY_TYPES.register(s.id, () -> {
+                EntityType.Builder<com.andrey.litrpg.entity.wild.WildMob> b = EntityType.Builder.of(s.hostile()
+                        ? com.andrey.litrpg.entity.wild.WildMob.Hostile::new : com.andrey.litrpg.entity.wild.WildMob::new, MobCategory.MONSTER);
+                if (s.has(com.andrey.litrpg.entity.wild.Species.Trait.FIRE_IMMUNE)) b.fireImmune();
+                return b.sized(s.w, s.h).clientTrackingRange(s.w > 1.5f ? 10 : 8).build(s.id);
+            }));
+        }
     }
 }

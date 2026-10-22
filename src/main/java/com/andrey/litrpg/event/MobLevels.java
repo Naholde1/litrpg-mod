@@ -21,8 +21,9 @@ import net.minecraft.world.entity.monster.Enemy;
 import java.util.UUID;
 
 /**
- * Уровни, ранги и свойства мобов. Уровень зависит от зоны (расстояние от
- * точки спавна, измерение), ночью монстры на 1–2 уровня сильнее.
+ * Уровни, ранги и свойства мобов. У каждого вида свой уровень: базовый ±5
+ * (таблица в /litrpg_bestiary.json — {@link com.andrey.litrpg.entity.wild.Species#band}).
+ * Внутри полосы уровень тянется к уровню зоны; ночью монстры на 1–2 уровня сильнее.
  * Ранги: обычный, элитный (≈8%), чемпион (≈1.5%) со случайными свойствами.
  */
 public class MobLevels {
@@ -31,6 +32,8 @@ public class MobLevels {
     public static final String AFFIX_TAG = "litrpg_affix";
     /** Уровень подземелья, в котором стоит моб (ставится в структуре). */
     public static final String DUNGEON_TAG = "litrpg_dlvl";
+    /** Запас прочности сверх предела Майнкрафта (1024 ед. здоровья): во сколько раз делится входящий урон. */
+    public static final String TOUGH_TAG = "litrpg_tough";
     private static final UUID HP_ID = UUID.fromString("8a4d1f52-77b0-4c4e-a1c2-9b3e5d7f1101");
     private static final UUID DMG_ID = UUID.fromString("8a4d1f52-77b0-4c4e-a1c2-9b3e5d7f1102");
     private static final UUID ARMOR_ID = UUID.fromString("8a4d1f52-77b0-4c4e-a1c2-9b3e5d7f1103");
@@ -90,10 +93,27 @@ public class MobLevels {
         return (e.getPersistentData().getInt(AFFIX_TAG) & (1 << a.ordinal())) != 0;
     }
 
-    /** Кому положен уровень: монстрам, нейтральным мобам и големам. */
+    /** Полоса уровней вида: базовый ±5. */
+    public static final int BAND = 5;
+
+    /** Кому положен уровень: монстрам, нейтральным мобам, големам и зверям бестиария. */
     public static boolean hasLevels(Mob mob) {
         return mob instanceof Enemy || mob instanceof com.andrey.litrpg.npc.RaceNpcEntity || mob instanceof net.minecraft.world.entity.NeutralMob
-                || mob instanceof net.minecraft.world.entity.animal.AbstractGolem;
+                || mob instanceof net.minecraft.world.entity.animal.AbstractGolem || mob instanceof com.andrey.litrpg.entity.wild.WildMob;
+    }
+
+    /** Уровень вида в этой зоне: уровень зоны, зажатый в полосу вида (base±5). */
+    public static int bandLevel(int base, int zoneLevel, RandomSource rnd) {
+        return Mth.clamp(zoneLevel + rnd.nextInt(3) - 1, Math.max(1, base - BAND), base + BAND);
+    }
+
+    /** Ранг по случаю: чем опаснее уровень, тем чаще элиты; в Кровавую луну — втрое чаще. */
+    public static Rank rollRank(Mob mob, int lvl, boolean bloodMoon) {
+        int tier = Math.min(7, lvl / 8);
+        float roll = mob instanceof Enemy ? mob.getRandom().nextFloat() / (bloodMoon ? 3f : 1f) : 1f;
+        if (roll < 0.015f + tier * 0.004f) return Rank.CHAMPION;
+        if (roll < 0.08f + tier * 0.012f) return Rank.ELITE;
+        return Rank.NORMAL;
     }
 
     public static void assignLevel(Mob mob, ServerLevel level) {
@@ -125,17 +145,16 @@ public class MobLevels {
         }
         int[] range = Zone.levels(level, mob.blockPosition());
         int lvl = range[0] + rnd.nextInt(Math.max(1, range[1] - range[0] + 1));
-        int tier = Math.min(7, range[1] / 8);
         if (level.isNight() && level.dimension() == net.minecraft.world.level.Level.OVERWORLD) {
             lvl += rnd.nextInt(3);
         }
+        // свой уровень у каждого вида: зомби — 1–9, эндермен — 30–40, где бы ни появился
+        Integer base = mob instanceof com.andrey.litrpg.npc.RaceNpcEntity npc && !npc.npcType().outlaw() ? null
+                : com.andrey.litrpg.entity.wild.Species.band(mob.getType());
+        if (base != null) lvl = bandLevel(base, lvl, rnd);
         boolean bloodMoon = com.andrey.litrpg.world.BloodMoon.isActive(level);
         if (bloodMoon) lvl += 4;
-        Rank rank = Rank.NORMAL;
-        float roll = mob instanceof Enemy ? rnd.nextFloat() / (bloodMoon ? 3f : 1f) : 1f;
-        if (roll < 0.015f + tier * 0.004f) rank = Rank.CHAMPION;
-        else if (roll < 0.08f + tier * 0.012f) rank = Rank.ELITE;
-        apply(mob, Mth.clamp(lvl, 1, 99), rank);
+        apply(mob, Mth.clamp(lvl, 1, 99), rollRank(mob, lvl, bloodMoon));
     }
 
     /** Выставить уровень и ранг (в том числе командой /litrpg spawn). */
@@ -153,6 +172,10 @@ public class MobLevels {
     private static void applyScaling(Mob mob, int lvl, Rank rank) {
         int l = lvl - 1;
         mod(mob, Attributes.MAX_HEALTH, HP_ID, (1 + 0.30 * l) * rank.hp - 1, AttributeModifier.Operation.MULTIPLY_BASE);
+        AttributeInstance hpAttr = mob.getAttribute(Attributes.MAX_HEALTH);
+        double wanted = hpAttr == null ? 0 : hpAttr.getBaseValue() * (1 + 0.30 * l) * rank.hp;
+        if (wanted > 1024) mob.getPersistentData().putFloat(TOUGH_TAG, (float) (wanted / 1024));
+        else mob.getPersistentData().remove(TOUGH_TAG);
         mod(mob, Attributes.ATTACK_DAMAGE, DMG_ID, (1 + 0.12 * l) * rank.dmg - 1, AttributeModifier.Operation.MULTIPLY_BASE);
         mod(mob, Attributes.ARMOR, ARMOR_ID, Math.min(20, l * 0.5), AttributeModifier.Operation.ADDITION);
         mod(mob, Attributes.ARMOR_TOUGHNESS, TOUGH_ID, Math.min(10, l * 0.15), AttributeModifier.Operation.ADDITION);
@@ -203,8 +226,9 @@ public class MobLevels {
         if (killed instanceof LitBoss boss) return boss.getXpReward();
         int lvl = getLevel(killed);
         double base;
-        if (killed instanceof Enemy || killed instanceof com.andrey.litrpg.npc.RaceNpcEntity) {
-            base = 6 + killed.getMaxHealth() / getRank(killed).hp * 0.6;
+        if (killed instanceof Enemy || killed instanceof com.andrey.litrpg.npc.RaceNpcEntity
+                || killed instanceof com.andrey.litrpg.entity.wild.WildMob w && w.spec().temper != com.andrey.litrpg.entity.wild.Species.Temper.TIMID) {
+            base = 6 + killed.getMaxHealth() * Math.max(1f, killed.getPersistentData().getFloat(TOUGH_TAG)) / getRank(killed).hp * 0.6;
             base *= 1.0 + 0.22 * (lvl - 1);
             base *= getRank(killed).xpMult;
         } else {

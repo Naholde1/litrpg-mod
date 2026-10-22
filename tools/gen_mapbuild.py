@@ -209,7 +209,28 @@ def arcadia(city):
     POIS.append(dict(type='spawn', id='spawn', name='Площадь Обелиска', x=city['x'], z=city['z'] + 26, y=city['y'] + 1, r=0))
 
     # --- королевский замок (север) ---
-    cx0, cz0, cx1, cz1 = C - 30, C - 108, C + 30, C - PR - 6
+    # северная стена замка отступает от городской: между ними — улица от северных ворот в обход замка
+    cx0, cz0, cx1, cz1 = C - 30, C - 100, C + 30, C - PR - 6
+    lz0, lz1 = C - WR + 3, C - WR + 6          # поперечная улица вдоль городской стены
+    lx0, lx1 = C - 40, C - 36                  # и продольная — к западному проспекту
+    for x in range(lx0, C + 5):
+        for z in range(lz0, lz1 + 1):
+            b.set(x, G - 1, z, b.bp(st['street'], x, 0, z))
+            b.set(x, G - 2, z, 'minecraft:stone')
+    for z in range(lz0, C - 3):
+        for x in range(lx0, lx1 + 1):
+            b.set(x, G - 1, z, b.bp(st['street'], x, 0, z))
+            b.set(x, G - 2, z, 'minecraft:stone')
+    for z in range(C - WR, lz0):
+        for x in range(C - 4, C + 5):
+            b.set(x, G - 1, z, b.bp(st['street'], x, 0, z))
+    b.reserve(lx0, lz0, C + 4, lz1)
+    b.reserve(lx0, lz0, lx1, C - 4)
+    b.reserve(C - 4, C - WR, C + 4, lz1)
+    for t in range(lz0 + 8, C - 8, 10):
+        b.lamp_post(lx1, t, 4)
+    for t in range(lx0 + 6, C - 12, 10):
+        b.lamp_post(t, lz1, 4)
     b.reserve(cx0, cz0, cx1, cz1)
     for x in range(cx0, cx1 + 1):
         for z in range(cz0, cz1 + 1):

@@ -232,6 +232,23 @@ public final class DevCommands {
                     dump(server);
                     continue;
                 }
+                if (line.startsWith("devmobs")) {
+                    // мобы вокруг Dev: вид, уровень, ранг, расстояние, состояние (для проверки бестиария)
+                    var p = server.getPlayerList().getPlayerByName("Dev");
+                    if (p == null) continue;
+                    int r = line.length() > 8 ? Integer.parseInt(line.substring(8).trim()) : 64;
+                    var mobs = p.serverLevel().getEntitiesOfClass(net.minecraft.world.entity.Mob.class, p.getBoundingBox().inflate(r));
+                    LitRPG.LOGGER.info("[dev] mobs around Dev ({} at {} {} {}, zone {}, land {}): {}", r, p.getBlockX(), p.getBlockY(), p.getBlockZ(),
+                            java.util.Arrays.toString(com.andrey.litrpg.world.Zone.levels(p.serverLevel(), p.blockPosition())),
+                            com.andrey.litrpg.entity.wild.WildSpawner.land(p.serverLevel(), p.blockPosition()), mobs.size());
+                    for (var m : mobs) {
+                        String st = m instanceof com.andrey.litrpg.entity.wild.WildMob w ? (w.isDormant() ? " dormant" : "") + (w.isInvisible() ? " invisible" : "") : "";
+                        LitRPG.LOGGER.info("[dev]   {} lvl {} {} d={} hp={}/{} target={}{}", net.minecraftforge.registries.ForgeRegistries.ENTITY_TYPES.getKey(m.getType()),
+                                com.andrey.litrpg.event.MobLevels.getLevel(m), com.andrey.litrpg.event.MobLevels.getRank(m), (int) m.distanceTo(p),
+                                (int) m.getHealth(), (int) m.getMaxHealth(), m.getTarget() == null ? "-" : m.getTarget().getName().getString(), st);
+                    }
+                    continue;
+                }
                 LitRPG.LOGGER.info("[dev] /{}", line);
                 server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), line);
             }

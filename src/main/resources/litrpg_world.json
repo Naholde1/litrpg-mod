@@ -14730,7 +14730,7 @@
    "npc": "litrpg:human_artisan",
    "x": -22,
    "y": 72,
-   "z": -49
+   "z": -41
   },
   {
    "city": "arcadia",
@@ -14936,101 +14936,77 @@
    "city": "arcadia",
    "craft": "blacksmith",
    "npc": "litrpg:human_artisan",
-   "x": -31,
+   "x": -11,
    "y": 73,
-   "z": 16
+   "z": 29
   },
   {
    "city": "arcadia",
    "craft": "armorer",
    "npc": "litrpg:human_artisan",
-   "x": -14,
+   "x": -29,
    "y": 73,
-   "z": 30
+   "z": 19
   },
   {
    "city": "arcadia",
    "craft": "weaponsmith",
    "npc": "litrpg:human_artisan",
-   "x": -34,
-   "y": 73,
-   "z": -14
-  },
-  {
-   "city": "arcadia",
-   "craft": "jeweler",
-   "npc": "litrpg:human_artisan",
-   "x": 30,
-   "y": 73,
-   "z": 11
-  },
-  {
-   "city": "arcadia",
-   "craft": "herbalist",
-   "npc": "litrpg:human_artisan",
    "x": 29,
    "y": 73,
-   "z": 25
-  },
-  {
-   "city": "arcadia",
-   "craft": "alchemist",
-   "npc": "litrpg:human_artisan",
-   "x": 16,
-   "y": 73,
-   "z": 37
-  },
-  {
-   "city": "arcadia",
-   "craft": "stablemaster",
-   "npc": "litrpg:human_artisan",
-   "x": 46,
-   "y": 73,
-   "z": 11
-  },
-  {
-   "city": "arcadia",
-   "craft": "innkeeper",
-   "npc": "litrpg:human_artisan",
-   "x": -14,
-   "y": 73,
-   "z": 47
-  },
-  {
-   "city": "arcadia",
-   "craft": "scribe",
-   "npc": "litrpg:human_artisan",
-   "x": 48,
-   "y": 73,
-   "z": 30
+   "z": 13
   },
   {
    "city": "arcadia",
    "craft": "builder",
    "npc": "litrpg:human_artisan",
-   "x": -51,
+   "x": 17,
    "y": 73,
-   "z": -22
+   "z": 35
   },
   {
    "city": "arcadia",
    "craft": "leatherworker",
    "npc": "litrpg:human_artisan",
-   "x": -39,
+   "x": -11,
    "y": 73,
-   "z": 26
+   "z": 44
   },
   {
    "city": "arcadia",
-   "craft": "fletcher",
+   "craft": "miner",
    "npc": "litrpg:human_artisan",
-   "x": -33,
+   "x": 45,
    "y": 73,
-   "z": 40
+   "z": 11
   },
   {
    "city": "arcadia",
-   "craft": "baker",
+   "craft": "banker",
+   "npc": "litrpg:human_artisan",
+   "x": -31,
+   "y": 73,
+   "z": 41
+  },
+  {
+   "city": "arcadia",
+   "craft": "jeweler",
+   "npc": "litrpg:human_artisan",
+   "x": 47,
+   "y": 73,
+   "z": 30
+  },
+  {
+   "city": "arcadia",
+   "craft": "tailor",
+   "npc": "litrpg:human_artisan",
+   "x": 34,
+   "y": 74,
+   "z": 43
+  },
+  {
+   "city": "arcadia",
+   "craft": "herbalist",
    "npc": "litrpg:human_artisan",
    "x": -53,
    "y": 73,
@@ -15038,51 +15014,75 @@
   },
   {
    "city": "arcadia",
-   "craft": "tailor",
+   "craft": "scribe",
    "npc": "litrpg:human_artisan",
-   "x": 35,
-   "y": 74,
-   "z": 43
-  },
-  {
-   "city": "arcadia",
-   "craft": "miner",
-   "npc": "litrpg:human_artisan",
-   "x": 13,
+   "x": 14,
    "y": 73,
-   "z": 58
-  },
-  {
-   "city": "arcadia",
-   "craft": "innkeeper",
-   "npc": "litrpg:human_artisan",
-   "x": 50,
-   "y": 73,
-   "z": -43
-  },
-  {
-   "city": "arcadia",
-   "craft": "healer",
-   "npc": "litrpg:human_artisan",
-   "x": 66,
-   "y": 73,
-   "z": 12
-  },
-  {
-   "city": "arcadia",
-   "craft": "banker",
-   "npc": "litrpg:human_artisan",
-   "x": -16,
-   "y": 73,
-   "z": 68
+   "z": 44
   },
   {
    "city": "arcadia",
    "craft": "builder",
    "npc": "litrpg:human_artisan",
-   "x": 56,
+   "x": -50,
    "y": 73,
-   "z": 32
+   "z": -20
+  },
+  {
+   "city": "arcadia",
+   "craft": "baker",
+   "npc": "litrpg:human_artisan",
+   "x": 12,
+   "y": 73,
+   "z": 58
+  },
+  {
+   "city": "arcadia",
+   "craft": "fletcher",
+   "npc": "litrpg:human_artisan",
+   "x": -47,
+   "y": 73,
+   "z": 24
+  },
+  {
+   "city": "arcadia",
+   "craft": "stablemaster",
+   "npc": "litrpg:human_artisan",
+   "x": 48,
+   "y": 73,
+   "z": -44
+  },
+  {
+   "city": "arcadia",
+   "craft": "alchemist",
+   "npc": "litrpg:human_artisan",
+   "x": 64,
+   "y": 73,
+   "z": 13
+  },
+  {
+   "city": "arcadia",
+   "craft": "healer",
+   "npc": "litrpg:human_artisan",
+   "x": -13,
+   "y": 73,
+   "z": 64
+  },
+  {
+   "city": "arcadia",
+   "craft": "innkeeper",
+   "npc": "litrpg:human_artisan",
+   "x": 12,
+   "y": 73,
+   "z": 70
+  },
+  {
+   "city": "arcadia",
+   "craft": "innkeeper",
+   "npc": "litrpg:human_artisan",
+   "x": -73,
+   "y": 73,
+   "z": 16
   },
   {
    "city": "haven",
@@ -16983,7 +16983,7 @@
    "chief": [
     -1,
     72,
-    -92
+    -84
    ],
    "center": [
     5,
@@ -16993,7 +16993,7 @@
    "craft_blacksmith": [
     -22,
     72,
-    -49
+    -41
    ],
    "craft_butcher": [
     35,
@@ -17046,49 +17046,49 @@
     -12
    ],
    "craft_armorer": [
-    -14,
+    -29,
     73,
-    30
+    19
    ],
    "craft_weaponsmith": [
-    -34,
+    29,
     73,
-    -14
+    13
    ],
-   "craft_stablemaster": [
-    46,
+   "craft_builder": [
+    17,
+    73,
+    35
+   ],
+   "craft_miner": [
+    45,
     73,
     11
    ],
-   "craft_innkeeper": [
-    -14,
+   "craft_banker": [
+    -31,
     73,
-    47
+    41
    ],
    "craft_scribe": [
+    14,
+    73,
+    44
+   ],
+   "craft_stablemaster": [
     48,
     73,
-    30
-   ],
-   "craft_builder": [
-    -51,
-    73,
-    -22
-   ],
-   "craft_miner": [
-    13,
-    73,
-    58
+    -44
    ],
    "craft_healer": [
-    66,
+    -13,
     73,
-    12
+    64
    ],
-   "craft_banker": [
-    -16,
+   "craft_innkeeper": [
+    12,
     73,
-    68
+    70
    ]
   },
   "haven": {

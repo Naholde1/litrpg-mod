@@ -1,0 +1,3775 @@
+{
+ "species": [
+  {
+   "id": "deer",
+   "ru": "Лесной олень",
+   "en": "Forest Deer",
+   "plural": "оленей",
+   "level": 3,
+   "w": 0.9,
+   "h": 1.5,
+   "hp": 16,
+   "dmg": 2,
+   "speed": 0.3,
+   "armor": 0,
+   "kb": 0.0,
+   "fly": 0.0,
+   "temper": "timid",
+   "zone": 8,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    2,
+    4
+   ],
+   "weight": 10,
+   "lands": [
+    "kingdom",
+    "elves",
+    "beastkin",
+    "wild"
+   ],
+   "traits": [],
+   "skills": [],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.goat.ambient",
+    "minecraft:entity.goat.hurt",
+    "minecraft:entity.goat.death",
+    1.2
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:leather",
+     0,
+     2,
+     1.0
+    ],
+    [
+     "minecraft:beef",
+     1,
+     2,
+     1.0
+    ]
+   ],
+   "egg": [
+    10118200,
+    15260864
+   ],
+   "mobtype": "",
+   "desc": "Пугливый зверь опушек. Убегает, едва заметит охотника, — подкрадывайся. Мясо и шкура пригодятся в дороге.",
+   "beast": true
+  },
+  {
+   "id": "boar",
+   "ru": "Дикий кабан",
+   "en": "Wild Boar",
+   "plural": "кабанов",
+   "level": 6,
+   "w": 0.9,
+   "h": 0.9,
+   "hp": 22,
+   "dmg": 4,
+   "speed": 0.28,
+   "armor": 2,
+   "kb": 0.2,
+   "fly": 0.0,
+   "temper": "neutral",
+   "zone": 8,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    3
+   ],
+   "weight": 8,
+   "lands": [
+    "kingdom",
+    "elves",
+    "orcs",
+    "wild",
+    "beastkin"
+   ],
+   "traits": [],
+   "skills": [
+    {
+     "s": "charge",
+     "cd": 100,
+     "p": 1.6,
+     "r": 10,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.hoglin.ambient",
+    "minecraft:entity.hoglin.hurt",
+    "minecraft:entity.hoglin.death",
+    1.3
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:porkchop",
+     1,
+     3,
+     1.0
+    ],
+    [
+     "minecraft:leather",
+     0,
+     1,
+     0.6
+    ]
+   ],
+   "egg": [
+    4863528,
+    13142656
+   ],
+   "mobtype": "",
+   "desc": "Мирно роет землю, пока его не тронуть. Раненый кабан роет копытом и бросается в $(l)таран$(): отскочи в сторону — и он врежется в дерево.",
+   "beast": true
+  },
+  {
+   "id": "jelly",
+   "ru": "Студень",
+   "en": "Jelly",
+   "plural": "студней",
+   "level": 2,
+   "w": 0.8,
+   "h": 0.75,
+   "hp": 12,
+   "dmg": 2,
+   "speed": 0.22,
+   "armor": 0,
+   "kb": 0.0,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    2
+   ],
+   "weight": 8,
+   "lands": [
+    "kingdom",
+    "goblins",
+    "elves"
+   ],
+   "traits": [
+    "split"
+   ],
+   "skills": [],
+   "hit": [
+    [
+     "minecraft:slowness",
+     30,
+     0
+    ]
+   ],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.slime.squish",
+    "minecraft:entity.slime.hurt",
+    "minecraft:entity.slime.death",
+    0.8
+   ],
+   "particle": "slime",
+   "drops": [
+    [
+     "minecraft:slime_ball",
+     0,
+     2,
+     0.8
+    ]
+   ],
+   "egg": [
+    8050794,
+    4098618
+   ],
+   "mobtype": "",
+   "desc": "Дрожащий ком слизи. Липкий удар замедляет. Если разрубить — $(l)распадается на два студня$() поменьше.",
+   "beast": false
+  },
+  {
+   "id": "scarecrow",
+   "ru": "Оживлённое пугало",
+   "en": "Living Scarecrow",
+   "plural": "пугал",
+   "level": 9,
+   "w": 0.6,
+   "h": 1.9,
+   "hp": 22,
+   "dmg": 4,
+   "speed": 0.26,
+   "armor": 0,
+   "kb": 0.0,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "night",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 6,
+   "lands": [
+    "kingdom"
+   ],
+   "traits": [
+    "disguise",
+    "flammable"
+   ],
+   "skills": [
+    {
+     "s": "scream",
+     "cd": 160,
+     "p": 0.5,
+     "r": 8,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [
+    [
+     "minecraft:weakness",
+     60,
+     0
+    ]
+   ],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.husk.ambient",
+    "minecraft:block.grass.break",
+    "minecraft:entity.armor_stand.break",
+    1.4
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:wheat",
+     1,
+     3,
+     1.0
+    ],
+    [
+     "minecraft:pumpkin",
+     1,
+     1,
+     0.3
+    ],
+    [
+     "minecraft:string",
+     0,
+     2,
+     0.6
+    ]
+   ],
+   "egg": [
+    14202976,
+    5913194
+   ],
+   "mobtype": "",
+   "desc": "Стоит в поле неподвижно, как обычное пугало, — пока ты не подойдёшь вплотную. Вороний крик слепит. $(l)Горит вдвое сильнее$(): факел или огненный клинок — лучший друг.",
+   "beast": false
+  },
+  {
+   "id": "stag_beetle",
+   "ru": "Жук-рогач",
+   "en": "Stag Beetle",
+   "plural": "жуков-рогачей",
+   "level": 11,
+   "w": 1.0,
+   "h": 0.8,
+   "hp": 26,
+   "dmg": 5,
+   "speed": 0.24,
+   "armor": 8,
+   "kb": 0.4,
+   "fly": 0.0,
+   "temper": "territorial",
+   "zone": 6,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    2
+   ],
+   "weight": 6,
+   "lands": [
+    "kingdom",
+    "elves",
+    "goblins",
+    "wild"
+   ],
+   "traits": [
+    "front_guard"
+   ],
+   "skills": [
+    {
+     "s": "charge",
+     "cd": 120,
+     "p": 1.5,
+     "r": 9,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.spider.ambient",
+    "minecraft:entity.spider.hurt",
+    "minecraft:entity.spider.death",
+    0.6
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:bone_meal",
+     0,
+     2,
+     0.8
+    ],
+    [
+     "minecraft:scute",
+     1,
+     1,
+     0.15
+    ]
+   ],
+   "egg": [
+    1980980,
+    9071168
+   ],
+   "mobtype": "arthropod",
+   "desc": "Охраняет свой кусок луга. Панцирь спереди держит половину урона, рога бросают в таран. Бей $(l)сбоку или сзади$().",
+   "beast": true
+  },
+  {
+   "id": "dire_wolf",
+   "ru": "Лютоволк",
+   "en": "Dire Wolf",
+   "plural": "лютоволков",
+   "level": 14,
+   "w": 0.9,
+   "h": 1.1,
+   "hp": 22,
+   "dmg": 5,
+   "speed": 0.33,
+   "armor": 0,
+   "kb": 0.1,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    2,
+    4
+   ],
+   "weight": 10,
+   "lands": [
+    "elves",
+    "beastkin",
+    "kingdom",
+    "wild",
+    "orcs"
+   ],
+   "traits": [
+    "pack"
+   ],
+   "skills": [
+    {
+     "s": "howl",
+     "cd": 300,
+     "p": 1,
+     "r": 24,
+     "arg": "",
+     "n": 1
+    },
+    {
+     "s": "leap",
+     "cd": 70,
+     "p": 1.4,
+     "r": 8,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.wolf.growl",
+    "minecraft:entity.wolf.hurt",
+    "minecraft:entity.wolf.death",
+    0.7
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:leather",
+     0,
+     2,
+     0.8
+    ],
+    [
+     "minecraft:bone",
+     0,
+     2,
+     0.8
+    ]
+   ],
+   "egg": [
+    5921376,
+    16764992
+   ],
+   "mobtype": "",
+   "desc": "Охотится стаей по 2–4. $(l)Вой$() созывает всю стаю и ускоряет её, прыжок сбивает с ног. Ударишь одного — придут все.",
+   "beast": true
+  },
+  {
+   "id": "bloodbat",
+   "ru": "Кровопийца",
+   "en": "Bloodbat",
+   "plural": "кровопийц",
+   "level": 12,
+   "w": 0.9,
+   "h": 0.7,
+   "hp": 14,
+   "dmg": 3,
+   "speed": 0.3,
+   "armor": 0,
+   "kb": 0.0,
+   "fly": 0.6,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "night",
+   "place": "both",
+   "group": [
+    1,
+    3
+   ],
+   "weight": 7,
+   "lands": [
+    "kingdom",
+    "elves",
+    "dwarves",
+    "orcs",
+    "beastkin",
+    "demonkin",
+    "goblins",
+    "frost",
+    "deadlands",
+    "wild"
+   ],
+   "traits": [
+    "drain"
+   ],
+   "skills": [
+    {
+     "s": "swoop",
+     "cd": 60,
+     "p": 1.3,
+     "r": 14,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.bat.ambient",
+    "minecraft:entity.bat.hurt",
+    "minecraft:entity.bat.death",
+    0.6
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:leather",
+     0,
+     1,
+     0.5
+    ]
+   ],
+   "egg": [
+    3811882,
+    16719904
+   ],
+   "mobtype": "",
+   "desc": "Огромная летучая мышь. Ночью и в пещерах пикирует сверху и $(l)пьёт кровь$() — каждый укус лечит её. Лук и арбалет удобнее меча.",
+   "beast": true
+  },
+  {
+   "id": "barrow_wight",
+   "ru": "Курганный умертвий",
+   "en": "Barrow Wight",
+   "plural": "курганных умертвий",
+   "level": 22,
+   "w": 0.7,
+   "h": 2.1,
+   "hp": 34,
+   "dmg": 6,
+   "speed": 0.24,
+   "armor": 6,
+   "kb": 0.3,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "night",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 6,
+   "lands": [
+    "kingdom",
+    "wild",
+    "deadlands",
+    "elves"
+   ],
+   "traits": [
+    "drain",
+    "sun_burn"
+   ],
+   "skills": [
+    {
+     "s": "bolt",
+     "cd": 80,
+     "p": 1.0,
+     "r": 16,
+     "arg": "shadow",
+     "n": 1
+    }
+   ],
+   "hit": [
+    [
+     "minecraft:weakness",
+     80,
+     0
+    ]
+   ],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.stray.ambient",
+    "minecraft:entity.stray.hurt",
+    "minecraft:entity.stray.death",
+    0.7
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:bone",
+     0,
+     2,
+     0.8
+    ],
+    [
+     "minecraft:gold_nugget",
+     1,
+     3,
+     0.6
+    ]
+   ],
+   "egg": [
+    3817528,
+    7405504
+   ],
+   "mobtype": "undead",
+   "desc": "Древний король, вставший из кургана в истлевшей короне. Мечет сгустки тьмы, высасывает силы. С рассветом сгорает.",
+   "beast": false
+  },
+  {
+   "id": "ogre",
+   "ru": "Огр",
+   "en": "Ogre",
+   "plural": "огров",
+   "level": 30,
+   "w": 1.4,
+   "h": 3.0,
+   "hp": 72,
+   "dmg": 11,
+   "speed": 0.23,
+   "armor": 4,
+   "kb": 0.6,
+   "fly": 0.0,
+   "temper": "territorial",
+   "zone": 10,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 6,
+   "lands": [
+    "wild",
+    "orcs",
+    "kingdom",
+    "beastkin",
+    "elves",
+    "demonkin",
+    "goblins",
+    "deadlands"
+   ],
+   "traits": [
+    "enrage"
+   ],
+   "skills": [
+    {
+     "s": "stomp",
+     "cd": 140,
+     "p": 1.2,
+     "r": 4.5,
+     "arg": "",
+     "n": 1
+    },
+    {
+     "s": "charge",
+     "cd": 200,
+     "p": 1.6,
+     "r": 12,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.ravager.ambient",
+    "minecraft:entity.ravager.hurt",
+    "minecraft:entity.ravager.death",
+    0.8
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:leather",
+     1,
+     2,
+     1.0
+    ],
+    [
+     "minecraft:beef",
+     1,
+     3,
+     1.0
+    ],
+    [
+     "minecraft:gold_nugget",
+     1,
+     5,
+     0.7
+    ]
+   ],
+   "egg": [
+    9083482,
+    8015920
+   ],
+   "mobtype": "",
+   "desc": "Медлительный великан с дубиной. Не трогает тех, кто обходит его стороной. $(l)Удар оземь$() подбрасывает всех рядом, при 35% здоровья впадает в ярость.",
+   "beast": false
+  },
+  {
+   "id": "griffin",
+   "ru": "Грифон",
+   "en": "Griffin",
+   "plural": "грифонов",
+   "level": 34,
+   "w": 1.4,
+   "h": 1.6,
+   "hp": 50,
+   "dmg": 9,
+   "speed": 0.3,
+   "armor": 4,
+   "kb": 0.3,
+   "fly": 0.7,
+   "temper": "territorial",
+   "zone": 14,
+   "time": "day",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 4,
+   "lands": [
+    "wild",
+    "dwarves",
+    "kingdom",
+    "beastkin",
+    "elves",
+    "orcs"
+   ],
+   "traits": [],
+   "skills": [
+    {
+     "s": "swoop",
+     "cd": 60,
+     "p": 1.5,
+     "r": 18,
+     "arg": "",
+     "n": 1
+    },
+    {
+     "s": "roar",
+     "cd": 240,
+     "p": 1,
+     "r": 10,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.parrot.ambient",
+    "minecraft:entity.parrot.hurt",
+    "minecraft:entity.parrot.death",
+    0.5
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:feather",
+     2,
+     5,
+     1.0
+    ],
+    [
+     "minecraft:leather",
+     0,
+     2,
+     0.6
+    ]
+   ],
+   "egg": [
+    11041344,
+    15789800
+   ],
+   "mobtype": "",
+   "desc": "Полуорёл-полулев. Кружит над своей территорией и пикирует на чужаков. Клёкот замедляет.",
+   "beast": true
+  },
+  {
+   "id": "weaver_spider",
+   "ru": "Паук-ткач",
+   "en": "Weaver Spider",
+   "plural": "пауков-ткачей",
+   "level": 16,
+   "w": 1.3,
+   "h": 0.9,
+   "hp": 26,
+   "dmg": 5,
+   "speed": 0.3,
+   "armor": 2,
+   "kb": 0.0,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "any",
+   "place": "both",
+   "group": [
+    1,
+    2
+   ],
+   "weight": 8,
+   "lands": [
+    "elves",
+    "goblins",
+    "wild",
+    "kingdom",
+    "dwarves"
+   ],
+   "traits": [],
+   "skills": [
+    {
+     "s": "bolt",
+     "cd": 100,
+     "p": 0.6,
+     "r": 14,
+     "arg": "web",
+     "n": 1
+    }
+   ],
+   "hit": [
+    [
+     "minecraft:poison",
+     80,
+     0
+    ]
+   ],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.spider.ambient",
+    "minecraft:entity.spider.hurt",
+    "minecraft:entity.spider.death",
+    0.8
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:string",
+     1,
+     3,
+     1.0
+    ],
+    [
+     "minecraft:spider_eye",
+     0,
+     1,
+     0.5
+    ]
+   ],
+   "egg": [
+    3156024,
+    13148256
+   ],
+   "mobtype": "arthropod",
+   "desc": "Плюётся $(l)паутиной$(): попавший не может прыгать и еле движется. Яд в укусе. Держись в движении.",
+   "beast": true
+  },
+  {
+   "id": "treant",
+   "ru": "Молодой древень",
+   "en": "Young Treant",
+   "plural": "древней",
+   "level": 21,
+   "w": 1.0,
+   "h": 2.6,
+   "hp": 54,
+   "dmg": 7,
+   "speed": 0.2,
+   "armor": 6,
+   "kb": 0.7,
+   "fly": 0.0,
+   "temper": "territorial",
+   "zone": 6,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 6,
+   "lands": [
+    "elves"
+   ],
+   "traits": [
+    "disguise",
+    "regen",
+    "flammable"
+   ],
+   "skills": [
+    {
+     "s": "roots",
+     "cd": 160,
+     "p": 0.6,
+     "r": 12,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.ravager.ambient",
+    "minecraft:block.wood.break",
+    "minecraft:entity.ravager.death",
+    0.5
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:oak_log",
+     1,
+     3,
+     1.0
+    ],
+    [
+     "minecraft:stick",
+     1,
+     4,
+     1.0
+    ],
+    [
+     "minecraft:apple",
+     0,
+     2,
+     0.6
+    ]
+   ],
+   "egg": [
+    6967348,
+    5147188
+   ],
+   "mobtype": "",
+   "desc": "Неотличим от дерева, пока не наступишь ему на корни. $(l)Корни$() опутывают ноги. Залечивает раны, но $(l)боится огня$().",
+   "beast": false
+  },
+  {
+   "id": "elder_treant",
+   "ru": "Древний древень",
+   "en": "Elder Treant",
+   "plural": "древних древней",
+   "level": 34,
+   "w": 1.6,
+   "h": 3.6,
+   "hp": 100,
+   "dmg": 11,
+   "speed": 0.18,
+   "armor": 10,
+   "kb": 0.9,
+   "fly": 0.0,
+   "temper": "territorial",
+   "zone": 8,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 3,
+   "lands": [
+    "elves",
+    "wild"
+   ],
+   "traits": [
+    "regen",
+    "flammable",
+    "enrage"
+   ],
+   "skills": [
+    {
+     "s": "roots",
+     "cd": 140,
+     "p": 0.7,
+     "r": 14,
+     "arg": "",
+     "n": 1
+    },
+    {
+     "s": "stomp",
+     "cd": 160,
+     "p": 1.2,
+     "r": 5,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.ravager.ambient",
+    "minecraft:block.wood.break",
+    "minecraft:entity.ravager.death",
+    0.4
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:dark_oak_log",
+     2,
+     5,
+     1.0
+    ],
+    [
+     "minecraft:apple",
+     1,
+     3,
+     1.0
+    ],
+    [
+     "minecraft:golden_apple",
+     1,
+     1,
+     0.05
+    ]
+   ],
+   "egg": [
+    4865584,
+    10154239
+   ],
+   "mobtype": "",
+   "desc": "Старейший страж леса, поросший мхом и светящимися грибами. Опутывает корнями и сотрясает землю.",
+   "beast": false
+  },
+  {
+   "id": "shadow_panther",
+   "ru": "Сумрачная пантера",
+   "en": "Shadow Panther",
+   "plural": "сумрачных пантер",
+   "level": 27,
+   "w": 0.9,
+   "h": 1.0,
+   "hp": 32,
+   "dmg": 8,
+   "speed": 0.36,
+   "armor": 2,
+   "kb": 0.2,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "night",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 5,
+   "lands": [
+    "elves",
+    "wild",
+    "goblins"
+   ],
+   "traits": [
+    "stealth"
+   ],
+   "skills": [
+    {
+     "s": "leap",
+     "cd": 80,
+     "p": 1.5,
+     "r": 10,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.cat.hiss",
+    "minecraft:entity.cat.hurt",
+    "minecraft:entity.cat.death",
+    0.5
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:leather",
+     1,
+     2,
+     1.0
+    ]
+   ],
+   "egg": [
+    1972772,
+    11559167
+   ],
+   "mobtype": "",
+   "desc": "Ночная охотница. $(l)Невидима$(), пока не окажется рядом, а первый удар из засады — двойной. Видишь фиолетовые глаза во тьме — беги или бей первым.",
+   "beast": true
+  },
+  {
+   "id": "cave_bear",
+   "ru": "Пещерный медведь",
+   "en": "Cave Bear",
+   "plural": "пещерных медведей",
+   "level": 19,
+   "w": 1.4,
+   "h": 1.5,
+   "hp": 50,
+   "dmg": 9,
+   "speed": 0.27,
+   "armor": 3,
+   "kb": 0.5,
+   "fly": 0.0,
+   "temper": "territorial",
+   "zone": 8,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 6,
+   "lands": [
+    "elves",
+    "beastkin",
+    "dwarves",
+    "kingdom"
+   ],
+   "traits": [
+    "enrage"
+   ],
+   "skills": [
+    {
+     "s": "roar",
+     "cd": 240,
+     "p": 1,
+     "r": 8,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.polar_bear.warning",
+    "minecraft:entity.polar_bear.hurt",
+    "minecraft:entity.polar_bear.death",
+    0.7
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:leather",
+     1,
+     3,
+     1.0
+    ],
+    [
+     "minecraft:beef",
+     1,
+     2,
+     1.0
+    ]
+   ],
+   "egg": [
+    6965806,
+    3811352
+   ],
+   "mobtype": "",
+   "desc": "Огромный бурый медведь. Нападает, если подойти слишком близко. Рёв замедляет и ослабляет, раненый звереет.",
+   "beast": true
+  },
+  {
+   "id": "kobold",
+   "ru": "Кобольд-подрывник",
+   "en": "Kobold Sapper",
+   "plural": "кобольдов",
+   "level": 12,
+   "w": 0.6,
+   "h": 1.1,
+   "hp": 14,
+   "dmg": 3,
+   "speed": 0.3,
+   "armor": 2,
+   "kb": 0.0,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "any",
+   "place": "both",
+   "group": [
+    2,
+    4
+   ],
+   "weight": 8,
+   "lands": [
+    "dwarves",
+    "wild"
+   ],
+   "traits": [
+    "flee_low",
+    "kite"
+   ],
+   "skills": [
+    {
+     "s": "bolt",
+     "cd": 90,
+     "p": 1.2,
+     "r": 14,
+     "arg": "bomb",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.fox.screech",
+    "minecraft:entity.fox.hurt",
+    "minecraft:entity.fox.death",
+    1.3
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:coal",
+     0,
+     2,
+     0.7
+    ],
+    [
+     "minecraft:gunpowder",
+     0,
+     2,
+     0.7
+    ],
+    [
+     "minecraft:iron_nugget",
+     0,
+     3,
+     0.7
+    ]
+   ],
+   "egg": [
+    12084266,
+    4868690
+   ],
+   "mobtype": "",
+   "desc": "Мелкие трусливые ящеролюди со свечами на касках. Держатся поодаль и $(l)швыряют бомбы$(). Раненый кобольд удирает.",
+   "beast": false
+  },
+  {
+   "id": "crystal_golem",
+   "ru": "Кристальный голем",
+   "en": "Crystal Golem",
+   "plural": "кристальных големов",
+   "level": 31,
+   "w": 1.2,
+   "h": 2.4,
+   "hp": 70,
+   "dmg": 10,
+   "speed": 0.2,
+   "armor": 14,
+   "kb": 0.9,
+   "fly": 0.0,
+   "temper": "territorial",
+   "zone": 6,
+   "time": "any",
+   "place": "under",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 5,
+   "lands": [
+    "any"
+   ],
+   "traits": [
+    "reflect"
+   ],
+   "skills": [
+    {
+     "s": "stomp",
+     "cd": 140,
+     "p": 1.0,
+     "r": 4,
+     "arg": "",
+     "n": 1
+    },
+    {
+     "s": "volley",
+     "cd": 120,
+     "p": 0.8,
+     "r": 16,
+     "arg": "crystal",
+     "n": 3
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:block.amethyst_block.chime",
+    "minecraft:block.amethyst_block.break",
+    "minecraft:block.glass.break",
+    0.7
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:amethyst_shard",
+     2,
+     5,
+     1.0
+    ],
+    [
+     "minecraft:quartz",
+     0,
+     3,
+     0.6
+    ],
+    [
+     "minecraft:diamond",
+     1,
+     1,
+     0.03
+    ]
+   ],
+   "egg": [
+    5919840,
+    10119896
+   ],
+   "mobtype": "",
+   "desc": "Ожившая жила аметиста. Кристаллы $(l)отражают стрелы и снаряды$() — бери молот или меч. Бросает осколки веером.",
+   "beast": false
+  },
+  {
+   "id": "harpy",
+   "ru": "Гарпия",
+   "en": "Harpy",
+   "plural": "гарпий",
+   "level": 22,
+   "w": 0.7,
+   "h": 1.6,
+   "hp": 22,
+   "dmg": 5,
+   "speed": 0.3,
+   "armor": 0,
+   "kb": 0.0,
+   "fly": 0.65,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "day",
+   "place": "surface",
+   "group": [
+    2,
+    3
+   ],
+   "weight": 6,
+   "lands": [
+    "dwarves",
+    "wild",
+    "frost",
+    "beastkin"
+   ],
+   "traits": [],
+   "skills": [
+    {
+     "s": "swoop",
+     "cd": 50,
+     "p": 1.3,
+     "r": 16,
+     "arg": "",
+     "n": 1
+    },
+    {
+     "s": "scream",
+     "cd": 200,
+     "p": 0.5,
+     "r": 8,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.phantom.ambient",
+    "minecraft:entity.phantom.hurt",
+    "minecraft:entity.phantom.death",
+    1.5
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:feather",
+     1,
+     3,
+     1.0
+    ]
+   ],
+   "egg": [
+    6978186,
+    13150352
+   ],
+   "mobtype": "",
+   "desc": "Крылатые сестры горных круч. Нападают стаей сверху, оглушают визгом.",
+   "beast": true
+  },
+  {
+   "id": "wyvern",
+   "ru": "Виверна",
+   "en": "Wyvern",
+   "plural": "виверн",
+   "level": 40,
+   "w": 1.8,
+   "h": 1.6,
+   "hp": 76,
+   "dmg": 11,
+   "speed": 0.3,
+   "armor": 6,
+   "kb": 0.4,
+   "fly": 0.7,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "day",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 4,
+   "lands": [
+    "dwarves",
+    "wild",
+    "frost",
+    "demonkin",
+    "kingdom"
+   ],
+   "traits": [],
+   "skills": [
+    {
+     "s": "swoop",
+     "cd": 70,
+     "p": 1.4,
+     "r": 20,
+     "arg": "",
+     "n": 1
+    },
+    {
+     "s": "bolt",
+     "cd": 90,
+     "p": 1.0,
+     "r": 20,
+     "arg": "poison",
+     "n": 1
+    }
+   ],
+   "hit": [
+    [
+     "minecraft:poison",
+     100,
+     1
+    ]
+   ],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.ender_dragon.ambient",
+    "minecraft:entity.ender_dragon.hurt",
+    "minecraft:entity.phantom.death",
+    1.3
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:leather",
+     2,
+     4,
+     1.0
+    ],
+    [
+     "minecraft:phantom_membrane",
+     0,
+     2,
+     0.6
+    ]
+   ],
+   "egg": [
+    3828298,
+    16769056
+   ],
+   "mobtype": "",
+   "desc": "Младшая родственница драконов. Плюётся ядом с высоты и пикирует. Ядовитый хвост — не подставляйся.",
+   "beast": true
+  },
+  {
+   "id": "hyena",
+   "ru": "Степная гиена",
+   "en": "Steppe Hyena",
+   "plural": "гиен",
+   "level": 17,
+   "w": 0.8,
+   "h": 0.9,
+   "hp": 18,
+   "dmg": 4,
+   "speed": 0.34,
+   "armor": 0,
+   "kb": 0.0,
+   "fly": 0.0,
+   "temper": "scavenger",
+   "zone": 8,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    3,
+    5
+   ],
+   "weight": 9,
+   "lands": [
+    "orcs",
+    "wild"
+   ],
+   "traits": [
+    "pack",
+    "flee_low"
+   ],
+   "skills": [
+    {
+     "s": "howl",
+     "cd": 300,
+     "p": 1,
+     "r": 24,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.fox.ambient",
+    "minecraft:entity.fox.hurt",
+    "minecraft:entity.fox.death",
+    0.7
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:leather",
+     0,
+     1,
+     0.6
+    ],
+    [
+     "minecraft:bone",
+     0,
+     2,
+     0.8
+    ]
+   ],
+   "egg": [
+    10521178,
+    3812894
+   ],
+   "mobtype": "",
+   "desc": "Трусливы поодиночке, опасны стаей. $(l)Нападают на раненых$(): пока здоровье выше 60%, гиены только кружат рядом.",
+   "beast": true
+  },
+  {
+   "id": "vulture",
+   "ru": "Стервятник",
+   "en": "Vulture",
+   "plural": "стервятников",
+   "level": 20,
+   "w": 0.9,
+   "h": 0.9,
+   "hp": 16,
+   "dmg": 4,
+   "speed": 0.28,
+   "armor": 0,
+   "kb": 0.0,
+   "fly": 0.6,
+   "temper": "scavenger",
+   "zone": 8,
+   "time": "day",
+   "place": "surface",
+   "group": [
+    2,
+    3
+   ],
+   "weight": 6,
+   "lands": [
+    "orcs",
+    "deadlands",
+    "wild"
+   ],
+   "traits": [],
+   "skills": [
+    {
+     "s": "swoop",
+     "cd": 60,
+     "p": 1.2,
+     "r": 14,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [
+    [
+     "minecraft:hunger",
+     100,
+     0
+    ]
+   ],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.parrot.ambient",
+    "minecraft:entity.parrot.hurt",
+    "minecraft:entity.parrot.death",
+    0.5
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:feather",
+     1,
+     3,
+     1.0
+    ],
+    [
+     "minecraft:rotten_flesh",
+     0,
+     1,
+     0.5
+    ]
+   ],
+   "egg": [
+    3814448,
+    14192784
+   ],
+   "mobtype": "",
+   "desc": "Кружат над степью и ждут. Стоит ослабнуть — спускаются клевать.",
+   "beast": true
+  },
+  {
+   "id": "centaur",
+   "ru": "Кентавр-налётчик",
+   "en": "Centaur Raider",
+   "plural": "кентавров",
+   "level": 26,
+   "w": 1.3,
+   "h": 2.2,
+   "hp": 44,
+   "dmg": 7,
+   "speed": 0.36,
+   "armor": 4,
+   "kb": 0.3,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "day",
+   "place": "surface",
+   "group": [
+    1,
+    2
+   ],
+   "weight": 5,
+   "lands": [
+    "orcs",
+    "wild",
+    "kingdom"
+   ],
+   "traits": [
+    "kite"
+   ],
+   "skills": [
+    {
+     "s": "arrows",
+     "cd": 45,
+     "p": 1.0,
+     "r": 22,
+     "arg": "",
+     "n": 1
+    },
+    {
+     "s": "arrows",
+     "cd": 200,
+     "p": 0.8,
+     "r": 18,
+     "arg": "",
+     "n": 4
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.horse.ambient",
+    "minecraft:entity.horse.hurt",
+    "minecraft:entity.horse.death",
+    0.8
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:leather",
+     1,
+     2,
+     1.0
+    ],
+    [
+     "minecraft:arrow",
+     2,
+     6,
+     1.0
+    ]
+   ],
+   "egg": [
+    9064496,
+    11567162
+   ],
+   "mobtype": "",
+   "desc": "Быстрые лучники степей. Держат дистанцию и $(l)осыпают стрелами$(). Щит или укрытие — и подбирайся ближе.",
+   "beast": false
+  },
+  {
+   "id": "basilisk",
+   "ru": "Василиск",
+   "en": "Basilisk",
+   "plural": "василисков",
+   "level": 38,
+   "w": 1.4,
+   "h": 1.1,
+   "hp": 64,
+   "dmg": 10,
+   "speed": 0.25,
+   "armor": 8,
+   "kb": 0.6,
+   "fly": 0.0,
+   "temper": "territorial",
+   "zone": 10,
+   "time": "any",
+   "place": "both",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 4,
+   "lands": [
+    "orcs",
+    "goblins",
+    "wild",
+    "deadlands"
+   ],
+   "traits": [],
+   "skills": [
+    {
+     "s": "gaze",
+     "cd": 40,
+     "p": 1.0,
+     "r": 16,
+     "arg": "",
+     "n": 1
+    },
+    {
+     "s": "bolt",
+     "cd": 120,
+     "p": 0.9,
+     "r": 14,
+     "arg": "poison",
+     "n": 1
+    }
+   ],
+   "hit": [
+    [
+     "minecraft:poison",
+     100,
+     1
+    ]
+   ],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.cat.hiss",
+    "minecraft:entity.hoglin.hurt",
+    "minecraft:entity.hoglin.death",
+    0.3
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:leather",
+     1,
+     3,
+     1.0
+    ],
+    [
+     "minecraft:emerald",
+     1,
+     1,
+     0.2
+    ]
+   ],
+   "egg": [
+    6978106,
+    16769056
+   ],
+   "mobtype": "",
+   "desc": "Шестиногий змей пустошей. $(l)Взгляд обращает в камень$(): не смотри ему в глаза дольше пары секунд — отворачивайся, когда Система предупреждает.",
+   "beast": true
+  },
+  {
+   "id": "sandworm",
+   "ru": "Песчаный червь",
+   "en": "Sandworm",
+   "plural": "песчаных червей",
+   "level": 44,
+   "w": 1.6,
+   "h": 2.2,
+   "hp": 96,
+   "dmg": 13,
+   "speed": 0.3,
+   "armor": 8,
+   "kb": 1.0,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 4,
+   "lands": [
+    "orcs",
+    "deadlands"
+   ],
+   "traits": [],
+   "skills": [
+    {
+     "s": "burrow",
+     "cd": 160,
+     "p": 1.6,
+     "r": 24,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.ravager.roar",
+    "minecraft:entity.ravager.hurt",
+    "minecraft:entity.ravager.death",
+    0.6
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:leather",
+     1,
+     3,
+     1.0
+    ],
+    [
+     "minecraft:gold_nugget",
+     2,
+     6,
+     1.0
+    ]
+   ],
+   "egg": [
+    13150320,
+    5903394
+   ],
+   "mobtype": "",
+   "desc": "Плывёт под песком — видна только дрожь земли. $(l)Вырывается из-под ног$() и подбрасывает. Почуял дрожь — отбегай в сторону.",
+   "beast": true
+  },
+  {
+   "id": "manticore",
+   "ru": "Мантикора",
+   "en": "Manticore",
+   "plural": "мантикор",
+   "level": 48,
+   "w": 1.5,
+   "h": 1.7,
+   "hp": 96,
+   "dmg": 14,
+   "speed": 0.32,
+   "armor": 6,
+   "kb": 0.5,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 3,
+   "lands": [
+    "wild",
+    "orcs",
+    "demonkin",
+    "frost"
+   ],
+   "traits": [],
+   "skills": [
+    {
+     "s": "volley",
+     "cd": 100,
+     "p": 0.8,
+     "r": 18,
+     "arg": "quill",
+     "n": 5
+    },
+    {
+     "s": "leap",
+     "cd": 80,
+     "p": 1.4,
+     "r": 10,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [
+    [
+     "minecraft:poison",
+     100,
+     1
+    ]
+   ],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.polar_bear.warning",
+    "minecraft:entity.ravager.hurt",
+    "minecraft:entity.ravager.death",
+    1.1
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:leather",
+     2,
+     4,
+     1.0
+    ],
+    [
+     "minecraft:arrow",
+     2,
+     6,
+     1.0
+    ]
+   ],
+   "egg": [
+    13142600,
+    9062944
+   ],
+   "mobtype": "",
+   "desc": "Лев с лицом человека, крыльями нетопыря и хвостом скорпиона. Мечет ядовитые шипы веером и прыгает.",
+   "beast": true
+  },
+  {
+   "id": "snow_leopard",
+   "ru": "Снежный барс",
+   "en": "Snow Leopard",
+   "plural": "снежных барсов",
+   "level": 24,
+   "w": 0.9,
+   "h": 0.9,
+   "hp": 28,
+   "dmg": 7,
+   "speed": 0.36,
+   "armor": 0,
+   "kb": 0.1,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 6,
+   "lands": [
+    "beastkin",
+    "frost"
+   ],
+   "traits": [
+    "stealth"
+   ],
+   "skills": [
+    {
+     "s": "leap",
+     "cd": 70,
+     "p": 1.5,
+     "r": 10,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [
+    [
+     "minecraft:slowness",
+     40,
+     0
+    ]
+   ],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.cat.hiss",
+    "minecraft:entity.cat.hurt",
+    "minecraft:entity.cat.death",
+    0.8
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:leather",
+     1,
+     2,
+     1.0
+    ]
+   ],
+   "egg": [
+    14211280,
+    3815994
+   ],
+   "mobtype": "",
+   "desc": "Сливается со снегом и $(l)невидим$() до прыжка. Первый удар из засады — двойной.",
+   "beast": true
+  },
+  {
+   "id": "yeti",
+   "ru": "Йети",
+   "en": "Yeti",
+   "plural": "йети",
+   "level": 31,
+   "w": 1.3,
+   "h": 2.6,
+   "hp": 70,
+   "dmg": 11,
+   "speed": 0.26,
+   "armor": 4,
+   "kb": 0.6,
+   "fly": 0.0,
+   "temper": "territorial",
+   "zone": 10,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 5,
+   "lands": [
+    "beastkin",
+    "frost"
+   ],
+   "traits": [
+    "enrage"
+   ],
+   "skills": [
+    {
+     "s": "bolt",
+     "cd": 90,
+     "p": 1.0,
+     "r": 18,
+     "arg": "ice",
+     "n": 1
+    },
+    {
+     "s": "roar",
+     "cd": 220,
+     "p": 1,
+     "r": 8,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.polar_bear.warning",
+    "minecraft:entity.polar_bear.hurt",
+    "minecraft:entity.polar_bear.death",
+    0.5
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:leather",
+     1,
+     3,
+     1.0
+    ],
+    [
+     "minecraft:snowball",
+     2,
+     6,
+     1.0
+    ]
+   ],
+   "egg": [
+    15791352,
+    8030880
+   ],
+   "mobtype": "",
+   "desc": "Снежный великан. Швыряет ледяные глыбы, ревёт так, что стынут ноги.",
+   "beast": true
+  },
+  {
+   "id": "mammoth",
+   "ru": "Мамонт",
+   "en": "Mammoth",
+   "plural": "мамонтов",
+   "level": 37,
+   "w": 2.2,
+   "h": 3.0,
+   "hp": 120,
+   "dmg": 13,
+   "speed": 0.22,
+   "armor": 6,
+   "kb": 1.0,
+   "fly": 0.0,
+   "temper": "neutral",
+   "zone": 8,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    3
+   ],
+   "weight": 4,
+   "lands": [
+    "beastkin",
+    "frost"
+   ],
+   "traits": [
+    "pack"
+   ],
+   "skills": [
+    {
+     "s": "stomp",
+     "cd": 120,
+     "p": 1.2,
+     "r": 5,
+     "arg": "",
+     "n": 1
+    },
+    {
+     "s": "charge",
+     "cd": 200,
+     "p": 1.8,
+     "r": 14,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.ravager.ambient",
+    "minecraft:entity.ravager.hurt",
+    "minecraft:entity.ravager.death",
+    0.5
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:leather",
+     2,
+     5,
+     1.0
+    ],
+    [
+     "minecraft:beef",
+     2,
+     5,
+     1.0
+    ],
+    [
+     "minecraft:bone",
+     1,
+     3,
+     1.0
+    ]
+   ],
+   "egg": [
+    5914152,
+    16051416
+   ],
+   "mobtype": "",
+   "desc": "Мирные гиганты тундры, бродят стадами. Тронешь одного — всё стадо пойдёт в $(l)таран$().",
+   "beast": true
+  },
+  {
+   "id": "ice_golem",
+   "ru": "Морозный страж",
+   "en": "Frost Sentinel",
+   "plural": "морозных стражей",
+   "level": 45,
+   "w": 1.4,
+   "h": 2.7,
+   "hp": 110,
+   "dmg": 14,
+   "speed": 0.2,
+   "armor": 14,
+   "kb": 1.0,
+   "fly": 0.0,
+   "temper": "territorial",
+   "zone": 6,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 4,
+   "lands": [
+    "frost",
+    "beastkin",
+    "dwarves"
+   ],
+   "traits": [
+    "aura_frost"
+   ],
+   "skills": [
+    {
+     "s": "stomp",
+     "cd": 140,
+     "p": 1.2,
+     "r": 4.5,
+     "arg": "",
+     "n": 1
+    },
+    {
+     "s": "bolt",
+     "cd": 100,
+     "p": 1.0,
+     "r": 18,
+     "arg": "ice",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:block.glass.break",
+    "minecraft:entity.iron_golem.hurt",
+    "minecraft:entity.iron_golem.death",
+    1.2
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:ice",
+     1,
+     3,
+     1.0
+    ],
+    [
+     "minecraft:packed_ice",
+     0,
+     2,
+     0.6
+    ],
+    [
+     "minecraft:diamond",
+     1,
+     1,
+     0.05
+    ]
+   ],
+   "egg": [
+    15265524,
+    10410224
+   ],
+   "mobtype": "",
+   "desc": "Древний страж из вечного льда. Рядом с ним $(l)стынет кровь$() — ты замедляешься и замерзаешь.",
+   "beast": false
+  },
+  {
+   "id": "wendigo",
+   "ru": "Вендиго",
+   "en": "Wendigo",
+   "plural": "вендиго",
+   "level": 52,
+   "w": 0.9,
+   "h": 2.8,
+   "hp": 84,
+   "dmg": 15,
+   "speed": 0.37,
+   "armor": 4,
+   "kb": 0.3,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "any",
+   "place": "both",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 4,
+   "lands": [
+    "frost",
+    "beastkin",
+    "wild",
+    "deadlands"
+   ],
+   "traits": [
+    "stealth",
+    "drain"
+   ],
+   "skills": [
+    {
+     "s": "scream",
+     "cd": 200,
+     "p": 0.6,
+     "r": 10,
+     "arg": "",
+     "n": 1
+    },
+    {
+     "s": "leap",
+     "cd": 90,
+     "p": 1.4,
+     "r": 10,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.stray.ambient",
+    "minecraft:entity.stray.hurt",
+    "minecraft:entity.stray.death",
+    0.4
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:bone",
+     1,
+     3,
+     1.0
+    ],
+    [
+     "minecraft:leather",
+     0,
+     2,
+     0.6
+    ]
+   ],
+   "egg": [
+    4867136,
+    12644607
+   ],
+   "mobtype": "",
+   "desc": "Тощий голод с оленьим черепом. Подкрадывается невидимым, пьёт жизнь, визг сводит с ума.",
+   "beast": false
+  },
+  {
+   "id": "hellhound",
+   "ru": "Адская гончая",
+   "en": "Hellhound",
+   "plural": "адских гончих",
+   "level": 33,
+   "w": 0.9,
+   "h": 1.1,
+   "hp": 36,
+   "dmg": 7,
+   "speed": 0.35,
+   "armor": 2,
+   "kb": 0.1,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    2,
+    3
+   ],
+   "weight": 8,
+   "lands": [
+    "demonkin",
+    "nether"
+   ],
+   "traits": [
+    "pack",
+    "fire_immune"
+   ],
+   "skills": [
+    {
+     "s": "breath_fire",
+     "cd": 120,
+     "p": 1.0,
+     "r": 6,
+     "arg": "",
+     "n": 1
+    },
+    {
+     "s": "leap",
+     "cd": 80,
+     "p": 1.3,
+     "r": 9,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 3,
+   "sound": [
+    "minecraft:entity.wolf.growl",
+    "minecraft:entity.wolf.hurt",
+    "minecraft:entity.wolf.death",
+    0.5
+   ],
+   "particle": "flame",
+   "drops": [
+    [
+     "minecraft:bone",
+     0,
+     2,
+     0.8
+    ],
+    [
+     "minecraft:blaze_powder",
+     0,
+     1,
+     0.4
+    ]
+   ],
+   "egg": [
+    2761252,
+    16738848
+   ],
+   "mobtype": "",
+   "desc": "Обугленные псы демонидов. $(l)Дышат огнём$() и охотятся стаей. Зелье огнестойкости спасает жизнь.",
+   "beast": true
+  },
+  {
+   "id": "salamander",
+   "ru": "Огненная саламандра",
+   "en": "Fire Salamander",
+   "plural": "саламандр",
+   "level": 38,
+   "w": 1.0,
+   "h": 0.7,
+   "hp": 48,
+   "dmg": 9,
+   "speed": 0.3,
+   "armor": 6,
+   "kb": 0.2,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "any",
+   "place": "both",
+   "group": [
+    1,
+    2
+   ],
+   "weight": 6,
+   "lands": [
+    "demonkin",
+    "nether"
+   ],
+   "traits": [
+    "aura_fire",
+    "fire_immune"
+   ],
+   "skills": [
+    {
+     "s": "bolt",
+     "cd": 80,
+     "p": 1.0,
+     "r": 16,
+     "arg": "fire",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 4,
+   "sound": [
+    "minecraft:entity.strider.ambient",
+    "minecraft:entity.strider.hurt",
+    "minecraft:entity.strider.death",
+    0.8
+   ],
+   "particle": "flame",
+   "drops": [
+    [
+     "minecraft:magma_cream",
+     0,
+     2,
+     0.8
+    ],
+    [
+     "minecraft:leather",
+     0,
+     1,
+     0.5
+    ]
+   ],
+   "egg": [
+    14176286,
+    16769136
+   ],
+   "mobtype": "",
+   "desc": "Ящерица из живого пламени. Плюётся огнём, а рядом с ней $(l)загорается всё$().",
+   "beast": true
+  },
+  {
+   "id": "magma_golem",
+   "ru": "Магмовый голем",
+   "en": "Magma Golem",
+   "plural": "магмовых големов",
+   "level": 45,
+   "w": 1.4,
+   "h": 2.6,
+   "hp": 110,
+   "dmg": 14,
+   "speed": 0.2,
+   "armor": 12,
+   "kb": 1.0,
+   "fly": 0.0,
+   "temper": "territorial",
+   "zone": 6,
+   "time": "any",
+   "place": "both",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 4,
+   "lands": [
+    "demonkin",
+    "nether"
+   ],
+   "traits": [
+    "aura_fire",
+    "explode",
+    "fire_immune"
+   ],
+   "skills": [
+    {
+     "s": "stomp",
+     "cd": 130,
+     "p": 1.3,
+     "r": 4.5,
+     "arg": "",
+     "n": 1
+    },
+    {
+     "s": "bolt",
+     "cd": 160,
+     "p": 1.2,
+     "r": 18,
+     "arg": "meteor",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:block.lava.pop",
+    "minecraft:entity.iron_golem.hurt",
+    "minecraft:entity.iron_golem.death",
+    0.6
+   ],
+   "particle": "lava",
+   "drops": [
+    [
+     "minecraft:magma_block",
+     1,
+     3,
+     1.0
+    ],
+    [
+     "minecraft:obsidian",
+     0,
+     2,
+     0.6
+    ],
+    [
+     "minecraft:magma_cream",
+     0,
+     2,
+     0.6
+    ]
+   ],
+   "egg": [
+    2759704,
+    16747040
+   ],
+   "mobtype": "",
+   "desc": "Ходячий вулкан. Жжёт всё рядом, мечет раскалённые глыбы и $(l)взрывается при гибели$() — отойди, добивая.",
+   "beast": false
+  },
+  {
+   "id": "demon_stalker",
+   "ru": "Демон-ловчий",
+   "en": "Demon Stalker",
+   "plural": "демонов-ловчих",
+   "level": 51,
+   "w": 0.8,
+   "h": 2.4,
+   "hp": 72,
+   "dmg": 14,
+   "speed": 0.35,
+   "armor": 8,
+   "kb": 0.4,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "any",
+   "place": "both",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 4,
+   "lands": [
+    "demonkin",
+    "wild",
+    "nether"
+   ],
+   "traits": [
+    "stealth",
+    "fire_immune"
+   ],
+   "skills": [
+    {
+     "s": "blink",
+     "cd": 100,
+     "p": 1.0,
+     "r": 20,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [
+    [
+     "minecraft:wither",
+     60,
+     1
+    ]
+   ],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.enderman.ambient",
+    "minecraft:entity.enderman.hurt",
+    "minecraft:entity.enderman.death",
+    0.6
+   ],
+   "particle": "portal",
+   "drops": [
+    [
+     "minecraft:blaze_rod",
+     0,
+     2,
+     0.6
+    ],
+    [
+     "minecraft:ender_pearl",
+     0,
+     1,
+     0.3
+    ]
+   ],
+   "egg": [
+    4860506,
+    14704895
+   ],
+   "mobtype": "",
+   "desc": "Охотник Бездны. $(l)Возникает за спиной$(), когти иссушают. Чаще оборачивайся.",
+   "beast": false
+  },
+  {
+   "id": "chimera",
+   "ru": "Химера",
+   "en": "Chimera",
+   "plural": "химер",
+   "level": 56,
+   "w": 1.8,
+   "h": 2.2,
+   "hp": 150,
+   "dmg": 16,
+   "speed": 0.3,
+   "armor": 10,
+   "kb": 0.7,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 2,
+   "lands": [
+    "wild",
+    "demonkin",
+    "orcs",
+    "deadlands",
+    "nether"
+   ],
+   "traits": [
+    "fire_immune"
+   ],
+   "skills": [
+    {
+     "s": "breath_fire",
+     "cd": 140,
+     "p": 1.0,
+     "r": 7,
+     "arg": "",
+     "n": 1
+    },
+    {
+     "s": "bolt",
+     "cd": 100,
+     "p": 0.9,
+     "r": 16,
+     "arg": "poison",
+     "n": 1
+    },
+    {
+     "s": "roar",
+     "cd": 260,
+     "p": 1,
+     "r": 10,
+     "arg": "",
+     "n": 1
+    },
+    {
+     "s": "leap",
+     "cd": 100,
+     "p": 1.3,
+     "r": 10,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.ravager.ambient",
+    "minecraft:entity.ravager.hurt",
+    "minecraft:entity.ravager.death",
+    0.9
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:leather",
+     2,
+     5,
+     1.0
+    ],
+    [
+     "minecraft:blaze_powder",
+     1,
+     3,
+     1.0
+    ]
+   ],
+   "egg": [
+    13142600,
+    4876842
+   ],
+   "mobtype": "",
+   "desc": "Лев, коза и змея в одном теле. Огонь из пасти, яд со змеиного хвоста, рёв козлиной головы. Вершина пищевой цепи Пограничья.",
+   "beast": true
+  },
+  {
+   "id": "giant_toad",
+   "ru": "Жаба-великан",
+   "en": "Giant Toad",
+   "plural": "жаб-великанов",
+   "level": 20,
+   "w": 1.1,
+   "h": 1.0,
+   "hp": 34,
+   "dmg": 6,
+   "speed": 0.24,
+   "armor": 2,
+   "kb": 0.3,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    2
+   ],
+   "weight": 8,
+   "lands": [
+    "goblins"
+   ],
+   "traits": [
+    "water"
+   ],
+   "skills": [
+    {
+     "s": "tongue",
+     "cd": 90,
+     "p": 0.6,
+     "r": 10,
+     "arg": "",
+     "n": 1
+    },
+    {
+     "s": "leap",
+     "cd": 70,
+     "p": 1.2,
+     "r": 8,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [
+    [
+     "minecraft:poison",
+     60,
+     0
+    ]
+   ],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.frog.ambient",
+    "minecraft:entity.frog.hurt",
+    "minecraft:entity.frog.death",
+    0.5
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:slime_ball",
+     1,
+     2,
+     1.0
+    ]
+   ],
+   "egg": [
+    6978106,
+    15781936
+   ],
+   "mobtype": "",
+   "desc": "Сидит в камышах. $(l)Язык$() выстреливает на десяток блоков и подтаскивает добычу к пасти.",
+   "beast": true
+  },
+  {
+   "id": "mire_horror",
+   "ru": "Трясинник",
+   "en": "Mire Horror",
+   "plural": "трясинников",
+   "level": 30,
+   "w": 1.5,
+   "h": 1.8,
+   "hp": 76,
+   "dmg": 9,
+   "speed": 0.18,
+   "armor": 4,
+   "kb": 0.8,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 5,
+   "lands": [
+    "goblins"
+   ],
+   "traits": [
+    "disguise",
+    "regen",
+    "engulf",
+    "water"
+   ],
+   "skills": [],
+   "hit": [
+    [
+     "minecraft:poison",
+     100,
+     1
+    ]
+   ],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.slime.squish",
+    "minecraft:block.mud.break",
+    "minecraft:entity.slime.death",
+    0.4
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:slime_ball",
+     2,
+     4,
+     1.0
+    ],
+    [
+     "minecraft:vine",
+     1,
+     3,
+     1.0
+    ],
+    [
+     "minecraft:lily_pad",
+     0,
+     2,
+     0.5
+    ]
+   ],
+   "egg": [
+    4866096,
+    13693024
+   ],
+   "mobtype": "",
+   "desc": "Кочка из грязи и тины — пока не шевельнётся. $(l)Затягивает в себя$(): пойманный не может уйти, пока трясинник не получит сильный удар.",
+   "beast": false
+  },
+  {
+   "id": "hydra",
+   "ru": "Болотная гидра",
+   "en": "Swamp Hydra",
+   "plural": "гидр",
+   "level": 42,
+   "w": 2.0,
+   "h": 2.6,
+   "hp": 120,
+   "dmg": 13,
+   "speed": 0.22,
+   "armor": 6,
+   "kb": 0.8,
+   "fly": 0.0,
+   "temper": "territorial",
+   "zone": 12,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 3,
+   "lands": [
+    "goblins"
+   ],
+   "traits": [
+    "regen",
+    "enrage",
+    "water"
+   ],
+   "skills": [
+    {
+     "s": "volley",
+     "cd": 100,
+     "p": 0.8,
+     "r": 18,
+     "arg": "poison",
+     "n": 3
+    }
+   ],
+   "hit": [
+    [
+     "minecraft:poison",
+     100,
+     1
+    ]
+   ],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.hoglin.angry",
+    "minecraft:entity.hoglin.hurt",
+    "minecraft:entity.hoglin.death",
+    0.5
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:leather",
+     2,
+     4,
+     1.0
+    ],
+    [
+     "minecraft:slime_ball",
+     1,
+     3,
+     1.0
+    ]
+   ],
+   "egg": [
+    3037754,
+    15793984
+   ],
+   "mobtype": "",
+   "desc": "Три головы — три плевка ядом разом. Быстро залечивает раны: бей без передышки.",
+   "beast": true
+  },
+  {
+   "id": "ghoul",
+   "ru": "Гуль",
+   "en": "Ghoul",
+   "plural": "гулей",
+   "level": 27,
+   "w": 0.7,
+   "h": 1.7,
+   "hp": 30,
+   "dmg": 7,
+   "speed": 0.33,
+   "armor": 2,
+   "kb": 0.0,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "night",
+   "place": "both",
+   "group": [
+    2,
+    3
+   ],
+   "weight": 9,
+   "lands": [
+    "deadlands",
+    "wild",
+    "kingdom",
+    "goblins",
+    "dwarves",
+    "orcs",
+    "demonkin",
+    "elves",
+    "beastkin",
+    "frost"
+   ],
+   "traits": [
+    "pack",
+    "sun_burn"
+   ],
+   "skills": [
+    {
+     "s": "leap",
+     "cd": 80,
+     "p": 1.2,
+     "r": 8,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [
+    [
+     "minecraft:slowness",
+     40,
+     1
+    ]
+   ],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.zombie.ambient",
+    "minecraft:entity.zombie.hurt",
+    "minecraft:entity.zombie.death",
+    1.3
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:rotten_flesh",
+     0,
+     2,
+     0.8
+    ],
+    [
+     "minecraft:bone",
+     0,
+     2,
+     0.8
+    ]
+   ],
+   "egg": [
+    8030826,
+    14745440
+   ],
+   "mobtype": "undead",
+   "desc": "Трупоеды. Быстрые, прыгучие, когти $(l)парализуют$(). С рассветом сгорают.",
+   "beast": false
+  },
+  {
+   "id": "banshee",
+   "ru": "Банши",
+   "en": "Banshee",
+   "plural": "банши",
+   "level": 40,
+   "w": 0.7,
+   "h": 2.0,
+   "hp": 40,
+   "dmg": 9,
+   "speed": 0.26,
+   "armor": 0,
+   "kb": 0.0,
+   "fly": 0.5,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "night",
+   "place": "both",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 5,
+   "lands": [
+    "deadlands",
+    "wild",
+    "beastkin",
+    "kingdom",
+    "dwarves"
+   ],
+   "traits": [],
+   "skills": [
+    {
+     "s": "scream",
+     "cd": 160,
+     "p": 0.8,
+     "r": 10,
+     "arg": "",
+     "n": 1
+    },
+    {
+     "s": "blink",
+     "cd": 140,
+     "p": 1.0,
+     "r": 16,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [
+    [
+     "minecraft:weakness",
+     60,
+     0
+    ]
+   ],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.vex.ambient",
+    "minecraft:entity.vex.hurt",
+    "minecraft:entity.vex.death",
+    0.7
+   ],
+   "particle": "soul",
+   "drops": [
+    [
+     "minecraft:ghast_tear",
+     0,
+     1,
+     0.4
+    ],
+    [
+     "minecraft:phantom_membrane",
+     0,
+     1,
+     0.5
+    ]
+   ],
+   "egg": [
+    13162720,
+    2109504
+   ],
+   "mobtype": "undead",
+   "desc": "Плакальщица мёртвых. Её $(l)вопль$() ранит и сбивает с толку. Исчезает и появляется вновь.",
+   "beast": false
+  },
+  {
+   "id": "necromancer",
+   "ru": "Некромант-отступник",
+   "en": "Renegade Necromancer",
+   "plural": "некромантов",
+   "level": 44,
+   "w": 0.6,
+   "h": 2.0,
+   "hp": 54,
+   "dmg": 8,
+   "speed": 0.28,
+   "armor": 4,
+   "kb": 0.2,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 4,
+   "lands": [
+    "deadlands",
+    "wild",
+    "goblins"
+   ],
+   "traits": [
+    "kite"
+   ],
+   "skills": [
+    {
+     "s": "summon",
+     "cd": 300,
+     "p": 1.0,
+     "r": 4,
+     "arg": "minecraft:skeleton",
+     "n": 2
+    },
+    {
+     "s": "bolt",
+     "cd": 70,
+     "p": 1.0,
+     "r": 18,
+     "arg": "shadow",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.evoker.ambient",
+    "minecraft:entity.evoker.hurt",
+    "minecraft:entity.evoker.death",
+    0.8
+   ],
+   "particle": "soul",
+   "drops": [
+    [
+     "minecraft:bone",
+     1,
+     3,
+     1.0
+    ],
+    [
+     "minecraft:lapis_lazuli",
+     1,
+     4,
+     1.0
+    ],
+    [
+     "minecraft:book",
+     1,
+     1,
+     0.3
+    ]
+   ],
+   "egg": [
+    2760244,
+    12611839
+   ],
+   "mobtype": "",
+   "desc": "Изгнанный из гильдии маг. Держится поодаль, $(l)поднимает скелетов$() и мечет тьму. Сначала — сам некромант.",
+   "beast": false
+  },
+  {
+   "id": "bone_colossus",
+   "ru": "Костяной колосс",
+   "en": "Bone Colossus",
+   "plural": "костяных колоссов",
+   "level": 52,
+   "w": 1.8,
+   "h": 3.6,
+   "hp": 170,
+   "dmg": 16,
+   "speed": 0.2,
+   "armor": 12,
+   "kb": 1.0,
+   "fly": 0.0,
+   "temper": "territorial",
+   "zone": 8,
+   "time": "any",
+   "place": "both",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 2,
+   "lands": [
+    "deadlands"
+   ],
+   "traits": [
+    "revive"
+   ],
+   "skills": [
+    {
+     "s": "stomp",
+     "cd": 120,
+     "p": 1.3,
+     "r": 5,
+     "arg": "",
+     "n": 1
+    },
+    {
+     "s": "roar",
+     "cd": 220,
+     "p": 1,
+     "r": 10,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.skeleton.ambient",
+    "minecraft:entity.skeleton.hurt",
+    "minecraft:entity.skeleton.death",
+    0.4
+   ],
+   "particle": "soul",
+   "drops": [
+    [
+     "minecraft:bone",
+     4,
+     10,
+     1.0
+    ],
+    [
+     "minecraft:bone_block",
+     1,
+     3,
+     1.0
+    ]
+   ],
+   "egg": [
+    15261896,
+    6353151
+   ],
+   "mobtype": "undead",
+   "desc": "Гора костей вокруг синего огня. $(l)Встаёт после первой смерти$() — не убирай оружие.",
+   "beast": false
+  },
+  {
+   "id": "mummy",
+   "ru": "Мумия",
+   "en": "Mummy",
+   "plural": "мумий",
+   "level": 30,
+   "w": 0.7,
+   "h": 2.0,
+   "hp": 52,
+   "dmg": 8,
+   "speed": 0.22,
+   "armor": 4,
+   "kb": 0.3,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    2
+   ],
+   "weight": 6,
+   "lands": [
+    "orcs",
+    "deadlands"
+   ],
+   "traits": [
+    "flammable"
+   ],
+   "skills": [
+    {
+     "s": "roar",
+     "cd": 200,
+     "p": 1,
+     "r": 8,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [
+    [
+     "minecraft:hunger",
+     160,
+     1
+    ],
+    [
+     "minecraft:wither",
+     60,
+     0
+    ]
+   ],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.husk.ambient",
+    "minecraft:entity.husk.hurt",
+    "minecraft:entity.husk.death",
+    0.7
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:string",
+     1,
+     3,
+     1.0
+    ],
+    [
+     "minecraft:paper",
+     0,
+     2,
+     0.6
+    ],
+    [
+     "minecraft:gold_nugget",
+     0,
+     4,
+     0.7
+    ]
+   ],
+   "egg": [
+    14207136,
+    4259712
+   ],
+   "mobtype": "undead",
+   "desc": "Царские слуги в бинтах. Проклятие вызывает голод и иссушение. $(l)Бинты горят$() вдвое лучше.",
+   "beast": false
+  },
+  {
+   "id": "grimlock",
+   "ru": "Слепой пещерник",
+   "en": "Grimlock",
+   "plural": "пещерников",
+   "level": 22,
+   "w": 0.7,
+   "h": 1.8,
+   "hp": 30,
+   "dmg": 7,
+   "speed": 0.3,
+   "armor": 2,
+   "kb": 0.2,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "any",
+   "place": "under",
+   "group": [
+    2,
+    3
+   ],
+   "weight": 9,
+   "lands": [
+    "any"
+   ],
+   "traits": [
+    "blind",
+    "pack"
+   ],
+   "skills": [
+    {
+     "s": "leap",
+     "cd": 80,
+     "p": 1.3,
+     "r": 8,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:entity.zombie_villager.ambient",
+    "minecraft:entity.zombie_villager.hurt",
+    "minecraft:entity.zombie_villager.death",
+    0.6
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:bone",
+     0,
+     2,
+     0.8
+    ],
+    [
+     "minecraft:iron_nugget",
+     0,
+     3,
+     0.8
+    ],
+    [
+     "minecraft:raw_iron",
+     1,
+     1,
+     0.2
+    ]
+   ],
+   "egg": [
+    13156536,
+    3803658
+   ],
+   "mobtype": "",
+   "desc": "Безглазые жители глубин. $(l)Слышат, но не видят$(): если красться (Shift), можно пройти мимо стаи.",
+   "beast": false
+  },
+  {
+   "id": "mimic",
+   "ru": "Мимик",
+   "en": "Mimic",
+   "plural": "мимиков",
+   "level": 25,
+   "w": 0.95,
+   "h": 1.0,
+   "hp": 50,
+   "dmg": 10,
+   "speed": 0.3,
+   "armor": 8,
+   "kb": 0.6,
+   "fly": 0.0,
+   "temper": "hostile",
+   "zone": 8,
+   "time": "any",
+   "place": "under",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 2,
+   "lands": [
+    "any"
+   ],
+   "traits": [
+    "disguise"
+   ],
+   "skills": [
+    {
+     "s": "leap",
+     "cd": 60,
+     "p": 1.4,
+     "r": 6,
+     "arg": "",
+     "n": 1
+    }
+   ],
+   "hit": [],
+   "fire": 0,
+   "sound": [
+    "minecraft:block.chest.open",
+    "minecraft:block.wood.break",
+    "minecraft:block.chest.close",
+    0.6
+   ],
+   "particle": "",
+   "drops": [
+    [
+     "minecraft:gold_ingot",
+     1,
+     4,
+     1.0
+    ],
+    [
+     "minecraft:emerald",
+     0,
+     3,
+     0.8
+    ],
+    [
+     "minecraft:diamond",
+     1,
+     1,
+     0.15
+    ]
+   ],
+   "egg": [
+    10514474,
+    13127786
+   ],
+   "mobtype": "",
+   "desc": "Сундук посреди пещеры? Подумай дважды. Мимик кусается, но и платит щедро — золотом и камнями.",
+   "beast": false
+  }
+ ],
+ "external": [
+  {
+   "id": "litrpg:stone_troll",
+   "level": 24,
+   "lands": [
+    "dwarves",
+    "wild",
+    "beastkin",
+    "elves"
+   ],
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 6
+  },
+  {
+   "id": "litrpg:frost_wraith",
+   "level": 30,
+   "lands": [
+    "frost",
+    "beastkin"
+   ],
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    2
+   ],
+   "weight": 7
+  },
+  {
+   "id": "litrpg:forest_wisp",
+   "level": 11,
+   "lands": [
+    "elves"
+   ],
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    3
+   ],
+   "weight": 8
+  },
+  {
+   "id": "litrpg:ash_imp",
+   "level": 27,
+   "lands": [
+    "demonkin",
+    "nether"
+   ],
+   "time": "any",
+   "place": "surface",
+   "group": [
+    2,
+    4
+   ],
+   "weight": 9
+  },
+  {
+   "id": "litrpg:bog_lurker",
+   "level": 24,
+   "lands": [
+    "goblins"
+   ],
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    2
+   ],
+   "weight": 8
+  },
+  {
+   "id": "litrpg:sand_scorpion",
+   "level": 22,
+   "lands": [
+    "orcs",
+    "deadlands"
+   ],
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    2
+   ],
+   "weight": 8
+  },
+  {
+   "id": "litrpg:grave_knight",
+   "level": 35,
+   "lands": [
+    "deadlands",
+    "wild",
+    "dwarves"
+   ],
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    2
+   ],
+   "weight": 6
+  },
+  {
+   "id": "litrpg:goblin",
+   "level": 18,
+   "lands": [
+    "goblins",
+    "wild"
+   ],
+   "time": "any",
+   "place": "surface",
+   "group": [
+    2,
+    4
+   ],
+   "weight": 9
+  },
+  {
+   "id": "litrpg:goblin_shaman",
+   "level": 22,
+   "lands": [
+    "goblins"
+   ],
+   "time": "any",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 4
+  },
+  {
+   "id": "litrpg:skeleton_warden",
+   "level": 33,
+   "lands": [
+    "deadlands"
+   ],
+   "time": "night",
+   "place": "surface",
+   "group": [
+    1,
+    1
+   ],
+   "weight": 4
+  }
+ ],
+ "bands": {
+  "minecraft:zombie": 4,
+  "minecraft:zombie_villager": 5,
+  "minecraft:husk": 13,
+  "minecraft:drowned": 11,
+  "minecraft:skeleton": 7,
+  "minecraft:stray": 17,
+  "minecraft:spider": 6,
+  "minecraft:cave_spider": 12,
+  "minecraft:creeper": 10,
+  "minecraft:slime": 8,
+  "minecraft:witch": 18,
+  "minecraft:pillager": 16,
+  "minecraft:vindicator": 22,
+  "minecraft:evoker": 30,
+  "minecraft:ravager": 33,
+  "minecraft:vex": 28,
+  "minecraft:illusioner": 30,
+  "minecraft:phantom": 21,
+  "minecraft:enderman": 35,
+  "minecraft:silverfish": 9,
+  "minecraft:endermite": 30,
+  "minecraft:guardian": 26,
+  "minecraft:elder_guardian": 45,
+  "minecraft:shulker": 50,
+  "minecraft:wolf": 8,
+  "minecraft:polar_bear": 20,
+  "minecraft:bee": 3,
+  "minecraft:llama": 5,
+  "minecraft:trader_llama": 5,
+  "minecraft:panda": 6,
+  "minecraft:iron_golem": 25,
+  "minecraft:snow_golem": 5,
+  "minecraft:piglin": 26,
+  "minecraft:zombified_piglin": 25,
+  "minecraft:hoglin": 30,
+  "minecraft:zoglin": 34,
+  "minecraft:magma_cube": 28,
+  "minecraft:blaze": 33,
+  "minecraft:ghast": 31,
+  "minecraft:wither_skeleton": 39,
+  "minecraft:piglin_brute": 42,
+  "minecraft:goat": 6,
+  "minecraft:dolphin": 8,
+  "litrpg:rat": 2,
+  "litrpg:rat_king": 6,
+  "litrpg:outlaw_thug": 12,
+  "litrpg:outlaw_cultist": 16,
+  "litrpg:pirate_cutthroat": 20,
+  "litrpg:pirate_gunner": 22,
+  "litrpg:pirate_captain": 26,
+  "litrpg:stone_troll": 24,
+  "litrpg:frost_wraith": 30,
+  "litrpg:forest_wisp": 11,
+  "litrpg:ash_imp": 27,
+  "litrpg:bog_lurker": 24,
+  "litrpg:sand_scorpion": 22,
+  "litrpg:grave_knight": 35,
+  "litrpg:goblin": 18,
+  "litrpg:goblin_shaman": 22,
+  "litrpg:skeleton_warden": 33
+ }
+}

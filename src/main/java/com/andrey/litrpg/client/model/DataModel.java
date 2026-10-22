@@ -39,7 +39,7 @@ public class DataModel<T extends net.minecraft.world.entity.Mob> extends EntityM
     private final List<Part> parts = new ArrayList<>();
     public final float scale;
     public final float shadow;
-    private float limbSwing, limbAmount, age, yaw, pitch, cast;
+    private float limbSwing, limbAmount, age, yaw, pitch, cast, awake = 1f;
     private int pose;
 
     public DataModel(ModelPart root, String name) {
@@ -140,9 +140,11 @@ public class DataModel<T extends net.minecraft.world.entity.Mob> extends EntityM
         if (entity instanceof Animated a) {
             this.cast = a.castAnim(partialTick);
             this.pose = a.castPose();
+            this.awake = a.awakeAnim(partialTick);
         } else {
             this.cast = 0;
             this.pose = 0;
+            this.awake = 1f;
         }
     }
 
@@ -158,6 +160,7 @@ public class DataModel<T extends net.minecraft.world.entity.Mob> extends EntityM
             float[] r = {p.rx, p.ry, p.rz};
             float dy = 0;
             for (Anim a : p.anims) {
+                if (awake < 0.5f && !a.type.equals("awake")) continue;
                 float v = switch (a.type) {
                     case "look" -> a.axis == 1 ? this.yaw * a.amp : this.pitch * a.amp;
                     case "walk" -> Mth.cos(this.limbSwing * 0.6662f * a.speed + a.phase) * 1.2f * this.limbAmount * a.amp;
@@ -167,6 +170,7 @@ public class DataModel<T extends net.minecraft.world.entity.Mob> extends EntityM
                     case "attack" -> -Mth.sin(swing * Mth.PI) * a.amp;
                     case "cast" -> (pose == 1 ? this.cast : 0f) * a.amp;
                     case "cast2" -> (pose == 2 ? this.cast : 0f) * a.amp;
+                    case "awake" -> this.awake * a.amp;
                     case "bob" -> {
                         dy += Mth.sin(this.age * a.speed + a.phase) * a.amp;
                         yield 0f;

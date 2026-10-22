@@ -187,12 +187,6 @@
     "weight": 5,
     "minCount": 1,
     "maxCount": 1
-   },
-   {
-    "type": "litrpg:forest_wisp",
-    "weight": 20,
-    "minCount": 1,
-    "maxCount": 3
    }
   ],
   "underground_water_creature": [

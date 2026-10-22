@@ -180,4 +180,11 @@ public class ModItems {
             () -> new Item(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> GRAVE_KNIGHT_SPAWN_EGG = ITEMS.register("grave_knight_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.GRAVE_KNIGHT, 0x3A3A40, 0x8E44AD, new Item.Properties()));
+
+    static {
+        // яйца призыва существ бестиария
+        for (com.andrey.litrpg.entity.wild.Species s : com.andrey.litrpg.entity.wild.Species.all()) {
+            ITEMS.register(s.id + "_spawn_egg", () -> new ForgeSpawnEggItem(ModEntities.WILD.get(s.id), s.egg1, s.egg2, new Item.Properties()));
+        }
+    }
 }

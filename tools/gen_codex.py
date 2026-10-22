@@ -92,7 +92,7 @@ ENTRIES = {
     "classes": None,  # заполняется из gen_lang.py
     "combat": [
         ("levels", "Уровни монстров", "minecraft:zombie_head", [
-            text("У каждого монстра есть уровень — он виден в рамке цели вверху экрана. Уровень зависит от зоны мира и времени суток: ночью монстры сильнее.$(br2)Каждый уровень даёт монстру +30% здоровья, +12% урона, броню и скорость."),
+            text("У каждого монстра есть уровень — он виден в рамке цели вверху экрана. У каждого $(l)вида свой уровень$(): базовый ±5. Зомби — 1–9, огр — 25–35, химера — 51–61. Внутри своей полосы монстр подстраивается под зону, ночью — на 1–2 уровня сильнее.$(br2)Каждый уровень даёт монстру +30% здоровья, +12% урона, броню и скорость."),
             text("$(l)Разница уровней важна:$()$(li)Монстр выше тебя на N уровней получает на 6% меньше урона за каждый уровень (минимум 15%) и бьёт на 8% сильнее.$(li)На 10 уровней выше — почти вдвое больнее и в 2.5 раза живучее.$(li)Слабые монстры дают меньше опыта, сильные — больше.", "Разница уровней"),
         ]),
         ("elites", "Элиты и чемпионы", "minecraft:wither_skeleton_skull", [
@@ -363,6 +363,48 @@ def world_entries():
     return ent
 
 
+LAND_RU = {'kingdom': 'Королевство', 'elves': 'Сильвендар', 'dwarves': 'Подгорье', 'orcs': 'Степи Орды', 'beastkin': 'Земли Клыка',
+           'demonkin': 'Пепельные Пустоши', 'goblins': 'Топи', 'frost': 'Ледяной Предел', 'deadlands': 'Мёртвые Земли',
+           'wild': 'Пограничье', 'nether': 'Преисподняя', 'any': 'везде'}
+TEMPER_RU = {'hostile': 'нападает сам', 'territorial': 'охраняет своё место', 'neutral': 'защищается', 'timid': 'убегает',
+             'scavenger': 'добивает раненых'}
+BEST_GROUPS = [
+    ('plains', 'Равнины Королевства', ['deer', 'boar', 'jelly', 'scarecrow', 'stag_beetle', 'dire_wolf', 'bloodbat', 'barrow_wight', 'ogre', 'griffin']),
+    ('forests', 'Леса Сильвендара', ['weaver_spider', 'treant', 'elder_treant', 'shadow_panther', 'cave_bear']),
+    ('mountains', 'Горы и небо', ['kobold', 'crystal_golem', 'harpy', 'wyvern']),
+    ('steppe', 'Степи и пустыни', ['hyena', 'vulture', 'centaur', 'basilisk', 'sandworm', 'manticore']),
+    ('north', 'Север', ['snow_leopard', 'yeti', 'mammoth', 'ice_golem', 'wendigo']),
+    ('ash', 'Пепел и пламя', ['hellhound', 'salamander', 'magma_golem', 'demon_stalker', 'chimera']),
+    ('swamp', 'Топи', ['giant_toad', 'mire_horror', 'hydra']),
+    ('dead', 'Мёртвые земли', ['ghoul', 'banshee', 'necromancer', 'bone_colossus', 'mummy']),
+    ('deep', 'Подземелья', ['grimlock', 'mimic']),
+]
+
+
+def bestiary_entries():
+    from bestiary_data import SPECIES
+    by = {s['id']: s for s in SPECIES}
+    out = [("levels", "Уровни видов", "minecraft:experience_bottle", [
+        text("Каждый вид живёт в своей $(l)полосе уровней$(): базовый ±5. Чем дальше от городов и дорог, тем более сильные виды там водятся. У столицы — олени, кабаны и зомби, в глуши Пограничья — огры, мантикоры и химеры.$(br2)Ночью выходят ночные твари, под землёй — пещерные."),
+        text("$(l)Привычные монстры:$()$(li)Зомби 1–9, скелет 2–12, паук 1–11$(li)Крипер 5–15, слизень 3–13$(li)Утопленник 6–16, кадавр 8–18$(li)Ведьма 13–23, странник 12–22$(li)Эндермен 30–40$(li)Ад: пиглин 21–31, гаст 26–36, ифрит 28–38, скелет-иссушитель 34–44"),
+        text("$(l)Нрав$() у видов разный:$(li)$(c)нападает сам$() — увидел и бросился;$(li)$(6)охраняет место$() — не подходи близко;$(li)$(2)защищается$() — тронешь — ответит (и позовёт стадо);$(li)$(a)убегает$() — подкрадывайся (Shift);$(li)$(4)добивает раненых$() — опасен, когда у тебя мало здоровья."),
+    ])]
+    for gid, gname, ids in BEST_GROUPS:
+        pages = []
+        for i in ids:
+            s = by[i]
+            lo, hi = max(1, s['level'] - 5), s['level'] + 5
+            lands = ', '.join(LAND_RU.get(l, l) for l in s['lands'])
+            when = {'night': ', ночью', 'day': ', днём'}.get(s['time'], '')
+            where = {'under': ' (пещеры)', 'both': ' (и в пещерах)'}.get(s['place'], '')
+            scale = round(min(1.0, 1.7 / max(s['w'], s['h'])), 2)
+            pages.append({"type": "patchouli:entity", "entity": "litrpg:" + i, "scale": scale, "name": s['ru'],
+                          "text": f"Ур. {lo}–{hi}: {TEMPER_RU[s['temper']]}{when}.$(br){lands}{where}"})
+            pages.append(text(s['desc'], s['ru']))
+        out.append((gid, gname, "litrpg:" + ids[0] + "_spawn_egg", pages))
+    return out
+
+
 def class_entries():
     import gen_lang
     import sys
@@ -391,6 +433,7 @@ def class_entries():
 def main():
     ENTRIES["classes"] = class_entries()
     ENTRIES["mapworld"] = world_entries()
+    ENTRIES["bestiary"] = ENTRIES["bestiary"] + bestiary_entries()
     if os.path.isdir(ASSETS):
         shutil.rmtree(ASSETS)
     os.makedirs(DATA, exist_ok=True)

@@ -122,7 +122,8 @@ public class HudOverlay {
     /** Рамка цели: имя, уровень и здоровье моба под прицелом. */
     private static void target(GuiGraphics g, Font font, Minecraft mc, int width) {
         Entity e = mc.crosshairPickEntity;
-        if (!(e instanceof LivingEntity le) || e instanceof Player || !le.isAlive()) return;
+        if (!(e instanceof LivingEntity le) || e instanceof Player || !le.isAlive() || le.isInvisible()) return;
+        if (e instanceof com.andrey.litrpg.entity.Animated a && a.awakeAnim(1f) < 0.5f) return;   // мимик притворяется сундуком
         Component name = le.getDisplayName();
         int w = Math.max(140, font.width(name) + 16);
         int x = width / 2 - w / 2;
