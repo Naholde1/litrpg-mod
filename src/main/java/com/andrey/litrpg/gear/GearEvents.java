@@ -133,8 +133,28 @@ public final class GearEvents {
         if (g.has(Passive.REGENERATION)) hidden(p, MobEffects.REGENERATION, 0, 100);
         if (g.has(Passive.FIREPROOF)) hidden(p, MobEffects.FIRE_RESISTANCE, 0, 100);
         if (g.has(Passive.WATER_BREATHING)) hidden(p, MobEffects.WATER_BREATHING, 0, 100);
+        auras(p, g);
         float regen = g.get(GearBonus.HEALTH_REGEN);
         if (regen > 0 && p.getHealth() < p.getMaxHealth()) p.heal(regen * 0.4f); // раз в 2 с = regen за 5 с
+    }
+
+    /** Ауры классов: баффы отряду вокруг (как «рейдовые баффы» в MMO). */
+    private static void auras(ServerPlayer p, PlayerGear g) {
+        boolean war = g.has(Passive.WAR_AURA), guard = g.has(Passive.GUARD_AURA), mana = g.has(Passive.MANA_AURA), focus = g.has(Passive.FOCUS_AURA);
+        if (!war && !guard && !mana && !focus) return;
+        for (ServerPlayer ally : p.serverLevel().getEntitiesOfClass(ServerPlayer.class, p.getBoundingBox().inflate(12),
+                x -> x.isAlive() && !x.isSpectator())) {
+            if (war) ally.addEffect(new MobEffectInstance(com.andrey.litrpg.registry.ModEffects.MIGHT.get(), 60, 0, true, true, true));
+            if (guard) ally.addEffect(new MobEffectInstance(com.andrey.litrpg.registry.ModEffects.BULWARK.get(), 60, 0, true, true, true));
+            if (focus) ally.addEffect(new MobEffectInstance(com.andrey.litrpg.registry.ModEffects.FOCUS.get(), 60, 0, true, true, true));
+            if (mana) {
+                PlayerStats as = StatsManager.get(ally);
+                if (as.getMana() < as.getMaxMana()) {
+                    as.setMana(Math.min(as.getMaxMana(), as.getMana() + as.getMaxMana() * 0.02));
+                    StatsManager.syncMana(ally);
+                }
+            }
+        }
     }
 
     private static void hidden(ServerPlayer p, MobEffect effect, int amp, int duration) {
@@ -195,6 +215,21 @@ public final class GearEvents {
         if (g.has(Passive.EXECUTIONER) && target.getHealth() < target.getMaxHealth() * 0.3f) amount *= 1.5f;
         if (g.has(Passive.GIANT_SLAYER) && MobLevels.getLevel(target) > s.getLevel()) amount *= 1.25f;
         if (g.has(Passive.BERSERKER) && p.getHealth() < p.getMaxHealth() * 0.4f) amount *= 1.3f;
+        if (g.has(Passive.MOMENTUM)) amount *= com.andrey.litrpg.ability.AbilityHandler.speedMult(p);
+        if (g.has(Passive.FURY_SWIPES) && melee) {
+            // как у Урсы: удары по одной цели копят ярость, смена цели или 6 с без ударов — сброс
+            var d = p.getPersistentData();
+            long now = p.level().getGameTime();
+            int stacks = target.getUUID().toString().equals(d.getString("litrpg_fury_target")) && now - d.getLong("litrpg_fury_time") < 120
+                    ? d.getInt("litrpg_fury") : 0;
+            amount *= 1 + 0.08f * stacks;
+            d.putString("litrpg_fury_target", target.getUUID().toString());
+            d.putInt("litrpg_fury", Math.min(10, stacks + 1));
+            d.putLong("litrpg_fury_time", now);
+            if (stacks >= 3 && p.level() instanceof ServerLevel sl) {
+                sl.sendParticles(ParticleTypes.DAMAGE_INDICATOR, target.getX(), target.getY() + target.getBbHeight(), target.getZ(), stacks, 0.3, 0.1, 0.3, 0.05);
+            }
+        }
         if (melee || arrow) {
             if (g.has(Passive.FLAME_TOUCH)) target.setSecondsOnFire(4);
             if (g.has(Passive.FROST_TOUCH)) target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 2), p);

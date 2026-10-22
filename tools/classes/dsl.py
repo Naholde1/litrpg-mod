@@ -15,7 +15,8 @@ ORDER = []  # порядок классов
 KINDS = set("""DASH DASH_STRIKE LEAP_SLAM NOVA MULTI_NOVA STRIKE MULTI_STRIKE BOLT CHAIN LIGHTNING METEOR ZONE ZONE_AT
 ARROWS BARRAGE ARROW_RAIN BUFF_SELF BUFF_ALLIES HEAL HEAL_SELF MEDITATE TAUNT PULL BLINK SHADOW_STEP STEALTH ON_HIT MARK
 PURIFY SUMMON BEAM CONE VORTEX LAUNCH PUSH STUN STASIS WALL SWAP RECALL GRAPPLE CHARM DOMINATE REVEAL STEAL RESET
-SACRIFICE MINE TETHER WARD SHIELD HEAL_TARGET GLOBAL RALLY GATHER ORB INVOKE""".split())
+SACRIFICE MINE TETHER WARD SHIELD HEAL_TARGET GLOBAL RALLY GATHER ORB INVOKE INTERRUPT REZ""".split())
+ALIASES = {}  # удалённый класс → замена (у игроков, выбравших его раньше)
 
 ELEMENTS = {'ARCANE', 'FIRE', 'FROST', 'HOLY', 'SHADOW', 'LIGHTNING', 'POISON', 'NATURE', 'EARTH'}
 STATS = {'STR': 'STRENGTH', 'AGI': 'AGILITY', 'VIT': 'VITALITY', 'INT': 'INTELLIGENCE', 'LUCK': 'LUCK'}
@@ -40,6 +41,9 @@ EFFECTS = {
     'fatigue': ('minecraft:mining_fatigue', 'Усталость'), 'hunger': ('minecraft:hunger', 'Голод'),
     'hero': ('minecraft:hero_of_the_village', 'Герой деревни'), 'conduit': ('minecraft:conduit_power', 'Сила источника'),
     'satur': ('minecraft:saturation', 'Насыщение'),
+    # эффекты отряда (мод): каждый уровень — 10%
+    'might': ('litrpg:might', 'Воодушевление'), 'bulwark': ('litrpg:bulwark', 'Заслон'),
+    'vuln': ('litrpg:vulnerability', 'Уязвимость'), 'focus': ('litrpg:focus', 'Сосредоточенность'),
 }
 
 SUMMON_RU = {
@@ -110,7 +114,7 @@ class Skill:
         self.me, self.foe = parse_fx(me), parse_fx(foe)
         self.flags = fl.split()
         for x in self.flags:
-            if x.split(':')[0] not in ('exec', 'back', 'steal', 'pierce', 'reflect', 'finish', 'perfoe', 'nostyle'):
+            if x.split(':')[0] not in ('exec', 'back', 'steal', 'pierce', 'reflect', 'finish', 'perfoe', 'nostyle', 'group', 'phase', 'speed'):
                 raise ValueError(f'{key}: unknown flag {x}')
         self.onhit, self.summon, self.wall = oh, sm, wall
         if sm and sm not in SUMMON_RU:
@@ -190,7 +194,12 @@ class Skill:
             'GATHER': f"Переносит союзников-игроков из {r} бл. к вам",
             'ORB': "Призывает сферу (до трёх). Сферы дают усиления и задают заклинание для Призыва",
             'INVOKE': "Сплетает три сферы в заклинание и кладёт его в ячейку",
+            'INTERRUPT': f"Прерывание (до {r} бл.): сбивает подготовку навыка хранителя, обычных врагов оглушает"
+                         + (f"; {self.dmg()}" if self.pow > 0 else ''),
+            'REZ': f"Воскрешает павшего в бою союзника (до {r} бл.) сразу, без обряда",
         }[k]
+        if k == 'RECALL' and 'group' in self.flags:
+            t = f"Откат времени: вы возвращаетесь на место 3 с назад и лечите {_pct(self.pow)} здоровья, союзники в {r} бл. — {_pct(self.pow * 0.6)}"
         parts = [t]
         fl = self.flags
         if 'exec' in fl:
@@ -203,6 +212,10 @@ class Skill:
             parts.append("пробивает насквозь")
         if 'reflect' in fl:
             parts.append("возвращает половину полученного урона")
+        if 'phase' in fl:
+            parts.append("сквозь врагов, на миг неуязвим")
+        if 'speed' in fl:
+            parts.append("урон растёт со скоростью бега")
         if 'perfoe' in fl:
             parts.append("+20% за каждого врага рядом")
         if 'finish' in fl:
@@ -210,7 +223,7 @@ class Skill:
         if self.combo:
             parts.append(f"+{self.combo} приём серии")
         if self.me:
-            parts.append(("союзникам: " if k in ('BUFF_ALLIES', 'TETHER', 'SHIELD', 'HEAL_TARGET', 'WARD') else "вам: ") + fx_text(self.me))
+            parts.append(("союзникам: " if k in ('BUFF_ALLIES', 'TETHER', 'SHIELD', 'HEAL_TARGET', 'WARD') or 'group' in fl else "вам: ") + fx_text(self.me))
         if self.foe:
             parts.append("врагам: " + fx_text(self.foe))
         if self.hp:
@@ -289,6 +302,9 @@ PASSIVES = {
     'swiftness': 'постоянная Скорость I', 'regeneration': 'постоянная Регенерация I', 'mana_shield': '20% урона поглощает мана',
     'berserker': '+30% урона при здоровье ниже 40%', 'water_breathing': 'дышит под водой',
     'arcane_echo': '15% шанс, что навык не уйдёт на перезарядку', 'treasure_hunter': 'вдвое выше шанс добычи',
+    'fury_swipes': 'каждый удар по той же цели +8% урона (до +80%)', 'momentum': 'урон растёт со скоростью бега',
+    'war_aura': 'аура: союзники рядом +10% урона', 'guard_aura': 'аура: союзники рядом −10% получаемого урона',
+    'mana_aura': 'аура: союзники рядом восполняют ману', 'focus_aura': 'аура: союзники рядом −10% перезарядки',
 }
 PROFS = ('miner', 'blacksmith', 'alchemist', 'hunter', 'herbalist')
 FACTIONS = ('kingdom', 'goblins', 'piglins', 'illagers', 'undead', 'wilds', 'elves', 'dwarves', 'orcs', 'beastkin', 'demonkin')

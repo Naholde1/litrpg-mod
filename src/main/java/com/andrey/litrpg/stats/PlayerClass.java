@@ -128,6 +128,14 @@ public final class PlayerClass {
             ALL.add(c);
             BY_KEY.put(c.key, c);
         }
+        // удалённые при переработке классы: у игроков, что их выбрали, — замена (tools/classes/pve.py)
+        var root = ClassData.root();
+        if (root.has("aliases")) {
+            for (var en : root.getAsJsonObject("aliases").entrySet()) {
+                PlayerClass to = BY_KEY.get(en.getValue().getAsString());
+                if (to != null) BY_KEY.putIfAbsent(en.getKey(), to);
+            }
+        }
     }
 
     public int ordinal() { return index; }

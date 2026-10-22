@@ -83,6 +83,21 @@ public final class SkillEffects {
     // ================= оглушение и усмирение =================
 
     /** Оглушить моба: замирает на месте. Боссы — втрое короче. */
+    public static final String PHASE_TAG = "litrpg_phase_until";
+
+    /** Призрачный облик: никакой урон не проходит, пока длится. */
+    public static void phase(LivingEntity e, int ticks) {
+        e.getPersistentData().putLong(PHASE_TAG, e.level().getGameTime() + ticks);
+        if (e.level() instanceof net.minecraft.server.level.ServerLevel sl) {
+            sl.sendParticles(ParticleTypes.SOUL, e.getX(), e.getY() + 1, e.getZ(), 15, 0.3, 0.6, 0.3, 0.02);
+        }
+    }
+
+    @net.minecraftforge.eventbus.api.SubscribeEvent
+    public static void onPhaseAttack(net.minecraftforge.event.entity.living.LivingAttackEvent e) {
+        if (e.getEntity().getPersistentData().getLong(PHASE_TAG) > e.getEntity().level().getGameTime()) e.setCanceled(true);
+    }
+
     public static void stun(LivingEntity e, int ticks) {
         if (!(e instanceof Mob m) || ticks <= 0) return;
         if (m instanceof BossBase) ticks = Math.max(10, ticks * 3 / 10);

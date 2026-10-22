@@ -78,7 +78,9 @@ public final class Ability {
         RALLY,          // телепорт к союзнику
         GATHER,         // собрать товарищей к себе
         ORB,            // сфера заклинателя (Инвокер)
-        INVOKE          // сплести сферы в заклинание
+        INVOKE,         // сплести сферы в заклинание
+        INTERRUPT,      // сбить подготовку навыка хранителя
+        REZ             // поднять павшего в бою союзника
     }
 
     /** Эффект при попадании для ON_HIT. */
@@ -114,6 +116,12 @@ public final class Ability {
     boolean reflect = false;
     boolean finisher = false;
     boolean perFoe = false;
+    /** Возврат лечит и союзников вокруг. */
+    boolean group = false;
+    /** Рывок сквозь врагов: секунда неуязвимости. */
+    boolean phase = false;
+    /** Урон растёт со скоростью бега. */
+    boolean speedScale = false;
     /** Доля здоровья вместо маны. */
     float hpCost = 0;
     /** Сколько приёмов серии даёт навык. */
@@ -185,6 +193,9 @@ public final class Ability {
                         case "reflect" -> a.reflect = true;
                         case "finish" -> a.finisher = true;
                         case "perfoe" -> a.perFoe = true;
+                        case "group" -> a.group = true;
+                        case "phase" -> a.phase = true;
+                        case "speed" -> a.speedScale = true;
                         default -> { }
                     }
                 }

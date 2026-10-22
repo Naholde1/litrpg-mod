@@ -47,7 +47,7 @@ public class FlameLordEntity extends BossBase {
                             e.setSecondsOnFire(6);
                             BossDamage.sunder(e, 1);
                         }).fx(c -> burst(ParticleTypes.FLAME, c.add(getLookAngle().scale(3)).add(0, 1, 0), 60, 2, 0.1)));
-        skill("Прилив магмы", 900, 20, 2).first(300)
+        skill("Прилив магмы", 900, 20, 2).first(300).unstoppable()
                 .act(t -> {
                     circle(arena(), 30, 100, 1.3f).color(Telegraph.ORANGE).spare(this::onIsland)
                             .then(e -> e.setSecondsOnFire(8))
@@ -59,7 +59,7 @@ public class FlameLordEntity extends BossBase {
                     shoutAll("ПРИЛИВ МАГМЫ через 5 с! Встаньте на обсидиан — на острова арены!");
                     sound(SoundEvents.LAVA_AMBIENT, 3f, 0.5f);
                 });
-        skill("Метеор", 360, 20, 2).first(200)
+        skill("Метеор", 360, 20, 2).first(200).unstoppable()
                 .act(t -> {
                     var at = randomSpot(12);
                     circle(at, 3.2, 90, 1.6f).color(Telegraph.GOLD).soak(2).then(e -> e.setSecondsOnFire(5))

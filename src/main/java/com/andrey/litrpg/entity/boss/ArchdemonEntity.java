@@ -63,7 +63,7 @@ public class ArchdemonEntity extends BossBase {
                     cone(position(), dirTo(o), 6, 50, 16, 0.75f).color(Telegraph.PURPLE);
                     sound(SoundEvents.ENDERMAN_TELEPORT, 1.5f, 0.5f);
                 });
-        skill("Метеоры Преисподней", 380, 20, 2).fromPhase(1).first(120)
+        skill("Метеоры Преисподней", 380, 20, 2).fromPhase(1).first(120).unstoppable()
                 .act(t -> {
                     for (int i = 0; i < 2; i++) {
                         circle(randomSpot(14), 3.2, 100, 1.8f).color(Telegraph.GOLD).soak(2).then(e -> e.setSecondsOnFire(6))

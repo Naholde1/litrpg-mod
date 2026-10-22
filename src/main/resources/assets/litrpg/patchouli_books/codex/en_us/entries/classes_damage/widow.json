@@ -2,7 +2,7 @@
   "name": "Вдова",
   "icon": "minecraft:iron_sword",
   "category": "litrpg:classes_damage",
-  "sortnum": 8,
+  "sortnum": 6,
   "pages": [
     {
       "type": "patchouli:text",

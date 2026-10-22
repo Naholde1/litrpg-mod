@@ -2,7 +2,7 @@
   "name": "Эхо",
   "icon": "minecraft:iron_sword",
   "category": "litrpg:classes_damage",
-  "sortnum": 100,
+  "sortnum": 95,
   "pages": [
     {
       "type": "patchouli:text",

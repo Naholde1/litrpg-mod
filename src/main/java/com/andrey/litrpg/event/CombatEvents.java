@@ -113,6 +113,14 @@ public class CombatEvents {
             event.setAmount(amount);
         }
 
+        // эффекты отряда: Заслон (−10%/ур.), Уязвимость (+10%/ур.)
+        int bw = com.andrey.litrpg.registry.ModEffects.level(target, com.andrey.litrpg.registry.ModEffects.BULWARK);
+        int vu = com.andrey.litrpg.registry.ModEffects.level(target, com.andrey.litrpg.registry.ModEffects.VULNERABILITY);
+        if (bw > 0 || vu > 0) {
+            amount *= (1f - Math.min(0.6f, 0.1f * bw)) * (1f + 0.1f * vu);
+            event.setAmount(amount);
+        }
+
         // ---------- игрок получает урон ----------
         if (target instanceof ServerPlayer victim) {
             PlayerStats vs = StatsManager.get(victim);
@@ -139,6 +147,7 @@ public class CombatEvents {
         PlayerStats s = StatsManager.get(player);
         amount *= outgoingMult(s.getLevel(), MobLevels.getLevel(target));
         if (s.getRole() != null) amount *= s.getRole().damageMult();
+        amount *= 1f + 0.1f * com.andrey.litrpg.registry.ModEffects.level(player, com.andrey.litrpg.registry.ModEffects.MIGHT);
 
         boolean melee = src.getDirectEntity() == player;
         boolean arrow = src.getDirectEntity() instanceof AbstractArrow;

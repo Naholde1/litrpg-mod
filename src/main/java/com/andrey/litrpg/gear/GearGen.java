@@ -94,7 +94,7 @@ public final class GearGen {
             d.bonuses.put(b, b.roll(level, m, rnd.nextFloat()));
         }
         List<Passive> passives = new ArrayList<>();
-        for (Passive p : Passive.values()) if (p.weapon == (cat == GearData.Category.WEAPON)) passives.add(p);
+        for (Passive p : Passive.values()) if (!p.classOnly && p.weapon == (cat == GearData.Category.WEAPON)) passives.add(p);
         for (int i = 0; i < rarity.passives && !passives.isEmpty(); i++) d.passives.add(passives.remove(rnd.nextInt(passives.size())));
         if (rarity.ability && cat == GearData.Category.WEAPON) d.ability = ABILITIES[rnd.nextInt(ABILITIES.length)];
         // врождённые свойства шаблона есть у предмета любой редкости

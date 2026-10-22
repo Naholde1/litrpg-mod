@@ -47,7 +47,7 @@ public class RottingEntEntity extends BossBase {
                             .then(x -> x.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 1)))
                             .fx(c -> burst(ParticleTypes.SPORE_BLOSSOM_AIR, c.add(0, 1, 0), 40, 1.5, 0.02));
                 });
-        skill("Цветение гнили", 320, 40, 2).first(240)
+        skill("Цветение гнили", 320, 40, 2).first(240).unstoppable()
                 .begin(t -> {
                     donut(position(), 5, 22, 40, 0.6f).color(Telegraph.GREEN)
                             .then(e -> e.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0)))

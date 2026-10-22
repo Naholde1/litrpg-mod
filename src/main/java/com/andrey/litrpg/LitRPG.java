@@ -34,6 +34,7 @@ public class LitRPG {
         ModWorldgen.register(bus);
         ModBlocks.BLOCKS.register(bus);
         ModBlocks.BLOCK_ENTITIES.register(bus);
+        com.andrey.litrpg.registry.ModEffects.EFFECTS.register(bus);
         ModItems.ITEMS.register(bus);
         ModEntities.ENTITY_TYPES.register(bus);
         ModCreativeTabs.TABS.register(bus);

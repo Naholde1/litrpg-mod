@@ -42,7 +42,7 @@ public class FrostGiantEntity extends BossBase {
 
     public FrostGiantEntity(EntityType<? extends Monster> type, Level level) {
         super(type, level, BossEvent.BossBarColor.BLUE);
-        skill("Ледяное дыхание", 260, 30, 2).first(140)
+        skill("Ледяное дыхание", 260, 30, 2).first(140).unstoppable()
                 .begin(t -> {
                     Vec3 d = dirTo(t);
                     cone(position(), d, 16, 35, 30, 0.7f).color(Telegraph.BLUE)

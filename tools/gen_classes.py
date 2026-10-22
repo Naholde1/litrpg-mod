@@ -10,6 +10,7 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 from classes import dsl  # noqa: E402
 from classes import legacy_skills, legacy_classes, tanks, damage_melee, damage_ranged, damage_magic, support, hidden, invokers  # noqa: E402,F401
+from classes import pve  # noqa: E402,F401  — переработка под PvE (2.17): правки поверх классов
 
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 RES = os.path.join(ROOT, 'src', 'main', 'resources')
@@ -61,7 +62,7 @@ def main():
             classes.append(o)
         else:
             classes.append(c.json(UNLOCK))
-    data = {'novice': NOVICE, 'noviceUnlock': NOVICE_UNLOCK, 'skills': skills, 'classes': classes}
+    data = {'novice': NOVICE, 'noviceUnlock': NOVICE_UNLOCK, 'skills': skills, 'classes': classes, 'aliases': dsl.ALIASES}
     with open(os.path.join(RES, 'litrpg_classes.json'), 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, separators=(',', ':'))
 

@@ -22,18 +22,32 @@ public enum Passive {
     BERSERKER("berserker", "Берсерк", "+30% урона при здоровье ниже 40%", false),
     WATER_BREATHING("water_breathing", "Жабры", "дыхание под водой", false),
     ARCANE_ECHO("arcane_echo", "Магическое эхо", "15% шанс, что навык не уйдёт на перезарядку", false),
-    TREASURE_HUNTER("treasure_hunter", "Кладоискатель", "вдвое выше шанс выпадения предметов", false);
+    TREASURE_HUNTER("treasure_hunter", "Кладоискатель", "вдвое выше шанс выпадения предметов", false),
+    // только у классов (на предметах не выпадают)
+    FURY_SWIPES("fury_swipes", "Ярость когтей", "каждый удар по той же цели +8% урона (до +80%)", true, true),
+    MOMENTUM("momentum", "Инерция", "урон растёт со скоростью бега", true, true),
+    WAR_AURA("war_aura", "Аура войны", "союзники в 12 бл. — Воодушевление I (+10% урона)", false, true),
+    GUARD_AURA("guard_aura", "Аура защиты", "союзники в 12 бл. — Заслон I (−10% урона)", false, true),
+    MANA_AURA("mana_aura", "Источник маны", "союзники в 12 бл. восполняют 2% маны раз в 2 с", false, true),
+    FOCUS_AURA("focus_aura", "Аура сосредоточенности", "союзники в 12 бл. — Сосредоточенность I (−10% перезарядки)", false, true);
 
     public final String key;
     public final String title;
     public final String desc;
     public final boolean weapon;
+    /** Свойство класса — на предметах не встречается. */
+    public final boolean classOnly;
 
     Passive(String key, String title, String desc, boolean weapon) {
+        this(key, title, desc, weapon, false);
+    }
+
+    Passive(String key, String title, String desc, boolean weapon, boolean classOnly) {
         this.key = key;
         this.title = title;
         this.desc = desc;
         this.weapon = weapon;
+        this.classOnly = classOnly;
     }
 
     public static Passive byKey(String key) {

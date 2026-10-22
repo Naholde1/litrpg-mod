@@ -135,6 +135,26 @@ public final class BossFight {
         CHANNEL.remove(p.getUUID());
     }
 
+    /** Навык воскрешения: поднять ближайшего павшего в радиусе r сразу. */
+    public static boolean reviveNear(ServerPlayer by, double r) {
+        UUID best = null;
+        double bestD = r;
+        for (Map.Entry<UUID, Spirit> en : SPIRITS.entrySet()) {
+            Spirit sp = en.getValue();
+            if (sp.dim != by.level().dimension()) continue;
+            double d = sp.body.distanceTo(by.position());
+            if (d <= bestD) {
+                bestD = d;
+                best = en.getKey();
+            }
+        }
+        if (best == null) return false;
+        ServerPlayer dead = by.server.getPlayerList().getPlayer(best);
+        if (dead == null) return false;
+        revive(dead, SPIRITS.get(best), by);
+        return true;
+    }
+
     private static void spiritTick(ServerPlayer p, Spirit s) {
         ServerLevel sl = p.server.getLevel(s.dim);
         if (sl == null) {

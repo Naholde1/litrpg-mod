@@ -55,7 +55,7 @@ public class TorbaldEntity extends BossBase {
         skill("Дрожь камня", 220, 28, 2).first(90)
                 .begin(t -> circle(position(), 7, 28, 0.6f).then(e -> e.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 2)))
                         .fx(c -> sound(SoundEvents.GENERIC_EXPLODE, 1.5f, 0.6f)));
-        skill("Гнев Подгорья", 600, 50, 2).first(300)
+        skill("Гнев Подгорья", 600, 50, 2).first(300).unstoppable()
                 .begin(t -> {
                     circle(arena(), 30, 50, 0.95f).color(Telegraph.GREEN).spare(this::onRune)
                             .fx(c -> {

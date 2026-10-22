@@ -2,7 +2,7 @@
   "name": "Охотник на нечисть",
   "icon": "minecraft:iron_sword",
   "category": "litrpg:classes_damage",
-  "sortnum": 62,
+  "sortnum": 56,
   "pages": [
     {
       "type": "patchouli:text",

@@ -65,7 +65,7 @@ public class SwampHagEntity extends BossBase implements RangedAttackMob {
                     tip(o, "Под вами трясина — отойдите!", ChatFormatting.RED);
                     sound(SoundEvents.SLIME_SQUISH, 1.5f, 0.5f);
                 });
-        skill("Зов трясины", 360, 40, 2).first(220)
+        skill("Зов трясины", 360, 40, 2).first(220).unstoppable()
                 .begin(t -> {
                     circle(arena(), 28, 40, 0.5f).color(Telegraph.GREEN).spare(e -> !e.isInWater())
                             .then(e -> e.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 3)))
@@ -82,7 +82,7 @@ public class SwampHagEntity extends BossBase implements RangedAttackMob {
                     tip(o, "Вы прокляты: ква! Слабость на 8 с.", ChatFormatting.DARK_GREEN);
                     sound(SoundEvents.FROG_AMBIENT, 2f, 0.6f);
                 });
-        skill("Варево", 700, 10, 2).first(500)
+        skill("Варево", 700, 10, 2).first(500).unstoppable()
                 .act(t -> startBrew());
     }
 

@@ -76,6 +76,9 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
     private LivingEntity castTarget;
     private int lonelyTicks;
     private int globalCooldown = 40;
+    /** Зоны, размеченные текущей подготовкой (пропадают при прерывании). */
+    private final List<Telegraph> castZones = new ArrayList<>();
+    private long interruptLock;
     /** Для плавной анимации подготовки на клиенте. */
     public float castAnim, castAnimO;
 
@@ -126,6 +129,8 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
         Consumer<LivingEntity> begin;
         Consumer<Integer> tick;
         boolean shout = true;
+        /** Можно ли сбить подготовку (оглушение, прерывание). Механики арены — нельзя. */
+        boolean interruptible = true;
         int minPhase = 0;
         int maxPhase = 99;
 
@@ -144,6 +149,8 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
         /** Каждый тик подготовки (оставшиеся тики). */
         public Skill during(Consumer<Integer> t) { this.tick = t; return this; }
         public Skill silent() { this.shout = false; return this; }
+        /** Механику арены не прервать. */
+        public Skill unstoppable() { this.interruptible = false; return this; }
         public Skill fromPhase(int p) { this.minPhase = p; return this; }
         public Skill untilPhase(int p) { this.maxPhase = p; return this; }
         /** Первое применение — через столько тиков после начала боя. */
@@ -361,7 +368,10 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
         Skill s = ready.get(random.nextInt(ready.size()));
         s.left = phase > 0 ? (int) (s.cooldown * 0.85f) : s.cooldown;
         castTarget = target;
+        int zonesBefore = zones.size();
         if (s.begin != null) s.begin.accept(target);
+        castZones.clear();
+        if (zones.size() > zonesBefore) castZones.addAll(zones.subList(zonesBefore, zones.size()));
         if (s.windup <= 0) {
             s.act.accept(target);
             globalCooldown = 20;
@@ -563,6 +573,29 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
     protected void setBarrier(float amount) {
         barrierMax = amount;
         barrier = amount;
+    }
+
+    public boolean isCastingPublic() {
+        return casting != null;
+    }
+
+    /**
+     * Прерывание (как «пинок» в MMO): сбивает подготовку навыка, его зоны гаснут.
+     * После этого 8 с хранителя не прервать. Механики арены ({@link Skill#unstoppable()}) не сбиваются.
+     */
+    public boolean interrupt(Entity by) {
+        if (casting == null || casting.windup < 12 || !casting.interruptible || level().getGameTime() < interruptLock) return false;
+        String name = casting.name;
+        zones.removeAll(castZones);
+        castZones.clear();
+        casting = null;
+        entityData.set(CAST, 0);
+        globalCooldown = 40;
+        interruptLock = level().getGameTime() + 160;
+        burst(ParticleTypes.ENCHANTED_HIT, position().add(0, getBbHeight() * 0.8, 0), 30, 0.6, 0.2);
+        sound(SoundEvents.SHIELD_BLOCK, 2f, 0.6f);
+        shoutAll((by == null ? "Кто-то" : by.getName().getString()) + " прерывает «" + name + "»!");
+        return true;
     }
 
     /** Оглушить хранителя: стоит, не колдует, получает +50% урона. */

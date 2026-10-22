@@ -51,7 +51,7 @@ public class XalatharEntity extends BossBase {
                     for (int i = 0; i < 3; i++) shoot(BossProjectile.Kind.SHADOW, randomOther(), 0.35f, 1.1f, 5f);
                     sound(SoundEvents.WITHER_SHOOT, 1.2f, 0.5f);
                 });
-        skill("Взгляд Бездны", 400, 50, 1).first(160)
+        skill("Взгляд Бездны", 400, 50, 1).first(160).unstoppable()
                 .begin(t -> {
                     LivingEntity o = randomOther();
                     Vec3 base = new Vec3(getX(), o.getY(), getZ());

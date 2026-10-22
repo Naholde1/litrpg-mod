@@ -42,7 +42,7 @@ public class MinotaurEntity extends BossBase {
     public MinotaurEntity(EntityType<? extends Monster> type, Level level) {
         super(type, level, BossEvent.BossBarColor.RED);
         var sand = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.SANDSTONE.defaultBlockState());
-        skill("Таранный рывок", 300, 40, 1).first(160)
+        skill("Таранный рывок", 300, 40, 1).first(160).unstoppable()
                 .begin(t -> {
                     LivingEntity o = randomOther();
                     chargeDir = dirTo(o);

@@ -59,7 +59,7 @@ public class ChronophageEntity extends BossBase {
                     o.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 160, 2));
                     tip(o, "Вы стареете на глазах — нужен лекарь!", ChatFormatting.GOLD);
                 });
-        skill("Петля", 700, 10, 2).first(260)
+        skill("Петля", 700, 10, 2).first(260).unstoppable()
                 .act(t -> {
                     loop.clear();
                     for (ServerPlayer p : players()) loop.put(p.getUUID(), p.position());

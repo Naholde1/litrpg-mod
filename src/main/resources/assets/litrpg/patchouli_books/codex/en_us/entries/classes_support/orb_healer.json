@@ -2,7 +2,7 @@
   "name": "Целитель сфер",
   "icon": "minecraft:golden_apple",
   "category": "litrpg:classes_support",
-  "sortnum": 46,
+  "sortnum": 40,
   "pages": [
     {
       "type": "patchouli:text",

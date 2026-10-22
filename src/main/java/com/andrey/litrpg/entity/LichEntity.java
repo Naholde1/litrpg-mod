@@ -69,7 +69,7 @@ public class LichEntity extends BossBase implements RangedAttackMob {
                     tip(o, "На вас «Смертельный рок»! Отбегите от группы!", ChatFormatting.DARK_PURPLE);
                     shoutAll("«Смертельный рок» на " + o.getName().getString() + " — не стойте рядом.");
                 });
-        skill("Взрыв некроэнергии", 300, 40, 2).first(260)
+        skill("Взрыв некроэнергии", 300, 40, 2).first(260).unstoppable()
                 .begin(t -> {
                     donut(position(), 5, 26, 40, 0.55f).color(Telegraph.PURPLE)
                             .fx(c -> burst(ParticleTypes.SCULK_SOUL, c.add(0, 1, 0), 80, 8, 0.05));

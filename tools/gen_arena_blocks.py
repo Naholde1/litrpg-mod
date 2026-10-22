@@ -103,6 +103,45 @@ def seal_door():
     return img
 
 
+# эффекты отряда (registry/ModEffects): иконки 18×18
+EFFECT_ICONS = {
+    'might': ((231, 76, 60), (255, 200, 120), 'sword', 'Воодушевление', 'Might'),
+    'bulwark': ((93, 173, 226), (220, 240, 255), 'shield', 'Заслон', 'Bulwark'),
+    'vulnerability': ((142, 68, 173), (230, 160, 255), 'crack', 'Уязвимость', 'Vulnerability'),
+    'focus': ((241, 196, 15), (255, 250, 200), 'eye', 'Сосредоточенность', 'Focus'),
+}
+
+
+def effect_icon(kind, base, light):
+    img = [[(0, 0, 0, 0)] * 18 for _ in range(18)]
+    for y in range(18):
+        for x in range(18):
+            cx, cy = x - 8.5, y - 8.5
+            inside = False
+            if kind == 'sword':
+                inside = abs(cx + cy) < 1.6 and -7 < cx < 6 or abs(cx - cy) < 1.2 and abs(cx) < 3 and cx > 1
+            elif kind == 'shield':
+                inside = abs(cx) < 6.5 - max(0, cy) * 0.75 and -7 < cy < 8
+            elif kind == 'crack':
+                inside = math.hypot(cx, cy) < 7.5 and not (abs(cx - cy * 0.4) < 1.0)
+            elif kind == 'eye':
+                inside = abs(cy) < 4.5 - cx * cx / 14 and abs(cx) < 8
+            if inside:
+                r = math.hypot(cx, cy) / 9
+                c = mix(light, base, r)
+                if kind == 'eye' and math.hypot(cx, cy) < 2.2:
+                    c = (40, 30, 10)
+                img[y][x] = c + (255,)
+    # тёмная обводка
+    out = [row[:] for row in img]
+    for y in range(18):
+        for x in range(18):
+            if img[y][x][3] == 0 and any(0 <= y + dy < 18 and 0 <= x + dx < 18 and img[y + dy][x + dx][3]
+                                         for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+                out[y][x] = (20, 16, 24, 255)
+    return out
+
+
 def main():
     block_dir = os.path.join(ASSETS, 'textures', 'block')
     os.makedirs(block_dir, exist_ok=True)
@@ -137,6 +176,11 @@ def main():
     ru_path, en_path = os.path.join(ASSETS, 'lang', 'ru_ru.json'), os.path.join(ASSETS, 'lang', 'en_us.json')
     ru = json.load(open(ru_path, encoding='utf-8'))
     en = json.load(open(en_path, encoding='utf-8'))
+    me = os.path.join(ASSETS, 'textures', 'mob_effect')
+    os.makedirs(me, exist_ok=True)
+    for key, (base, light, kind, rname, ename) in EFFECT_ICONS.items():
+        write_png(os.path.join(me, key + '.png'), effect_icon(kind, base, light), 18, 18)
+        ru['effect.litrpg.' + key], en['effect.litrpg.' + key] = rname, ename
     ru['block.litrpg.relic'], en['block.litrpg.relic'] = 'Узел силы', 'Power Node'
     ru['block.litrpg.seal_door'], en['block.litrpg.seal_door'] = 'Рунная преграда', 'Rune Barrier'
     ru['death.attack.litrpg.boss'] = '%1$s пал от руки %2$s'

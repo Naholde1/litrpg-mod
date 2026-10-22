@@ -2,7 +2,7 @@
   "name": "Лунная лучница",
   "icon": "minecraft:iron_sword",
   "category": "litrpg:classes_damage",
-  "sortnum": 40,
+  "sortnum": 37,
   "pages": [
     {
       "type": "patchouli:text",

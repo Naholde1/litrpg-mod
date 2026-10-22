@@ -2,7 +2,7 @@
   "name": "Повелительница ветра",
   "icon": "minecraft:iron_sword",
   "category": "litrpg:classes_damage",
-  "sortnum": 68,
+  "sortnum": 63,
   "pages": [
     {
       "type": "patchouli:text",

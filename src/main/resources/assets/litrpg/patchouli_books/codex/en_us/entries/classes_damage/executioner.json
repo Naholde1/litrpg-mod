@@ -2,7 +2,7 @@
   "name": "Палач",
   "icon": "minecraft:iron_sword",
   "category": "litrpg:classes_damage",
-  "sortnum": 63,
+  "sortnum": 57,
   "pages": [
     {
       "type": "patchouli:text",
@@ -11,7 +11,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "$(li)$(l)Рубка$() (10) — Топор палача знает своё дело$(li)$(l)Приговор$() (10) — Виновен$(li)$(l)Виселица$() (14) — Петля тянет к эшафоту"
+      "text": "$(li)$(l)Рубка$() (10) — Топор палача знает своё дело$(li)$(l)Приговор$() (10) — Виновен$(li)$(l)Вихрь$() (14) — Шесть круговых ударов по всем вокруг"
     },
     {
       "type": "patchouli:text",

@@ -2,7 +2,7 @@
   "name": "Чародей пустоты",
   "icon": "minecraft:iron_sword",
   "category": "litrpg:classes_damage",
-  "sortnum": 98,
+  "sortnum": 93,
   "pages": [
     {
       "type": "patchouli:text",

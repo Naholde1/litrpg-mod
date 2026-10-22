@@ -119,7 +119,8 @@ public class AbilityHandler {
             if (a.combo > 0) s.addCombo(a.combo, now);
             s.addStyle(Style.MAGIC, a.mana / 4);
             var g = s.gear();
-            int cd = Math.round(a.cooldown * (1 - Math.min(50f, g.get(com.andrey.litrpg.gear.GearBonus.COOLDOWN)) / 100f));
+            int cd = Math.round(a.cooldown * (1 - Math.min(50f, g.get(com.andrey.litrpg.gear.GearBonus.COOLDOWN)) / 100f)
+                    * (1 - 0.1f * Math.min(4, com.andrey.litrpg.registry.ModEffects.level(player, com.andrey.litrpg.registry.ModEffects.FOCUS))));
             if (g.has(com.andrey.litrpg.gear.Passive.ARCANE_ECHO) && player.getRandom().nextFloat() < 0.15f) {
                 cd = 0;
                 player.displayClientMessage(Component.literal("Магическое эхо!").withStyle(ChatFormatting.LIGHT_PURPLE), true);
@@ -132,6 +133,47 @@ public class AbilityHandler {
     /** Только для dev-проверки: применить навык напрямую. @return сработал ли */
     public static boolean devExecute(ServerPlayer p, Ability a) {
         return execute(p, StatsManager.get(p), a);
+    }
+
+    /** Урон «от скорости»: во сколько раз вы быстрее обычного шага. */
+    public static float speedMult(ServerPlayer p) {
+        double v = p.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED) / 0.1;
+        return (float) Math.max(1.0, Math.min(3.0, v));
+    }
+
+    /** Прерывание: сбивает подготовку навыка хранителя, у обычных врагов — короткое оглушение. */
+    private static boolean interrupt(ServerPlayer p, PlayerStats s, Ability a) {
+        LivingEntity t = lookEnemy(p, a.radius);
+        if (!isEnemy(p, t)) return noTarget(p);
+        float dmg = base(s, a) * a.power;
+        if (dmg > 0) hurt(p, a, t, dmg);
+        else applyFoe(a, t, p);
+        ServerLevel level = p.serverLevel();
+        if (t instanceof com.andrey.litrpg.entity.BossBase b) {
+            boolean done = b.interrupt(p);
+            com.andrey.litrpg.LitRPG.LOGGER.debug("[interrupt] {} by {}: casting={} done={} hp={}", b.bossId(), p.getName().getString(),
+                    b.isCastingPublic(), done, b.getHealth());
+            if (!done) {
+                p.displayClientMessage(Component.literal(b.isCastingPublic() ? "Этот навык не прервать (или защита от прерывания)" : "Хранитель ничего не готовит")
+                        .withStyle(ChatFormatting.GRAY), true);
+            }
+        } else {
+            SkillEffects.stun(t, 30);
+        }
+        if (a.radius > 6) line(level, p.getEyePosition(), t.position().add(0, t.getBbHeight() * 0.6, 0), ParticleTypes.CRIT);
+        level.sendParticles(ParticleTypes.ENCHANTED_HIT, t.getX(), t.getY() + 1.5, t.getZ(), 20, 0.3, 0.4, 0.3, 0.2);
+        sound(p, SoundEvents.SHIELD_BLOCK, 1f, 1.4f);
+        return true;
+    }
+
+    /** Боевое воскрешение: поднять павшего (дух) рядом сразу, без долгого обряда. */
+    private static boolean rez(ServerPlayer p, PlayerStats s, Ability a) {
+        if (!com.andrey.litrpg.entity.BossFight.reviveNear(p, a.radius)) {
+            p.displayClientMessage(Component.literal("Рядом нет павших союзников").withStyle(ChatFormatting.YELLOW), true);
+            return false;
+        }
+        applySelf(a, p);
+        return true;
     }
 
     /** Множитель урона текущего навыка (серия, число врагов). */
@@ -208,6 +250,8 @@ public class AbilityHandler {
             case GATHER -> gather(p, a);
             case ORB -> orb(p, s, a);
             case INVOKE -> invoke(p, s);
+            case INTERRUPT -> interrupt(p, s, a);
+            case REZ -> rez(p, s, a);
         };
     }
 
@@ -233,6 +277,7 @@ public class AbilityHandler {
     /** Нанести урон навыка с учётом стихии. @return нанесён ли урон */
     private static boolean hurt(ServerPlayer p, Ability a, LivingEntity e, float dmg) {
         Element el = a.element;
+        if (a.speedScale) dmg *= speedMult(p);
         if (el == Element.HOLY && e.getMobType() == MobType.UNDEAD) dmg *= 2f;
         if (el == Element.FIRE) e.setSecondsOnFire(4);
         boolean ok = e.hurt(source(p, a), dmg);
@@ -287,6 +332,7 @@ public class AbilityHandler {
 
     private static boolean dashStrike(ServerPlayer p, PlayerStats s, Ability a) {
         Vec3 dir = flatLook(p);
+        if (a.phase) SkillEffects.phase(p, 20);
         p.setDeltaMovement(dir.x * a.radius, 0.25, dir.z * a.radius);
         p.hurtMarked = true;
         p.fallDistance = 0;
@@ -867,6 +913,7 @@ public class AbilityHandler {
             e.invulnerableTime = 0;
             if (dmg > 0) hurt(p, a, e, dmg);
             else applyFoe(a, e, p);
+            if (e instanceof com.andrey.litrpg.entity.BossBase b) b.interrupt(p);
             if (!(e instanceof com.andrey.litrpg.entity.BossBase)) {
                 e.setDeltaMovement(e.getDeltaMovement().x * 0.3, 1.0, e.getDeltaMovement().z * 0.3);
                 e.hurtMarked = true;
@@ -890,6 +937,7 @@ public class AbilityHandler {
             e.invulnerableTime = 0;
             if (dmg > 0) hurt(p, a, e, dmg);
             else applyFoe(a, e, p);
+            if (e instanceof com.andrey.litrpg.entity.BossBase b) b.interrupt(p);
             Vec3 kb = flat.lengthSqr() < 0.01 ? dir : flat.normalize();
             e.setDeltaMovement(kb.x * 1.7, 0.45, kb.z * 1.7);
             e.hurtMarked = true;
@@ -910,6 +958,7 @@ public class AbilityHandler {
         if (dmg > 0) hurt(p, a, t, dmg);
         else applyFoe(a, t, p);
         SkillEffects.stun(t, a.duration);
+        if (t instanceof com.andrey.litrpg.entity.BossBase b) b.interrupt(p);
         ServerLevel level = p.serverLevel();
         if (a.radius > 6) line(level, p.getEyePosition(), t.position().add(0, t.getBbHeight() * 0.6, 0), particle(a.element));
         level.sendParticles(ParticleTypes.FLASH, t.getX(), t.getY() + 1, t.getZ(), 1, 0, 0, 0, 0);
@@ -997,6 +1046,17 @@ public class AbilityHandler {
         p.teleportTo(back.x, back.y, back.z);
         p.fallDistance = 0;
         p.heal(p.getMaxHealth() * a.power);
+        if (a.group) {
+            // откат времени для всех рядом: раны союзников затягиваются
+            for (LivingEntity ally : alliesAround(p, a.radius)) {
+                if (ally == p) continue;
+                float before = ally.getHealth();
+                ally.heal(ally.getMaxHealth() * a.power * 0.6f);
+                com.andrey.litrpg.event.Threat.healed(p, ally, ally.getHealth() - before);
+                level.sendParticles(ParticleTypes.REVERSE_PORTAL, ally.getX(), ally.getY() + 1, ally.getZ(), 25, 0.3, 0.7, 0.3, 0.05);
+            }
+            ring(level, p.position().add(0, 0.2, 0), a.radius, ParticleTypes.END_ROD, (int) (a.radius * 6));
+        }
         applySelf(a, p);
         sound(p, SoundEvents.CHORUS_FRUIT_TELEPORT, 1f, 1.4f);
         return true;

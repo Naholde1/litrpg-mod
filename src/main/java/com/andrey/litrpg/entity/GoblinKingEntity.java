@@ -57,7 +57,7 @@ public class GoblinKingEntity extends BossBase {
                     setDeltaMovement(0, 0.9, 0);
                     hasImpulse = true;
                 });
-        skill("Пороховые бочки", 300, 20, 2).first(160)
+        skill("Пороховые бочки", 300, 20, 2).first(160).unstoppable()
                 .act(t -> {
                     for (int i = 0; i < 2 + phase; i++) keg(randomSpot(12));
                     shout("Ха! Подарочки!");

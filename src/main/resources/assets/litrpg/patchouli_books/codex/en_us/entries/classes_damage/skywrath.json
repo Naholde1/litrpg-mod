@@ -2,7 +2,7 @@
   "name": "Небесный маг",
   "icon": "minecraft:iron_sword",
   "category": "litrpg:classes_damage",
-  "sortnum": 53,
+  "sortnum": 47,
   "pages": [
     {
       "type": "patchouli:text",
