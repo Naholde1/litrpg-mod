@@ -205,6 +205,8 @@ public class CombatEvents {
         float luck = StatsManager.get(player).getStat(Stat.LUCK) * 0.004f;
         var rnd = dead.getRandom();
         int lvl = MobLevels.getLevel(dead);
+        // «серые» мобы (на 5+ уровней ниже самого сильного из бивших) ценного не роняют
+        if (com.andrey.litrpg.gear.LootRolls.killerLevel(dead, player) - lvl >= 5) return;
         if (rank == MobLevels.Rank.ELITE) {
             drop(event, dead, new ItemStack(Items.GOLD_NUGGET, 2 + rnd.nextInt(5)));
             if (rnd.nextFloat() < 0.3f + luck) drop(event, dead, new ItemStack(ModItems.MANA_POTION.get()));

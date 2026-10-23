@@ -22,7 +22,10 @@ public class ClientData {
     public static java.util.List<com.andrey.litrpg.network.PartyPacket.Member> party = java.util.List.of();
 
     public static void update(CompoundTag data, int[] cooldowns) {
-        if (data != null) STATS.load(data);
+        if (data != null) {
+            STATS.load(data);
+            Waypoints.pruneQuests(id -> STATS.quests().find(id) != null);
+        }
         java.util.Arrays.fill(COOLDOWN, 0);
         for (int i = 0; i + 1 < cooldowns.length; i += 2) {
             if (cooldowns[i] >= 0 && cooldowns[i] < COOLDOWN.length) COOLDOWN[cooldowns[i]] = cooldowns[i + 1];

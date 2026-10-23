@@ -30,6 +30,33 @@ public final class LootRolls {
         return out;
     }
 
+    /**
+     * Уровень убийцы для добычи — самый высокий среди всех, кто бил моба (и самого получателя),
+     * чтобы сильный игрок не «фармил» слабых мобов руками новичка.
+     */
+    public static int killerLevel(LivingEntity dead, ServerPlayer player) {
+        int lvl = StatsManager.get(player).getLevel();
+        for (ServerPlayer p : com.andrey.litrpg.party.DamageTracker.shares(dead).keySet()) lvl = Math.max(lvl, StatsManager.get(p).getLevel());
+        return lvl;
+    }
+
+    /**
+     * Множитель добычи с «серых» мобов: до 3 уровней разницы — полная, дальше −20% за уровень, с 8 уровней — ничего ценного.
+     * Например, игрок 10 ур. и элитный зомби 3 ур.: разница 7 → 20% шанса, не выше необычной редкости.
+     */
+    public static float grayMult(int diff) {
+        return diff <= 3 ? 1f : Math.max(0f, 1f - (diff - 3) * 0.2f);
+    }
+
+    /** Предел редкости с «серых» мобов. */
+    public static Rarity grayCap(int diff) {
+        return diff >= 7 ? Rarity.UNCOMMON : diff >= 5 ? Rarity.RARE : diff >= 4 ? Rarity.EPIC : Rarity.DIVINE;
+    }
+
+    private static Rarity cap(Rarity r, Rarity max) {
+        return r.ordinal() > max.ordinal() ? max : r;
+    }
+
     public static List<ItemStack> mobDrops(LivingEntity dead, ServerPlayer player) {
         List<ItemStack> out = new ArrayList<>();
         if (!(dead instanceof Enemy) && !(dead instanceof com.andrey.litrpg.npc.RaceNpcEntity)) return out;
@@ -39,8 +66,17 @@ public final class LootRolls {
         int lvl = MobLevels.getLevel(dead);
         float findMult = (1 + g.get(GearBonus.LOOT) / 100f + s.getStat(Stat.LUCK) * 0.01f) * (g.has(Passive.TREASURE_HUNTER) ? 2f : 1f);
         float luckBoost = s.getStat(Stat.LUCK) * 0.01f;
+        int diff = killerLevel(dead, player) - lvl;
+        float gray = grayMult(diff);
+        Rarity maxR = grayCap(diff);
 
         if (dead instanceof LitBoss) {
+            if (diff >= 10) {
+                // хранитель давно пройден: одна вещь его уровня, без трофеев и редкостей
+                out.add(GearGen.random(rnd, lvl, cap(GearGen.rollRarity(rnd, 0.5f), Rarity.RARE)));
+                out.addAll(coinStacks(Math.round(lvl * (5 + rnd.nextInt(5)))));
+                return out;
+            }
             // два предмета не ниже редкого; эпик и выше — уже удача
             for (int i = 0; i < 2; i++) {
                 Rarity r = GearGen.rollRarity(rnd, 2.5f + luckBoost);
@@ -86,28 +122,33 @@ public final class LootRolls {
             default -> { chance = 0.015f + lvl * 0.0005f; boost = 0f; }
         }
         boost += luckBoost + lvl * 0.006f;
+        // удача не перебивает разницу уровней: с «серых» мобов редкость и шанс падают
+        boost *= gray;
+        chance *= gray;
         int rolls = rank == MobLevels.Rank.CHAMPION ? 2 : 1;
         for (int i = 0; i < rolls; i++) {
             if (rnd.nextFloat() < chance * findMult) {
                 int itemLvl = Math.max(1, lvl + rnd.nextInt(5) - 2);
-                out.add(GearGen.random(rnd, itemLvl, GearGen.rollRarity(rnd, boost)));
+                out.add(GearGen.random(rnd, itemLvl, cap(GearGen.rollRarity(rnd, boost), maxR)));
             }
             chance *= 0.4f;
         }
         // монеты: медь, с элит и чемпионов — серебро и золото
         float coinMult = 1 + g.get(GearBonus.COIN_FIND) / 100f;
         if (rnd.nextFloat() < 0.35f) {
-            int copper = Math.round((1 + rnd.nextInt(3) + lvl / 4f) * coinMult * (rank == MobLevels.Rank.CHAMPION ? 12 : rank == MobLevels.Rank.ELITE ? 4 : 1));
+            int copper = Math.round((1 + rnd.nextInt(3) + lvl / 4f) * coinMult * Math.max(0.25f, gray)
+                    * (rank == MobLevels.Rank.CHAMPION ? 12 : rank == MobLevels.Rank.ELITE ? 4 : 1));
             out.addAll(coinStacks(copper));
         }
         // «мелочёвка»: украшения падают часто — их можно носить или продать
-        float trinket = (rank == MobLevels.Rank.CHAMPION ? 0.6f : rank == MobLevels.Rank.ELITE ? 0.3f : 0.06f + lvl * 0.001f) * findMult;
+        float trinket = (rank == MobLevels.Rank.CHAMPION ? 0.6f : rank == MobLevels.Rank.ELITE ? 0.3f : 0.06f + lvl * 0.001f) * findMult
+                * (diff >= 5 ? 0f : gray);
         if (rnd.nextFloat() < trinket) {
             ItemStack t = GearGen.trinket(rnd, lvl, boost * 0.5f);
             if (!t.isEmpty()) out.add(t);
         }
         // редчайшие уникальные предметы с чемпионов
-        if (rank == MobLevels.Rank.CHAMPION) {
+        if (rank == MobLevels.Rank.CHAMPION && diff <= 3) {
             if (lvl >= 22 && rnd.nextFloat() < 0.008f * findMult) out.add(GearGen.unique("dawn_blade"));
             if (lvl >= 28 && rnd.nextFloat() < 0.005f * findMult) out.add(GearGen.unique("archmage_staff"));
             if (lvl >= 35 && rnd.nextFloat() < 0.002f * findMult) out.add(GearGen.unique("frost_sorrow"));

@@ -319,7 +319,7 @@ def arcadia(city):
     # --- рынок (восток): тесные ряды лавок вдоль проспекта ---
     import mapbuild_crafts as MCR
     import mapbuild_layout as ML
-    mx0, mz0, mx1, mz1 = C + 28, C - 30, C + 78, C - 7
+    mx0, mz0, mx1, mz1 = C + 36, C - 30, C + 86, C - 7   # западнее — юго-восточная башня замка (C+30, C-28, r 4)
     ML.market(b, mx0, mz0, mx1, mz1, ['baker', 'butcher', 'fishmonger', 'farmer', 'herbalist', 'tailor', 'jeweler', 'alchemist',
                                       'fletcher', 'leatherworker'], 'litrpg:human_merchant', 'litrpg:human_citizen', 'arcadia')
     # казармы стражи и башня магов

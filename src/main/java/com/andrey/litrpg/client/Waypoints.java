@@ -11,7 +11,12 @@ import java.util.List;
 
 /** Метки на карте. Хранятся в файле litrpg_waypoints.txt в папке игры. */
 public class Waypoints {
-    public record Waypoint(String world, String dim, int x, int z, String name) {}
+    /** tag — id задания, если метку поставило задание (пропадает, когда задания больше нет). */
+    public record Waypoint(String world, String dim, int x, int z, String name, String tag) {
+        public Waypoint(String world, String dim, int x, int z, String name) {
+            this(world, dim, x, z, name, "");
+        }
+    }
 
     private static final List<Waypoint> ALL = new ArrayList<>();
     private static boolean loaded = false;
@@ -48,7 +53,7 @@ public class Waypoints {
                 String[] p = line.split("\t");
                 if (p.length < 5) continue;
                 try {
-                    ALL.add(new Waypoint(p[0], p[1], Integer.parseInt(p[2]), Integer.parseInt(p[3]), p[4]));
+                    ALL.add(new Waypoint(p[0], p[1], Integer.parseInt(p[2]), Integer.parseInt(p[3]), p[4], p.length > 5 ? p[5] : ""));
                 } catch (NumberFormatException ignored) {
                 }
             }
@@ -59,7 +64,8 @@ public class Waypoints {
     private static void save() {
         List<String> lines = new ArrayList<>();
         for (Waypoint w : ALL) {
-            lines.add(w.world() + "\t" + w.dim() + "\t" + w.x() + "\t" + w.z() + "\t" + w.name().replace("\t", " "));
+            lines.add(w.world() + "\t" + w.dim() + "\t" + w.x() + "\t" + w.z() + "\t" + w.name().replace("\t", " ")
+                    + (w.tag().isEmpty() ? "" : "\t" + w.tag()));
         }
         try {
             Files.write(file(), lines, StandardCharsets.UTF_8);
@@ -83,6 +89,21 @@ public class Waypoints {
         int n = forCurrentDimension().size() + 1;
         ALL.add(new Waypoint(worldKey(), dimKey(), x, z, "Метка " + n));
         save();
+    }
+
+    /** Метка задания: одна на задание, старая того же задания заменяется. */
+    public static void addQuest(int x, int z, String name, String tag) {
+        load();
+        ALL.removeIf(w -> w.tag().equals(tag) && w.world().equals(worldKey()));
+        ALL.add(new Waypoint(worldKey(), dimKey(), x, z, name.isEmpty() ? "Задание" : name, tag));
+        save();
+    }
+
+    /** Убрать метки заданий, которых больше нет в журнале (выполнены, отменены, сюжет ушёл дальше). */
+    public static void pruneQuests(java.util.function.Predicate<String> alive) {
+        load();
+        String wk = worldKey();
+        if (ALL.removeIf(w -> !w.tag().isEmpty() && w.world().equals(wk) && !alive.test(w.tag()))) save();
     }
 
     /** Удаляет ближайшую метку в радиусе r блоков. */

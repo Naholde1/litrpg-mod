@@ -734,7 +734,7 @@ public final class CityQuests {
 
     public static void waypoint(ServerPlayer p, Quest q) {
         com.andrey.litrpg.network.ModNetwork.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
-                new com.andrey.litrpg.network.WaypointPacket(q.px, q.pz));
+                new com.andrey.litrpg.network.WaypointPacket(q.px, q.pz, q.id, q.title));
         int dx = q.px - p.getBlockX(), dz = q.pz - p.getBlockZ();
         StatsManager.message(p, Component.literal("◆ " + q.title + ": X " + q.px + ", Z " + q.pz + " — "
                 + (int) Math.hypot(dx, dz) + " бл. Метка добавлена на карту.").withStyle(ChatFormatting.AQUA));

@@ -42,7 +42,8 @@ import net.minecraftforge.fml.common.Mod;
  * Закон городов «Мира Системы». Город можно разрушать и обворовывать — добыча
  * достаётся вору, а строители потом всё восстанавливают (CityRepairs). Но если
  * кто-то видел (стража — издалека, жители — то, что перед глазами), наказание
- * жёсткое и растёт: потеря репутации, долгий розыск, конфискация монет, стража.
+ * растёт с каждым разом — но это только потеря репутации народа. Розыска нет: стража
+ * нападает сама, лишь когда репутация упала до «Враждебности» (RaceNpcEntity.hostileTo).
  * Огонь и разлитые жидкости запрещены. Стража, горожане и мастера пополняются.
  */
 @Mod.EventBusSubscriber(modid = LitRPG.MODID)
@@ -71,7 +72,7 @@ public final class CityLaw {
         return p.isCreative() || p.isSpectator() || p.hasPermissions(2) && p.getPersistentData().getBoolean("litrpg_builder");
     }
 
-    /** Проступок в городе: предупреждение → штраф → розыск. */
+    /** Проступок в городе: потеря репутации, растущая с каждым разом (прощение через 5 минут). */
     public static void offense(ServerPlayer p, WorldMap.City city, String what, int severity) {
         long now = p.level().getGameTime();
         var data = p.getPersistentData();
@@ -89,14 +90,20 @@ public final class CityLaw {
             p.level().playSound(null, p.blockPosition(), SoundEvents.VILLAGER_NO, SoundSource.NEUTRAL, 1f, 0.8f);
             return;
         }
-        int seconds = n >= 4 ? 300 : n >= 3 ? 180 : 60;
-        if (f != null) RepEvents.change(p, f, n >= 3 ? -30 : -15);
-        data.putLong(WANTED, now + seconds * 20L);
+        int rep = n >= 4 ? 30 : n >= 3 ? 20 : 10;
+        if (f != null) RepEvents.change(p, f, -rep);
         p.sendSystemMessage(Component.literal("[Стража " + guardName + "] ").withStyle(ChatFormatting.RED)
-                .append(Component.literal(what + " Ты в розыске на " + seconds / 60 + " мин.! Беги из города — или сдавайся.")
-                        .withStyle(ChatFormatting.RED, ChatFormatting.BOLD)));
-        p.level().playSound(null, p.blockPosition(), SoundEvents.BELL_BLOCK, SoundSource.NEUTRAL, 2f, 0.8f);
-        alertGuards(p, city);
+                .append(Component.literal(what + " Репутация −" + rep + "." + hostileNote(p, f)).withStyle(ChatFormatting.RED)));
+        p.level().playSound(null, p.blockPosition(), SoundEvents.VILLAGER_NO, SoundSource.NEUTRAL, 1.5f, 0.7f);
+    }
+
+    /** Подсказка: при «Враждебности» стража нападает сама. */
+    private static String hostileNote(ServerPlayer p, Faction f) {
+        if (f == null) return "";
+        int rep = StatsManager.get(p).getRep(f);
+        if (rep < Faction.Tier.UNFRIENDLY.from) return " Народ враждебен тебе — стража нападёт!";
+        if (rep < Faction.Tier.UNFRIENDLY.from + 100) return " Ещё немного — и стража станет враждебной.";
+        return "";
     }
 
     private static void alertGuards(ServerPlayer p, WorldMap.City city) {
@@ -144,7 +151,7 @@ public final class CityLaw {
         return best;
     }
 
-    /** Попался на краже или порче: жёсткое наказание, растущее с каждым разом. */
+    /** Попался на краже или порче: потеря репутации, растущая с каждым разом. */
     public static void caught(ServerPlayer p, WorldMap.City city, RaceNpcEntity who, String what) {
         long now = p.level().getGameTime();
         var data = p.getPersistentData();
@@ -153,36 +160,14 @@ public final class CityLaw {
         data.putInt(THEFTS, n);
         data.putLong(THEFT_TIME, now);
         Faction f = city.faction() == null ? Faction.KINGDOM : Faction.byKey(city.faction());
-        int rep = n == 1 ? 20 : n == 2 ? 45 : 90;
+        int rep = n == 1 ? 15 : n == 2 ? 30 : 60;
         if (f != null) RepEvents.change(p, f, -rep);
-        int seconds = n == 1 ? 180 : n == 2 ? 360 : 600;
-        data.putLong(WANTED, Math.max(data.getLong(WANTED), now + seconds * 20L));
-        data.putInt(OFFENSES, Math.max(4, data.getInt(OFFENSES)));
-        data.putLong(LAST_OFFENSE, now);
-        // штраф: стража изымает часть монет
-        int fine = 0;
-        if (n >= 2) {
-            float part = n == 2 ? 0.25f : 0.5f;
-            var inv = p.getInventory();
-            for (int i = 0; i < inv.getContainerSize(); i++) {
-                var st = inv.getItem(i);
-                if (st.is(com.andrey.litrpg.registry.ModItems.COPPER_COIN.get()) || st.is(com.andrey.litrpg.registry.ModItems.SILVER_COIN.get())
-                        || st.is(com.andrey.litrpg.registry.ModItems.GOLD_COIN.get())) {
-                    int take = (int) Math.ceil(st.getCount() * part);
-                    fine += take;
-                    st.shrink(take);
-                }
-            }
-        }
         String shout = who.npcType().isGuard() ? "Стоять! Именем закона!" : p.getRandom().nextBoolean() ? "Вор! Держи вора!" : "Стража! Здесь вор!";
         Speech.say(who, shout, 80);
         who.playSound(net.minecraft.sounds.SoundEvents.VILLAGER_NO, 1.5f, 0.8f);
         p.sendSystemMessage(Component.literal("[" + city.name() + "] ").withStyle(ChatFormatting.RED)
-                .append(Component.literal(what + " Тебя заметил " + who.getName().getString() + "! Репутация −" + rep
-                        + ", розыск на " + seconds / 60 + " мин." + (fine > 0 ? " Стража изъяла монет: " + fine + "." : ""))
-                        .withStyle(ChatFormatting.RED, ChatFormatting.BOLD)));
-        p.level().playSound(null, p.blockPosition(), net.minecraft.sounds.SoundEvents.BELL_BLOCK, net.minecraft.sounds.SoundSource.NEUTRAL, 2f, 0.7f);
-        alertGuards(p, city);
+                .append(Component.literal(what + " Тебя заметил " + who.getName().getString() + "! Репутация −" + rep + "."
+                        + hostileNote(p, f)).withStyle(ChatFormatting.RED, ChatFormatting.BOLD)));
     }
 
     private static boolean isStash(ServerLevel sl, BlockPos pos) {
@@ -286,7 +271,7 @@ public final class CityLaw {
         }
     }
 
-    /** Нападение на горожан, стражу, жителей — сразу розыск. */
+    /** Нападение на горожан, стражу, жителей — минус репутация за каждый удар (стража — вдвое). */
     @SubscribeEvent
     public static void onHurt(LivingHurtEvent event) {
         if (!(event.getSource().getEntity() instanceof ServerPlayer p) || exempt(p)) return;
@@ -295,9 +280,16 @@ public final class CityLaw {
         if (t instanceof RaceNpcEntity npc && (npc.getTarget() == p || npc.npcType().outlaw())) return; // самооборона, разбойники
         WorldMap.City c = cityAt(t);
         if (c == null) return;
-        var data = p.getPersistentData();
-        data.putInt(OFFENSES, Math.max(2, data.getInt(OFFENSES)));
-        offense(p, c, "Нападение на жителей города!", 2);
+        Faction f = c.faction() == null ? Faction.KINGDOM : Faction.byKey(c.faction());
+        boolean guard = t instanceof RaceNpcEntity npc && npc.npcType().isGuard();
+        if (f != null) RepEvents.change(p, f, guard ? -20 : -10);
+        long now = p.level().getGameTime();
+        if (now - p.getPersistentData().getLong("litrpg_hurt_note") > 100) {
+            p.getPersistentData().putLong("litrpg_hurt_note", now);
+            p.sendSystemMessage(Component.literal("[Стража " + c.name() + "] ").withStyle(ChatFormatting.RED)
+                    .append(Component.literal((guard ? "Нападение на стражу! Репутация −20 за удар." : "Нападение на жителей! Репутация −10 за удар.")
+                            + hostileNote(p, f)).withStyle(ChatFormatting.RED)));
+        }
     }
 
     /** Взрывы рушат город, но без добычи — и строители потом всё отстроят. */

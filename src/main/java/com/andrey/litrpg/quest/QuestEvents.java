@@ -340,7 +340,7 @@ public final class QuestEvents {
                                 .withStyle(ChatFormatting.WHITE)));
                 if (nether == (level.dimension() == net.minecraft.world.level.Level.NETHER)) {
                     com.andrey.litrpg.network.ModNetwork.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
-                            new com.andrey.litrpg.network.WaypointPacket(poi.x(), poi.z()));
+                            new com.andrey.litrpg.network.WaypointPacket(poi.x(), poi.z(), q.id, d.title));
                 }
                 return;
             }
@@ -360,13 +360,18 @@ public final class QuestEvents {
             return;
         }
         BlockPos pos = found.getFirst();
+        // запомнить найденное подземелье: дальше «Где?» ведёт туда же, а не к ближайшему от нового места
+        q.hasPos = true;
+        q.px = pos.getX();
+        q.py = pos.getY();
+        q.pz = pos.getZ();
         int dx = pos.getX() - p.getBlockX(), dz = pos.getZ() - p.getBlockZ();
         int dist = (int) Math.sqrt((double) dx * dx + (double) dz * dz);
         StatsManager.message(p, Component.literal("◆ " + d.title + " (ур. " + d.level + "): ").withStyle(s -> s.withColor(d.color))
                 .append(Component.literal("X " + pos.getX() + ", Z " + pos.getZ() + " — " + dist + " бл. на " + direction(dx, dz)
                         + ". Метка добавлена на карту.").withStyle(ChatFormatting.WHITE)));
         com.andrey.litrpg.network.ModNetwork.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
-                new com.andrey.litrpg.network.WaypointPacket(pos.getX(), pos.getZ()));
+                new com.andrey.litrpg.network.WaypointPacket(pos.getX(), pos.getZ(), q.id, d.title));
     }
 
     private static String direction(int dx, int dz) {

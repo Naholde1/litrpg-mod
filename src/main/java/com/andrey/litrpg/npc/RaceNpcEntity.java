@@ -84,6 +84,8 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
     private CompoundTag sold = new CompoundTag();
     @Nullable private final ServerBossEvent bossEvent;
     private int spellCooldown = 60;
+    /** Торговец за прилавком рынка (0 — ещё не проверено, 1 — да, 2 — нет): стоит у своей палатки. */
+    private byte stall;
 
     public RaceNpcEntity(EntityType<? extends RaceNpcEntity> type, Level level, NpcType npc) {
         super(type, level);
@@ -215,7 +217,7 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
         goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         if (npc.isGuard()) {
             // стража: преступники, враги народа и любые монстры в городе
-            targetSelector.addGoal(1, new HurtByTargetGoal(this, RaceNpcEntity.class).setAlertOthers());
+            targetSelector.addGoal(1, new LawfulHurtByTarget(this).setAlertOthers());
             targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 5, false, false,
                     e -> e instanceof Player p && (com.andrey.litrpg.city.CityLaw.isWanted(p) || hostileTo(p))));
             targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, net.minecraft.world.entity.Mob.class, 10, false, false,
@@ -226,11 +228,36 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
             targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false,
                     e -> e instanceof Player p && hostileTo(p)));
         } else if (npc.fights()) {
-            targetSelector.addGoal(1, new HurtByTargetGoal(this, RaceNpcEntity.class).setAlertOthers());
+            targetSelector.addGoal(1, new LawfulHurtByTarget(this).setAlertOthers());
             targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false,
                     e -> e instanceof Player p && hostileTo(p)));
             targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false,
                     e -> e instanceof Enemy && com.andrey.litrpg.ability.Minions.ownerOf(e) == null));
+        }
+    }
+
+    /**
+     * Ответ на удар: монстрам и чужакам — всегда, игроку — только если народ ему враждебен
+     * (в городе за удары снимается репутация, а не объявляется розыск).
+     */
+    private static class LawfulHurtByTarget extends HurtByTargetGoal {
+        private final RaceNpcEntity self;
+
+        LawfulHurtByTarget(RaceNpcEntity self) {
+            super(self, RaceNpcEntity.class);
+            this.self = self;
+        }
+
+        @Override
+        public boolean canUse() {
+            if (self.getLastHurtByMob() instanceof Player p && !self.hostileTo(p)) return false;
+            return super.canUse();
+        }
+
+        @Override
+        protected void alertOther(net.minecraft.world.entity.Mob other, LivingEntity target) {
+            if (target instanceof Player p && other instanceof RaceNpcEntity n && !n.hostileTo(p)) return;
+            super.alertOther(other, target);
         }
     }
 
@@ -258,8 +285,27 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
     }
 
     private int homeRadius() {
+        if (stall == 1) return 1;
         if (npc.isArtisan()) return craft() == Craft.BUILDER ? 40 : 6;
-        return npc.role == NpcType.Role.TRADER ? 10 : 22;
+        return npc.role == NpcType.Role.TRADER ? 4 : 22;
+    }
+
+    /** Под тентом из шерсти (палатка рынка) — продавец не отходит от прилавка, чтобы его было легко найти. */
+    private void checkStall() {
+        if (stall != 0 || !hasRestriction() || tickCount < 40) return;
+        if (!(npc.isArtisan() || npc.role == NpcType.Role.TRADER) || craft() == Craft.BUILDER) {
+            stall = 2;
+            return;
+        }
+        net.minecraft.core.BlockPos c = getRestrictCenter();
+        stall = 2;
+        for (int dx = -1; dx <= 1 && stall == 2; dx++)
+            for (int dz = -1; dz <= 1; dz++)
+                if (level().getBlockState(c.offset(dx, 3, dz)).is(net.minecraft.tags.BlockTags.WOOL)) {
+                    stall = 1;
+                    break;
+                }
+        if (stall == 1) restrictTo(c, homeRadius());
     }
 
     private void equip() {
@@ -416,6 +462,7 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
     @Override
     protected void customServerAiStep() {
         super.customServerAiStep();
+        checkStall();
         chatter();
         if (npc.isGuard() && tickCount % 20 == 0 && getHealth() < getMaxHealth()) heal(6f);
         if (bossEvent != null) {
@@ -738,6 +785,7 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
         if (!storyName.isEmpty()) tag.putString("SName", storyName);
         if (job != null) tag.putString("Job", job.name());
         if (!sold.isEmpty()) tag.put("Sold", sold);
+        if (stall != 0) tag.putByte("Stall", stall);
         if (hasRestriction()) {
             tag.putInt("HomeX", getRestrictCenter().getX());
             tag.putInt("HomeY", getRestrictCenter().getY());
@@ -754,6 +802,7 @@ public class RaceNpcEntity extends PathfinderMob implements RangedAttackMob, Mer
         sold = tag.getCompound("Sold");
         storyName = tag.getString("SName");
         job = tag.contains("Job") ? Job.byKey(tag.getString("Job")) : null;
+        stall = tag.getByte("Stall");
         if (tag.contains("HomeX")) {
             restrictTo(new net.minecraft.core.BlockPos(tag.getInt("HomeX"), tag.getInt("HomeY"), tag.getInt("HomeZ")), homeRadius());
         }

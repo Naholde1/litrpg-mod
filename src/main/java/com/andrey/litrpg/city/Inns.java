@@ -312,6 +312,8 @@ public final class Inns {
         if (!(sl.getBlockState(e.getPos()).getBlock() instanceof DoorBlock)) return;
         Room r = roomAt(sl, e.getPos(), true);
         if (r == null || p.isCreative() || p.isSpectator()) return;
+        // изнутри дверь открывается всегда — запертым в комнате не останешься
+        if (r.contains(p.blockPosition())) return;
         long now = sl.getGameTime();
         Rents.Rent x = Rents.get(sl).holder(r, now);
         if (x != null && x.owner.equals(p.getUUID()) && now <= x.until) return;
@@ -322,6 +324,68 @@ public final class Inns {
                 : "Комната №" + r.n() + " занята. Здесь живёт " + x.name + ".";
         p.displayClientMessage(Component.literal("🔒 " + why).withStyle(ChatFormatting.GOLD), true);
         sl.playSound(null, e.getPos(), SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 0.8f, 1.2f);
+    }
+
+    /** Постоялец этой комнаты прямо сейчас (аренда не истекла). */
+    private static boolean tenant(ServerLevel sl, Room r, Player p) {
+        long now = sl.getGameTime();
+        Rents.Rent x = Rents.get(sl).holder(r, now);
+        return x != null && x.owner.equals(p.getUUID()) && now <= x.until;
+    }
+
+    /** Кровать в чужой (или не снятой) комнате: спать и ставить точку возрождения нельзя. */
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onUseBed(PlayerInteractEvent.RightClickBlock e) {
+        if (!(e.getLevel() instanceof ServerLevel sl) || !(e.getEntity() instanceof ServerPlayer p) || p.isCreative()) return;
+        if (!(sl.getBlockState(e.getPos()).getBlock() instanceof net.minecraft.world.level.block.BedBlock)) return;
+        Room r = roomAt(sl, e.getPos(), false);
+        if (r == null || tenant(sl, r, p)) return;
+        e.setCanceled(true);
+        e.setCancellationResult(net.minecraft.world.InteractionResult.FAIL);
+        p.displayClientMessage(Component.literal("🛏 Это не ваша комната — сначала снимите её у хозяина.").withStyle(ChatFormatting.GOLD), true);
+    }
+
+    /**
+     * Возрождение в комнате, срок которой истёк: точка у кровати сбрасывается, игрок выходит из комнаты
+     * (дверь всё равно открывается изнутри).
+     */
+    @SubscribeEvent
+    public static void onRespawn(PlayerEvent.PlayerRespawnEvent e) {
+        if (e.isEndConquered() || !(e.getEntity() instanceof ServerPlayer p)) return;
+        ServerLevel sl = p.serverLevel();
+        Room r = roomAt(sl, p.blockPosition(), false);
+        if (r == null || tenant(sl, r, p)) return;
+        p.setRespawnPosition(Level.OVERWORLD, null, 0, false, false);
+        BlockPos d = r.door();
+        // встать по ту сторону двери: из двух соседних клеток выбрать ту, что вне комнаты
+        for (BlockPos out : new BlockPos[]{d.north(), d.south(), d.east(), d.west()}) {
+            if (r.contains(out) || !sl.getBlockState(out).isAir() || !sl.getBlockState(out.above()).isAir()) continue;
+            p.teleportTo(out.getX() + 0.5, out.getY(), out.getZ() + 0.5);
+            break;
+        }
+        StatsManager.message(p, Component.literal("🛏 Срок аренды комнаты №" + r.n() + " истёк — точка возрождения у кровати сброшена.")
+                .withStyle(ChatFormatting.GOLD));
+    }
+
+    /** Двери комнат сами закрываются, когда внутри и у порога никого нет (раз в 2 с, только рядом с игроками). */
+    @SubscribeEvent
+    public static void onLevelTick(net.minecraftforge.event.TickEvent.LevelTickEvent e) {
+        if (e.phase != net.minecraftforge.event.TickEvent.Phase.END || !(e.level instanceof ServerLevel sl)) return;
+        if (sl.getGameTime() % 40 != 13 || !SystemWorld.isOverworld(sl)) return;
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        for (ServerPlayer p : sl.players()) {
+            WorldMap.City c = WorldMap.get().cityAt(p.getX(), p.getZ());
+            if (c == null || !seen.add(c.id())) continue;
+            for (Room r : rooms(c.id())) {
+                BlockPos d = r.door();
+                if (!sl.isLoaded(d)) continue;
+                var st = sl.getBlockState(d);
+                if (!(st.getBlock() instanceof DoorBlock door) || !st.getValue(DoorBlock.OPEN)) continue;
+                var box = new net.minecraft.world.phys.AABB(r.lo()).minmax(new net.minecraft.world.phys.AABB(r.hi())).inflate(1.5);
+                if (!sl.getEntitiesOfClass(Player.class, box, x -> x.isAlive() && !x.isSpectator()).isEmpty()) continue;
+                door.setOpen(null, sl, st, d, false);
+            }
+        }
     }
 
     /** При входе — напомнить о сроке комнат, которые скоро истекут или уже истекли. */
