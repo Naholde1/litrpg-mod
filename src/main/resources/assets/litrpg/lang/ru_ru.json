@@ -719,10 +719,10 @@
   "item.litrpg.sol_twin_spawn_egg": "Яйцо призыва: Сол, Близнец Рассвета",
   "entity.litrpg.luna_twin": "Луна, Близнец Сумерек",
   "item.litrpg.luna_twin_spawn_egg": "Яйцо призыва: Луна, Близнец Сумерек",
-  "entity.litrpg.chronophage": "Хронофаг, Пожиратель Времени",
-  "item.litrpg.chronophage_spawn_egg": "Яйцо призыва: Хронофаг, Пожиратель Времени",
-  "entity.litrpg.xalathar": "Ксал'Атар, Глаз Бездны",
-  "item.litrpg.xalathar_spawn_egg": "Яйцо призыва: Ксал'Атар, Глаз Бездны",
+  "entity.litrpg.chronophage": "Хронофаг",
+  "item.litrpg.chronophage_spawn_egg": "Яйцо призыва: Хронофаг",
+  "entity.litrpg.xalathar": "Ксал'Атар, Голос Бездны",
+  "item.litrpg.xalathar_spawn_egg": "Яйцо призыва: Ксал'Атар, Голос Бездны",
   "effect.litrpg.might": "Воодушевление",
   "effect.litrpg.bulwark": "Заслон",
   "effect.litrpg.vulnerability": "Уязвимость",
@@ -2098,5 +2098,7 @@
   "entity.litrpg.fire_twin_cinder": "Синдер",
   "item.litrpg.fire_twin_cinder_spawn_egg": "Яйцо призыва: Синдер",
   "entity.litrpg.ash_lord": "Повелитель Пепла",
-  "item.litrpg.ash_lord_spawn_egg": "Яйцо призыва: Повелитель Пепла"
+  "item.litrpg.ash_lord_spawn_egg": "Яйцо призыва: Повелитель Пепла",
+  "entity.litrpg.world_eater": "Пожиратель миров",
+  "item.litrpg.world_eater_spawn_egg": "Яйцо призыва: Пожиратель миров"
 }

@@ -51,6 +51,12 @@ MATS.update({
     'hair_ember': G.m_hair(0xE05A10, 0x7A2008),
     'skin_ash': G.m_skin(0x8A7A70, 0x5A4C44, spots=0x3A302A, spot_chance=0.1),
     'obsid': G.m_stone(0x1A1022, 0x0A0612, 0x3A2A4A, cracks=True),
+    # этап 5
+    'void_hide': G.m_chitin(0x1A0E2A, 0x4A2A7A, band=3),
+    'star_skin': G.m_ice(0x241434, 0xC8A0FF, 0x0A0614, glow_chance=0.18),
+    'maw_teeth': G.m_bone(0xE8E0F0, 0x9A90B0),
+    'void_glow': G.m_glow(0xC070FF, 0x6020A0),
+    'tentacle': G.m_skin(0x3A1A5A, 0x1A0A2A, spots=0xA060E0, spot_chance=0.06),
 })
 
 
@@ -328,8 +334,39 @@ def ash_lord():
     return m
 
 
+# ======================= Этап 5 =======================
+
+def world_eater():
+    """Пожиратель миров: приземистое чудовище, в шкуре — звёзды; огромная голова-пасть с четырьмя челюстями, щупальца на спине."""
+    leg = Part('leg_l', 'root', (8, 12, -6), [Cube(5, 0, -10, 7, 12, 8, 'void_hide'), Cube(4, 0, -12, 9, 3, 4, 'maw_teeth')],
+               anim=[A('walk', 'x', 0.5)])
+    leg_b = Part('leg_bl', 'root', (8, 12, 8), [Cube(5, 0, 4, 7, 12, 8, 'void_hide')], anim=[A('walk', 'x', 0.5, phase=math.pi)])
+    body = Part('body', 'root', (0, 12, 0), [
+        Cube(-12, 12, -12, 24, 16, 26, 'star_skin'),
+        Cube(-10, 28, -8, 20, 4, 20, 'void_hide'),
+        Cube(-13, 10, -13, 26, 3, 28, 'void_hide'),
+    ], anim=[A('idle', 'x', 0.02, 0.06), A('bob', 'y', 0.5, 0.05)])
+    head = Part('head', 'body', (0, 22, -12), [
+        Cube(-9, 14, -26, 18, 14, 14, 'void_hide', decals=eyes(18, 10, 0xD080FF, gap=8, size=(2, 2)) + eyes(18, 7, 0xD080FF, gap=4, size=(1, 1))),
+        Cube(-7, 16, -27, 14, 8, 1, 'void_glow'),
+    ], anim=[A('look', 'y', 0.5), A('look', 'x', 0.3)])
+    jaws = []
+    for name, cubes, axis, amp in (
+            ('jaw_top', [Cube(-9, 28, -30, 18, 3, 12, 'void_hide'), Cube(-8, 27, -30, 16, 1, 3, 'maw_teeth')], 'x', -0.6),
+            ('jaw_bot', [Cube(-9, 11, -30, 18, 3, 12, 'void_hide'), Cube(-8, 14, -30, 16, 1, 3, 'maw_teeth')], 'x', 0.6),
+            ('jaw_l', [Cube(9, 13, -30, 3, 14, 10, 'void_hide'), Cube(8, 14, -30, 1, 12, 3, 'maw_teeth')], 'y', -0.5)):
+        jaws.append(Part(name, 'head', (0, 20, -20), cubes, anim=[A('attack', axis, amp), A('cast', axis, amp * 1.4), A('idle', axis, amp * 0.15, 0.1)]))
+    jaws.append(mirror(jaws[2], 'jaw_r'))
+    tent = []
+    for i, (x, z) in enumerate(((-6, 4), (6, 4), (0, 10), (-8, 12), (8, 12))):
+        tent.append(Part(f'tent{i}', 'body', (x, 32, z), [Cube(x - 1, 32, z - 1, 2, 12, 2, 'tentacle'), Cube(x - 1, 44, z - 1, 2, 2, 2, 'void_glow')],
+                         anim=[A('idle', 'x', 0.3, 0.07, phase=i), A('idle', 'z', 0.25, 0.05, phase=i * 1.3)]))
+    return dict(name='world_eater', scale=1.5, shadow=1.6,
+                parts=[leg, mirror(leg, 'leg_r'), leg_b, mirror(leg_b, 'leg_br'), body, head] + jaws + tent)
+
+
 MODELS = [gatekeeper, twin_morra, twin_vessa, lich_king, dark_witch, tide_warden, leviathan, deep_priestess,
-          smelter_golem, fire_twin_ignis, fire_twin_cinder, ash_lord]
+          smelter_golem, fire_twin_ignis, fire_twin_cinder, ash_lord, world_eater]
 
 NAMES = {
     'gatekeeper': ('Привратник Костей', 'Bone Gatekeeper'),
@@ -346,6 +383,9 @@ NAMES = {
     'fire_twin_ignis': ('Игнис', 'Ignis'),
     'fire_twin_cinder': ('Синдер', 'Cinder'),
     'ash_lord': ('Повелитель Пепла', 'Ash Lord'),
+    'chronophage': ('Хронофаг', 'Chronophage'),
+    'world_eater': ('Пожиратель миров', 'World Eater'),
+    'xalathar': ("Ксал'Атар, Голос Бездны", "Xal'Atar, Voice of the Abyss"),
 }
 
 

@@ -57,6 +57,10 @@ public final class Bosses {
         add(r, "fire_twin_ignis", "fire_twin_ignis", FireTwinEntity::new, 1.0f, 3.2f, true, FireTwinEntity::createAttributes);
         add(r, "fire_twin_cinder", "fire_twin_cinder", FireTwinEntity::new, 0.8f, 2.6f, true, FireTwinEntity::createAttributes);
         add(r, "ash_lord", "ash_lord", AshLordEntity::new, 1.4f, 3.8f, true, AshLordEntity::createAttributes);
+        // ---- этап 5: Шпиль Бездны ----
+        add(r, "chronophage", "chronophage", ChronophageEntity::new, 1.6f, 3.6f, false, ChronophageEntity::createAttributes);
+        add(r, "world_eater", "world_eater", WorldEaterEntity::new, 2.8f, 3.0f, true, WorldEaterEntity::createAttributes);
+        add(r, "xalathar", "xalathar", XalatharEntity::new, 1.4f, 4.0f, true, XalatharEntity::createAttributes);
     }
 
     public static void attributes(EntityAttributeCreationEvent e) {

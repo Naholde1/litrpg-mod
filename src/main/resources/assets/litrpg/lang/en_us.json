@@ -712,10 +712,10 @@
   "item.litrpg.sol_twin_spawn_egg": "Sol, Twin of Dawn Spawn Egg",
   "entity.litrpg.luna_twin": "Luna, Twin of Dusk",
   "item.litrpg.luna_twin_spawn_egg": "Luna, Twin of Dusk Spawn Egg",
-  "entity.litrpg.chronophage": "Chronophage the Time-Eater",
-  "item.litrpg.chronophage_spawn_egg": "Chronophage the Time-Eater Spawn Egg",
-  "entity.litrpg.xalathar": "Xal'athar, Eye of the Abyss",
-  "item.litrpg.xalathar_spawn_egg": "Xal'athar, Eye of the Abyss Spawn Egg",
+  "entity.litrpg.chronophage": "Chronophage",
+  "item.litrpg.chronophage_spawn_egg": "Chronophage Spawn Egg",
+  "entity.litrpg.xalathar": "Xal'Atar, Voice of the Abyss",
+  "item.litrpg.xalathar_spawn_egg": "Xal'Atar, Voice of the Abyss Spawn Egg",
   "effect.litrpg.might": "Might",
   "effect.litrpg.bulwark": "Bulwark",
   "effect.litrpg.vulnerability": "Vulnerability",
@@ -2091,5 +2091,7 @@
   "entity.litrpg.fire_twin_cinder": "Cinder",
   "item.litrpg.fire_twin_cinder_spawn_egg": "Cinder Spawn Egg",
   "entity.litrpg.ash_lord": "Ash Lord",
-  "item.litrpg.ash_lord_spawn_egg": "Ash Lord Spawn Egg"
+  "item.litrpg.ash_lord_spawn_egg": "Ash Lord Spawn Egg",
+  "entity.litrpg.world_eater": "World Eater",
+  "item.litrpg.world_eater_spawn_egg": "World Eater Spawn Egg"
 }
