@@ -41,6 +41,8 @@ public final class BossMusic {
     private static final int START = 30, KEEP = 64;
     private static final Map<Long, CompletableFuture<short[]>> TRACKS = new LinkedHashMap<>();
     private static Track playing;
+    /** Трек из файла (музыка владельца), если у хранителя он есть. */
+    private static FileTrack file;
     private static int lostFor;
 
     @SubscribeEvent
@@ -52,7 +54,33 @@ public final class BossMusic {
             playing = null;
             return;
         }
-        LivingEntity boss = nearestBoss(mc, playing == null ? START : KEEP);
+        LivingEntity boss = nearestBoss(mc, playing == null && file == null ? START : KEEP);
+        if (file != null) {
+            if (file.isStopped() || !mc.getSoundManager().isActive(file) && file.ticks > 40) file = null;
+            else {
+                mc.getMusicManager().stopPlaying();
+                if (boss == null || !mc.player.isAlive()) {
+                    if (++lostFor > 60) {
+                        file.fadeOut();
+                        file = null;
+                    }
+                } else lostFor = 0;
+                return;
+            }
+        }
+        if (playing == null && boss != null && mc.player.isAlive()) {
+            var key = ForgeRegistries.ENTITY_TYPES.getKey(boss.getType());
+            String name = key == null ? null : Tracks.BOSS.get(key.getPath());
+            net.minecraft.sounds.SoundEvent ev = name == null ? null : com.andrey.litrpg.registry.ModSounds.music(name);
+            if (ev != null && mc.getSoundManager().getSoundEvent(ev.getLocation()) != null) {
+                mc.getMusicManager().stopPlaying();
+                file = new FileTrack(ev);
+                lostFor = 0;
+                mc.getSoundManager().play(file);
+                LitRPG.LOGGER.info("Boss music (file) {} for {}", name, key);
+                return;
+            }
+        }
         if (playing != null && (playing.isStopped() || !mc.getSoundManager().isActive(playing) && playing.started)) playing = null;
         if (playing != null) {
             mc.getMusicManager().stopPlaying(); // обычная музыка ждёт, пока идёт бой
@@ -157,6 +185,39 @@ public final class BossMusic {
                 fadeIn = Math.min(30, fadeIn + 1);
                 volume = Math.max(0.01f, fadeIn / 30f);
             } else {
+                volume -= 0.025f;
+                if (volume <= 0.01f) stop();
+            }
+        }
+    }
+
+    /** Трек из файла: поток по кругу, плавное вступление и затихание. */
+    private static final class FileTrack extends AbstractTickableSoundInstance {
+        private float target = 1f;
+        int ticks;
+
+        FileTrack(SoundEvent ev) {
+            super(ev, SoundSource.MUSIC, SoundInstance.createUnseededRandom());
+            this.looping = true;
+            this.relative = true;
+            this.attenuation = Attenuation.NONE;
+            this.volume = 0.01f;
+        }
+
+        @Override
+        public boolean canStartSilent() {
+            return true;
+        }
+
+        void fadeOut() {
+            target = 0f;
+        }
+
+        @Override
+        public void tick() {
+            ticks++;
+            if (target > 0) volume = Math.min(1f, Math.max(0.01f, ticks / 30f));
+            else {
                 volume -= 0.025f;
                 if (volume <= 0.01f) stop();
             }

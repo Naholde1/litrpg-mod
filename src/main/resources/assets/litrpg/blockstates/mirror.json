@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "turn=0": {
+   "model": "litrpg:block/mirror_0"
+  },
+  "turn=1": {
+   "model": "litrpg:block/mirror_1"
+  }
+ }
+}

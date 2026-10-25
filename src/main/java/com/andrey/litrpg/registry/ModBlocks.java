@@ -47,7 +47,7 @@ public class ModBlocks {
     /** Разлом — переход на следующий этап. */
     public static final RegistryObject<Block> RIFT = BLOCKS.register("rift",
             () -> new RiftBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_MAGENTA)
-                    .strength(-1.0f, 3600000.0f).noLootTable().noCollission().sound(SoundType.AMETHYST)
+                    .strength(-1.0f, 3600000.0f).noLootTable().noCollission().noOcclusion().sound(SoundType.AMETHYST)
                     .lightLevel(s -> 15).pushReaction(PushReaction.BLOCK)));
 
     @SuppressWarnings("ConstantConditions")

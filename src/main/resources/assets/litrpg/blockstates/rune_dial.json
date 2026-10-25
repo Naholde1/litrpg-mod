@@ -1,0 +1,100 @@
+{
+ "variants": {
+  "facing=north,symbol=0": {
+   "model": "litrpg:block/rune_dial_0",
+   "y": 0
+  },
+  "facing=north,symbol=1": {
+   "model": "litrpg:block/rune_dial_1",
+   "y": 0
+  },
+  "facing=north,symbol=2": {
+   "model": "litrpg:block/rune_dial_2",
+   "y": 0
+  },
+  "facing=north,symbol=3": {
+   "model": "litrpg:block/rune_dial_3",
+   "y": 0
+  },
+  "facing=north,symbol=4": {
+   "model": "litrpg:block/rune_dial_4",
+   "y": 0
+  },
+  "facing=north,symbol=5": {
+   "model": "litrpg:block/rune_dial_5",
+   "y": 0
+  },
+  "facing=east,symbol=0": {
+   "model": "litrpg:block/rune_dial_0",
+   "y": 90
+  },
+  "facing=east,symbol=1": {
+   "model": "litrpg:block/rune_dial_1",
+   "y": 90
+  },
+  "facing=east,symbol=2": {
+   "model": "litrpg:block/rune_dial_2",
+   "y": 90
+  },
+  "facing=east,symbol=3": {
+   "model": "litrpg:block/rune_dial_3",
+   "y": 90
+  },
+  "facing=east,symbol=4": {
+   "model": "litrpg:block/rune_dial_4",
+   "y": 90
+  },
+  "facing=east,symbol=5": {
+   "model": "litrpg:block/rune_dial_5",
+   "y": 90
+  },
+  "facing=south,symbol=0": {
+   "model": "litrpg:block/rune_dial_0",
+   "y": 180
+  },
+  "facing=south,symbol=1": {
+   "model": "litrpg:block/rune_dial_1",
+   "y": 180
+  },
+  "facing=south,symbol=2": {
+   "model": "litrpg:block/rune_dial_2",
+   "y": 180
+  },
+  "facing=south,symbol=3": {
+   "model": "litrpg:block/rune_dial_3",
+   "y": 180
+  },
+  "facing=south,symbol=4": {
+   "model": "litrpg:block/rune_dial_4",
+   "y": 180
+  },
+  "facing=south,symbol=5": {
+   "model": "litrpg:block/rune_dial_5",
+   "y": 180
+  },
+  "facing=west,symbol=0": {
+   "model": "litrpg:block/rune_dial_0",
+   "y": 270
+  },
+  "facing=west,symbol=1": {
+   "model": "litrpg:block/rune_dial_1",
+   "y": 270
+  },
+  "facing=west,symbol=2": {
+   "model": "litrpg:block/rune_dial_2",
+   "y": 270
+  },
+  "facing=west,symbol=3": {
+   "model": "litrpg:block/rune_dial_3",
+   "y": 270
+  },
+  "facing=west,symbol=4": {
+   "model": "litrpg:block/rune_dial_4",
+   "y": 270
+  },
+  "facing=west,symbol=5": {
+   "model": "litrpg:block/rune_dial_5",
+   "y": 270
+  }
+ }
+}

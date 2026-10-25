@@ -14,7 +14,7 @@
       "offset": 2.0
     },
     "music": {
-      "sound": "minecraft:music.overworld.deep_dark",
+      "sound": "litrpg:music.as_time_flies",
       "min_delay": 1200,
       "max_delay": 3600,
       "replace_current_music": false

@@ -185,6 +185,48 @@ class Map:
                     self.open[(x, y, z)] = theme.name
                     self.nowall.add((x, y, z))
 
+    # ---------------- свет ----------------
+
+    def auto_lights(self, spacing=7, soul=True, themes=None, min_h=4, chain=2, offset=0):
+        """Фонари на цепях под потолком по сетке (там, где потолок не ниже min_h и место свободно)."""
+        cols = {}
+        for (x, y, z), t in self.open.items():
+            if themes and t not in themes:
+                continue
+            if (x + offset) % spacing or (z + offset) % spacing:
+                continue
+            if (x, y - 1, z) in self.open:
+                continue
+            cols[(x, z, y)] = t
+        n = 0
+        for (x, z, y) in cols:
+            top = y
+            while (x, top + 1, z) in self.open and top - y < 40:
+                top += 1
+            if top - y + 1 < min_h or (x, top + 1, z) in self.nowall:
+                continue
+            if any(self.solid_at(x, yy, z) for yy in range(top - chain, top + 1)):
+                continue
+            ln = min(chain, max(0, top - y - 3))
+            self.chain_lantern(x, top, z, length=ln, soul=soul) if ln > 0 else self.lantern(x, top, z, soul=soul, hanging=True)
+            n += 1
+        return n
+
+    def glow(self, spacing=6, level=11, themes=None, height=2):
+        """Невидимые источники света (minecraft:light) по сетке над полом — ровная полутьма без лишних фонарей."""
+        n = 0
+        for (x, y, z), t in list(self.open.items()):
+            if themes and t not in themes:
+                continue
+            if x % spacing or z % spacing or (x, y - 1, z) in self.open and not self.solid_at(x, y - 1, z):
+                continue
+            ly = y + height
+            if (x, ly, z) not in self.open or self.solid_at(x, ly, z) or (x, ly, z) in self.blocks:
+                continue
+            self.set(x, ly, z, 'minecraft:light', level=level, waterlogged=False)
+            n += 1
+        return n
+
     # ---------------- оболочка ----------------
 
     def shell(self, thick=2):

@@ -10,7 +10,7 @@ ROOT = os.path.join(os.path.dirname(__file__), '..', 'src', 'main', 'resources',
 
 # id: (туман, вода, частица, вероятность, звук-петля, настроение, музыка)
 BIOMES = {
-    'vestibule': (0x14141F, 0x2A3A5A, 'minecraft:white_ash', 0.004, None, 'minecraft:ambient.cave', 'minecraft:music.overworld.deep_dark'),
+    'vestibule': (0x14141F, 0x2A3A5A, 'minecraft:white_ash', 0.004, None, 'minecraft:ambient.cave', 'litrpg:music.as_time_flies'),
     'crypt': (0x16201A, 0x1F3A30, 'minecraft:white_ash', 0.012, 'minecraft:ambient.soul_sand_valley.loop', 'minecraft:ambient.soul_sand_valley.mood',
               'minecraft:music.nether.soul_sand_valley'),
     'thicket': (0x101A0C, 0x2E4A1A, 'minecraft:spore_blossom_air', 0.006, 'minecraft:ambient.warped_forest.loop', 'minecraft:ambient.warped_forest.mood',
@@ -51,7 +51,7 @@ def main():
     write('tags/worldgen/biome/dungeon.json', {'values': [f'litrpg:{k}' for k in BIOMES]})
     write('dimension_type/dungeon.json', {
         'ultrawarm': False, 'natural': False, 'coordinate_scale': 1.0, 'has_skylight': False, 'has_ceiling': True,
-        'ambient_light': 0.06, 'fixed_time': 18000, 'monster_spawn_light_level': 0, 'monster_spawn_block_light_limit': 0,
+        'ambient_light': 0.12, 'fixed_time': 18000, 'monster_spawn_light_level': 0, 'monster_spawn_block_light_limit': 0,
         'piglin_safe': True, 'bed_works': False, 'respawn_anchor_works': False, 'has_raids': False,
         'logical_height': 256, 'min_y': 0, 'height': 256, 'infiniburn': '#minecraft:infiniburn_overworld',
         'effects': 'minecraft:overworld'})

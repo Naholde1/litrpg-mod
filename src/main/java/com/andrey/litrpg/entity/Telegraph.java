@@ -75,6 +75,11 @@ public final class Telegraph {
     /** Зона ползёт за целью, пока до взрыва не останется lockTicks. */
     public Telegraph follow(Entity e, int lockTicks) { this.follow = e; this.followUntil = lockTicks; return this; }
 
+    /** Центр зоны (у ползущей — где она сейчас). */
+    public Vec3 center() {
+        return center;
+    }
+
     public boolean contains(Vec3 p) {
         double dx = p.x - center.x, dz = p.z - center.z;
         if (Math.abs(p.y - center.y) > 4) return false;

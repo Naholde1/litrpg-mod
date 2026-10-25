@@ -142,6 +142,9 @@ def build():
     memory(m, st)
     arena3(m, st)
     packs(st)
+    m.auto_lights(spacing=8, soul=True, themes={'s1_hall', 's1_tomb', 's1_trap', 's1_soul', 's1_throne'}, min_h=5)
+    m.auto_lights(spacing=6, soul=False, themes={'s1_camp'}, min_h=5, offset=3)
+    m.glow(spacing=5, level=10)
 
     st.box = [X(-90), 10, Z(-410), X(50), 110, Z(24)]
     st.camp = [X(0), Y, Z(10), 180]

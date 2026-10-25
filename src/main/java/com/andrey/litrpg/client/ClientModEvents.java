@@ -34,14 +34,18 @@ public class ClientModEvents {
         event.registerEntityRenderer(ModEntities.SAND_SCORPION.get(), ctx -> new DataBossRenderer<>(ctx, "sand_scorpion"));
         event.registerEntityRenderer(ModEntities.GRAVE_KNIGHT.get(), ctx -> new DataBossRenderer<>(ctx, "grave_knight"));
         ModEntities.WILD.forEach((id, t) -> event.registerEntityRenderer(t.get(), ctx -> new DataBossRenderer<>(ctx, id)));
-        ModEntities.BOSSES.forEach((id, t) -> event.registerEntityRenderer(t.get(), ctx -> new DataBossRenderer<>(ctx, id)));
+        ModEntities.BOSSES.forEach((id, t) -> event.registerEntityRenderer(t.get(),
+                ctx -> new DataBossRenderer<>(ctx, com.andrey.litrpg.entity.stage.Bosses.model(id))));
     }
 
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
         List<String> names = new ArrayList<>(List.of(CREATURE_MODELS));
         names.addAll(ModEntities.WILD.keySet());
-        names.addAll(ModEntities.BOSSES.keySet());
+        for (String id : ModEntities.BOSSES.keySet()) {
+            String model = com.andrey.litrpg.entity.stage.Bosses.model(id);
+            if (!names.contains(model)) names.add(model);
+        }
         for (String name : names) {
             event.registerLayerDefinition(DataBossRenderer.layer(name), () -> com.andrey.litrpg.client.model.DataModel.createLayer(name));
         }

@@ -4,3 +4,6 @@ run/
 out/
 *.iml
 .idea/
+
+# музыка владельца (личные треки) — только в локальной сборке, не в GitHub
+src/main/resources/assets/litrpg/sounds/music/

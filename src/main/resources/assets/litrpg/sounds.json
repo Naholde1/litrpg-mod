@@ -1,0 +1,137 @@
+{
+ "music.red": {
+  "category": "music",
+  "sounds": [
+   {
+    "name": "litrpg:music/red",
+    "stream": true
+   }
+  ]
+ },
+ "music.jane_hoodtrap": {
+  "category": "music",
+  "sounds": [
+   {
+    "name": "litrpg:music/jane_hoodtrap",
+    "stream": true
+   }
+  ]
+ },
+ "music.blud": {
+  "category": "music",
+  "sounds": [
+   {
+    "name": "litrpg:music/blud",
+    "stream": true
+   }
+  ]
+ },
+ "music.kurayami": {
+  "category": "music",
+  "sounds": [
+   {
+    "name": "litrpg:music/kurayami",
+    "stream": true
+   }
+  ]
+ },
+ "music.as_time_flies": {
+  "category": "music",
+  "sounds": [
+   {
+    "name": "litrpg:music/as_time_flies",
+    "stream": true
+   }
+  ]
+ },
+ "music.wutiwant": {
+  "category": "music",
+  "sounds": [
+   {
+    "name": "litrpg:music/wutiwant",
+    "stream": true
+   }
+  ]
+ },
+ "music.next_opponent": {
+  "category": "music",
+  "sounds": [
+   {
+    "name": "litrpg:music/next_opponent",
+    "stream": true
+   }
+  ]
+ },
+ "music.no_time_for_caution": {
+  "category": "music",
+  "sounds": [
+   {
+    "name": "litrpg:music/no_time_for_caution",
+    "stream": true
+   }
+  ]
+ },
+ "music.ecstasy_of_gold": {
+  "category": "music",
+  "sounds": [
+   {
+    "name": "litrpg:music/ecstasy_of_gold",
+    "stream": true
+   }
+  ]
+ },
+ "music.aura_of_glory": {
+  "category": "music",
+  "sounds": [
+   {
+    "name": "litrpg:music/aura_of_glory",
+    "stream": true
+   }
+  ]
+ },
+ "music.fight_club": {
+  "category": "music",
+  "sounds": [
+   {
+    "name": "litrpg:music/fight_club",
+    "stream": true
+   }
+  ]
+ },
+ "music.fragment": {
+  "category": "music",
+  "sounds": [
+   {
+    "name": "litrpg:music/fragment",
+    "stream": true
+   }
+  ]
+ },
+ "music.woops": {
+  "category": "music",
+  "sounds": [
+   {
+    "name": "litrpg:music/woops",
+    "stream": true
+   }
+  ]
+ },
+ "music.fear": {
+  "category": "music",
+  "sounds": [
+   {
+    "name": "litrpg:music/fear",
+    "stream": true
+   }
+  ]
+ },
+ "music.blue_lock": {
+  "category": "music",
+  "sounds": [
+   {
+    "name": "litrpg:music/blue_lock",
+    "stream": true
+   }
+  ]
+ }
+}

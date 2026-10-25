@@ -32,6 +32,7 @@ public class LitRPG {
         ModItems.ITEMS.register(bus);
         ModEntities.ENTITY_TYPES.register(bus);
         ModCreativeTabs.TABS.register(bus);
+        com.andrey.litrpg.registry.ModSounds.SOUNDS.register(bus);
 
         bus.addListener(this::commonSetup);
         bus.addListener(this::registerCaps);

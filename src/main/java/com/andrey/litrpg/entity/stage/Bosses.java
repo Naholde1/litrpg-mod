@@ -24,15 +24,26 @@ public final class Bosses {
 
     /** Модели и рендеры: id хранителя → имя модели (boss_models/NAME.json). */
     public static final List<String> IDS = new ArrayList<>();
+    public static final java.util.Map<String, String> MODEL = new java.util.HashMap<>();
 
-    private static <T extends BossBase> void add(ModEntities.BossReg r, String id, EntityType.EntityFactory<T> f, float w, float h, boolean fire,
-                                                 Supplier<AttributeSupplier.Builder> attrs) {
+    private static <T extends BossBase> void add(ModEntities.BossReg r, String id, String model, EntityType.EntityFactory<T> f, float w, float h,
+                                                 boolean fire, Supplier<AttributeSupplier.Builder> attrs) {
         ALL.add(new Def(r.boss(id, f, w, h, fire), attrs));
         IDS.add(id);
+        MODEL.put(id, model);
+    }
+
+    /** Имя модели хранителя (у кого своей ещё нет — похожая). */
+    public static String model(String id) {
+        return MODEL.getOrDefault(id, id);
     }
 
     public static void register(ModEntities.BossReg r) {
-        // хранители добавляются по этапам (stage1..stage5)
+        // ---- этап 1: Склеп Забытых ----
+        add(r, "gatekeeper", "gatekeeper", GatekeeperEntity::new, 1.5f, 3.6f, false, GatekeeperEntity::createAttributes);
+        add(r, "twin_morra", "twin_morra", TwinNecromancerEntity::new, 0.8f, 2.4f, false, TwinNecromancerEntity::createAttributes);
+        add(r, "twin_vessa", "twin_vessa", TwinNecromancerEntity::new, 0.8f, 2.4f, false, TwinNecromancerEntity::createAttributes);
+        add(r, "lich_king", "lich_king", LichKingEntity::new, 1.0f, 3.2f, true, LichKingEntity::createAttributes);
     }
 
     public static void attributes(EntityAttributeCreationEvent e) {
