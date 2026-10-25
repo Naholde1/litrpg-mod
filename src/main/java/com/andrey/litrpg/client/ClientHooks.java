@@ -11,9 +11,25 @@ public final class ClientHooks {
         return mc.player == null || !mc.player.isAlive() || mc.screen instanceof net.minecraft.client.gui.screens.DeathScreen;
     }
 
+    /** Окно роли попросили открыть, пока клиент ещё не готов (вход в мир) — откроем, как только сможем. */
+    static boolean pendingOrigin;
+
     public static void openOriginScreen() {
         Minecraft mc = Minecraft.getInstance();
-        if (!busy(mc) && !(mc.screen instanceof OriginScreen)) mc.setScreen(new OriginScreen());
+        if (busy(mc) || mc.screen != null && !(mc.screen instanceof OriginScreen)) {
+            pendingOrigin = true;
+            return;
+        }
+        pendingOrigin = false;
+        if (!(mc.screen instanceof OriginScreen)) mc.setScreen(new OriginScreen());
+    }
+
+    /** Каждый тик клиента: отложенное окно роли. */
+    static void tick(Minecraft mc) {
+        if (pendingOrigin && !busy(mc) && mc.screen == null && mc.level != null && mc.player.tickCount > 20) {
+            pendingOrigin = false;
+            if (!ClientData.received || ClientData.STATS.getRole() == null) mc.setScreen(new OriginScreen());
+        }
     }
 
     public static void openClassChoice() {

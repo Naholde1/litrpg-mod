@@ -57,13 +57,13 @@ def build():
     # АРЕНА 1 — Плавильня
     m.room(X(-18), Z(-132), X(18), Z(-98), YF, 14, forge, vault=4)
     # к лавовой реке
-    m.carve(X(-2), YF, Z(-142), X(2), YF + 5, Z(-133), rock)
+    m.carve(X(-2), YF, Z(-148), X(2), YF + 5, Z(-133), rock)
     m.cave(X(0), YF + 8, Z(-165), 22, 12, 22, rock, rough=0.25, seed=46, floor=YF)
     m.carve(X(-22), YF - 4, Z(-172), X(22), YF - 1, Z(-158), rock)     # русло лавы
     # Зал Мехов
-    m.carve(X(-2), YF, Z(-192), X(2), YF + 5, Z(-186), hall)
+    m.carve(X(-2), YF, Z(-192), X(2), YF + 5, Z(-182), hall)
     m.room(X(-10), Z(-206), X(10), Z(-193), YF, 9, hall, vault=3)
-    m.carve(X(-2), YF, Z(-215), X(2), YF + 5, Z(-207), hall)
+    m.carve(X(-2), YF, Z(-220), X(2), YF + 5, Z(-207), hall)
     # АРЕНА 2 — Горнило близнецов
     m.round_room(X(0), Z(-238), 20, YF, 14, forge, dome=6)
     # Горн надсмотрщика
@@ -93,7 +93,7 @@ def build():
     packs(st)
 
     st.box = [X(-45), 20, Z(-432), X(45), 110, Z(22)]
-    st.camp = [X(0), Y, Z(9), 180]
+    st.camp = [X(0), Y, Z(12), 180]
     st.trader = [X(-5), Y, Z(3), 135]
     m.auto_lights(spacing=8, soul=False, themes={'s4_guard', 's4_forge', 's4_hall'}, min_h=6)
     m.glow(spacing=5, level=11)

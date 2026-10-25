@@ -29,7 +29,12 @@
     "litrpg:ring_storm",
     "litrpg:ring_netherforged",
     "litrpg:ring_bounty",
+    "litrpg:lich_soulring",
     "litrpg:morra_ring",
-    "litrpg:ignis_ember"
+    "litrpg:tide_pearl",
+    "litrpg:smelter_ingot",
+    "litrpg:ignis_ember",
+    "litrpg:chrono_gear",
+    "litrpg:ymir_maul"
   ]
 }

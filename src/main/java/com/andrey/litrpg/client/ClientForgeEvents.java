@@ -47,6 +47,7 @@ public class ClientForgeEvents {
         if (mc.player == null || mc.level == null) return;
 
         ClientData.tick();
+        ClientHooks.tick(mc);
         Minimap.tick(mc);
 
         while (ModKeys.CHARACTER.consumeClick()) {

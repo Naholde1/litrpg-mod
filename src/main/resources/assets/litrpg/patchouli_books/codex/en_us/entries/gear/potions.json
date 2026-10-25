@@ -1,0 +1,18 @@
+{
+  "name": "Зелья",
+  "icon": "litrpg:health_potion",
+  "category": "litrpg:gear",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "litrpg:health_potion",
+      "text": "Восстанавливает 20% здоровья и чуть лечит после. Общий откат зелий — 60 с."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "litrpg:mana_potion",
+      "text": "Восстанавливает 30% маны. Тот же общий откат."
+    }
+  ]
+}

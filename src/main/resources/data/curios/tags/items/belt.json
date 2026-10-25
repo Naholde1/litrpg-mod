@@ -13,6 +13,9 @@
     "litrpg:belt_flasks",
     "litrpg:belt_climber",
     "litrpg:belt_treasure",
-    "litrpg:belt_titan"
+    "litrpg:belt_titan",
+    "litrpg:golem_core",
+    "litrpg:priestess_dome",
+    "litrpg:chrono_pendulum"
   ]
 }

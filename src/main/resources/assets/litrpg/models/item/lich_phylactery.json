@@ -1,1 +1,1 @@
-{ "parent": "minecraft:item/generated", "textures": { "layer0": "litrpg:item/lich_phylactery" } }
+{"parent": "minecraft:item/generated", "textures": {"layer0": "litrpg:item/lich_phylactery"}}

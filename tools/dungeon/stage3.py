@@ -67,7 +67,7 @@ def build():
     m.carve(X(-2), YL, Z(-204), X(2), YL + 5, Z(-197), deep)
     m.room(X(-9), Z(-218), X(9), Z(-205), YL, 8, sanct, vault=3)
     # АРЕНА 2 — Бассейн Левиафана: огромная пещера с бассейном и кольцевой дорожкой
-    m.carve(X(-2), YL, Z(-226), X(2), YL + 5, Z(-219), deep)
+    m.carve(X(-2), YL, Z(-232), X(2), YL + 5, Z(-219), deep)
     m.cave(X(0), YL + 9, Z(-252), 25, 14, 25, deep, rough=0.15, seed=36, floor=YL)
     m.carve(X(-15), YL - 8, Z(-267), X(15), YL - 1, Z(-237), deep)     # чаша бассейна (8 глубиной)
     # Звонница
@@ -95,7 +95,7 @@ def build():
     packs(st)
 
     st.box = [X(-40), 10, Z(-376), X(40), 110, Z(22)]
-    st.camp = [X(0), Y, Z(9), 180]
+    st.camp = [X(0), Y, Z(12), 180]
     st.trader = [X(-5), Y, Z(3), 135]
     st.exit = [X(-3), YT, Z(-369), X(3), YT + 6, Z(-365)]
     m.auto_lights(spacing=8, soul=False, themes={'s3_chapel', 's3_temple', 's3_sanct'}, min_h=6)
@@ -325,7 +325,7 @@ def packs(st):
     S('s3_g1', (X(0), YL, Z(-158)), [('drowned', X(-3), YL, Z(-158), 23), ('drowned', X(3), YL, Z(-158), 23), ('litrpg:jelly', X(0), YL, Z(-161), 23)], r=12)
     S('s3_g2', (X(0), YL, Z(-172)), [('litrpg:mire_horror', X(0), YL, Z(-172), 24, 'ELITE'), ('drowned', X(-4), YL, Z(-174), 23)], r=12)
     S('s3_g3', (X(0), YL, Z(-186)), [('guardian', X(-5), YL, Z(-186), 24), ('guardian', X(5), YL, Z(-186), 24), ('drowned', X(0), YL, Z(-190), 24, 'ELITE')], r=12)
-    S('s3_basilisk', (X(-21), YL, Z(-176)), [('litrpg:basilisk', X(-21), YL, Z(-176), 25, 'CHAMPION', 'Око Глубин', 'guard')], r=8, mini=True)
+    S('s3_basilisk', (X(21), YL, Z(-176)), [('litrpg:basilisk', X(21), YL, Z(-176), 25, 'CHAMPION', 'Око Глубин', 'guard')], r=8, mini=True)
     S('s3_d1', (X(0), YL, Z(-210)), [('litrpg:mire_horror', X(-4), YL, Z(-210), 25), ('drowned', X(4), YL, Z(-210), 25),
                                      ('drowned', X(0), YL, Z(-214), 25)], r=10)
     S('s3_hydra', (X(0), YL, Z(-292)), [('litrpg:hydra', X(0), YL, Z(-292), 27, 'CHAMPION', 'Гидра Звонницы', 'brute'),

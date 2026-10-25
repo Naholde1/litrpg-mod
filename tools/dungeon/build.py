@@ -158,7 +158,10 @@ class Map:
                 for y in range(int(cy - ry) - 2, int(cy + ry) + 3):
                     if floor is not None and y < floor:
                         continue
-                    d = ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 + ((z - cz) / rz) ** 2
+                    # с ровным полом нижняя половина — отвесные стены до пола (иначе у пола пещера сужается
+                    # и входящие коридоры упираются в камень)
+                    dy = 0 if floor is not None and y < cy else (y - cy)
+                    d = ((x - cx) / rx) ** 2 + (dy / ry) ** 2 + ((z - cz) / rz) ** 2
                     if d <= 1 + n * rough * 2 + (h3(x, y, z, seed) - 0.5) * rough * 0.4:
                         self.open[(x, y, z)] = theme.name
 

@@ -100,7 +100,7 @@ C('lycanthrope', 'Ликантроп', 'Lycanthrope', 'DAMAGE', 0x6E2C00, 'AGI',
 K('saints_touch', 'Касание святого', 'Saint\'s Touch', 'HEAL_TARGET', '✚', m=20, cd=3, pw=2.0, r=20, f='Простое касание исцеляет')
 K('halo', 'Нимб', 'Halo', 'ZONE', '◯', m=40, cd=20, el='HOLY', pw=0.5, r=7, d=10, f='Свет вокруг святого лечит своих и жжёт нежить')
 K('martyrdom', 'Мученичество', 'Martyrdom', 'SACRIFICE', '✝', m=0, cd=20, pw=0.15, me='regen 6 1', f='Святой отдаёт себя')
-K('resurrection_ward', 'Воскрешение', 'Resurrection', 'WARD', '☩', m=50, cd=40, r=24, d=20, f='Душа союзника не покинет тело')
+K('resurrection_ward', 'Оберег души', 'Soul Ward', 'WARD', '☩', m=50, cd=40, r=24, d=20, f='Душа союзника не покинет тело')
 K('divine_intervention', 'Божье вмешательство', 'Divine Intervention', 'BUFF_ALLIES', '✺', m=100, cd=120, r=20, me='res 8 4; regen 8 3; abs 8 4',
   f='Небо вмешивается в бой')
 C('saint', 'Святой', 'Saint', 'SUPPORT', 0xFFFDE7, 'INT', 'VIT', 'support 4 undead 3',

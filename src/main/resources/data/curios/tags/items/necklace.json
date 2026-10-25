@@ -24,7 +24,14 @@
     "litrpg:amulet_shadow",
     "litrpg:amulet_void",
     "litrpg:amulet_firstlight",
+    "litrpg:gate_key",
+    "litrpg:twin_locket",
+    "litrpg:lich_crown",
     "litrpg:ent_heartwood",
+    "litrpg:levi_tide",
+    "litrpg:twins_bond",
+    "litrpg:ash_crown",
+    "litrpg:eater_maw",
     "litrpg:baalzar_horn"
   ]
 }

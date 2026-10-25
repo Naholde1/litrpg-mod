@@ -93,7 +93,7 @@ def build():
     packs(st)
 
     st.box = [X(-80), 10, Z(-376), X(80), 120, Z(22)]
-    st.camp = [X(0), Y, Z(9), 180]
+    st.camp = [X(0), Y, Z(12), 180]
     st.trader = [X(-5), Y, Z(3), 135]
     m.auto_lights(spacing=8, soul=True, themes={'s5_camp', 's5_hall', 's5_clock'}, min_h=6)
     m.glow(spacing=5, level=11)
@@ -180,7 +180,7 @@ def bridge(m, st):
     st.mech('s5_crumble', 'collapse', box=[X(min(xs) + 3), y, Z(min(zs) + 3), X(max(xs) - 3), y, Z(max(zs) - 3)],
             tile='minecraft:cracked_stone_bricks', near=[X(-20), YF - 2, Z(-56), X(16), YF + 6, Z(-30)])
     # тайный островок со ступеньками-камнями от острова C
-    for sx, sz in ((17, -46), (20, -41), (23, -36)):
+    for sx, sz in ((16, -46), (18, -43), (20, -40), (22, -37), (24, -34)):
         m.set(X(sx), y, Z(sz), 'minecraft:end_stone_bricks')
         m.set(X(sx), y - 1, Z(sz), 'minecraft:obsidian')
     island(m, 26, -30, 3, y, top='minecraft:amethyst_block', seed=9)

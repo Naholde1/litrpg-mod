@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "XMX",
+    "M M"
+  ],
+  "key": {
+    "X": {
+      "item": "litrpg:demon_token"
+    },
+    "M": {
+      "item": "minecraft:netherite_scrap"
+    }
+  },
+  "result": {
+    "item": "litrpg:demonic_helmet",
+    "count": 1
+  }
+}

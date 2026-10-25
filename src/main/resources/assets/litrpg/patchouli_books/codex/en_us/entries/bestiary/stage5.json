@@ -1,0 +1,32 @@
+{
+  "name": "Впервые: Шпиль Бездны",
+  "icon": "litrpg:wyvern_spawn_egg",
+  "category": "litrpg:bestiary",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:entity",
+      "entity": "litrpg:wyvern",
+      "scale": 0.94,
+      "name": "Виверна",
+      "text": "Этапы: 5. Нападает сам."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Младшая родственница драконов. Плюётся ядом с высоты и пикирует. Ядовитый хвост — не подставляйся.",
+      "title": "Виверна"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "litrpg:necromancer",
+      "scale": 0.85,
+      "name": "Некромант-отступник",
+      "text": "Этапы: 5. Нападает сам."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Изгнанный из гильдии маг. Держится поодаль, $(l)поднимает скелетов$() и мечет тьму. Сначала — сам некромант.",
+      "title": "Некромант-отступник"
+    }
+  ]
+}

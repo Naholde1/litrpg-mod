@@ -6,19 +6,11 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Нужны права оператора (в одиночной игре — «Открыть для сети» → «Читы: вкл»).$(li)/litrpg info$(li)/litrpg level set @s 30$(li)/litrpg xp @s 5000$(li)/litrpg points @s 50$(li)/litrpg stat @s strength 40"
+      "text": "$(li)/litrpg run status — состояние похода$(li)/litrpg run stage <1-5> — перейти на этап$(li)/litrpg run wipe — сбросить этап$(li)/litrpg run lobby — в Преддверие$(li)/litrpg run minplayers <n> — сколько игроков нужно для начала (по умолчанию 3)$(li)/litrpg run claims <игрок> — снова выдать награды"
     },
     {
       "type": "patchouli:text",
-      "text": "$(li)/litrpg race @s elf$(li)/litrpg class set @s necromancer$(li)/litrpg role @s tank$(li)/litrpg class offer @s$(li)/litrpg style @s magic 500$(li)/litrpg origin reset @s$(li)/litrpg prof level @s miner 30$(li)/litrpg title give @s kingslayer$(li)/litrpg mana @s$(li)/litrpg cooldowns @s"
-    },
-    {
-      "type": "patchouli:text",
-      "text": "$(l)Подземелья и задания:$()$(li)/place structure litrpg:dungeon_crypt$(li)/place template litrpg:raid_khazdarum$(li)/locate structure litrpg:dungeon_mire$(li)/summon litrpg:minotaur$(li)/litrpg quest step @s 4$(li)/litrpg quest finish @s$(li)/litrpg quest refresh @s"
-    },
-    {
-      "type": "patchouli:text",
-      "text": "$(li)/litrpg spawn litrpg:goblin 25 champion$(li)/litrpg spawn minecraft:zombie 10 elite$(li)/litrpg respec @s$(li)/litrpg reset @s$(li)/litrpg codex @s$(li)/litrpg zone$(li)/litrpg bloodmoon"
+      "text": "$(li)/litrpg level set <игрок> <ур>$(li)/litrpg role <игрок> <tank|damage|support>$(li)/litrpg class set <игрок> <класс>$(li)/litrpg points add <игрок> <n>"
     }
   ]
 }

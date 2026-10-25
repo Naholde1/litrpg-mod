@@ -1448,57 +1448,195 @@
    "set": "hunter_gear"
   },
   {
+   "id": "golem_fist",
+   "kind": "sword",
+   "tier": 5,
+   "implicit": {
+    "damage": 1,
+    "res_undead": 10
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "damage": 6,
+   "speed": -3.0,
+   "roles": [
+    "damage"
+   ]
+  },
+  {
    "id": "golem_core",
-   "kind": "charm",
-   "tier": 8,
+   "kind": "belt",
+   "tier": 5,
    "implicit": {
     "armor": 2,
     "vitality": 2
    },
    "set": "conqueror",
    "min": "epic",
-   "boss": "ruin_golem"
+   "boss": "gatekeeper",
+   "roles": [
+    "tank"
+   ]
   },
   {
-   "id": "golem_fist",
-   "kind": "sword",
+   "id": "gate_lantern",
+   "kind": "charm",
+   "tier": 5,
+   "implicit": {
+    "spell_power": 3,
+    "mana_regen": 6
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "gate_key",
+   "kind": "necklace",
+   "tier": 5,
+   "implicit": {
+    "spell_power": 4,
+    "crit_chance": 2
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "twin_sickle",
+   "kind": "dagger",
    "tier": 8,
    "implicit": {
-    "damage": 1,
-    "res_explosion": 10
+    "crit_chance": 3,
+    "lifesteal": 2
    },
    "set": "conqueror",
    "min": "epic",
-   "boss": "ruin_golem",
-   "damage": 6,
-   "speed": -3.0
+   "boss": "twin_morra",
+   "damage": 2,
+   "speed": 0,
+   "roles": [
+    "damage"
+   ]
   },
   {
-   "id": "ent_heartwood",
-   "kind": "necklace",
-   "tier": 11,
-   "implicit": {
-    "health": 8,
-    "health_regen": 0.6
-   },
-   "set": "conqueror",
-   "min": "epic",
-   "boss": "rotting_ent",
-   "passive": "regeneration"
-  },
-  {
-   "id": "ent_staff",
+   "id": "twin_skullstaff",
    "kind": "staff",
-   "tier": 11,
+   "tier": 8,
    "implicit": {
     "spell_power": 6,
+    "mana": 15
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "twin_morra",
+   "damage": 0,
+   "speed": 0,
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "twin_veil",
+   "kind": "back",
+   "tier": 8,
+   "implicit": {
+    "health": 8,
+    "res_magic": 10
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "twin_morra",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "twin_locket",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {
+    "spell_power": 4,
+    "cooldown": 3
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "twin_morra",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "lich_runeblade",
+   "kind": "sword",
+   "tier": 10,
+   "implicit": {
+    "damage": 2,
+    "crit_damage": 10
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "lich_king",
+   "damage": 6,
+   "speed": -2.4,
+   "passive": "frost_touch",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "lich_phylactery",
+   "kind": "charm",
+   "tier": 10,
+   "implicit": {
+    "spell_power": 7,
+    "mana": 20
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "lich_crown",
+   "kind": "necklace",
+   "tier": 10,
+   "implicit": {
+    "vitality": 3,
+    "armor": 2,
+    "res_magic": 10
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "lich_soulring",
+   "kind": "ring",
+   "tier": 10,
+   "implicit": {
+    "spell_power": 5,
     "mana_regen": 10
    },
    "set": "conqueror",
    "min": "epic",
-   "boss": "rotting_ent",
-   "damage": 0,
-   "speed": 0
+   "boss": "lich_king",
+   "passive": "regeneration",
+   "roles": [
+    "support"
+   ]
   },
   {
    "id": "arachna_fang",
@@ -1513,7 +1651,10 @@
    "boss": "spider_queen",
    "damage": 2,
    "speed": 0,
-   "passive": "venom"
+   "passive": "venom",
+   "roles": [
+    "damage"
+   ]
   },
   {
    "id": "arachna_cloak",
@@ -1521,139 +1662,634 @@
    "tier": 14,
    "implicit": {
     "dodge": 4,
-    "res_arthropod": 15
+    "res_arthropod": 15,
+    "health": 8
    },
    "set": "conqueror",
    "min": "epic",
-   "boss": "spider_queen"
+   "boss": "spider_queen",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "arachna_eye",
+   "kind": "charm",
+   "tier": 14,
+   "implicit": {
+    "spell_power": 8,
+    "crit_chance": 2
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "spider_queen",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "arachna_silk",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {
+    "spell_power": 6,
+    "mana_regen": 10
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "spider_queen",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "ent_heartwood",
+   "kind": "necklace",
+   "tier": 17,
+   "implicit": {
+    "health": 12,
+    "health_regen": 0.6,
+    "armor": 2
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "rot_ent",
+   "passive": "regeneration",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "ent_staff",
+   "kind": "staff",
+   "tier": 17,
+   "implicit": {
+    "spell_power": 9,
+    "mana_regen": 10
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "rot_ent",
+   "damage": 0,
+   "speed": 0,
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "ent_axe",
+   "kind": "axe",
+   "tier": 17,
+   "implicit": {
+    "damage": 2,
+    "dmg_beast": 15
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "rot_ent",
+   "damage": 8,
+   "speed": -3.1,
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "ent_seed",
+   "kind": "charm",
+   "tier": 17,
+   "implicit": {
+    "spell_power": 7,
+    "health_regen": 0.4,
+    "cooldown": 3
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "rot_ent",
+   "roles": [
+    "support"
+   ]
   },
   {
    "id": "morra_ring",
    "kind": "ring",
    "tier": 20,
    "implicit": {
-    "spell_power": 8,
-    "mana": 20
+    "spell_power": 10,
+    "mana": 25
    },
    "set": "conqueror",
    "min": "epic",
-   "boss": "swamp_hag"
+   "boss": "dark_witch",
+   "roles": [
+    "damage"
+   ]
   },
   {
    "id": "morra_staff",
    "kind": "staff",
    "tier": 20,
    "implicit": {
-    "spell_power": 10,
-    "cooldown": 4
+    "spell_power": 9,
+    "cooldown": 5,
+    "mana_regen": 10
    },
    "set": "conqueror",
    "min": "epic",
-   "boss": "swamp_hag",
+   "boss": "dark_witch",
    "damage": 0,
-   "speed": 0
+   "speed": 0,
+   "roles": [
+    "support"
+   ]
   },
   {
-   "id": "minotaur_axe",
-   "kind": "axe",
-   "tier": 25,
+   "id": "witch_knife",
+   "kind": "dagger",
+   "tier": 20,
+   "implicit": {
+    "crit_chance": 4,
+    "crit_damage": 12
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "dark_witch",
+   "damage": 3,
+   "speed": 0,
+   "passive": "venom",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "witch_hat_charm",
+   "kind": "charm",
+   "tier": 20,
+   "implicit": {
+    "vitality": 3,
+    "res_magic": 15,
+    "dodge": 3
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "tide_trident",
+   "kind": "sword",
+   "tier": 24,
    "implicit": {
     "damage": 2,
-    "crit_damage": 15
+    "attack_speed": 5
    },
    "set": "conqueror",
    "min": "epic",
-   "boss": "minotaur",
-   "damage": 9,
-   "speed": -3.2,
-   "passive": "berserker"
+   "boss": "tide_warden",
+   "damage": 8,
+   "speed": -2.6,
+   "roles": [
+    "damage"
+   ]
   },
   {
-   "id": "minotaur_horn",
+   "id": "tide_shell",
    "kind": "charm",
-   "tier": 25,
+   "tier": 24,
    "implicit": {
-    "strength": 3,
+    "armor": 3,
+    "vitality": 3,
     "res_projectile": 10
    },
    "set": "conqueror",
    "min": "epic",
-   "boss": "minotaur"
+   "boss": "tide_warden",
+   "roles": [
+    "tank"
+   ]
   },
   {
-   "id": "ymir_heart",
-   "kind": "charm",
-   "tier": 38,
-   "implicit": {
-    "vitality": 4,
-    "health": 15,
-    "res_fire": 10
-   },
-   "set": "conqueror",
-   "min": "epic",
-   "boss": "frost_giant"
-  },
-  {
-   "id": "ymir_maul",
-   "kind": "sword",
-   "tier": 38,
-   "implicit": {
-    "damage": 3,
-    "crit_damage": 20
-   },
-   "set": "conqueror",
-   "min": "epic",
-   "boss": "frost_giant",
-   "damage": 9,
-   "speed": -3.0,
-   "passive": "frost_touch"
-  },
-  {
-   "id": "ignis_ember",
+   "id": "tide_pearl",
    "kind": "ring",
-   "tier": 45,
+   "tier": 24,
+   "implicit": {
+    "spell_power": 11,
+    "mana": 25
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "tide_warden",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "tide_coral",
+   "kind": "bracelet",
+   "tier": 24,
+   "implicit": {
+    "spell_power": 8,
+    "mana_regen": 12
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "tide_warden",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "levi_fang",
+   "kind": "dagger",
+   "tier": 27,
+   "implicit": {
+    "crit_chance": 4,
+    "crit_damage": 15
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "leviathan",
+   "damage": 3,
+   "speed": 0,
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "levi_scale",
+   "kind": "back",
+   "tier": 27,
+   "implicit": {
+    "health": 15,
+    "armor": 3,
+    "res_magic": 10
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "leviathan",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "levi_eye",
+   "kind": "charm",
+   "tier": 27,
+   "implicit": {
+    "spell_power": 12,
+    "crit_chance": 3
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "leviathan",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "levi_tide",
+   "kind": "necklace",
+   "tier": 27,
+   "implicit": {
+    "spell_power": 9,
+    "cooldown": 5
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "leviathan",
+   "passive": "regeneration",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "priestess_staff",
+   "kind": "staff",
+   "tier": 30,
    "implicit": {
     "spell_power": 14,
-    "res_fire": 20
+    "mana_regen": 15
    },
    "set": "conqueror",
    "min": "epic",
-   "boss": "flame_lord",
-   "passive": "fireproof"
+   "boss": "deep_priestess",
+   "damage": 0,
+   "speed": 0,
+   "roles": [
+    "support"
+   ]
   },
   {
-   "id": "ignis_blade",
+   "id": "priestess_blade",
    "kind": "sword",
-   "tier": 45,
+   "tier": 30,
    "implicit": {
     "damage": 3,
     "crit_chance": 4
    },
    "set": "conqueror",
    "min": "epic",
-   "boss": "flame_lord",
+   "boss": "deep_priestess",
    "damage": 7,
    "speed": -2.4,
-   "passive": "flame_touch"
+   "roles": [
+    "damage"
+   ]
   },
   {
-   "id": "baalzar_horn",
-   "kind": "necklace",
-   "tier": 55,
+   "id": "priestess_conch",
+   "kind": "charm",
+   "tier": 30,
    "implicit": {
-    "strength": 4,
-    "intelligence": 4,
-    "lifesteal": 3
+    "spell_power": 14,
+    "mana": 30
    },
    "set": "conqueror",
    "min": "epic",
-   "boss": "archdemon",
-   "passive": "phoenix"
+   "boss": "deep_priestess",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "priestess_dome",
+   "kind": "belt",
+   "tier": 30,
+   "implicit": {
+    "vitality": 4,
+    "armor": 3,
+    "health": 12
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "minotaur_axe",
+   "kind": "axe",
+   "tier": 34,
+   "implicit": {
+    "damage": 3,
+    "crit_damage": 15
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "smelter_golem",
+   "damage": 10,
+   "speed": -3.2,
+   "passive": "berserker",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "minotaur_horn",
+   "kind": "charm",
+   "tier": 34,
+   "implicit": {
+    "armor": 4,
+    "vitality": 4,
+    "res_fire": 15
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "smelter_golem",
+   "passive": "fireproof",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "smelter_ingot",
+   "kind": "ring",
+   "tier": 34,
+   "implicit": {
+    "spell_power": 14,
+    "crit_chance": 3
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "smelter_golem",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "smelter_bellows",
+   "kind": "bracelet",
+   "tier": 34,
+   "implicit": {
+    "spell_power": 10,
+    "mana_regen": 15
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "smelter_golem",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "ignis_blade",
+   "kind": "sword",
+   "tier": 37,
+   "implicit": {
+    "damage": 3,
+    "crit_chance": 4
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "fire_twin_ignis",
+   "damage": 8,
+   "speed": -2.4,
+   "passive": "flame_touch",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "ignis_ember",
+   "kind": "ring",
+   "tier": 37,
+   "implicit": {
+    "spell_power": 16,
+    "res_fire": 20
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "fire_twin_ignis",
+   "passive": "fireproof",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "twins_bond",
+   "kind": "necklace",
+   "tier": 37,
+   "implicit": {
+    "spell_power": 11,
+    "cooldown": 6
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "fire_twin_ignis",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "twins_aegis",
+   "kind": "back",
+   "tier": 37,
+   "implicit": {
+    "health": 18,
+    "armor": 3,
+    "res_fire": 20
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "fire_twin_ignis",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "ash_greatsword",
+   "kind": "sword",
+   "tier": 40,
+   "implicit": {
+    "damage": 4,
+    "crit_damage": 20
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "ash_lord",
+   "damage": 11,
+   "speed": -3.0,
+   "passive": "flame_touch",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "ash_crown",
+   "kind": "necklace",
+   "tier": 40,
+   "implicit": {
+    "strength": 4,
+    "vitality": 5,
+    "armor": 3
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "ash_lord",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "ash_heart",
+   "kind": "charm",
+   "tier": 40,
+   "implicit": {
+    "spell_power": 18,
+    "crit_chance": 3
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "ash_lord",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "ash_phoenix",
+   "kind": "charm",
+   "tier": 40,
+   "implicit": {
+    "spell_power": 13,
+    "mana_regen": 15
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "ash_lord",
+   "passive": "phoenix",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "chrono_hand",
+   "kind": "sword",
+   "tier": 44,
+   "implicit": {
+    "damage": 4,
+    "attack_speed": 8
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "chronophage",
+   "damage": 9,
+   "speed": -2.4,
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "chrono_glass",
+   "kind": "charm",
+   "tier": 44,
+   "implicit": {
+    "spell_power": 13,
+    "cooldown": 8
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "chronophage",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "chrono_gear",
+   "kind": "ring",
+   "tier": 44,
+   "implicit": {
+    "spell_power": 19,
+    "mana": 35
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "chronophage",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "chrono_pendulum",
+   "kind": "belt",
+   "tier": 44,
+   "implicit": {
+    "armor": 4,
+    "vitality": 5,
+    "dodge": 4
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "chronophage",
+   "roles": [
+    "tank"
+   ]
   },
   {
    "id": "baalzar_blade",
    "kind": "sword",
-   "tier": 55,
+   "tier": 47,
    "implicit": {
     "damage": 4,
     "lifesteal": 4,
@@ -1661,10 +2297,129 @@
    },
    "set": "conqueror",
    "min": "epic",
-   "boss": "archdemon",
-   "damage": 9,
+   "boss": "world_eater",
+   "damage": 10,
    "speed": -2.4,
-   "passive": "soul_eater"
+   "passive": "soul_eater",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "ymir_heart",
+   "kind": "charm",
+   "tier": 47,
+   "implicit": {
+    "vitality": 5,
+    "health": 20,
+    "res_fire": 10
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "world_eater",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "ymir_maul",
+   "kind": "ring",
+   "tier": 47,
+   "implicit": {
+    "spell_power": 20,
+    "crit_chance": 4
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "world_eater",
+   "passive": "flame_touch",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "eater_maw",
+   "kind": "necklace",
+   "tier": 47,
+   "implicit": {
+    "spell_power": 14,
+    "mana_regen": 18
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "world_eater",
+   "passive": "regeneration",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "xal_voidblade",
+   "kind": "sword",
+   "tier": 50,
+   "implicit": {
+    "damage": 5,
+    "crit_chance": 5,
+    "crit_damage": 25
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "xalathar",
+   "damage": 12,
+   "speed": -2.4,
+   "passive": "soul_eater",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "baalzar_horn",
+   "kind": "necklace",
+   "tier": 50,
+   "implicit": {
+    "strength": 5,
+    "vitality": 6,
+    "armor": 4
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "xalathar",
+   "passive": "phoenix",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "xal_star",
+   "kind": "charm",
+   "tier": 50,
+   "implicit": {
+    "spell_power": 22,
+    "crit_chance": 5
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "xalathar",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "xal_dawn",
+   "kind": "bracelet",
+   "tier": 50,
+   "implicit": {
+    "spell_power": 16,
+    "mana_regen": 20,
+    "cooldown": 6
+   },
+   "set": "conqueror",
+   "min": "epic",
+   "boss": "xalathar",
+   "passive": "regeneration",
+   "roles": [
+    "support"
+   ]
   }
  ],
  "sets": [
@@ -2093,22 +2848,66 @@
    "id": "conqueror",
    "title": "Регалии Покорителя",
    "items": [
-    "golem_core",
     "golem_fist",
-    "ent_heartwood",
-    "ent_staff",
+    "golem_core",
+    "gate_lantern",
+    "gate_key",
+    "twin_sickle",
+    "twin_skullstaff",
+    "twin_veil",
+    "twin_locket",
+    "lich_runeblade",
+    "lich_phylactery",
+    "lich_crown",
+    "lich_soulring",
     "arachna_fang",
     "arachna_cloak",
+    "arachna_eye",
+    "arachna_silk",
+    "ent_heartwood",
+    "ent_staff",
+    "ent_axe",
+    "ent_seed",
     "morra_ring",
     "morra_staff",
+    "witch_knife",
+    "witch_hat_charm",
+    "tide_trident",
+    "tide_shell",
+    "tide_pearl",
+    "tide_coral",
+    "levi_fang",
+    "levi_scale",
+    "levi_eye",
+    "levi_tide",
+    "priestess_staff",
+    "priestess_blade",
+    "priestess_conch",
+    "priestess_dome",
     "minotaur_axe",
     "minotaur_horn",
+    "smelter_ingot",
+    "smelter_bellows",
+    "ignis_blade",
+    "ignis_ember",
+    "twins_bond",
+    "twins_aegis",
+    "ash_greatsword",
+    "ash_crown",
+    "ash_heart",
+    "ash_phoenix",
+    "chrono_hand",
+    "chrono_glass",
+    "chrono_gear",
+    "chrono_pendulum",
+    "baalzar_blade",
     "ymir_heart",
     "ymir_maul",
-    "ignis_ember",
-    "ignis_blade",
+    "eater_maw",
+    "xal_voidblade",
     "baalzar_horn",
-    "baalzar_blade"
+    "xal_star",
+    "xal_dawn"
    ],
    "tiers": [
     {

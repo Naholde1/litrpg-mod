@@ -1,0 +1,104 @@
+{
+  "name": "Впервые: Склеп Забытых",
+  "icon": "litrpg:bloodbat_spawn_egg",
+  "category": "litrpg:bestiary",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:entity",
+      "entity": "litrpg:bloodbat",
+      "scale": 1.0,
+      "name": "Кровопийца",
+      "text": "Этапы: 1. Нападает сам."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Огромная летучая мышь. Ночью и в пещерах пикирует сверху и $(l)пьёт кровь$() — каждый укус лечит её. Лук и арбалет удобнее меча.",
+      "title": "Кровопийца"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "litrpg:barrow_wight",
+      "scale": 0.81,
+      "name": "Курганный умертвий",
+      "text": "Этапы: 1. Нападает сам."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Древний король, вставший из кургана в истлевшей короне. Мечет сгустки тьмы, высасывает силы. С рассветом сгорает.",
+      "title": "Курганный умертвий"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "litrpg:ghoul",
+      "scale": 1.0,
+      "name": "Гуль",
+      "text": "Этапы: 1. Нападает сам."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Трупоеды. Быстрые, прыгучие, когти $(l)парализуют$(). С рассветом сгорают.",
+      "title": "Гуль"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "litrpg:banshee",
+      "scale": 0.85,
+      "name": "Банши",
+      "text": "Этапы: 1, 5. Нападает сам."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Плакальщица мёртвых. Её $(l)вопль$() ранит и сбивает с толку. Исчезает и появляется вновь.",
+      "title": "Банши"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "litrpg:bone_colossus",
+      "scale": 0.47,
+      "name": "Костяной колосс",
+      "text": "Этапы: 1, 5. Охраняет своё место."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Гора костей вокруг синего огня. $(l)Встаёт после первой смерти$() — не убирай оружие.",
+      "title": "Костяной колосс"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "litrpg:mummy",
+      "scale": 0.85,
+      "name": "Мумия",
+      "text": "Этапы: 1. Нападает сам."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Царские слуги в бинтах. Проклятие вызывает голод и иссушение. $(l)Бинты горят$() вдвое лучше.",
+      "title": "Мумия"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "litrpg:grimlock",
+      "scale": 0.94,
+      "name": "Слепой пещерник",
+      "text": "Этапы: 1. Нападает сам."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Безглазые жители глубин. $(l)Слышат, но не видят$(): если красться (Shift), можно пройти мимо стаи.",
+      "title": "Слепой пещерник"
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "litrpg:mimic",
+      "scale": 1.0,
+      "name": "Мимик",
+      "text": "Этапы: 1, 2. Нападает сам."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Сундук посреди пещеры? Подумай дважды. Мимик кусается, но и платит щедро — золотом и камнями.",
+      "title": "Мимик"
+    }
+  ]
+}

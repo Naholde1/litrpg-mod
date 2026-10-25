@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "M M",
+    "XMX",
+    "MMM"
+  ],
+  "key": {
+    "X": {
+      "item": "litrpg:orc_token"
+    },
+    "M": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "litrpg:orcish_chestplate",
+    "count": 1
+  }
+}

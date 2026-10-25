@@ -365,24 +365,74 @@ WEAPONS = [
 
 # --- трофеи боссов подземелий: падают только с них (набор «Регалии Покорителя») ---
 BOSS_LOOT = [
-    # id, рус., англ., вид, форма, палитра, уровень, урон, скорость, врождённое, босс, пассивка
-    ('golem_core', 'Сердце Голема', 'Golem Core', 'charm', 'crystal', ('stone', 'sapphire'), 8, 0, 0, {'armor': 2, 'vitality': 2}, 'ruin_golem', None),
-    ('golem_fist', 'Кулак Руин', 'Fist of the Ruins', 'sword', 'mace', ('stone', 'sapphire', 'stone'), 8, 6, -3.0, {'damage': 1, 'res_explosion': 10}, 'ruin_golem', None),
-    ('ent_heartwood', 'Сердцевина Энта', 'Ent Heartwood', 'necklace', 'amulet', ('wood', 'green'), 11, 0, 0, {'health': 8, 'health_regen': 0.6}, 'rotting_ent', 'regeneration'),
-    ('ent_staff', 'Посох Гнилого Корня', 'Rotroot Staff', 'staff', 'staff', ('wood', 'green', 'brown'), 11, 0, 0, {'spell_power': 6, 'mana_regen': 10}, 'rotting_ent', None),
-    ('arachna_fang', 'Клык Арахны', "Arachna's Fang", 'dagger', 'dagger', ('black', 'green', 'bone'), 14, 2, 0, {'crit_chance': 3, 'dmg_arthropod': 20}, 'spider_queen', 'venom'),
-    ('arachna_cloak', 'Шёлковый плащ Королевы', "Queen's Silk Cloak", 'back', 'cloak', ('white', 'emerald'), 14, 0, 0, {'dodge': 4, 'res_arthropod': 15}, 'spider_queen', None),
-    ('morra_ring', 'Кольцо Проклятой Топи', 'Ring of the Cursed Mire', 'ring', 'ring', ('obsidian', 'green'), 20, 0, 0, {'spell_power': 8, 'mana': 20}, 'swamp_hag', None),
-    ('morra_staff', 'Клюка Морры', "Morra's Crook", 'staff', 'staff', ('green', 'void', 'wood'), 20, 0, 0, {'spell_power': 10, 'cooldown': 4}, 'swamp_hag', None),
-    ('minotaur_axe', 'Секира Астериона', "Asterion's Greataxe", 'axe', 'axe', ('iron', 'blood', 'brown'), 25, 9, -3.2, {'damage': 2, 'crit_damage': 15}, 'minotaur', 'berserker'),
-    ('minotaur_horn', 'Рог Минотавра', 'Minotaur Horn', 'charm', 'fang', ('bone', 'blood'), 25, 0, 0, {'strength': 3, 'res_projectile': 10}, 'minotaur', None),
-    ('ymir_heart', 'Вечный Лёд Имира', "Ymir's Eternal Ice", 'charm', 'crystal', ('ice', 'ice'), 38, 0, 0, {'vitality': 4, 'health': 15, 'res_fire': 10}, 'frost_giant', None),
-    ('ymir_maul', 'Молот Вечной Зимы', 'Maul of Endless Winter', 'sword', 'mace', ('ice', 'ice', 'iron'), 38, 9, -3.0, {'damage': 3, 'crit_damage': 20}, 'frost_giant', 'frost_touch'),
-    ('ignis_ember', 'Кольцо Живого Пламени', 'Ring of Living Flame', 'ring', 'ring', ('fire', 'fire'), 45, 0, 0, {'spell_power': 14, 'res_fire': 20}, 'flame_lord', 'fireproof'),
-    ('ignis_blade', 'Клинок Горнила', 'Crucible Blade', 'sword', 'sword', ('fire', 'fire', 'black'), 45, 7, -2.4, {'damage': 3, 'crit_chance': 4}, 'flame_lord', 'flame_touch'),
-    ('baalzar_horn', "Венец Баал'Зара", "Baal'zar's Crown", 'necklace', 'amulet', ('demonic', 'void'), 55, 0, 0, {'strength': 4, 'intelligence': 4, 'lifesteal': 3}, 'archdemon', 'phoenix'),
-    ('baalzar_blade', 'Пожиратель Миров', 'Worldeater', 'sword', 'sword', ('obsidian', 'void', 'demonic'), 55, 9, -2.4, {'damage': 4, 'lifesteal': 4, 'crit_damage': 25}, 'archdemon', 'soul_eater'),
+    # id, рус., англ., вид, форма, палитра, уровень, урон, скорость, врождённое, хранитель, пассивка, роли
+    # ---- этап 1: Склеп Забытых ----
+    ('golem_fist', 'Кистень Привратника', "Gatekeeper's Flail", 'sword', 'mace', ('iron', 'onyx', 'bone'), 5, 6, -3.0, {'damage': 1, 'res_undead': 10}, 'gatekeeper', None, ['damage']),
+    ('golem_core', 'Цепь Привратника', "Gatekeeper's Chain", 'belt', 'bracelet', ('iron', 'onyx'), 5, 0, 0, {'armor': 2, 'vitality': 2}, 'gatekeeper', None, ['tank']),
+    ('gate_lantern', 'Фонарь Склепа', 'Crypt Lantern', 'charm', 'bell', ('bone', 'green'), 5, 0, 0, {'spell_power': 3, 'mana_regen': 6}, 'gatekeeper', None, ['support']),
+    ('gate_key', 'Ключ от Врат', 'Key of the Gates', 'necklace', 'amulet', ('bone', 'void'), 5, 0, 0, {'spell_power': 4, 'crit_chance': 2}, 'gatekeeper', None, ['damage']),
+    ('twin_sickle', 'Серп Вессы', "Vessa's Sickle", 'dagger', 'claw', ('red', 'blood', 'black'), 8, 2, 0, {'crit_chance': 3, 'lifesteal': 2}, 'twin_morra', None, ['damage']),
+    ('twin_skullstaff', 'Посох Морры', "Morra's Skull Staff", 'staff', 'staff', ('bone', 'green', 'black'), 8, 0, 0, {'spell_power': 6, 'mana': 15}, 'twin_morra', None, ['damage']),
+    ('twin_veil', 'Вуаль сестёр', "Sisters' Veil", 'back', 'cloak', ('purple', 'blood'), 8, 0, 0, {'health': 8, 'res_magic': 10}, 'twin_morra', None, ['tank']),
+    ('twin_locket', 'Медальон сестёр', "Sisters' Locket", 'necklace', 'amulet', ('silver', 'blood'), 8, 0, 0, {'spell_power': 4, 'cooldown': 3}, 'twin_morra', None, ['support']),
+    ('lich_runeblade', 'Рунный клинок Лича', "Lich's Runeblade", 'sword', 'sword', ('mithril', 'ice', 'black'), 10, 6, -2.4, {'damage': 2, 'crit_damage': 10}, 'lich_king', 'frost_touch', ['damage']),
+    ('lich_phylactery', 'Филактерия', 'Phylactery', 'charm', 'crystal', ('obsidian', 'ice'), 10, 0, 0, {'spell_power': 7, 'mana': 20}, 'lich_king', None, ['damage']),
+    ('lich_crown', 'Ледяной венец', 'Frost Circlet', 'necklace', 'amulet', ('ice', 'ice'), 10, 0, 0, {'vitality': 3, 'armor': 2, 'res_magic': 10}, 'lich_king', None, ['tank']),
+    ('lich_soulring', 'Кольцо душ', 'Ring of Souls', 'ring', 'ring', ('silver', 'ender'), 10, 0, 0, {'spell_power': 5, 'mana_regen': 10}, 'lich_king', 'regeneration', ['support']),
+    # ---- этап 2: Паучья чаща ----
+    ('arachna_fang', 'Клык Матки', "Matriarch's Fang", 'dagger', 'dagger', ('black', 'green', 'bone'), 14, 2, 0, {'crit_chance': 3, 'dmg_arthropod': 20}, 'spider_queen', 'venom', ['damage']),
+    ('arachna_cloak', 'Шёлковый плащ Матки', "Matriarch's Silk Cloak", 'back', 'cloak', ('white', 'emerald'), 14, 0, 0, {'dodge': 4, 'res_arthropod': 15, 'health': 8}, 'spider_queen', None, ['tank']),
+    ('arachna_eye', 'Око Матки', "Matriarch's Eye", 'charm', 'eye', ('black', 'emerald'), 14, 0, 0, {'spell_power': 8, 'crit_chance': 2}, 'spider_queen', None, ['damage']),
+    ('arachna_silk', 'Целебный шёлк', 'Healing Silk', 'bracelet', 'bracelet', ('white', 'pearl'), 14, 0, 0, {'spell_power': 6, 'mana_regen': 10}, 'spider_queen', None, ['support']),
+    ('ent_heartwood', 'Сердцевина Древня', 'Ent Heartwood', 'necklace', 'amulet', ('wood', 'green'), 17, 0, 0, {'health': 12, 'health_regen': 0.6, 'armor': 2}, 'rot_ent', 'regeneration', ['tank']),
+    ('ent_staff', 'Посох Гнилого Корня', 'Rotroot Staff', 'staff', 'staff', ('wood', 'green', 'brown'), 17, 0, 0, {'spell_power': 9, 'mana_regen': 10}, 'rot_ent', None, ['damage']),
+    ('ent_axe', 'Топор Лесоруба', "Woodsman's Axe", 'axe', 'axe', ('iron', 'green', 'wood'), 17, 8, -3.1, {'damage': 2, 'dmg_beast': 15}, 'rot_ent', None, ['damage']),
+    ('ent_seed', 'Семя Рощи', 'Seed of the Grove', 'charm', 'acorn', ('wood', 'green'), 17, 0, 0, {'spell_power': 7, 'health_regen': 0.4, 'cooldown': 3}, 'rot_ent', None, ['support']),
+    ('morra_ring', 'Кольцо Изнанки', 'Ring of the Underside', 'ring', 'ring', ('obsidian', 'void'), 20, 0, 0, {'spell_power': 10, 'mana': 25}, 'dark_witch', None, ['damage']),
+    ('morra_staff', 'Клюка Ведьмы', "Witch's Crook", 'staff', 'staff', ('green', 'void', 'wood'), 20, 0, 0, {'spell_power': 9, 'cooldown': 5, 'mana_regen': 10}, 'dark_witch', None, ['support']),
+    ('witch_knife', 'Нож для зелий', 'Potion Knife', 'dagger', 'dagger', ('purple', 'void', 'black'), 20, 3, 0, {'crit_chance': 4, 'crit_damage': 12}, 'dark_witch', 'venom', ['damage']),
+    ('witch_hat_charm', 'Вороний оберег', 'Raven Ward', 'charm', 'feather', ('black', 'void'), 20, 0, 0, {'vitality': 3, 'res_magic': 15, 'dodge': 3}, 'dark_witch', None, ['tank']),
+    # ---- этап 3: Затопленный храм ----
+    ('tide_trident', 'Трезубец прилива', 'Tide Trident', 'sword', 'spear', ('mithril', 'sapphire', 'gold'), 24, 8, -2.6, {'damage': 2, 'attack_speed': 5}, 'tide_warden', None, ['damage']),
+    ('tide_shell', 'Раковина Стража', "Warden's Shell", 'charm', 'shell', ('white', 'pearl'), 24, 0, 0, {'armor': 3, 'vitality': 3, 'res_projectile': 10}, 'tide_warden', None, ['tank']),
+    ('tide_pearl', 'Жемчуг глубин', 'Deep Pearl', 'ring', 'ring', ('silver', 'pearl'), 24, 0, 0, {'spell_power': 11, 'mana': 25}, 'tide_warden', None, ['damage']),
+    ('tide_coral', 'Коралловый браслет', 'Coral Bracelet', 'bracelet', 'bracelet', ('red', 'pearl'), 24, 0, 0, {'spell_power': 8, 'mana_regen': 12}, 'tide_warden', None, ['support']),
+    ('levi_fang', 'Зуб Левиафана', "Leviathan's Tooth", 'dagger', 'fang', ('bone', 'sapphire', 'blue'), 27, 3, 0, {'crit_chance': 4, 'crit_damage': 15}, 'leviathan', None, ['damage']),
+    ('levi_scale', 'Чешуя Левиафана', 'Leviathan Scale', 'back', 'cloak', ('blue', 'sapphire'), 27, 0, 0, {'health': 15, 'armor': 3, 'res_magic': 10}, 'leviathan', None, ['tank']),
+    ('levi_eye', 'Око бездны вод', 'Eye of the Deep Waters', 'charm', 'eye', ('blue', 'star'), 27, 0, 0, {'spell_power': 12, 'crit_chance': 3}, 'leviathan', None, ['damage']),
+    ('levi_tide', 'Ожерелье прилива', 'Necklace of the Tide', 'necklace', 'amulet', ('silver', 'sapphire'), 27, 0, 0, {'spell_power': 9, 'cooldown': 5}, 'leviathan', 'regeneration', ['support']),
+    ('priestess_staff', 'Посох Жрицы', "Priestess's Staff", 'staff', 'staff', ('gold', 'pearl', 'blue'), 30, 0, 0, {'spell_power': 14, 'mana_regen': 15}, 'deep_priestess', None, ['support']),
+    ('priestess_blade', 'Клинок штормов', 'Stormblade', 'sword', 'sword', ('mithril', 'star', 'blue'), 30, 7, -2.4, {'damage': 3, 'crit_chance': 4}, 'deep_priestess', None, ['damage']),
+    ('priestess_conch', 'Священная раковина', 'Sacred Conch', 'charm', 'shell', ('gold', 'pearl'), 30, 0, 0, {'spell_power': 14, 'mana': 30}, 'deep_priestess', None, ['damage']),
+    ('priestess_dome', 'Оберег купола', 'Dome Ward', 'belt', 'bracelet', ('silver', 'glass'), 30, 0, 0, {'vitality': 4, 'armor': 3, 'health': 12}, 'deep_priestess', None, ['tank']),
+    # ---- этап 4: Кузни Пепла ----
+    ('minotaur_axe', 'Молот Плавильщика', "Smelter's Hammer", 'axe', 'mace', ('iron', 'fire', 'black'), 34, 10, -3.2, {'damage': 3, 'crit_damage': 15}, 'smelter_golem', 'berserker', ['damage']),
+    ('minotaur_horn', 'Закалённое сердце', 'Tempered Heart', 'charm', 'crystal', ('iron', 'fire'), 34, 0, 0, {'armor': 4, 'vitality': 4, 'res_fire': 15}, 'smelter_golem', 'fireproof', ['tank']),
+    ('smelter_ingot', 'Слиток звёздной стали', 'Starsteel Ingot', 'ring', 'ring', ('mithril', 'fire'), 34, 0, 0, {'spell_power': 14, 'crit_chance': 3}, 'smelter_golem', None, ['damage']),
+    ('smelter_bellows', 'Кузнечные мехи', 'Forge Bellows', 'bracelet', 'bracelet', ('dwarven', 'topaz'), 34, 0, 0, {'spell_power': 10, 'mana_regen': 15}, 'smelter_golem', None, ['support']),
+    ('ignis_blade', 'Клинок Игниса', "Ignis' Blade", 'sword', 'sword', ('fire', 'fire', 'black'), 37, 8, -2.4, {'damage': 3, 'crit_chance': 4}, 'fire_twin_ignis', 'flame_touch', ['damage']),
+    ('ignis_ember', 'Кольцо Синдер', "Cinder's Ring", 'ring', 'ring', ('fire', 'fire'), 37, 0, 0, {'spell_power': 16, 'res_fire': 20}, 'fire_twin_ignis', 'fireproof', ['damage']),
+    ('twins_bond', 'Узы близнецов', 'Bond of the Twins', 'necklace', 'amulet', ('gold', 'fire'), 37, 0, 0, {'spell_power': 11, 'cooldown': 6}, 'fire_twin_ignis', None, ['support']),
+    ('twins_aegis', 'Огнеупорный плащ', 'Fireproof Mantle', 'back', 'cloak', ('demonic', 'fire'), 37, 0, 0, {'health': 18, 'armor': 3, 'res_fire': 20}, 'fire_twin_ignis', None, ['tank']),
+    ('ash_greatsword', 'Пепельный Двуручник', 'Ashen Greatsword', 'sword', 'sword', ('black', 'fire', 'obsidian'), 40, 11, -3.0, {'damage': 4, 'crit_damage': 20}, 'ash_lord', 'flame_touch', ['damage']),
+    ('ash_crown', 'Пепельный венец', 'Ashen Crown', 'necklace', 'amulet', ('obsidian', 'fire'), 40, 0, 0, {'strength': 4, 'vitality': 5, 'armor': 3}, 'ash_lord', None, ['tank']),
+    ('ash_heart', 'Сердце кальдеры', 'Heart of the Caldera', 'charm', 'crystal', ('demonic', 'fire'), 40, 0, 0, {'spell_power': 18, 'crit_chance': 3}, 'ash_lord', None, ['damage']),
+    ('ash_phoenix', 'Перо феникса', 'Phoenix Feather', 'charm', 'feather', ('fire', 'gold'), 40, 0, 0, {'spell_power': 13, 'mana_regen': 15}, 'ash_lord', 'phoenix', ['support']),
+    # ---- этап 5: Шпиль Бездны ----
+    ('chrono_hand', 'Стрелка Хронофага', "Chronophage's Hand", 'sword', 'spear', ('gold', 'topaz', 'black'), 44, 9, -2.4, {'damage': 4, 'attack_speed': 8}, 'chronophage', None, ['damage']),
+    ('chrono_glass', 'Песочные часы', 'Hourglass', 'charm', 'idol', ('gold', 'glass'), 44, 0, 0, {'spell_power': 13, 'cooldown': 8}, 'chronophage', None, ['support']),
+    ('chrono_gear', 'Шестерня вечности', 'Gear of Eternity', 'ring', 'ring', ('gold', 'star'), 44, 0, 0, {'spell_power': 19, 'mana': 35}, 'chronophage', None, ['damage']),
+    ('chrono_pendulum', 'Маятник', 'Pendulum', 'belt', 'bracelet', ('gold', 'onyx'), 44, 0, 0, {'armor': 4, 'vitality': 5, 'dodge': 4}, 'chronophage', None, ['tank']),
+    ('baalzar_blade', 'Пожиратель Миров', 'Worldeater', 'sword', 'sword', ('obsidian', 'void', 'demonic'), 47, 10, -2.4, {'damage': 4, 'lifesteal': 4, 'crit_damage': 25}, 'world_eater', 'soul_eater', ['damage']),
+    ('ymir_heart', 'Осколок ледяного мира', 'Shard of the Frozen World', 'charm', 'crystal', ('ice', 'ice'), 47, 0, 0, {'vitality': 5, 'health': 20, 'res_fire': 10}, 'world_eater', None, ['tank']),
+    ('ymir_maul', 'Осколок огненного мира', 'Shard of the Burning World', 'ring', 'ring', ('fire', 'void'), 47, 0, 0, {'spell_power': 20, 'crit_chance': 4}, 'world_eater', 'flame_touch', ['damage']),
+    ('eater_maw', 'Зуб Пасти', 'Tooth of the Maw', 'necklace', 'amulet', ('bone', 'void'), 47, 0, 0, {'spell_power': 14, 'mana_regen': 18}, 'world_eater', 'regeneration', ['support']),
+    ('xal_voidblade', "Клинок Ксал'Атара", "Xal'Atar's Blade", 'sword', 'sword', ('obsidian', 'void', 'purple'), 50, 12, -2.4, {'damage': 5, 'crit_chance': 5, 'crit_damage': 25}, 'xalathar', 'soul_eater', ['damage']),
+    ('baalzar_horn', "Венец Ксал'Атара", "Xal'Atar's Crown", 'necklace', 'amulet', ('obsidian', 'star'), 50, 0, 0, {'strength': 5, 'vitality': 6, 'armor': 4}, 'xalathar', 'phoenix', ['tank']),
+    ('xal_star', 'Последняя звезда', 'The Last Star', 'charm', 'crystal', ('white', 'star'), 50, 0, 0, {'spell_power': 22, 'crit_chance': 5}, 'xalathar', None, ['damage']),
+    ('xal_dawn', 'Рассвет', 'Dawn', 'bracelet', 'bracelet', ('gold', 'star'), 50, 0, 0, {'spell_power': 16, 'mana_regen': 20, 'cooldown': 6}, 'xalathar', 'regeneration', ['support']),
 ]
+
 
 # --- наборы (эффекты за количество разных предметов) ---
 SETS = [
@@ -509,7 +559,7 @@ def main():
         items_json.append(e)
 
     # трофеи боссов
-    for id, rname, ename, kind, shape, p, tier, dmg, speed, implicit, boss, passive in BOSS_LOOT:
+    for id, rname, ename, kind, shape, p, tier, dmg, speed, implicit, boss, passive, roles in BOSS_LOOT:
         pal = palette(p[0], p[1], p[2] if len(p) > 2 else 'leather')
         texture(id, render(shape, pal))
         model(id, handheld=kind in ('sword', 'axe', 'staff', 'dagger'))
@@ -522,6 +572,7 @@ def main():
         if kind in CURIO_TAG:
             tags[CURIO_TAG[kind]].append('litrpg:' + id)
         if passive: e['passive'] = passive
+        if roles: e['roles'] = roles
         items_json.append(e)
 
     # жетоны и монеты

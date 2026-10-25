@@ -1,12 +1,12 @@
 {
   "name": "Кодекс Системы",
-  "landing_text": "Приветствую, игрок. Я — $(4)Система$(). В этом кодексе собрано всё, что нужно знать о новом мире: расы и классы, бой, профессии, монстры и способы их одолеть.$(br2)Окно персонажа — $(k:litrpg.character)$(). Навыки — $(k:litrpg.ability1)$(), $(k:litrpg.ability2)$(), $(k:litrpg.ability3)$(), $(k:litrpg.ability4)$(), $(k:litrpg.ability5)$().",
-  "version": 1,
+  "landing_text": "Приветствую, игрок. Я — $(4)Система$(). Впереди — $(l)Подземелье$(): пять этапов, пятнадцать хранителей и путь без возврата.$(br2)Идти можно только группой от трёх до пяти. Окно персонажа — $(k:litrpg.character)$().",
+  "version": 3,
   "use_resource_pack": true,
   "book_texture": "patchouli:textures/gui/book_blue.png",
   "model": "patchouli:book_blue",
   "show_progress": false,
   "creative_tab": "litrpg:main",
-  "subtitle": "Руководство игрока",
+  "subtitle": "Руководство героя",
   "i18n": false
 }

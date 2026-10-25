@@ -25,8 +25,19 @@
     "litrpg:charm_piglin_trinket",
     "litrpg:charm_warden_bone",
     "litrpg:charm_stardust",
-    "litrpg:golem_core",
+    "litrpg:gate_lantern",
+    "litrpg:lich_phylactery",
+    "litrpg:arachna_eye",
+    "litrpg:ent_seed",
+    "litrpg:witch_hat_charm",
+    "litrpg:tide_shell",
+    "litrpg:levi_eye",
+    "litrpg:priestess_conch",
     "litrpg:minotaur_horn",
-    "litrpg:ymir_heart"
+    "litrpg:ash_heart",
+    "litrpg:ash_phoenix",
+    "litrpg:chrono_glass",
+    "litrpg:ymir_heart",
+    "litrpg:xal_star"
   ]
 }
