@@ -453,8 +453,8 @@
   "item.litrpg.ruin_golem_spawn_egg": "Яйцо призыва: Голем Руин",
   "entity.litrpg.rotting_ent": "Гниющий Энт",
   "item.litrpg.rotting_ent_spawn_egg": "Яйцо призыва: Гниющий Энт",
-  "entity.litrpg.spider_queen": "Королева Арахна",
-  "item.litrpg.spider_queen_spawn_egg": "Яйцо призыва: Королева Арахна",
+  "entity.litrpg.spider_queen": "Матка пауков",
+  "item.litrpg.spider_queen_spawn_egg": "Яйцо призыва: Матка пауков",
   "entity.litrpg.swamp_hag": "Морра, Болотная ведьма",
   "item.litrpg.swamp_hag_spawn_egg": "Яйцо призыва: Морра, Болотная ведьма",
   "entity.litrpg.minotaur": "Астерион, Минотавр",
@@ -2080,5 +2080,9 @@
   "class.litrpg.moon_priestess": "Жрица Луны",
   "class.litrpg.moon_priestess.desc": "Жрица Луны: лунный свет и лисьи чары",
   "class.litrpg.moon_priestess.trait": "Дитя ночи",
-  "class.litrpg.moon_priestess.trait.desc": "+10% восстановления маны, видит в темноте"
+  "class.litrpg.moon_priestess.trait.desc": "+10% восстановления маны, видит в темноте",
+  "entity.litrpg.rot_ent": "Древень-гниль",
+  "item.litrpg.rot_ent_spawn_egg": "Яйцо призыва: Древень-гниль",
+  "entity.litrpg.dark_witch": "Ведьма Тьмы",
+  "item.litrpg.dark_witch_spawn_egg": "Яйцо призыва: Ведьма Тьмы"
 }

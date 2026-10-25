@@ -65,6 +65,39 @@ public abstract class StageBoss extends BossBase {
         soundAt(arena(), SoundEvents.ENDERMAN_TELEPORT, 2f, 0.5f);
     }
 
+    // ---------------- лужи-опасности ----------------
+
+    /** Опасное место на полу на время: каждую секунду бьёт стоящих (power — доля «единицы»). */
+    protected record Hazard(Vec3 c, double r, long until, float power, int color, java.util.function.Consumer<LivingEntity> extra) {}
+
+    protected final List<Hazard> hazards = new ArrayList<>();
+
+    protected void hazard(Vec3 c, double r, int ticks, float power, int color, java.util.function.Consumer<LivingEntity> extra) {
+        hazards.add(new Hazard(c, r, level().getGameTime() + ticks, power, color, extra));
+        Fx.disc(level(), c, r, 0, ticks, color & 0x70FFFFFF);
+    }
+
+    private void tickHazards() {
+        if (hazards.isEmpty()) return;
+        long now = level().getGameTime();
+        hazards.removeIf(h -> now >= h.until);
+        if (now % 20 != 0) return;
+        for (Hazard h : hazards) {
+            for (LivingEntity e : enemiesAround(h.c, h.r + 1)) {
+                double dx = e.getX() - h.c.x, dz = e.getZ() - h.c.z;
+                if (dx * dx + dz * dz > h.r * h.r || Math.abs(e.getY() - h.c.y) > 3) continue;
+                if (h.power > 0) hit(e, h.power);
+                if (h.extra != null) h.extra.accept(e);
+            }
+        }
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (!level().isClientSide && isAlive()) tickHazards();
+    }
+
     // ---------------- эффекты ----------------
 
     protected void fxRing(Vec3 c, double r0, double r1, int ticks, int color) {
@@ -116,6 +149,7 @@ public abstract class StageBoss extends BossBase {
     @Override
     protected void onReset() {
         clearAdds();
+        hazards.clear();
     }
 
     /** Точка арены на полу (по сетке блоков). */

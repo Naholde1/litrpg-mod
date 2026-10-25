@@ -446,8 +446,8 @@
   "item.litrpg.ruin_golem_spawn_egg": "Ruin Golem Spawn Egg",
   "entity.litrpg.rotting_ent": "Rotting Ent",
   "item.litrpg.rotting_ent_spawn_egg": "Rotting Ent Spawn Egg",
-  "entity.litrpg.spider_queen": "Queen Arachna",
-  "item.litrpg.spider_queen_spawn_egg": "Queen Arachna Spawn Egg",
+  "entity.litrpg.spider_queen": "Spider Matriarch",
+  "item.litrpg.spider_queen_spawn_egg": "Spider Matriarch Spawn Egg",
   "entity.litrpg.swamp_hag": "Morra the Swamp Hag",
   "item.litrpg.swamp_hag_spawn_egg": "Morra the Swamp Hag Spawn Egg",
   "entity.litrpg.minotaur": "Asterion the Minotaur",
@@ -2073,5 +2073,9 @@
   "class.litrpg.moon_priestess": "Moon Priestess",
   "class.litrpg.moon_priestess.desc": "Жрица Луны: лунный свет и лисьи чары",
   "class.litrpg.moon_priestess.trait": "Дитя ночи",
-  "class.litrpg.moon_priestess.trait.desc": "+10% восстановления маны, видит в темноте"
+  "class.litrpg.moon_priestess.trait.desc": "+10% восстановления маны, видит в темноте",
+  "entity.litrpg.rot_ent": "Rot Ent",
+  "item.litrpg.rot_ent_spawn_egg": "Rot Ent Spawn Egg",
+  "entity.litrpg.dark_witch": "Witch of Darkness",
+  "item.litrpg.dark_witch_spawn_egg": "Witch of Darkness Spawn Egg"
 }

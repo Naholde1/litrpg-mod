@@ -44,6 +44,10 @@ public final class Bosses {
         add(r, "twin_morra", "twin_morra", TwinNecromancerEntity::new, 0.8f, 2.4f, false, TwinNecromancerEntity::createAttributes);
         add(r, "twin_vessa", "twin_vessa", TwinNecromancerEntity::new, 0.8f, 2.4f, false, TwinNecromancerEntity::createAttributes);
         add(r, "lich_king", "lich_king", LichKingEntity::new, 1.0f, 3.2f, true, LichKingEntity::createAttributes);
+        // ---- этап 2: Паучья чаща ----
+        add(r, "spider_queen", "spider_queen", SpiderQueenEntity::new, 2.2f, 1.6f, false, SpiderQueenEntity::createAttributes);
+        add(r, "rot_ent", "rotting_ent", RotEntEntity::new, 1.4f, 3.6f, false, RotEntEntity::createAttributes);
+        add(r, "dark_witch", "dark_witch", DarkWitchEntity::new, 0.8f, 2.6f, false, DarkWitchEntity::createAttributes);
     }
 
     public static void attributes(EntityAttributeCreationEvent e) {

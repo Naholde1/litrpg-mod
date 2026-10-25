@@ -141,13 +141,31 @@ def lich_king():
     return dict(name='lich_king', scale=1.35, shadow=0.7, parts=[leg, mirror(leg, 'leg_r'), body, head, arm, arm_r, blade, aura])
 
 
-MODELS = [gatekeeper, twin_morra, twin_vessa, lich_king]
+def dark_witch():
+    """Ведьма Тьмы: сгорбленная, в чёрно-фиолетовом рубище, остроконечная шляпа, посох с вороньим черепом."""
+    m = G.swamp_hag()
+    m['name'] = 'dark_witch'
+    for p in m['parts']:
+        for c in p.cubes:
+            c.mat = {'cloth_green': 'robe_violet', 'skin_hag': 'skin_pale', 'hair': 'hair_black', 'glass_green': 'soul_glow'}.get(c.mat, c.mat)
+            c.decals = [(d[0], d[1], d[2], d[3], d[4], 0xB060FF if d[5] in (0x90F070, 0xF0E040) else d[5], d[6]) for d in c.decals]
+    # вороньи крылья за спиной
+    wing = Part('wing_l', 'body', (4, 26, 4), [Cube(4, 14, 4, 1, 14, 10, 'hair_black')], rot=(0, 20, 0), anim=[A('idle', 'y', 0.25, 0.15)])
+    m['parts'] += [wing, mirror(wing, 'wing_r')]
+    m['scale'] = 1.2
+    return m
+
+
+MODELS = [gatekeeper, twin_morra, twin_vessa, lich_king, dark_witch]
 
 NAMES = {
     'gatekeeper': ('Привратник Костей', 'Bone Gatekeeper'),
     'twin_morra': ('Морра, Повелительница Костей', 'Morra, Mistress of Bones'),
     'twin_vessa': ('Весса, Кровавая Ведьма', 'Vessa, the Blood Witch'),
     'lich_king': ('Король-лич', 'The Lich King'),
+    'spider_queen': ('Матка пауков', 'Spider Matriarch'),
+    'rot_ent': ('Древень-гниль', 'Rot Ent'),
+    'dark_witch': ('Ведьма Тьмы', 'Witch of Darkness'),
 }
 
 
