@@ -241,6 +241,7 @@ class Map:
                 border.append((x, y, z))
         rng = range(-thick, thick + 1)
         made = 0
+        walled = set()   # клетки, получившие материал стены: пол/потолок их перекрывают
         for (x, y, z) in border:
             t = self.themes[opn[(x, y, z)]]
             pit = (x, y, z) in self.nowall
@@ -250,7 +251,7 @@ class Map:
                 for dx in rng:
                     for dz in rng:
                         p = (x + dx, y + dy, z + dz)
-                        if p in opn or p in blocks:
+                        if p in opn:
                             continue
                         if dy < 0 and abs(dx) <= 1 and abs(dz) <= 1 and -dy >= max(abs(dx), abs(dz)):
                             pal = t.floor
@@ -258,6 +259,12 @@ class Map:
                             pal = t.ceil
                         else:
                             pal = t.wall
+                        if p in blocks:
+                            if p not in walled or pal is t.wall:
+                                continue
+                            walled.discard(p)
+                        elif pal is t.wall:
+                            walled.add(p)
                         blocks[p] = (Theme.pick(pal, p[0], p[1], p[2], t.seed), ())
                         made += 1
         return made

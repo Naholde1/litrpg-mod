@@ -2077,5 +2077,11 @@
   "entity.litrpg.rot_ent": "Rot Ent",
   "item.litrpg.rot_ent_spawn_egg": "Rot Ent Spawn Egg",
   "entity.litrpg.dark_witch": "Witch of Darkness",
-  "item.litrpg.dark_witch_spawn_egg": "Witch of Darkness Spawn Egg"
+  "item.litrpg.dark_witch_spawn_egg": "Witch of Darkness Spawn Egg",
+  "entity.litrpg.tide_warden": "Tide Warden",
+  "item.litrpg.tide_warden_spawn_egg": "Tide Warden Spawn Egg",
+  "entity.litrpg.leviathan": "Leviathan",
+  "item.litrpg.leviathan_spawn_egg": "Leviathan Spawn Egg",
+  "entity.litrpg.deep_priestess": "Priestess of the Deep",
+  "item.litrpg.deep_priestess_spawn_egg": "Priestess of the Deep Spawn Egg"
 }

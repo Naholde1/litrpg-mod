@@ -2084,5 +2084,11 @@
   "entity.litrpg.rot_ent": "Древень-гниль",
   "item.litrpg.rot_ent_spawn_egg": "Яйцо призыва: Древень-гниль",
   "entity.litrpg.dark_witch": "Ведьма Тьмы",
-  "item.litrpg.dark_witch_spawn_egg": "Яйцо призыва: Ведьма Тьмы"
+  "item.litrpg.dark_witch_spawn_egg": "Яйцо призыва: Ведьма Тьмы",
+  "entity.litrpg.tide_warden": "Страж приливов",
+  "item.litrpg.tide_warden_spawn_egg": "Яйцо призыва: Страж приливов",
+  "entity.litrpg.leviathan": "Левиафан",
+  "item.litrpg.leviathan_spawn_egg": "Яйцо призыва: Левиафан",
+  "entity.litrpg.deep_priestess": "Жрица глубин",
+  "item.litrpg.deep_priestess_spawn_egg": "Яйцо призыва: Жрица глубин"
 }

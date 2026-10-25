@@ -48,6 +48,10 @@ public final class Bosses {
         add(r, "spider_queen", "spider_queen", SpiderQueenEntity::new, 2.2f, 1.6f, false, SpiderQueenEntity::createAttributes);
         add(r, "rot_ent", "rotting_ent", RotEntEntity::new, 1.4f, 3.6f, false, RotEntEntity::createAttributes);
         add(r, "dark_witch", "dark_witch", DarkWitchEntity::new, 0.8f, 2.6f, false, DarkWitchEntity::createAttributes);
+        // ---- этап 3: Затопленный храм ----
+        add(r, "tide_warden", "tide_warden", TideWardenEntity::new, 1.4f, 3.8f, false, TideWardenEntity::createAttributes);
+        add(r, "leviathan", "leviathan", LeviathanEntity::new, 3.0f, 6.0f, false, LeviathanEntity::createAttributes);
+        add(r, "deep_priestess", "deep_priestess", DeepPriestessEntity::new, 0.9f, 3.0f, false, DeepPriestessEntity::createAttributes);
     }
 
     public static void attributes(EntityAttributeCreationEvent e) {

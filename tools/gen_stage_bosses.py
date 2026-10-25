@@ -30,6 +30,17 @@ MATS.update({
     'lich_cloak': G.m_cloth(0x1A2030, 0x0A0E18, tatter=True),
     'runeblade': G.m_glow(0xC8F0FF, 0x4AA0E0),
     'skull': G.m_bone(0xE0D8C0, 0x9A8E70),
+    # этап 3
+    'coral_plate': G.m_metal(0x2E7A78, 0x6AD0C0, 0x123A3C),
+    'coral_red': G.m_chitin(0xB0405A, 0xF08A9A, band=3),
+    'scale_teal': G.m_chitin(0x1E5A66, 0x48A8B0, band=2),
+    'scale_belly': G.m_chitin(0xA8B890, 0xE0E8C0, band=2),
+    'skin_sea': G.m_skin(0x5A8A90, 0x3A6068, spots=0x2A4A50, spot_chance=0.08),
+    'fin': G.m_membrane(0x3A8AA0, 0x1A4A60),
+    'sea_glow': G.m_glow(0x80F0FF, 0x2A90B0),
+    'robe_sea': G.m_cloth(0x1A3A5A, 0x0A1A2C, tatter=True),
+    'pearl': G.m_glow(0xF0F0FF, 0xA0B0D0),
+    'gold_trim': G.m_metal(0xB08A30, 0xF0D070, 0x5A4010, rivets=False),
 })
 
 
@@ -156,7 +167,93 @@ def dark_witch():
     return m
 
 
-MODELS = [gatekeeper, twin_morra, twin_vessa, lich_king, dark_witch]
+# ======================= Этап 3 =======================
+
+def tide_warden():
+    """Страж приливов: рыболюд-рыцарь в коралловых латах, плавники на голове и руках, трезубец."""
+    leg = Part('leg_l', 'root', (3, 16, 0), [Cube(1, 0, -3, 5, 16, 6, 'coral_plate'), Cube(1, 0, -5, 5, 2, 3, 'scale_teal')],
+               anim=[A('walk', 'x', 0.55)])
+    body = Part('body', 'root', (0, 16, 0), [
+        Cube(-7, 16, -4, 14, 16, 8, 'coral_plate', decals=[('front', 5, 5, 4, 4, 0x80F0FF, True)]),
+        Cube(-6, 14, -3, 12, 3, 6, 'scale_teal'),
+        Cube(-10, 28, -5, 6, 6, 10, 'coral_red'), Cube(4, 28, -5, 6, 6, 10, 'coral_red'),
+        Cube(-1, 20, 4, 2, 14, 6, 'fin'),
+    ], anim=[A('idle', 'x', 0.03, 0.08)])
+    head = Part('head', 'body', (0, 32, 0), [
+        Cube(-4, 32, -5, 8, 8, 9, 'skin_sea', decals=eyes(8, 4, 0x80F0FF, gap=2, size=(2, 2)) + [('front', 1, 7, 6, 1, 0x10282C, False)]),
+        Cube(-5, 32, -6, 10, 3, 3, 'scale_teal'),
+        Cube(-1, 40, -4, 2, 6, 9, 'fin'),
+        Cube(-6, 35, -2, 2, 5, 4, 'fin'), Cube(4, 35, -2, 2, 5, 4, 'fin'),
+    ], anim=[A('look', 'y'), A('look', 'x', 0.5)])
+    arm = Part('arm_l', 'body', (9, 31, 0), [Cube(7, 17, -2, 4, 14, 4, 'skin_sea'), Cube(6, 22, -3, 6, 6, 6, 'coral_plate'),
+                                            Cube(11, 18, -1, 2, 8, 3, 'fin')],
+               anim=[A('walk', 'x', 0.45, phase=math.pi), A('attack', 'x', 2.0), A('cast', 'x', -2.6), A('cast2', 'z', -1.1)])
+    arm_r = mirror(arm, 'arm_r')
+    trident = Part('trident', 'arm_r', (-9, 18, 0), [
+        Cube(-10, -14, -1, 2, 42, 2, 'gold_trim'),
+        Cube(-14, 26, -1, 10, 2, 2, 'gold_trim'),
+        Cube(-14, 28, -1, 2, 7, 2, 'sea_glow'), Cube(-10, 28, -1, 2, 9, 2, 'sea_glow'), Cube(-6, 28, -1, 2, 7, 2, 'sea_glow'),
+    ])
+    return dict(name='tide_warden', scale=1.45, shadow=0.9, parts=[leg, mirror(leg, 'leg_r'), body, head, arm, arm_r, trident])
+
+
+def leviathan():
+    """Левиафан: морской змей — шея поднимается из воды кольцами, голова с челюстями и гребнем, плавники."""
+    parts = []
+    segs = [(0, 0, 14, 'base'), (0, 12, 13, 'neck1'), (-2, 24, 12, 'neck2'), (-1, 35, 11, 'neck3')]
+    parent = 'root'
+    for i, (dx, y, w, name) in enumerate(segs):
+        h = 13
+        cubes = [Cube(-w // 2 + dx, y, -w // 2, w, h, w, 'scale_teal'),
+                 Cube(-w // 2 + dx + 2, y, -w // 2 - 1, w - 4, h, 1, 'scale_belly'),
+                 Cube(dx - 1, y + 2, w // 2, 2, h - 2, 4, 'fin')]
+        parts.append(Part(name, parent, (dx, y, 0), cubes, anim=[A('idle', 'z', 0.06, 0.07, phase=i * 0.8), A('bob', 'x', 0.05, 0.06, phase=i)]))
+        parent = name
+    head = Part('head', parent, (-1, 46, 0), [
+        Cube(-8, 46, -14, 16, 10, 18, 'scale_teal', decals=eyes(16, 3, 0x80F0FF, gap=6, size=(3, 2))),
+        Cube(-7, 42, -18, 14, 4, 16, 'scale_belly'),
+        Cube(-7, 46, -19, 14, 1, 5, 'bone_old'),
+        Cube(-1, 56, -12, 2, 8, 16, 'fin'),
+        Cube(-10, 50, -2, 3, 8, 6, 'fin'), Cube(7, 50, -2, 3, 8, 6, 'fin'),
+        Cube(-6, 56, -6, 2, 5, 2, 'coral_red'), Cube(4, 56, -6, 2, 5, 2, 'coral_red'),
+    ], anim=[A('look', 'y', 0.7), A('look', 'x', 0.5), A('attack', 'x', 0.8), A('cast', 'x', -0.5)])
+    jaw = Part('jaw', 'head', (0, 44, 2), [Cube(-6, 40, -17, 12, 3, 15, 'scale_teal'), Cube(-6, 43, -17, 12, 1, 4, 'bone_old')],
+               anim=[A('attack', 'x', 0.7), A('cast', 'x', 0.9), A('idle', 'x', 0.08, 0.1)])
+    fin_l = Part('fin_l', 'base', (7, 10, 0), [Cube(7, 4, -6, 14, 2, 12, 'fin')], anim=[A('idle', 'z', 0.25, 0.1)])
+    return dict(name='leviathan', scale=1.7, shadow=1.4, parts=parts + [head, jaw, fin_l, mirror(fin_l, 'fin_r')])
+
+
+def deep_priestess():
+    """Жрица глубин: высокая, в синих одеждах с золотом, волосы-щупальца, коралловый венец, посох с жемчужиной."""
+    body = Part('body', 'root', (0, 14, 0), [
+        Cube(-7, 0, -5, 14, 16, 10, 'robe_sea', decals=[('front', 6, 1, 2, 14, 0xF0D070, False)]),
+        Cube(-5, 16, -3, 10, 11, 6, 'robe_sea', decals=[('front', 3, 4, 4, 3, 0x80F0FF, True)]),
+        Cube(-7, 25, -4, 14, 3, 8, 'gold_trim'),
+    ], anim=[A('idle', 'x', 0.03, 0.08), A('bob', 'y', 0.6, 0.07)])
+    head = Part('head', 'body', (0, 28, 0), [
+        Cube(-4, 28, -4, 8, 8, 8, 'skin_sea', decals=eyes(8, 3, 0xF0F0FF, gap=2, size=(2, 1))),
+        Cube(-5, 35, -5, 10, 2, 10, 'coral_red'),
+        Cube(-5, 37, -2, 2, 4, 2, 'coral_red'), Cube(-1, 37, -5, 2, 6, 2, 'coral_red'), Cube(3, 37, -2, 2, 4, 2, 'coral_red'),
+        Cube(-1, 39, -5, 2, 2, 1, 'pearl'),
+    ], anim=[A('look', 'y'), A('look', 'x', 0.5)])
+    hair = []
+    for i, (x, z) in enumerate(((-4, 3), (-1, 4), (2, 3), (-5, 0), (4, 0))):
+        hair.append(Part(f'tentacle{i}', 'head', (x, 30, z), [Cube(x - 1, 14, z - 1, 2, 16, 2, 'scale_teal'), Cube(x - 1, 12, z - 1, 2, 2, 2, 'sea_glow')],
+                         anim=[A('idle', 'x', 0.2, 0.08, phase=i), A('idle', 'z', 0.12, 0.06, phase=i * 1.7)]))
+    arm = Part('arm_l', 'body', (7, 26, 0), [Cube(6, 13, -2, 3, 13, 4, 'robe_sea'), Cube(6, 10, -2, 3, 3, 3, 'skin_sea')],
+               anim=[A('walk', 'x', 0.3, phase=math.pi), A('attack', 'x', 1.6), A('cast', 'x', -2.6), A('cast2', 'z', -1.1)])
+    arm_r = mirror(arm, 'arm_r')
+    staff = Part('staff', 'arm_r', (-8, 12, -1), [
+        Cube(-9, -8, -2, 2, 40, 2, 'gold_trim'),
+        Cube(-11, 30, -4, 6, 2, 6, 'coral_red'),
+        Cube(-10, 32, -3, 4, 4, 4, 'pearl'),
+    ])
+    orbs = Part('orbs', 'body', (0, 22, 0), [Cube(-13, 26, -1, 2, 2, 2, 'sea_glow'), Cube(11, 26, -1, 2, 2, 2, 'sea_glow'),
+                                             Cube(-1, 26, 11, 2, 2, 2, 'sea_glow')], anim=[A('spin', 'y', 1.0, 0.04)])
+    return dict(name='deep_priestess', scale=1.35, shadow=0.7, parts=[body, head, arm, arm_r, staff, orbs] + hair)
+
+
+MODELS = [gatekeeper, twin_morra, twin_vessa, lich_king, dark_witch, tide_warden, leviathan, deep_priestess]
 
 NAMES = {
     'gatekeeper': ('Привратник Костей', 'Bone Gatekeeper'),
@@ -166,6 +263,9 @@ NAMES = {
     'spider_queen': ('Матка пауков', 'Spider Matriarch'),
     'rot_ent': ('Древень-гниль', 'Rot Ent'),
     'dark_witch': ('Ведьма Тьмы', 'Witch of Darkness'),
+    'tide_warden': ('Страж приливов', 'Tide Warden'),
+    'leviathan': ('Левиафан', 'Leviathan'),
+    'deep_priestess': ('Жрица глубин', 'Priestess of the Deep'),
 }
 
 
