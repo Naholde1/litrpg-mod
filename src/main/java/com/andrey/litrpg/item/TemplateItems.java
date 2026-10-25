@@ -150,7 +150,7 @@ public final class TemplateItems {
         @Override public boolean isFoil(ItemStack stack) { return foil(stack); }
     }
 
-    public static class Staff extends LichStaffItem implements TemplateItem {
+    public static class Staff extends StaffItem implements TemplateItem {
         private final ItemTemplates.Def def;
 
         public Staff(Item.Properties props, ItemTemplates.Def def) {

@@ -29,9 +29,11 @@ public class ManaPotionItem extends Item {
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
         if (entity instanceof ServerPlayer sp) {
             PlayerStats s = StatsManager.get(sp);
-            s.setMana(s.getMana() + 60);
+            int add = (int) Math.round(s.getMaxMana() * 0.3);
+            s.setMana(s.getMana() + add);
             StatsManager.sync(sp);
-            sp.displayClientMessage(Component.literal("+60 маны").withStyle(ChatFormatting.BLUE), true);
+            sp.displayClientMessage(Component.literal("+" + add + " маны").withStyle(ChatFormatting.BLUE), true);
+            HealthPotionItem.cooldown(sp);
         }
         if (entity instanceof Player p && !p.getAbilities().instabuild) {
             stack.shrink(1);
@@ -43,7 +45,7 @@ public class ManaPotionItem extends Item {
 
     @Override
     public int getUseDuration(ItemStack stack) {
-        return 24;
+        return 32;
     }
 
     @Override
@@ -58,6 +60,7 @@ public class ManaPotionItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("item.litrpg.mana_potion.tooltip").withStyle(ChatFormatting.BLUE));
+        tooltip.add(Component.literal("+30% маны").withStyle(ChatFormatting.BLUE));
+        tooltip.add(Component.literal("Общий откат зелий — 60 с").withStyle(ChatFormatting.GRAY));
     }
 }

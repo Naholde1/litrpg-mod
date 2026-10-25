@@ -1,9 +1,7 @@
 package com.andrey.litrpg.gear;
 
-import com.andrey.litrpg.entity.GoblinEntity;
 import com.andrey.litrpg.entity.LitBoss;
 import com.andrey.litrpg.event.MobLevels;
-import com.andrey.litrpg.npc.RaceNpcEntity;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.tags.DamageTypeTags;
@@ -30,12 +28,11 @@ public final class Families {
         if (t.getMobType() == MobType.UNDEAD) pct += g.get(GearBonus.DMG_UNDEAD);
         if (t.getMobType() == MobType.ARTHROPOD) pct += g.get(GearBonus.DMG_ARTHROPOD);
         if (t instanceof AbstractIllager || t instanceof Raider) pct += g.get(GearBonus.DMG_ILLAGER);
-        if (t instanceof GoblinEntity) pct += g.get(GearBonus.DMG_GOBLIN);
         if (t instanceof Animal || t instanceof net.minecraft.world.entity.animal.Wolf
                 || t instanceof com.andrey.litrpg.entity.wild.WildMob w && w.spec().beast) pct += g.get(GearBonus.DMG_BEAST);
         if (isNether(t)) pct += g.get(GearBonus.DMG_NETHER);
         if (t instanceof LitBoss || MobLevels.getRank(t) != MobLevels.Rank.NORMAL) pct += g.get(GearBonus.DMG_ELITE);
-        if (t instanceof RaceNpcEntity || t instanceof AbstractVillager || t instanceof AbstractIllager) pct += g.get(GearBonus.DMG_HUMANOID);
+        if (t instanceof AbstractVillager || t instanceof AbstractIllager) pct += g.get(GearBonus.DMG_HUMANOID);
         return 1f + pct / 100f;
     }
 
@@ -46,7 +43,6 @@ public final class Families {
             if (a.getMobType() == MobType.UNDEAD) pct += g.get(GearBonus.RES_UNDEAD);
             if (a.getMobType() == MobType.ARTHROPOD) pct += g.get(GearBonus.RES_ARTHROPOD);
             if (a instanceof AbstractIllager || a instanceof Raider) pct += g.get(GearBonus.RES_ILLAGER);
-            if (a instanceof GoblinEntity) pct += g.get(GearBonus.RES_GOBLIN);
         }
         if (src.is(DamageTypeTags.IS_FIRE)) pct += g.get(GearBonus.RES_FIRE);
         if (src.is(DamageTypes.FALL)) pct += g.get(GearBonus.RES_FALL);

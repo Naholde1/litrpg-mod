@@ -1,0 +1,18 @@
+{
+  "type": "litrpg:dungeon",
+  "generator": {
+    "type": "minecraft:noise",
+    "settings": "litrpg:void",
+    "biome_source": {
+      "type": "litrpg:stages",
+      "biomes": [
+        "litrpg:vestibule",
+        "litrpg:crypt",
+        "litrpg:thicket",
+        "litrpg:temple",
+        "litrpg:forges",
+        "litrpg:spire"
+      ]
+    }
+  }
+}

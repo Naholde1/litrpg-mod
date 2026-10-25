@@ -1,8 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "#minecraft:is_taiga",
-    "minecraft:dark_forest",
-    "minecraft:snowy_taiga"
-  ]
-}

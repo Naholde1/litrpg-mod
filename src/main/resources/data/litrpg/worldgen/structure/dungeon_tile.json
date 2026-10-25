@@ -1,0 +1,7 @@
+{
+  "type": "litrpg:dungeon_tile",
+  "biomes": "#litrpg:dungeon",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none"
+}

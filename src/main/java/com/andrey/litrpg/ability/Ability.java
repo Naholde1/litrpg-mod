@@ -94,8 +94,11 @@ public final class Ability {
     /** Навыки новичка (до выбора класса). */
     public static final String[] NOVICE;
     public static final int[] NOVICE_UNLOCK;
-    /** Ячеек на панели навыков (клавиши Z X C V B G). */
-    public static final int BAR = 6;
+    /** Ячеек на панели навыков (клавиши Z X C V B G R H). */
+    public static final int BAR = 8;
+    /** Особая «ячейка» рывка (Alt): у всех и всегда — навык dash. */
+    public static final int DASH_SLOT = 8;
+    public static final String DASH_KEY = "dash";
 
     public final String key;
     public final Kind kind;
@@ -157,6 +160,7 @@ public final class Ability {
     /** Уровень открытия навыка у класса (у новичка — по списку новичка). */
     public static int unlockLevel(PlayerClass c, Ability a) {
         if (a == null) return 999;
+        if (a.key.equals(DASH_KEY)) return 1;
         if (c == null) {
             for (int i = 0; i < NOVICE.length; i++) if (NOVICE[i].equals(a.key)) return NOVICE_UNLOCK[i];
             return 999;

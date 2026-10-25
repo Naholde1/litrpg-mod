@@ -1,8 +1,0 @@
-{
- "type": "litrpg:map_tile",
- "layer": "nether",
- "biomes": "#litrpg:map_nether",
- "step": "surface_structures",
- "spawn_overrides": {},
- "terrain_adaptation": "none"
-}

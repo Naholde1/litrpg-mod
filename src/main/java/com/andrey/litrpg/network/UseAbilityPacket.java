@@ -8,7 +8,7 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-/** Нажатие клавиши навыка: передаётся номер ячейки 0–5. */
+/** Нажатие клавиши навыка: номер ячейки 0–7 или 8 — рывок. */
 public class UseAbilityPacket {
     private final int slot;
 
@@ -19,7 +19,7 @@ public class UseAbilityPacket {
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ServerPlayer player = ctx.get().getSender();
-        if (player != null && slot >= 0 && slot < Ability.BAR && player.isAlive()) {
+        if (player != null && slot >= 0 && slot <= Ability.DASH_SLOT && player.isAlive()) {
             AbilityHandler.tryUse(player, slot);
         }
     }

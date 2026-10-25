@@ -14,7 +14,7 @@ public class ModCreativeTabs {
 
     public static final RegistryObject<CreativeModeTab> MAIN = TABS.register("main", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.litrpg"))
-            .icon(() -> new ItemStack(ModItems.SYSTEM_KEY.get()))
+            .icon(() -> new ItemStack(ModItems.RIFT.get()))
             .displayItems((params, output) -> {
                 for (RegistryObject<Item> item : ModItems.ITEMS.getEntries()) {
                     if (item != ModItems.MANA_ORB) {

@@ -47,6 +47,8 @@ public final class Telegraph {
     int soak;
     Entity follow;
     int followUntil;
+    /** Разметка уже отправлена клиентам (рисуется светящейся геометрией, {@link com.andrey.litrpg.fx.Fx}). */
+    boolean sent;
 
     Telegraph(Shape shape, Vec3 center, double r1, double r2, int delay, float power) {
         this.shape = shape;
@@ -94,15 +96,54 @@ public final class Telegraph {
         };
     }
 
+    /** Цвет разметки для клиента (по цвету частиц). */
+    int argb() {
+        if (color == ORANGE) return 0xB0FF8C1A;
+        if (color == PURPLE) return 0xB0B040FF;
+        if (color == BLUE) return 0xB060C0FF;
+        if (color == GREEN) return 0xB070FF40;
+        if (color == GOLD) return 0xB0FFD840;
+        return 0xB0FF2A1A;
+    }
+
+    /** Отправить разметку зоны клиентам: заливка растёт к моменту взрыва. */
+    void announce(ServerLevel sl) {
+        sent = true;
+        int c = soak > 0 ? 0xB0FFD840 : argb();
+        if (follow != null) {
+            com.andrey.litrpg.fx.Fx.follow(sl, follow, r1, Math.max(1, left - followUntil), c);
+            return;
+        }
+        switch (shape) {
+            case CIRCLE -> com.andrey.litrpg.fx.Fx.disc(sl, center, r1, 0, left, c);
+            case RING -> com.andrey.litrpg.fx.Fx.disc(sl, center, r1, r2, left, c);
+            case CONE -> com.andrey.litrpg.fx.Fx.cone(sl, center, dir, r1, r2, left, c);
+            case LINE -> com.andrey.litrpg.fx.Fx.line(sl, center, dir, r1, r2, left, c);
+        }
+    }
+
+    /** Взрыв зоны: вспышка на месте. */
+    void burst(ServerLevel sl) {
+        int c = argb() | 0xFF000000;
+        switch (shape) {
+            case CIRCLE -> {
+                com.andrey.litrpg.fx.Fx.ring(sl, center, Math.max(0.5, r1 * 0.3), r1 + 0.5, 10, c);
+                com.andrey.litrpg.fx.Fx.pillar(sl, center, r1 * 0.6, 2.5, 8, c & 0x80FFFFFF);
+            }
+            case RING -> com.andrey.litrpg.fx.Fx.ring(sl, center, r2, r1 + 0.5, 12, c);
+            case CONE -> com.andrey.litrpg.fx.Fx.slash(sl, center.add(0, 0.6, 0), dir, r1, r2 * 2, 0, 8, c);
+            case LINE -> com.andrey.litrpg.fx.Fx.beam(sl, center.add(0, 0.4, 0), center.add(dir.scale(r1)).add(0, 0.4, 0), r2 * 2, 8, c);
+        }
+    }
+
     /** Контур зоны частицами: чем ближе взрыв, тем гуще. */
     void draw(ServerLevel sl) {
         double y = center.y + 0.15;
         float urgency = 1f - (float) left / Math.max(1, total);
         switch (shape) {
             case CIRCLE, RING -> {
-                circle(sl, r1, y, (int) (r1 * 9) + 10);
-                if (shape == Shape.RING) circle(sl, r2, y, (int) (r2 * 9) + 8);
-                else circle(sl, r1 * urgency, y, (int) (r1 * 6 * urgency) + 4);
+                circle(sl, r1, y, (int) (r1 * 3) + 4);
+                if (shape == Shape.RING) circle(sl, r2, y, (int) (r2 * 3) + 4);
             }
             case CONE -> {
                 double a0 = Math.atan2(dir.z, dir.x), half = Math.toRadians(r2);
@@ -151,9 +192,16 @@ public final class Telegraph {
             if (t.follow != null && t.follow.isAlive() && t.left > t.followUntil) {
                 t.center = new Vec3(t.follow.getX(), t.follow.getY(), t.follow.getZ());
             }
-            if (t.left % 3 == 0 || t.left < 10 && t.left % 2 == 0) t.draw(sl);
+            if (!t.sent) t.announce(sl);
+            // зона, что ползёт за целью, в последние тики застывает — разметка на месте
+            if (t.follow != null && t.left == t.followUntil) {
+                t.follow = null;
+                t.announce(sl);
+            }
+            if (t.left % 8 == 0) t.draw(sl);
             if (t.left > 0) continue;
             done.add(t);
+            t.burst(sl);
             boss.detonate(t);
         }
         list.removeAll(done);

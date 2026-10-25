@@ -11,9 +11,8 @@ import java.util.Map;
 /**
  * Подбор классов на 10 уровне. Система оценивает каждый класс выбранной роли сразу по нескольким признакам:
  * <ul>
- *   <li>стиль игры (ближний бой, магия, скрытность, игра в группе или в одиночку, торговля, походы, ночные бои…) — 50%;</li>
- *   <li>во что вложены очки характеристик — 25%;</li>
- *   <li>раса, освоенные профессии и репутация с народом класса — 25%.</li>
+ *   <li>стиль игры в первом этапе подземелья (ближний бой, стрельба, магия, лечение, защита, скрытность…) — 70%;</li>
+ *   <li>во что вложены очки характеристик — 30%.</li>
  * </ul>
  * Предлагаются пять классов: три лучших, один из следующих шести (для разнообразия) и пятый —
  * открытый скрытый класс, а если его нет — ещё один из близких.
@@ -53,17 +52,8 @@ public final class ClassOffers {
         return Math.min(1, prim * 1.4 + sec * 0.7);
     }
 
-    /** Раса, профессии и репутация (0..1). */
-    public static double originScore(PlayerStats s, PlayerClass c) {
-        double v = 0;
-        if (s.getRace() != null && c.races.contains(s.getRace())) v += 0.5;
-        for (Profession p : c.profs) if (s.knows(p)) v += 0.15 + Math.min(0.2, s.getProfLevel(p) / 100.0);
-        if (c.faction != null) v += Math.max(0, Math.min(0.35, s.getRep(c.faction) / 1000.0));
-        return Math.min(1, v);
-    }
-
     public static double score(PlayerStats s, PlayerClass c) {
-        return styleScore(s, c) * 0.5 + statScore(s, c) * 0.25 + originScore(s, c) * 0.25;
+        return styleScore(s, c) * 0.7 + statScore(s, c) * 0.3;
     }
 
     public static List<PlayerClass> generate(PlayerStats s, RandomSource rnd) {
@@ -106,13 +96,6 @@ public final class ClassOffers {
         if (statScore(s, c) >= 0.5) {
             out.add("очки в " + net.minecraft.network.chat.Component.translatable(c.primary.translationKey()).getString());
         }
-        if (s.getRace() != null && c.races.contains(s.getRace())) {
-            out.add("раса: " + net.minecraft.network.chat.Component.translatable(s.getRace().nameKey()).getString());
-        }
-        for (Profession p : c.profs) {
-            if (s.knows(p)) out.add("профессия: " + net.minecraft.network.chat.Component.translatable(p.nameKey()).getString());
-        }
-        if (c.faction != null && s.getRep(c.faction) >= 100) out.add("репутация: " + c.faction.title);
         if (out.isEmpty()) out.add("Система видит в тебе задатки");
         return out;
     }

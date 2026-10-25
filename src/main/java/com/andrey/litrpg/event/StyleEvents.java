@@ -10,27 +10,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobType;
-import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.PotionItem;
-import net.minecraft.world.item.TieredItem;
-import net.minecraft.world.level.block.CropBlock;
-import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
-import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
-import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.ShieldBlockEvent;
-import net.minecraftforge.event.entity.player.AnvilRepairEvent;
-import net.minecraftforge.event.entity.player.ItemFishedEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.TradeWithVillagerEvent;
-import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -70,9 +55,7 @@ public class StyleEvents {
         }
         // с кем и как сражается
         boolean friends = false;
-        for (ServerPlayer o : p.serverLevel().players()) {
-            if (o != p && o.distanceToSqr(p) < 32 * 32 && com.andrey.litrpg.party.Party.sameParty(p, o)) friends = true;
-        }
+        for (ServerPlayer o : p.serverLevel().players()) if (o != p && o.distanceToSqr(p) < 32 * 32) friends = true;
         add(p, friends ? Style.PARTY : Style.SOLO, amount * (friends ? 0.6f : 0.3f));
         if (p.level().isNight() || p.level().getMaxLocalRawBrightness(p.blockPosition()) < 6) add(p, Style.NIGHT, amount * 0.5f);
         if (p.isInWater() || target.isInWater()) add(p, Style.WATER, amount * 0.6f);
@@ -93,106 +76,13 @@ public class StyleEvents {
         if (!(event.getSource().getEntity() instanceof ServerPlayer p)) return;
         LivingEntity dead = event.getEntity();
         if (dead.getMobType() == MobType.UNDEAD) add(p, Style.UNDEAD, 6);
-        if (dead instanceof Animal) add(p, Style.NATURE, 2);
         if (dead instanceof Enemy && (p.isCrouching() || Stealth.isHidden(p))) add(p, Style.STEALTH, 5);
     }
 
-    @SubscribeEvent
-    public static void onBreed(BabyEntitySpawnEvent event) {
-        if (event.getCausedByPlayer() != null) {
-            add(event.getCausedByPlayer(), Style.NATURE, 5);
-            add(event.getCausedByPlayer(), Style.BEAST, 8);
-        }
-    }
-
-    @SubscribeEvent
-    public static void onTame(AnimalTameEvent event) {
-        add(event.getTamer(), Style.NATURE, 8);
-        add(event.getTamer(), Style.BEAST, 25);
-    }
-
-    @SubscribeEvent
-    public static void onFish(ItemFishedEvent event) {
-        add(event.getEntity(), Style.NATURE, 3);
-        add(event.getEntity(), Style.WATER, 5);
-    }
-
-    @SubscribeEvent
-    public static void onMine(BlockEvent.BreakEvent event) {
-        if (event.getState().is(net.minecraftforge.common.Tags.Blocks.ORES)) add(event.getPlayer(), Style.MINING, 4);
-        else if (event.getState().is(net.minecraft.tags.BlockTags.BASE_STONE_OVERWORLD) && event.getPlayer().getRandom().nextInt(8) == 0) {
-            add(event.getPlayer(), Style.MINING, 1);
-        }
-    }
-
-    /** Дальние походы: каждые ~100 блоков пути — очко исследования. */
-    private static final java.util.Map<java.util.UUID, net.minecraft.world.phys.Vec3> WALK = new java.util.HashMap<>();
-
-    @SubscribeEvent
-    public static void onWalk(net.minecraftforge.event.TickEvent.PlayerTickEvent event) {
-        if (event.phase != net.minecraftforge.event.TickEvent.Phase.END || !(event.player instanceof ServerPlayer p) || p.tickCount % 100 != 0) return;
-        var last = WALK.get(p.getUUID());
-        var now = p.position();
-        if (last == null || last.distanceToSqr(now) > 400 * 400) {
-            WALK.put(p.getUUID(), now);
-        } else if (last.distanceToSqr(now) > 100 * 100) {
-            add(p, Style.EXPLORE, 2);
-            WALK.put(p.getUUID(), now);
-        }
-    }
-
-    @SubscribeEvent
-    public static void onHarvest(BlockEvent.BreakEvent event) {
-        if (event.getState().getBlock() instanceof CropBlock crop && crop.isMaxAge(event.getState())) {
-            add(event.getPlayer(), Style.NATURE, 2);
-        }
-    }
-
-    @SubscribeEvent
-    public static void onIgnite(BlockEvent.EntityPlaceEvent event) {
-        if (event.getEntity() instanceof Player p && event.getPlacedBlock().is(net.minecraft.world.level.block.Blocks.FIRE)) {
-            add(p, Style.FIRE, 3);
-        }
-    }
-
-    @SubscribeEvent
-    public static void onCraft(PlayerEvent.ItemCraftedEvent event) {
-        boolean gear = event.getCrafting().getItem() instanceof TieredItem || event.getCrafting().getItem() instanceof ArmorItem;
-        add(event.getEntity(), Style.CRAFT, gear ? 5 : 1);
-    }
-
-    @SubscribeEvent
-    public static void onSmelt(PlayerEvent.ItemSmeltedEvent event) {
-        add(event.getEntity(), Style.CRAFT, event.getSmelting().getCount());
-    }
-
-    @SubscribeEvent
-    public static void onBrew(PlayerBrewedPotionEvent event) {
-        add(event.getEntity(), Style.CRAFT, 6);
-        add(event.getEntity(), Style.SUPPORT, 2);
-    }
-
-    @SubscribeEvent
-    public static void onAnvil(AnvilRepairEvent event) {
-        add(event.getEntity(), Style.CRAFT, 5);
-    }
-
-    /** Зачарование и починка на наковальне тратят уровни опыта. */
-    @SubscribeEvent
-    public static void onXpSpent(net.minecraftforge.event.entity.player.PlayerXpEvent.LevelChange event) {
-        if (event.getLevels() < 0) add(event.getEntity(), Style.CRAFT, -event.getLevels() * 4);
-    }
-
-    @SubscribeEvent
-    public static void onTrade(TradeWithVillagerEvent event) {
-        add(event.getEntity(), Style.TRADE, 6);
-    }
-
-    @SubscribeEvent
-    public static void onConsume(LivingEntityUseItemEvent.Finish event) {
-        if (!(event.getEntity() instanceof Player p)) return;
-        var item = event.getItem().getItem();
-        if (item instanceof PotionItem) add(p, Style.SUPPORT, 8);
-        else if (item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE) add(p, Style.SUPPORT, 10);
+    /** Лечение союзников (зовут навыки лечения) — главный признак поддержки. */
+    public static void healed(ServerPlayer p, net.minecraft.world.entity.LivingEntity target, float amount) {
+        if (amount <= 0) return;
+        add(p, Style.SUPPORT, amount * (target == p ? 0.4f : 1.2f));
+        if (target != p) add(p, Style.PARTY, amount * 0.3f);
     }
 }

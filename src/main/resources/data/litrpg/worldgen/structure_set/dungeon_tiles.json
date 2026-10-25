@@ -1,0 +1,11 @@
+{
+  "structures": [
+    {
+      "structure": "litrpg:dungeon_tile",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "litrpg:dungeon_tiles"
+  }
+}

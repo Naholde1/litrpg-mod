@@ -7,13 +7,12 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 
 import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
 /** Всё, что Система знает об игроке. */
 public class PlayerStats {
-    public static final int MAX_LEVEL = 100;
+    public static final int MAX_LEVEL = 50;
     public static final int POINTS_PER_LEVEL = 3;
     private static final int DATA_VERSION = 2;
 
@@ -24,8 +23,9 @@ public class PlayerStats {
     private final int[] spent = new int[Stat.values().length];
     private double mana = 50;
     private boolean welcomed = false;
+    /** Стартовый набор уже выдан (при первом выборе роли). */
+    private boolean kitGiven = false;
 
-    private Race race = null;
     private Role role = null;
     private PlayerClass playerClass = null;
     /** Панель навыков: ключи навыков по ячейкам (у заклинателя сфер — не используется). */
@@ -36,11 +36,8 @@ public class PlayerStats {
     /** Приёмы серии (не сохраняются). */
     private int combo = 0;
     private long comboTime = 0;
-    private final Map<Profession, int[]> professions = new EnumMap<>(Profession.class); // {level, xp}
-    private final Set<Title> titles = EnumSet.noneOf(Title.class);
-    /** Открытые места Мира Системы (id из карты). */
-    private final Set<String> found = new java.util.HashSet<>();
-    private final Map<Title.Counter, Integer> counters = new EnumMap<>(Title.Counter.class);
+    /** Полученные награды подземелья (опыт за моба, хранителя, загадку — один раз): ключи "s1:p3#2". */
+    private final Set<String> claims = new java.util.HashSet<>();
     /** Очки стиля игры до выбора класса. */
     private final Map<Style, Integer> styles = new EnumMap<>(Style.class);
     /** Классы, которые Система предложила на 10 уровне. */
@@ -48,11 +45,6 @@ public class PlayerStats {
 
     /** Сводка надетой экипировки. Не сохраняется — пересчитывается по инвентарю. */
     private final com.andrey.litrpg.gear.PlayerGear gear = new com.andrey.litrpg.gear.PlayerGear();
-    /** Репутация с народами: -1000..1000. */
-    private final Map<com.andrey.litrpg.rep.Faction, Integer> reputation = new EnumMap<>(com.andrey.litrpg.rep.Faction.class);
-
-    /** Журнал заданий. */
-    private final com.andrey.litrpg.quest.QuestLog quests = new com.andrey.litrpg.quest.QuestLog();
 
     /** Время (gameTime), когда способность снова станет доступна. Не сохраняется. */
     private final long[] cooldownEnd = new long[Ability.count()];
@@ -64,8 +56,10 @@ public class PlayerStats {
     public int getFreePoints() { return freePoints; }
     public boolean isWelcomed() { return welcomed; }
     public void setWelcomed(boolean w) { welcomed = w; }
+    public boolean isKitGiven() { return kitGiven; }
+    public void setKitGiven(boolean k) { kitGiven = k; }
 
-    /** Опыт до следующего уровня (с 2.15 — примерно вдвое медленнее, к сотому уровню — втрое). */
+    /** Опыт до следующего уровня. Опыт этапов подземелья рассчитан по этой же формуле (run/Rewards). */
     public static int xpForNextLevel(int level) {
         return 100 + (int) Math.round(90 * Math.pow(level, 1.85));
     }
@@ -75,8 +69,6 @@ public class PlayerStats {
     /** @return сколько уровней получено */
     public int addXp(int amount) {
         if (level >= MAX_LEVEL) return 0;
-        if (race == Race.HUMAN) amount = (int) Math.ceil(amount * 1.10);
-        amount = (int) Math.ceil(amount * (1 + gear.get(com.andrey.litrpg.gear.GearBonus.XP) / 100.0));
         xp += amount;
         int gained = 0;
         while (level < MAX_LEVEL && xp >= xpForNext()) {
@@ -113,12 +105,10 @@ public class PlayerStats {
 
     // ---------- характеристики ----------
 
-    /** Итоговое значение: раса + класс + титулы + вложенные очки. */
+    /** Итоговое значение: класс + экипировка + вложенные очки. */
     public int getStat(Stat s) {
         int v = spent[s.ordinal()];
-        if (race != null) v += race.bonus(s);
         if (playerClass != null) v += playerClass.growth(s, level);
-        for (Title t : titles) v += t.bonus(s);
         v += gear.stats[s.ordinal()];
         return Math.max(0, v);
     }
@@ -156,11 +146,9 @@ public class PlayerStats {
         return StatBreakdown.manaRegen(this).value();
     }
 
-    // ---------- раса, класс ----------
+    // ---------- роль, класс ----------
 
-    public Race getRace() { return race; }
     public PlayerClass getPlayerClass() { return playerClass; }
-    public void setRace(Race r) { race = r; }
     public Role getRole() { return role; }
     public void setRole(Role r) { role = r; }
 
@@ -180,6 +168,7 @@ public class PlayerStats {
 
     /** Навык в ячейке панели: у новичка — его навыки, у заклинателя сфер — сферы, Призыв и два заклинания. */
     public Ability barSkill(int slot) {
+        if (slot == Ability.DASH_SLOT) return Ability.byKey(Ability.DASH_KEY);
         if (slot < 0 || slot >= Ability.BAR) return null;
         PlayerClass c = playerClass;
         if (c == null) return slot < Ability.NOVICE.length ? Ability.byKey(Ability.NOVICE[slot]) : null;
@@ -257,8 +246,8 @@ public class PlayerStats {
 
     /** Для интерфейса: приёмы серии как есть. */
     public int comboPoints() { return combo; }
-    /** Раса выбрана (выбирается при первом входе). */
-    public boolean hasOrigin() { return race != null; }
+    /** Роль выбрана (выбирается при первом входе). */
+    public boolean hasOrigin() { return role != null; }
     public boolean hasClass() { return playerClass != null; }
 
     // ---------- стиль игры и выбор класса ----------
@@ -273,64 +262,12 @@ public class PlayerStats {
     public void setOffers(java.util.List<PlayerClass> list) { offers.clear(); offers.addAll(list); }
     public boolean canChooseClass() { return playerClass == null && level >= CLASS_LEVEL; }
 
-    // ---------- профессии ----------
+    // ---------- награды подземелья ----------
 
-    public boolean knows(Profession p) { return professions.containsKey(p); }
-    public Set<Profession> getProfessions() { return professions.keySet(); }
-
-    public boolean learn(Profession p) {
-        if (knows(p) || professions.size() >= Profession.MAX_KNOWN) return false;
-        professions.put(p, new int[]{1, 0});
-        return true;
-    }
-
-    public void forget(Profession p) { professions.remove(p); }
-
-    public int getProfLevel(Profession p) {
-        int[] d = professions.get(p);
-        return d == null ? 0 : d[0];
-    }
-
-    public int getProfXp(Profession p) {
-        int[] d = professions.get(p);
-        return d == null ? 0 : d[1];
-    }
-
-    public void setProfLevel(Profession p, int lvl) {
-        int[] d = professions.get(p);
-        if (d == null) return;
-        d[0] = Math.max(1, Math.min(Profession.MAX_LEVEL, lvl));
-        d[1] = 0;
-    }
-
-    /** @return сколько уровней профессии получено */
-    public int addProfXp(Profession p, int amount) {
-        int[] d = professions.get(p);
-        if (d == null || d[0] >= Profession.MAX_LEVEL) return 0;
-        d[1] += amount;
-        int gained = 0;
-        while (d[0] < Profession.MAX_LEVEL && d[1] >= Profession.xpForNext(d[0])) {
-            d[1] -= Profession.xpForNext(d[0]);
-            d[0]++;
-            gained++;
-        }
-        return gained;
-    }
-
-    // ---------- титулы и счётчики ----------
-
-    public Set<Title> getTitles() { return titles; }
-    public boolean hasTitle(Title t) { return titles.contains(t); }
-
-    /** @return true, если место открыто впервые */
-    public boolean discover(String id) { return found.add(id); }
-
-    public int foundCount() { return found.size(); }
-    public void addTitle(Title t) { titles.add(t); }
-    public void removeTitle(Title t) { titles.remove(t); }
-
-    public int getCounter(Title.Counter c) { return counters.getOrDefault(c, 0); }
-    public void addCounter(Title.Counter c, int n) { counters.merge(c, n, Integer::sum); }
+    /** @return true, если награда по ключу ещё не получена (и теперь отмечена) */
+    public boolean claim(String key) { return claims.add(key); }
+    public boolean claimed(String key) { return claims.contains(key); }
+    public void clearClaims() { claims.clear(); }
 
     // ---------- перезарядки ----------
 
@@ -351,7 +288,7 @@ public class PlayerStats {
         tag.put("spent", st);
         tag.putDouble("mana", mana);
         tag.putBoolean("welcomed", welcomed);
-        if (race != null) tag.putString("race", race.key);
+        tag.putBoolean("kit", kitGiven);
         if (role != null) tag.putString("role", role.key);
         if (playerClass != null) tag.putString("class", playerClass.key);
         ListTag bl = new ListTag();
@@ -363,17 +300,9 @@ public class PlayerStats {
         tag.put("invoked", il);
         tag.putInt("combo", combo);
 
-        CompoundTag prof = new CompoundTag();
-        professions.forEach((p, d) -> prof.putIntArray(p.key, d.clone()));
-        tag.put("professions", prof);
-
-        ListTag tl = new ListTag();
-        for (Title t : titles) tl.add(StringTag.valueOf(t.key));
-        tag.put("titles", tl);
-
-        CompoundTag cnt = new CompoundTag();
-        counters.forEach((c, v) -> cnt.putInt(c.key(), v));
-        tag.put("counters", cnt);
+        ListTag cl = new ListTag();
+        for (String c : claims) cl.add(StringTag.valueOf(c));
+        tag.put("claims", cl);
 
         CompoundTag sty = new CompoundTag();
         styles.forEach((k, v) -> sty.putInt(k.key, v));
@@ -381,13 +310,6 @@ public class PlayerStats {
         ListTag of = new ListTag();
         for (PlayerClass c : offers) of.add(StringTag.valueOf(c.key));
         tag.put("offers", of);
-        CompoundTag rep = new CompoundTag();
-        reputation.forEach((f, v) -> rep.putInt(f.key, v));
-        tag.put("rep", rep);
-        tag.put("quests", quests.save());
-        ListTag fl = new ListTag();
-        for (String f : found) fl.add(StringTag.valueOf(f));
-        tag.put("found", fl);
         return tag;
     }
 
@@ -405,7 +327,7 @@ public class PlayerStats {
         }
         mana = tag.getDouble("mana");
         welcomed = tag.getBoolean("welcomed");
-        race = Race.byKey(tag.getString("race"));
+        kitGiven = tag.getBoolean("kit");
         role = Role.byKey(tag.getString("role"));
         playerClass = PlayerClass.byKey(tag.getString("class"));
         if (role == null && playerClass != null) role = playerClass.role;
@@ -427,30 +349,9 @@ public class PlayerStats {
         // персонажи до 2.15: навыки раскладываются на панель сами
         if (playerClass != null && !tag.contains("bar")) fillBar();
 
-        professions.clear();
-        CompoundTag prof = tag.getCompound("professions");
-        for (String k : prof.getAllKeys()) {
-            Profession p = Profession.byKey(k);
-            int[] d = prof.getIntArray(k);
-            if (p != null && d.length == 2) professions.put(p, d.clone());
-        }
-
-        found.clear();
-        ListTag fl = tag.getList("found", Tag.TAG_STRING);
-        for (int i = 0; i < fl.size(); i++) found.add(fl.getString(i));
-
-        titles.clear();
-        ListTag tl = tag.getList("titles", Tag.TAG_STRING);
-        for (int i = 0; i < tl.size(); i++) {
-            Title t = Title.byKey(tl.getString(i));
-            if (t != null) titles.add(t);
-        }
-
-        counters.clear();
-        CompoundTag cnt = tag.getCompound("counters");
-        for (Title.Counter c : Title.Counter.values()) {
-            if (cnt.contains(c.key())) counters.put(c, cnt.getInt(c.key()));
-        }
+        claims.clear();
+        ListTag cl = tag.getList("claims", Tag.TAG_STRING);
+        for (int i = 0; i < cl.size(); i++) claims.add(cl.getString(i));
 
         styles.clear();
         CompoundTag sty = tag.getCompound("styles");
@@ -461,22 +362,10 @@ public class PlayerStats {
             PlayerClass c = PlayerClass.byKey(of.getString(i));
             if (c != null) offers.add(c);
         }
-        reputation.clear();
-        CompoundTag rep = tag.getCompound("rep");
-        for (var f : com.andrey.litrpg.rep.Faction.values()) if (rep.contains(f.key)) reputation.put(f, rep.getInt(f.key));
         if (tag.contains("gear")) gear.load(tag.getCompound("gear"));
-        quests.load(tag.getCompound("quests"));
     }
 
-    public com.andrey.litrpg.quest.QuestLog quests() { return quests; }
-
     public com.andrey.litrpg.gear.PlayerGear gear() { return gear; }
-
-    // ---------- репутация ----------
-
-    public int getRep(com.andrey.litrpg.rep.Faction f) { return reputation.getOrDefault(f, 0); }
-    public void setRep(com.andrey.litrpg.rep.Faction f, int v) { reputation.put(f, Math.max(-1000, Math.min(1000, v))); }
-    public void addRep(com.andrey.litrpg.rep.Faction f, int v) { setRep(f, getRep(f) + v); }
 
     /** Данные для клиента: сохранение + сводка экипировки. */
     public CompoundTag saveForSync() {

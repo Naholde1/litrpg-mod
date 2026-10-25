@@ -3,7 +3,6 @@ package com.andrey.litrpg.ability;
 import com.andrey.litrpg.entity.ManaBoltEntity;
 import com.andrey.litrpg.entity.ManaBoltEntity.Element;
 import com.andrey.litrpg.stats.PlayerStats;
-import com.andrey.litrpg.stats.Race;
 import com.andrey.litrpg.stats.Stat;
 import com.andrey.litrpg.stats.StatsManager;
 import com.andrey.litrpg.stats.Style;
@@ -168,7 +167,7 @@ public class AbilityHandler {
 
     /** Боевое воскрешение: поднять павшего (дух) рядом сразу, без долгого обряда. */
     private static boolean rez(ServerPlayer p, PlayerStats s, Ability a) {
-        if (!com.andrey.litrpg.entity.BossFight.reviveNear(p, a.radius)) {
+        if (!com.andrey.litrpg.run.Spirits.reviveNear(p, a.radius)) {
             p.displayClientMessage(Component.literal("Рядом нет павших союзников").withStyle(ChatFormatting.YELLOW), true);
             return false;
         }
@@ -266,7 +265,6 @@ public class AbilityHandler {
             default -> 0.7f;
         };
         float v = 4 + s.getStat(a.scale) * k + s.getLevel() * 0.5f;
-        if (s.getRace() == Race.DEMONKIN) v *= 1.1f;
         return v * boost;
     }
 
@@ -1318,14 +1316,14 @@ public class AbilityHandler {
     private static boolean gather(ServerPlayer p, Ability a) {
         int n = 0;
         for (ServerPlayer o : p.serverLevel().players()) {
-            if (o == p || o.distanceToSqr(p) > a.radius * a.radius || !com.andrey.litrpg.party.Party.sameParty(p, o)) continue;
+            if (o == p || o.distanceToSqr(p) > a.radius * a.radius || com.andrey.litrpg.run.Spirits.isSpirit(o)) continue;
             o.teleportTo(p.getX(), p.getY(), p.getZ());
             o.fallDistance = 0;
             applySelf(a, o);
             n++;
         }
         if (n == 0) {
-            p.displayClientMessage(Component.literal("Некого собрать — нужна группа (/party)").withStyle(ChatFormatting.YELLOW), true);
+            p.displayClientMessage(Component.literal("Рядом нет союзников").withStyle(ChatFormatting.YELLOW), true);
             return false;
         }
         ring(p.serverLevel(), p.position().add(0, 0.2, 0), 2.5, ParticleTypes.PORTAL, 40);

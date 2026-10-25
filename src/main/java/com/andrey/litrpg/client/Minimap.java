@@ -3,8 +3,6 @@ package com.andrey.litrpg.client;
 import com.andrey.litrpg.LitRPG;
 import com.andrey.litrpg.client.map.MapCache;
 import com.andrey.litrpg.entity.LitBoss;
-import com.andrey.litrpg.npc.RaceNpcEntity;
-import com.andrey.litrpg.world.map.WorldMap;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -182,15 +180,6 @@ public class Minimap {
         }
         RenderSystem.disableBlend();
 
-        // значки Мира Системы: города, подземелья, чудеса, поселения
-        if (systemWorld(mc)) {
-            for (WorldMap.Poi p : WorldMap.get().pois) {
-                float ix = cx + (float) ((p.x() - wx) * scale), iy = cy + (float) ((p.z() - wz) * scale);
-                if (!inside(ix, iy, cx, cy, r - 3, x, y, size)) continue;
-                poiIcon(g, p.type(), Math.round(ix), Math.round(iy));
-            }
-        }
-
         // существа
         for (Entity e : mc.level.entitiesForRendering()) {
             if (e == mc.player || !(e instanceof LivingEntity le) || !le.isAlive() || e.isInvisible()) continue;
@@ -201,7 +190,7 @@ public class Minimap {
             if (e instanceof Player) arrow(m, ix, iz, e.getYRot(), 0.75f, 0xFF4FC3F7);
             else if (e instanceof LitBoss) dot(g, ix, iz, 3, 0xFFE040FB);
             else if (e instanceof Enemy) dot(g, ix, iz, 2, 0xFFFF4A3D);
-            else if (e instanceof RaceNpcEntity npc) dot(g, ix, iz, 1, npc.npcType().outlaw() ? 0xFFFF4A3D : 0xFFFFD54F);
+            else if (e instanceof com.andrey.litrpg.run.TraderEntity) dot(g, ix, iz, 1, 0xFFFFD54F);
             else if (e instanceof Animal || e instanceof com.andrey.litrpg.entity.wild.WildMob) dot(g, ix, iz, 1, 0xFFC8F0B0);
         }
 
@@ -264,11 +253,9 @@ public class Minimap {
         String time = (night ? "☾ " : "☀ ") + String.format("%02d:%02d", hh, mm);
         String danger = null;
         int dangerColor = 0xFFB0BEC5;
-        if (systemWorld(mc)) {
-            int lv = WorldMap.get().levelAt(p.getX(), p.getZ());
-            int diff = lv - ClientData.STATS.getLevel();
-            danger = "Земли ур. " + lv;
-            dangerColor = diff <= -4 ? 0xFF8BC34A : diff <= 3 ? 0xFFFFE082 : diff <= 7 ? 0xFFFFA040 : 0xFFFF5040;
+        if (ClientData.stage > 0 && ClientData.stage <= 5) {
+            danger = "Этап " + ClientData.stage + " · ур. " + (ClientData.stage == 1 ? 1 : (ClientData.stage - 1) * 10) + "–" + ClientData.stage * 10;
+            dangerColor = 0xFFFFE082;
         }
         int lines = danger == null ? 3 : 4;
         int h = lines * 10 + 3;

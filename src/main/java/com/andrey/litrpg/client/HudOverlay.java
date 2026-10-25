@@ -65,11 +65,13 @@ public class HudOverlay {
         var cls = s.getPlayerClass();
         int accent = cls != null ? cls.color : 0x4FC3F7;
         int slots = cls == null ? Ability.NOVICE.length : Ability.BAR;
-        for (int i = 0; i < slots; i++) {
-            Ability a = s.barSkill(i);
-            int sx = ax + i * (slot + 4);
-            String key = ModKeys.ABILITIES[i].getTranslatedKeyMessage().getString();
-            if (key.length() > 2) key = key.substring(0, 1);
+        for (int i = 0; i <= slots; i++) {
+            boolean dash = i == slots;
+            Ability a = s.barSkill(dash ? Ability.DASH_SLOT : i);
+            int sx = ax + i * (slot + 4) + (dash ? 6 : 0);
+            String key = (dash ? ModKeys.DASH : ModKeys.ABILITIES[i]).getTranslatedKeyMessage().getString();
+            if (dash && key.toLowerCase().contains("alt")) key = "Alt";
+            if (key.length() > 3) key = key.substring(0, 1);
             g.drawString(font, key, sx + 1, ay - 9, 0xFFBBBBBB);
             g.fill(sx - 1, ay - 1, sx + slot + 1, ay + slot + 1, 0xFF000000);
             if (a == null) {
@@ -133,21 +135,53 @@ public class HudOverlay {
         };
     }
 
-    /** Панель группы: имена, уровни, здоровье и мана товарищей. */
+    /**
+     * Рамки группы (как в рейде): номер для Ctrl+1…5, роль, имя, здоровье с щитом, мана.
+     * Выбранный союзник (цель таргетных лечений) — в золотой рамке; дух — серый крест.
+     */
     private static void party(GuiGraphics g, Font font, int y) {
         var list = ClientData.party;
-        if (list.isEmpty()) return;
-        int x = 6, w = 110;
-        g.drawString(font, "ГРУППА", x, y, UiKit.FRAME, false);
-        y += 10;
-        for (var m : list) {
-            g.fill(x - 2, y - 2, x + w + 2, y + 20, 0x90050A12);
-            g.drawString(font, m.name(), x, y, 0xFF000000 | m.color(), false);
-            String lv = String.valueOf(m.level());
-            g.drawString(font, lv, x + w - font.width(lv), y, UiKit.GOLD, false);
-            UiKit.bar(g, x, y + 10, w, 4, m.hp() / Math.max(1f, m.maxHp()), 0xFF2A0A0A, 0xFFD03A3A);
-            UiKit.bar(g, x, y + 15, w, 2, m.mana(), 0xFF1A2340, 0xFF3D8BFF);
-            y += 25;
+        if (list.size() <= 1 && ClientData.stage == 0 && list.stream().noneMatch(m -> m.hp() < m.maxHp())) {
+            if (list.isEmpty()) return;
+        }
+        int x = 6, w = 128, h = 25;
+        g.drawString(font, "ГРУППА  (Ctrl+1…5 — выбрать)", x, y, UiKit.FRAME, false);
+        y += 11;
+        for (int i = 0; i < list.size(); i++) {
+            var m = list.get(i);
+            boolean spirit = (m.flags() & 1) != 0, fight = (m.flags() & 2) != 0;
+            boolean focus = m.id().equals(ClientData.focus);
+            g.fill(x - 2, y - 2, x + w + 2, y + h - 1, focus ? 0xC0302810 : 0xA0050A12);
+            UiKit.frame(g, x - 2, y - 2, w + 4, h + 1, focus ? 0xFFFFD54F : fight ? 0xFF6A2A2A : 0xFF1E3A4A);
+            String num = String.valueOf(i + 1);
+            g.drawString(font, num, x, y, 0xFF8AA4B8, false);
+            int roleColor = switch (m.role()) {
+                case 1 -> 0xFF5DADE2;
+                case 2 -> 0xFFE74C3C;
+                case 3 -> 0xFF58D68D;
+                default -> 0xFF8A8A8A;
+            };
+            String roleIcon = switch (m.role()) {
+                case 1 -> "⛨";
+                case 2 -> "⚔";
+                case 3 -> "✚";
+                default -> "·";
+            };
+            g.drawString(font, roleIcon, x + 8, y, roleColor, false);
+            String name = m.name();
+            if (font.width(name) > w - 44) name = font.plainSubstrByWidth(name, w - 48) + "…";
+            g.drawString(font, name, x + 18, y, spirit ? 0xFF808080 : 0xFF000000 | m.color(), false);
+            float frac = spirit ? 0 : m.hp() / Math.max(1f, m.maxHp());
+            String pct = spirit ? "✝" : Math.round(frac * 100) + "%";
+            g.drawString(font, pct, x + w - font.width(pct), y, spirit ? 0xFFB0B0B0 : frac < 0.35f ? 0xFFFF5050 : 0xFFE0E0E0, false);
+            int hpColor = frac > 0.6f ? 0xFF3CB043 : frac > 0.3f ? 0xFFD8B02A : 0xFFD03A3A;
+            UiKit.bar(g, x, y + 10, w, 6, frac, 0xFF201010, hpColor);
+            if (m.absorb() > 0 && !spirit) {
+                int aw = (int) Math.min(w, w * m.absorb() / Math.max(1f, m.maxHp()));
+                g.fill(x, y + 10, x + aw, y + 12, 0xD0FFFFFF);
+            }
+            UiKit.bar(g, x, y + 18, w, 2, spirit ? 0 : m.mana(), 0xFF1A2340, 0xFF3D8BFF);
+            y += h + 3;
         }
     }
 

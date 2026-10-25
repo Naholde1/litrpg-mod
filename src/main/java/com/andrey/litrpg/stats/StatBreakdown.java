@@ -70,10 +70,6 @@ public final class StatBreakdown {
 
     public static final String[] STAT_NAMES = {"Сила", "Ловкость", "Выносливость", "Интеллект", "Удача"};
 
-    private static Component race(PlayerStats s) {
-        return Component.literal("Раса: ").append(Component.translatable(s.getRace().nameKey()));
-    }
-
     private static Component cls(PlayerStats s) {
         return Component.literal("Класс: ").append(Component.translatable(s.getPlayerClass().nameKey()));
     }
@@ -87,12 +83,8 @@ public final class StatBreakdown {
     public static Value stat(PlayerStats s, Stat st) {
         Value v = new Value(STAT_NAMES[st.ordinal()], "%.0f");
         v.add("Вложенные очки", s.getSpent(st));
-        if (s.getRace() != null) v.add(race(s), s.getRace().bonus(st));
         if (s.getPlayerClass() != null) v.add(Component.literal("Рост класса (").append(Component.translatable(s.getPlayerClass().nameKey()))
                 .append(", ур. " + s.getLevel() + ")"), s.getPlayerClass().growth(st, s.getLevel()));
-        int titles = 0;
-        for (Title t : s.getTitles()) titles += t.bonus(st);
-        v.add("Титулы (" + s.getTitles().size() + ")", titles);
         v.add("Экипировка и наборы", s.gear().stats[st.ordinal()]);
         v.floor = 0;
         return v;
@@ -107,8 +99,6 @@ public final class StatBreakdown {
         v.add("База", 20);
         v.add("Выносливость ×2", s.getStat(Stat.VITALITY) * 2.0);
         v.add("Уровень (+1 за уровень)", lvl - 1);
-        if (s.getRace() == Race.ORC) v.add(race(s), 4);
-        if (s.getRace() == Race.DWARF) v.add(race(s), 2);
         int tank = tankWeight(s);
         if (tank > 0) v.add(cls(s), tank * (1 + lvl * 0.15));
         v.add("Экипировка", s.gear().get(GearBonus.HEALTH));
@@ -142,7 +132,6 @@ public final class StatBreakdown {
     public static Value moveSpeed(PlayerStats s) {
         Value v = new Value("Скорость бега", "+%.0f%%");
         v.add("Ловкость ×0.6% (до 50%)", Math.min(s.getStat(Stat.AGILITY) * 0.6, 50));
-        if (s.getRace() == Race.BEASTKIN) v.add(race(s), 8);
         v.add("Экипировка", s.gear().get(GearBonus.MOVE_SPEED));
         return v;
     }
@@ -177,7 +166,6 @@ public final class StatBreakdown {
         Value v = new Value("Уклонение", "%.1f%%");
         v.add("Ловкость ×0.3%", s.getStat(Stat.AGILITY) * 0.3);
         v.add("Удача ×0.2%", s.getStat(Stat.LUCK) * 0.2);
-        if (s.getRace() == Race.BEASTKIN) v.add(race(s), 4);
         int st = styleWeight(s, Style.STEALTH);
         if (st > 0) v.add(cls(s), st * 1.5);
         v.add("Экипировка", s.gear().get(GearBonus.DODGE));
@@ -204,10 +192,6 @@ public final class StatBreakdown {
         v.add("Интеллект ×0.12", s.getStat(Stat.INTELLIGENCE) * 0.12);
         v.add("Уровень ×0.04", s.getLevel() * 0.04);
         double mult = 1;
-        if (s.getRace() == Race.ELF) {
-            v.add(Component.literal("Раса: ").append(Component.translatable(s.getRace().nameKey())).append(" (×1.3)"), base * 0.3);
-            mult = 1.3;
-        }
         v.add("Экипировка (+" + Math.round(s.gear().get(GearBonus.MANA_REGEN)) + "%)",
                 base * mult * s.gear().get(GearBonus.MANA_REGEN) / 100.0);
         return v;
@@ -215,7 +199,6 @@ public final class StatBreakdown {
 
     public static Value xpBonus(PlayerStats s) {
         Value v = new Value("Бонус опыта", "+%.0f%%");
-        if (s.getRace() == Race.HUMAN) v.add(race(s), 10);
         v.add("Экипировка", s.gear().get(GearBonus.XP));
         return v;
     }
@@ -231,7 +214,6 @@ public final class StatBreakdown {
     public static Value spellPower(PlayerStats s) {
         Value v = new Value("Сила навыков", "+%.0f%%");
         v.add("Экипировка", s.gear().get(GearBonus.SPELL_POWER));
-        if (s.getRace() == Race.DEMONKIN) v.add(race(s), 10);
         v.note = "Основа силы навыка: 4 + характеристика навыка × 0.6–0.8 + уровень × 0.5.";
         return v;
     }

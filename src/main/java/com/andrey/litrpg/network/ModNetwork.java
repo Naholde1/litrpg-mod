@@ -6,7 +6,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public class ModNetwork {
-    private static final String VERSION = "12";
+    private static final String VERSION = "30";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             LitRPG.id("main"), () -> VERSION, VERSION::equals, VERSION::equals);
 
@@ -27,9 +27,6 @@ public class ModNetwork {
         CHANNEL.messageBuilder(ChooseOriginPacket.class, id++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(ChooseOriginPacket::encode).decoder(ChooseOriginPacket::new)
                 .consumerMainThread(ChooseOriginPacket::handle).add();
-        CHANNEL.messageBuilder(ProfessionPacket.class, id++, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(ProfessionPacket::encode).decoder(ProfessionPacket::new)
-                .consumerMainThread(ProfessionPacket::handle).add();
         CHANNEL.messageBuilder(OpenClassChoicePacket.class, id++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(OpenClassChoicePacket::encode).decoder(OpenClassChoicePacket::new)
                 .consumerMainThread(OpenClassChoicePacket::handle).add();
@@ -39,32 +36,26 @@ public class ModNetwork {
         CHANNEL.messageBuilder(ManaPacket.class, id++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(ManaPacket::encode).decoder(ManaPacket::new)
                 .consumerMainThread(ManaPacket::handle).add();
-        CHANNEL.messageBuilder(PartyPacket.class, id++, NetworkDirection.PLAY_TO_CLIENT)
-                .encoder(PartyPacket::encode).decoder(PartyPacket::new)
-                .consumerMainThread(PartyPacket::handle).add();
-        CHANNEL.messageBuilder(RacesPacket.class, id++, NetworkDirection.PLAY_TO_CLIENT)
-                .encoder(RacesPacket::encode).decoder(RacesPacket::new)
-                .consumerMainThread(RacesPacket::handle).add();
-        CHANNEL.messageBuilder(QuestActionPacket.class, id++, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(QuestActionPacket::encode).decoder(QuestActionPacket::new)
-                .consumerMainThread(QuestActionPacket::handle).add();
-        CHANNEL.messageBuilder(OpenQuestsPacket.class, id++, NetworkDirection.PLAY_TO_CLIENT)
-                .encoder(OpenQuestsPacket::encode).decoder(OpenQuestsPacket::new)
-                .consumerMainThread(OpenQuestsPacket::handle).add();
-        CHANNEL.messageBuilder(WaypointPacket.class, id++, NetworkDirection.PLAY_TO_CLIENT)
-                .encoder(WaypointPacket::encode).decoder(WaypointPacket::new)
-                .consumerMainThread(WaypointPacket::handle).add();
         CHANNEL.messageBuilder(ThreatPacket.class, id++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(ThreatPacket::encode).decoder(ThreatPacket::new)
                 .consumerMainThread(ThreatPacket::handle).add();
-        CHANNEL.messageBuilder(OpenServicePacket.class, id++, NetworkDirection.PLAY_TO_CLIENT)
-                .encoder(OpenServicePacket::encode).decoder(OpenServicePacket::new)
-                .consumerMainThread(OpenServicePacket::handle).add();
-        CHANNEL.messageBuilder(ServicePacket.class, id++, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(ServicePacket::encode).decoder(ServicePacket::new)
-                .consumerMainThread(ServicePacket::handle).add();
         CHANNEL.messageBuilder(SetBarPacket.class, id++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(SetBarPacket::encode).decoder(SetBarPacket::new)
                 .consumerMainThread(SetBarPacket::handle).add();
+        CHANNEL.messageBuilder(OpenShopPacket.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(OpenShopPacket::encode).decoder(OpenShopPacket::new)
+                .consumerMainThread(OpenShopPacket::handle).add();
+        CHANNEL.messageBuilder(BuyPacket.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(BuyPacket::encode).decoder(BuyPacket::new)
+                .consumerMainThread(BuyPacket::handle).add();
+        CHANNEL.messageBuilder(PartyPacket.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(PartyPacket::encode).decoder(PartyPacket::new)
+                .consumerMainThread(PartyPacket::handle).add();
+        CHANNEL.messageBuilder(FocusPacket.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(FocusPacket::encode).decoder(FocusPacket::new)
+                .consumerMainThread(FocusPacket::handle).add();
+        CHANNEL.messageBuilder(FxPacket.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(FxPacket::encode).decoder(FxPacket::new)
+                .consumerMainThread(FxPacket::handle).add();
     }
 }

@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.Mod;
 public class ClientForgeEvents {
 
     /**
-     * Мир Системы использует свой генератор, и Майнкрафт помечает такие миры как
+     * Подземелье — своё измерение, и Майнкрафт помечает такие миры как
      * «экспериментальные»: при создании и при входе висит окно-предупреждение.
      * Подтверждаем его сами — это ожидаемо для мира мода.
      */
@@ -50,7 +50,7 @@ public class ClientForgeEvents {
         Minimap.tick(mc);
 
         while (ModKeys.CHARACTER.consumeClick()) {
-            if (ClientData.received && (!ClientData.STATS.hasOrigin() || ClientData.STATS.getRole() == null && !ClientData.STATS.hasClass())) mc.setScreen(new OriginScreen());
+            if (ClientData.received && ClientData.STATS.getRole() == null) mc.setScreen(new OriginScreen());
             else if (ClientData.received && ClientData.STATS.canChooseClass() && !ClientData.STATS.getOffers().isEmpty()) mc.setScreen(new ClassChoiceScreen());
             else mc.setScreen(new CharacterScreen());
         }
@@ -64,6 +64,23 @@ public class ClientForgeEvents {
         for (int i = 0; i < ModKeys.ABILITIES.length; i++) {
             while (ModKeys.ABILITIES[i].consumeClick()) {
                 ModNetwork.CHANNEL.sendToServer(new UseAbilityPacket(i));
+            }
+        }
+        while (ModKeys.DASH.consumeClick()) {
+            ModNetwork.CHANNEL.sendToServer(new UseAbilityPacket(com.andrey.litrpg.ability.Ability.DASH_SLOT));
+        }
+        for (int i = 0; i < ModKeys.FOCUS.length; i++) {
+            while (ModKeys.FOCUS[i].consumeClick()) {
+                java.util.UUID id = null;
+                if (i < 5 && i < ClientData.party.size()) id = ClientData.party.get(i).id();
+                if (id != null && id.equals(ClientData.focus)) id = null; // повторное нажатие — снять
+                ClientData.focus = id;
+                ModNetwork.CHANNEL.sendToServer(new com.andrey.litrpg.network.FocusPacket(id == null ? new java.util.UUID(0, 0) : id));
+                if (mc.player != null) {
+                    String who = id == null ? "по взгляду" : ClientData.party.get(i).name();
+                    mc.player.displayClientMessage(net.minecraft.network.chat.Component.literal("Цель союзных навыков: " + who)
+                            .withStyle(net.minecraft.ChatFormatting.GREEN), true);
+                }
             }
         }
     }
@@ -83,8 +100,6 @@ public class ClientForgeEvents {
                 if (what.startsWith("char")) {
                     CharacterScreen.setTab(Integer.parseInt(what.substring(4).trim()));
                     mc.setScreen(new CharacterScreen());
-                } else if (what.equals("atlas")) {
-                    mc.setScreen(new AtlasScreen());
                 } else if (what.equals("map")) {
                     mc.setScreen(new WorldMapScreen());
                 } else if (what.equals("zoom")) {
@@ -110,6 +125,7 @@ public class ClientForgeEvents {
     public static void onLogout(ClientPlayerNetworkEvent.LoggingOut event) {
         ClientData.received = false;
         ClientData.party = java.util.List.of();
+        ClientData.focus = null;
         Waypoints.clearLoaded();
         com.andrey.litrpg.client.map.MapCache.reset();
     }

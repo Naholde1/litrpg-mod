@@ -6,11 +6,9 @@ import net.minecraft.client.Minecraft;
 public final class ClientPackets {
     private ClientPackets() {}
 
-    public static void openQuestBoard(String board, String faction, String npcName, String workshop, int entityId) {
-        Minecraft.getInstance().setScreen(new QuestBoardScreen(board, faction, npcName, workshop, entityId));
-    }
-
-    public static void openService(com.andrey.litrpg.network.OpenServicePacket data) {
-        Minecraft.getInstance().setScreen(new ServiceScreen(data));
+    public static void openShop(com.andrey.litrpg.network.OpenShopPacket data) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.screen instanceof ShopScreen s && s.entityId == data.entityId) s.refresh(data);
+        else mc.setScreen(new ShopScreen(data));
     }
 }

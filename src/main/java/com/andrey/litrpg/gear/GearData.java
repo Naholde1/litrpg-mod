@@ -3,7 +3,7 @@ package com.andrey.litrpg.gear;
 import com.andrey.litrpg.ability.Ability;
 import com.andrey.litrpg.item.GearSetArmorItem;
 import com.andrey.litrpg.item.JewelryItem;
-import com.andrey.litrpg.item.LichStaffItem;
+import com.andrey.litrpg.item.StaffItem;
 import com.andrey.litrpg.stats.Stat;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -49,7 +49,7 @@ public final class GearData {
         if (item instanceof JewelryItem) return Category.JEWEL;
         if (item instanceof ArmorItem || item instanceof ShieldItem) return Category.ARMOR;
         if (item instanceof TieredItem || item instanceof BowItem || item instanceof CrossbowItem
-                || item instanceof TridentItem || item instanceof LichStaffItem) return Category.WEAPON;
+                || item instanceof TridentItem || item instanceof StaffItem) return Category.WEAPON;
         return null;
     }
 

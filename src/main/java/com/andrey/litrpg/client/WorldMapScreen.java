@@ -2,7 +2,6 @@ package com.andrey.litrpg.client;
 
 import com.andrey.litrpg.client.map.MapCache;
 import com.andrey.litrpg.entity.LitBoss;
-import com.andrey.litrpg.world.map.WorldMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -19,7 +18,7 @@ import java.util.List;
 
 /**
  * Карта мира в духе JourneyMap: всё разведанное (память карты хранится на диске),
- * ЛКМ — тянуть, колесо — масштаб, ПКМ — метка, Пробел — к себе, Tab — атлас.
+ * ЛКМ — тянуть, колесо — масштаб, ПКМ — метка, Пробел — к себе.
  * В Мире Системы — города, подземелья, чудеса и поселения с названиями.
  */
 public class WorldMapScreen extends Screen {
@@ -103,25 +102,6 @@ public class WorldMapScreen extends Screen {
         }
 
         List<Component> tip = new ArrayList<>();
-        // места Мира Системы
-        if (Minimap.systemWorld(mc) && !MapCache.caveLayer()) {
-            for (WorldMap.Poi p : WorldMap.get().pois) {
-                if (p.type().startsWith("nether") || p.type().equals("spawn")) continue;
-                boolean big = !java.util.Set.of("village", "farm", "hamlet", "fishing", "lumber", "caravan", "outpost", "ruins", "camp").contains(p.type());
-                if (!big && scale < 0.25) continue;
-                int x = sx(p.x()), z = sz(p.z());
-                if (x < -40 || z < top - 20 || x > width + 40 || z > bottom + 20) continue;
-                Minimap.poiIcon(g, p.type(), x, z);
-                if (p.type().equals("city") || scale >= 1.0 && big) {
-                    String n = p.name();
-                    g.drawString(font, n, x - font.width(n) / 2, z + 7, p.type().equals("city") ? 0xFFFFE0A0 : 0xFFE0C0FF);
-                }
-                if (Math.abs(mouseX - x) <= 4 && Math.abs(mouseY - z) <= 4) {
-                    tip.add(Component.literal(p.name()).withStyle(s -> s.withColor(0xFFE8B0)));
-                    tip.add(Component.literal("X " + p.x() + ", Z " + p.z()).withStyle(s -> s.withColor(0xB0A080)));
-                }
-            }
-        }
         // существа рядом
         for (Entity e : mc.level.entitiesForRendering()) {
             if (e == mc.player || e.isInvisible()) continue;
@@ -159,10 +139,9 @@ public class WorldMapScreen extends Screen {
                 c += "  •  " + mc.level.getBiome(new BlockPos(x, mc.player.getBlockY(), z)).unwrapKey()
                         .map(k -> Component.translatable("biome." + k.location().getNamespace() + "." + k.location().getPath()).getString()).orElse("");
             }
-            if (Minimap.systemWorld(mc)) c += "  •  земли ур. " + WorldMap.get().levelAt(x, z);
             g.drawString(font, c, 8, bottom + 4, 0xFFE8E8E8);
         }
-        String help = "ЛКМ — двигать • колесо — масштаб • ПКМ — метка • Пробел — к себе • Tab — атлас • N — масштаб мини-карты";
+        String help = "ЛКМ — двигать • колесо — масштаб • ПКМ — метка • Пробел — к себе • N — масштаб мини-карты";
         g.drawString(font, help, width - font.width(help) - 8, bottom + 4, 0xFF8A8070);
 
         super.render(g, mouseX, mouseY, pt);
@@ -226,10 +205,6 @@ public class WorldMapScreen extends Screen {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (ModKeys.WORLD_MAP.matches(keyCode, scanCode)) {
             onClose();
-            return true;
-        }
-        if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_TAB) {
-            minecraft.setScreen(new AtlasScreen());
             return true;
         }
         if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE && minecraft.player != null) {

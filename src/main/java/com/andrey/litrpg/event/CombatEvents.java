@@ -3,10 +3,8 @@ package com.andrey.litrpg.event;
 import com.andrey.litrpg.LitRPG;
 import com.andrey.litrpg.ability.Ability;
 import com.andrey.litrpg.ability.AbilityHandler;
-import com.andrey.litrpg.registry.ModItems;
 import com.andrey.litrpg.stats.PlayerClass;
 import com.andrey.litrpg.stats.PlayerStats;
-import com.andrey.litrpg.stats.Race;
 import com.andrey.litrpg.stats.Stat;
 import com.andrey.litrpg.stats.StatsManager;
 import com.andrey.litrpg.stats.Style;
@@ -20,17 +18,12 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
@@ -124,8 +117,6 @@ public class CombatEvents {
         // ---------- игрок получает урон ----------
         if (target instanceof ServerPlayer victim) {
             PlayerStats vs = StatsManager.get(victim);
-            if (src.is(DamageTypes.FALL) && vs.getRace() == Race.BEASTKIN) amount *= 0.5f;
-            if (src.is(DamageTypeTags.IS_FIRE) && vs.getRace() == Race.DEMONKIN) amount *= 0.5f;
             if (src.getEntity() instanceof LivingEntity attacker && !(attacker instanceof Player)) {
                 amount *= incomingMult(vs.getLevel(), MobLevels.getLevel(attacker));
                 if (victim.getPersistentData().getLong(AbilityHandler.REFLECT_TAG) > victim.level().getGameTime()) {
@@ -152,8 +143,6 @@ public class CombatEvents {
         boolean melee = src.getDirectEntity() == player;
         boolean arrow = src.getDirectEntity() instanceof AbstractArrow;
 
-        if (s.getRace() == Race.ORC && melee && player.getHealth() < player.getMaxHealth() * 0.5f) amount *= 1.2f;
-        if (s.getRace() == Race.ELF && arrow) amount *= 1.15f;
         if (arrow) amount *= 1f + 0.07f * classWeight(s, Style.RANGED);
 
         long markedUntil = target.getPersistentData().getLong(AbilityHandler.MARK_TAG);
@@ -194,31 +183,16 @@ public class CombatEvents {
         }
     }
 
+    /** Монстры подземелья не роняют ванильную добычу (личная добыча — run/RunLoot). */
     @SubscribeEvent
     public static void onDrops(LivingDropsEvent event) {
-        LivingEntity dead = event.getEntity();
-        if (!(dead instanceof Enemy) && !(dead instanceof com.andrey.litrpg.npc.RaceNpcEntity)) return;
-        ServerPlayer player = com.andrey.litrpg.party.DamageTracker.topContributor(dead, event.getSource());
-        if (player == null) return;
-        for (ItemStack gear : com.andrey.litrpg.gear.LootRolls.mobDrops(dead, player)) drop(event, dead, gear);
-        MobLevels.Rank rank = MobLevels.getRank(dead);
-        float luck = StatsManager.get(player).getStat(Stat.LUCK) * 0.004f;
-        var rnd = dead.getRandom();
-        int lvl = MobLevels.getLevel(dead);
-        // «серые» мобы (на 5+ уровней ниже самого сильного из бивших) ценного не роняют
-        if (com.andrey.litrpg.gear.LootRolls.killerLevel(dead, player) - lvl >= 5) return;
-        if (rank == MobLevels.Rank.ELITE) {
-            drop(event, dead, new ItemStack(Items.GOLD_NUGGET, 2 + rnd.nextInt(5)));
-            if (rnd.nextFloat() < 0.3f + luck) drop(event, dead, new ItemStack(ModItems.MANA_POTION.get()));
-            if (rnd.nextFloat() < 0.15f + luck) drop(event, dead, new ItemStack(ModItems.SOUL_SHARD.get()));
-        } else if (rank == MobLevels.Rank.CHAMPION) {
-            drop(event, dead, new ItemStack(Items.EMERALD, 1 + rnd.nextInt(3)));
-            drop(event, dead, new ItemStack(ModItems.SOUL_SHARD.get(), 1 + rnd.nextInt(2)));
-            if (rnd.nextFloat() < 0.35f + luck) drop(event, dead, new ItemStack(ModItems.TOME_OF_EXPERIENCE.get()));
-            if (rnd.nextFloat() < 0.10f + luck) drop(event, dead, new ItemStack(ModItems.SCROLL_OF_OBLIVION.get()));
-        } else if (rnd.nextFloat() < 0.02f + luck + lvl * 0.0005f) {
-            drop(event, dead, new ItemStack(ModItems.SOUL_SHARD.get()));
-        }
+        if (event.getEntity() instanceof Player) return;
+        if (com.andrey.litrpg.run.Run.inDungeon(event.getEntity())) event.getDrops().clear();
+    }
+
+    @SubscribeEvent
+    public static void onXpDrop(net.minecraftforge.event.entity.living.LivingExperienceDropEvent event) {
+        if (com.andrey.litrpg.run.Run.inDungeon(event.getEntity())) event.setCanceled(true);
     }
 
     /** Заряды оружия от навыков (яд, огонь, вампиризм…). */
@@ -258,10 +232,6 @@ public class CombatEvents {
         }
         data.putInt(AbilityHandler.ONHIT_COUNT_TAG, charges - 1);
         return amount;
-    }
-
-    private static void drop(LivingDropsEvent event, LivingEntity dead, ItemStack stack) {
-        event.getDrops().add(new ItemEntity(dead.level(), dead.getX(), dead.getY() + 0.5, dead.getZ(), stack));
     }
 
     /** Отражение урона шипами — откладываем на тик, чтобы не войти в рекурсию урона. */

@@ -3,16 +3,13 @@ package com.andrey.litrpg.client;
 import com.andrey.litrpg.ability.Ability;
 import com.andrey.litrpg.event.CombatEvents;
 import com.andrey.litrpg.network.ModNetwork;
-import com.andrey.litrpg.network.ProfessionPacket;
 import com.andrey.litrpg.network.SpendPointPacket;
 import com.andrey.litrpg.stats.ClassOffers;
 import com.andrey.litrpg.stats.PlayerClass;
 import com.andrey.litrpg.stats.PlayerStats;
 import com.andrey.litrpg.stats.Style;
 import java.util.Map;
-import com.andrey.litrpg.stats.Profession;
 import com.andrey.litrpg.stats.Stat;
-import com.andrey.litrpg.stats.Title;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -24,14 +21,11 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Окно персонажа с вкладками: Статус, Навыки, Профессии, Титулы. */
+/** Окно персонажа с вкладками: Статус, Навыки, Расчёт. */
 public class CharacterScreen extends SystemScreen {
-    private static final String[] TABS = {"Статус", "Навыки", "Профессии", "Титулы", "Репутация", "Задания", "Расчёт"};
+    private static final String[] TABS = {"Статус", "Навыки", "Расчёт"};
 
     private static int tab = 0;
-    private int titleScroll = 0;
-    private int repScroll = 0;
-    private int questScroll = 0;
     private int calcScroll = 0;
     private final List<Hit> hits = new ArrayList<>();
     private Component tooltip;
@@ -59,7 +53,7 @@ public class CharacterScreen extends SystemScreen {
             boolean hov = UiKit.inside(mx, my, tx, top + 21, tw, 15);
             UiKit.tile(g, font, tx, top + 21, tw, 15, TABS[i], tab == i, hov, 0x4FC3F7);
             final int idx = i;
-            hits.add(new Hit(tx, top + 21, tw, 15, () -> { tab = idx; titleScroll = 0; }));
+            hits.add(new Hit(tx, top + 21, tw, 15, () -> { tab = idx; calcScroll = 0; }));
             tx += tw + 4;
         }
 
@@ -68,11 +62,7 @@ public class CharacterScreen extends SystemScreen {
         switch (tab) {
             case 0 -> status(g, s, cx, cy, mx, my);
             case 1 -> skills(g, s, cx, cy, mx, my);
-            case 2 -> professions(g, s, cx, cy, mx, my);
-            case 3 -> titles(g, s, cx, cy, mx, my);
-            case 4 -> reputation(g, s, cx, cy, mx, my);
-            case 5 -> quests(g, s, cx, cy, mx, my);
-            case 6 -> calc(g, s, cx, cy, mx, my);
+            case 2 -> calc(g, s, cx, cy, mx, my);
         }
 
         if (tooltip != null) g.renderTooltip(font, font.split(tooltip, 220), mx, my);
@@ -84,7 +74,7 @@ public class CharacterScreen extends SystemScreen {
         Minecraft mc = Minecraft.getInstance();
         String name = mc.player != null ? mc.player.getGameProfile().getName() : "?";
         g.drawString(font, name, x, y, 0xFFFFFFFF, false);
-        String origin = (s.getRace() == null ? "—" : Component.translatable(s.getRace().nameKey()).getString())
+        String origin = (s.getRole() == null ? "—" : s.getRole().title)
                 + " • " + (s.getPlayerClass() == null ? "Новичок" : Component.translatable(s.getPlayerClass().nameKey()).getString());
         g.drawString(font, origin, x, y + 11, s.getPlayerClass() == null ? UiKit.TEXT : 0xFF000000 | s.getPlayerClass().color, false);
         g.drawString(font, "Уровень " + s.getLevel(), x, y + 22, UiKit.GOLD, false);
@@ -139,9 +129,8 @@ public class CharacterScreen extends SystemScreen {
         int[] colors = {0xFFFF6B6B, 0xFFE05A47, 0xFFBBBBBB, 0xFF5AA0F0, 0xFFFFD54F, 0xFF5BD16A, 0xFF5BD16A};
         for (int i = 0; i < lines.length; i++) g.drawString(font, lines[i], dx, dy + i * 11, colors[i], false);
 
-        if (s.getRace() != null) {
-            UiKit.wrapped(g, font, Component.literal("✦ ").append(Component.translatable(s.getRace().passiveKey())),
-                    x, top + H - 24, W - 20, 0xFFB8E0FF);
+        if (s.getRole() != null) {
+            UiKit.wrapped(g, font, Component.literal("✦ Роль: " + s.getRole().perk), x, top + H - 24, W - 20, 0xFFB8E0FF);
         }
     }
 
@@ -366,104 +355,12 @@ public class CharacterScreen extends SystemScreen {
         };
     }
 
-    // ---------------- Профессии ----------------
-
-    private void professions(GuiGraphics g, PlayerStats s, int x, int y, int mx, int my) {
-        g.drawString(font, "Освоено: " + s.getProfessions().size() + " / " + Profession.MAX_KNOWN
-                + "   (Shift + клик по «Забыть» — сбросить профессию)", x, y, UiKit.MUTED, false);
-        Profession[] all = Profession.values();
-        for (int i = 0; i < all.length; i++) {
-            Profession p = all[i];
-            int ry = y + 14 + i * 36;
-            boolean known = s.knows(p);
-            g.fill(x, ry, x + W - 20, ry + 32, known ? 0x80183A52 : 0x600C1824);
-            UiKit.frame(g, x, ry, W - 20, 32, known ? (0xFF000000 | p.color) : UiKit.FRAME_DIM);
-            g.drawString(font, Component.translatable(p.nameKey()), x + 6, ry + 4, 0xFF000000 | p.color, false);
-            UiKit.wrapped(g, font, Component.translatable(p.descKey()), x + 6, ry + 15, W - 120, UiKit.MUTED);
-            int bx = x + W - 92;
-            if (known) {
-                int lvl = s.getProfLevel(p);
-                g.drawString(font, "Ур. " + lvl, bx - 40, ry + 4, UiKit.GOLD, false);
-                UiKit.bar(g, bx - 40, ry + 15, 34, 4, lvl >= Profession.MAX_LEVEL ? 1f
-                        : s.getProfXp(p) / (float) Profession.xpForNext(lvl), 0xFF2A2A2A, 0xFF000000 | p.color);
-                button(g, bx, ry + 8, 64, 16, "Забыть", mx, my, 0xFF6A2020, () -> {
-                    if (hasShiftDown()) ModNetwork.CHANNEL.sendToServer(new ProfessionPacket(p, false));
-                });
-            } else if (s.getProfessions().size() < Profession.MAX_KNOWN) {
-                button(g, bx, ry + 8, 64, 16, "Изучить", mx, my, 0xFF1F6F4A,
-                        () -> ModNetwork.CHANNEL.sendToServer(new ProfessionPacket(p, true)));
-            }
-        }
-    }
-
     private void button(GuiGraphics g, int x, int y, int w, int h, String label, int mx, int my, int color, Runnable r) {
         boolean hov = UiKit.inside(mx, my, x, y, w, h);
         g.fill(x, y, x + w, y + h, hov ? (color | 0xFF202020) : color);
         UiKit.frame(g, x, y, w, h, hov ? 0xFFFFFFFF : UiKit.FRAME_DIM);
         g.drawString(font, label, x + w / 2 - font.width(label) / 2, y + (h - 8) / 2, 0xFFFFFFFF, false);
         hits.add(new Hit(x, y, w, h, r));
-    }
-
-    // ---------------- Титулы ----------------
-
-    private void titles(GuiGraphics g, PlayerStats s, int x, int y, int mx, int my) {
-        Title[] all = Title.values();
-        g.drawString(font, "Получено: " + s.getTitles().size() + " / " + all.length + "   (колесо — прокрутка)", x, y, UiKit.MUTED, false);
-        int rows = 8;
-        titleScroll = Math.max(0, Math.min(titleScroll, all.length - rows));
-        for (int i = 0; i < rows && i + titleScroll < all.length; i++) {
-            Title t = all[i + titleScroll];
-            int ry = y + 14 + i * 22;
-            boolean has = s.hasTitle(t);
-            g.fill(x, ry, x + W - 20, ry + 20, has ? 0x80301A52 : 0x600C1824);
-            String name = "«" + Component.translatable(t.nameKey()).getString() + "»";
-            g.drawString(font, name, x + 6, ry + 6, has ? 0xFFE0B0FF : 0xFF666666, false);
-            StringBuilder b = new StringBuilder();
-            for (Stat st : Stat.values()) {
-                int v = t.bonus(st);
-                if (v != 0) {
-                    if (b.length() > 0) b.append(", ");
-                    b.append('+').append(v).append(' ').append(Component.translatable(st.translationKey()).getString());
-                }
-            }
-            String right = has ? b.toString() : t.threshold == Integer.MAX_VALUE ? "по репутации" : s.getCounter(t.counter) + " / " + t.threshold;
-            g.drawString(font, right, x + W - 26 - font.width(right), ry + 6, has ? 0xFF9CFF9C : 0xFF888888, false);
-            if (UiKit.inside(mx, my, x, ry, W - 20, 20)) {
-                tooltip = Component.translatable(t.descKey()).copy()
-                        .append(Component.literal(has ? "\nБонус: " + b : "").withStyle(ChatFormatting.GREEN));
-            }
-        }
-    }
-
-    // ---------------- Репутация ----------------
-
-    private void reputation(GuiGraphics g, PlayerStats s, int x, int y, int mx, int my) {
-        var factions = com.andrey.litrpg.rep.Faction.values();
-        int rows = 6;
-        repScroll = Math.max(0, Math.min(repScroll, factions.length - rows));
-        g.drawString(font, "Народов: " + factions.length + "   (колесо — прокрутка)", x, y - 1, UiKit.MUTED, false);
-        y += 10;
-        for (int i = 0; i < rows && i + repScroll < factions.length; i++) {
-            var f = factions[i + repScroll];
-            int ry = y + i * 31;
-            int rep = s.getRep(f);
-            var tier = com.andrey.litrpg.rep.Faction.Tier.of(rep);
-            g.fill(x, ry, x + W - 20, ry + 28, 0x600C1824);
-            UiKit.frame(g, x, ry, W - 20, 28, UiKit.FRAME_DIM);
-            g.drawString(font, f.title, x + 6, ry + 4, 0xFF000000 | f.color, false);
-            String t = tier.title + " (" + rep + ")";
-            g.drawString(font, Component.literal(t).withStyle(tier.color), x + W - 26 - font.width(t), ry + 4, 0xFFFFFFFF, false);
-            // шкала -1000..1000 с отметкой нуля
-            int bx = x + 6, bw = W - 32, by = ry + 17;
-            g.fill(bx - 1, by - 1, bx + bw + 1, by + 6, 0xFF000000);
-            g.fill(bx, by, bx + bw, by + 5, 0xFF1A1A24);
-            int zero = bx + bw / 2;
-            int pos = bx + (int) ((rep + 1000) / 2000f * bw);
-            int col = rep >= 0 ? 0xFF4CAF50 : 0xFFE53935;
-            g.fill(Math.min(zero, pos), by, Math.max(zero, pos), by + 5, col);
-            g.fill(zero, by - 1, zero + 1, by + 6, 0xFFFFFFFF);
-            if (UiKit.inside(mx, my, x, ry, W - 20, 28)) tooltip = Component.literal(f.desc);
-        }
     }
 
     // ---------------- Расчёт ----------------
@@ -551,89 +448,6 @@ public class CharacterScreen extends SystemScreen {
         return sb.toString();
     }
 
-    // ---------------- Задания ----------------
-
-    private void quests(GuiGraphics g, PlayerStats s, int x, int y, int mx, int my) {
-        var log = s.quests();
-        int w = W - 20;
-        int bottom = top + H - 8;
-        // строки: сюжет, заголовок, задания, заголовок, предложения
-        List<Runnable> rows = new ArrayList<>();
-        List<Integer> heights = new ArrayList<>();
-        final int[] cy = {y};
-        if (log.story != null) {
-            var q = log.story;
-            int h = 40 + Math.min(3, font.split(Component.literal(q.desc), w - 12).size()) * 10;
-            heights.add(h + 4);
-            rows.add(() -> {
-                QuestUi.card(g, font, q, x, cy[0], w, true);
-                if (q.type == com.andrey.litrpg.quest.Quest.Type.BOSS) {
-                    questButton(g, mx, my, x + w - 46, cy[0] + 14, 40, 14, "Где?", 0x4FC3F7,
-                            () -> QuestUi.send(com.andrey.litrpg.network.QuestActionPacket.Action.LOCATE, "", q.id));
-                }
-            });
-        } else if (log.storyStep >= com.andrey.litrpg.quest.Story.length()) {
-            heights.add(14);
-            rows.add(() -> g.drawString(font, "✦ Сюжет «Путь Избранного» пройден!", x, cy[0] + 2, UiKit.GOLD, false));
-        }
-        heights.add(14);
-        rows.add(() -> g.drawString(font, "Задания (" + log.regularCount() + "/" + com.andrey.litrpg.quest.QuestLog.MAX_ACTIVE
-                + ")  •  выполнено всего: " + log.completed, x, cy[0] + 3, UiKit.GOLD, false));
-        if (log.active.isEmpty()) {
-            heights.add(14);
-            rows.add(() -> g.drawString(font, "Нет заданий. Возьмите поручение ниже или у жителей народов (ПКМ).", x, cy[0] + 2, UiKit.MUTED, false));
-        }
-        for (var q : log.active) {
-            // сюжеты городов — с описанием шага, чтобы история читалась прямо в журнале
-            boolean chain = q.source == com.andrey.litrpg.quest.Quest.Source.CHAIN;
-            heights.add(chain ? 42 + Math.min(3, font.split(Component.literal(q.desc), w - 64).size()) * 10 : 42);
-            rows.add(() -> {
-                QuestUi.card(g, font, q, x, cy[0], w - 52, chain);
-                int bx = x + w - 48;
-                questButton(g, mx, my, bx, cy[0], 48, 12, "Отказ", 0xE53935,
-                        () -> QuestUi.send(com.andrey.litrpg.network.QuestActionPacket.Action.ABANDON, "", q.id));
-                if (q.type == com.andrey.litrpg.quest.Quest.Type.COLLECT) {
-                    boolean ok = QuestUi.carried(q) >= q.need;
-                    questButton(g, mx, my, bx, cy[0] + 14, 48, 12, "Сдать", ok ? 0x66DD44 : 0x555555,
-                            () -> QuestUi.send(com.andrey.litrpg.network.QuestActionPacket.Action.TURN_IN, "", q.id));
-                }
-                if (q.locatable()) {
-                    questButton(g, mx, my, bx, cy[0] + 14, 48, 12, "Где?", 0x4FC3F7,
-                            () -> QuestUi.send(com.andrey.litrpg.network.QuestActionPacket.Action.LOCATE, "", q.id));
-                }
-            });
-        }
-        var offers = log.offers(com.andrey.litrpg.quest.QuestLog.SYSTEM);
-        heights.add(14);
-        rows.add(() -> g.drawString(font, "Поручения Системы (обновляются каждый игровой день)", x, cy[0] + 3, 0xFF8FE3FF, false));
-        for (var q : offers) {
-            heights.add(42);
-            rows.add(() -> {
-                QuestUi.card(g, font, q, x, cy[0], w - 52, false);
-                questButton(g, mx, my, x + w - 48, cy[0] + 12, 48, 14, "Принять", 0x4CAF50,
-                        () -> QuestUi.send(com.andrey.litrpg.network.QuestActionPacket.Action.ACCEPT, com.andrey.litrpg.quest.QuestLog.SYSTEM, q.id));
-            });
-        }
-        questScroll = Math.max(0, Math.min(questScroll, rows.size() - 1));
-        for (int i = questScroll; i < rows.size(); i++) {
-            if (cy[0] + heights.get(i) > bottom + 4) {
-                g.drawString(font, "▼ колесо мыши", x + w - font.width("▼ колесо мыши"), bottom - 8, UiKit.MUTED, false);
-                break;
-            }
-            rows.get(i).run();
-            cy[0] += heights.get(i);
-        }
-        if (questScroll > 0) g.drawString(font, "▲", x + w - 6, y - 10, UiKit.MUTED, false);
-    }
-
-    private void questButton(GuiGraphics g, int mx, int my, int x, int y, int w, int h, String label, int accent, Runnable r) {
-        boolean hov = UiKit.inside(mx, my, x, y, w, h);
-        g.fill(x, y, x + w, y + h, hov ? 0xF0204A30 : 0xE0122636);
-        UiKit.frame(g, x, y, w, h, 0xFF000000 | accent);
-        g.drawString(font, label, x + w / 2 - font.width(label) / 2, y + (h - 8) / 2, 0xFFFFFFFF, false);
-        hits.add(new Hit(x, y, w, h, r));
-    }
-
     // ---------------- ввод ----------------
 
     @Override
@@ -658,19 +472,7 @@ public class CharacterScreen extends SystemScreen {
 
     @Override
     protected boolean scrollContent(double mx, double my, double delta) {
-        if (tab == 3) {
-            titleScroll -= (int) Math.signum(delta);
-            return true;
-        }
-        if (tab == 4) {
-            repScroll -= (int) Math.signum(delta);
-            return true;
-        }
-        if (tab == 5) {
-            questScroll -= (int) Math.signum(delta);
-            return true;
-        }
-        if (tab == 6) {
+        if (tab == 2) {
             calcScroll -= (int) Math.signum(delta) * 2;
             return true;
         }

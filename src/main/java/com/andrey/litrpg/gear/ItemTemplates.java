@@ -38,6 +38,8 @@ public final class ItemTemplates {
         public String passive;
         /** Трофей босса: падает только с него (id босса), в общий лут не входит. */
         public String boss;
+        /** Для каких ролей трофей (tank/damage/support); пусто — для всех. */
+        public java.util.List<String> roles;
 
         public boolean isJewel() {
             return switch (kind) {
@@ -127,6 +129,10 @@ public final class ItemTemplates {
                 if (o.has("speed")) d.speed = o.get("speed").getAsFloat();
                 if (o.has("passive")) d.passive = o.get("passive").getAsString();
                 if (o.has("boss")) d.boss = o.get("boss").getAsString();
+                if (o.has("roles")) {
+                    d.roles = new ArrayList<>();
+                    for (JsonElement r : o.getAsJsonArray("roles")) d.roles.add(r.getAsString());
+                }
                 if (o.has("implicit")) readMods(o.getAsJsonObject("implicit"), d.implicitBonus, d.implicitStats);
                 ITEMS.add(d);
                 BY_ID.put(d.id, d);

@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 /** Материалы наборов брони. */
 public enum LitArmorMaterial implements ArmorMaterial {
     GOBLIN("goblin", 18, new int[]{2, 5, 4, 2}, 14, SoundEvents.ARMOR_EQUIP_LEATHER, 0f, 0f,
-            () -> Ingredient.of(ModItems.GOBLIN_EAR.get())),
+            () -> Ingredient.of(ModItems.BONE_SHARD.get())),
     BONEWARDEN("bonewarden", 30, new int[]{3, 7, 6, 3}, 12, SoundEvents.ARMOR_EQUIP_IRON, 1.5f, 0.05f,
             () -> Ingredient.of(ModItems.BONE_SHARD.get())),
     SHADOW("shadow", 36, new int[]{3, 8, 6, 3}, 20, SoundEvents.ARMOR_EQUIP_NETHERITE, 2.5f, 0.05f,

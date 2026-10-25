@@ -70,6 +70,49 @@ public final class GearGen {
         return base;
     }
 
+    /**
+     * Личная добыча: предмет под класс игрока (оружие его рода, броня, украшение) уровня level.
+     * Танку чаще броня и щиты, магам — посохи, стрелкам — луки.
+     */
+    public static ItemStack personal(RandomSource rnd, int level, Rarity rarity, com.andrey.litrpg.stats.PlayerStats ps) {
+        if (rnd.nextFloat() < 0.15f) {
+            ItemStack t = templateNear(rnd, level, false);
+            if (!t.isEmpty()) {
+                apply(t, rnd, level, rarity.ordinal() < templateMin(t).ordinal() ? templateMin(t) : rarity);
+                return t;
+            }
+        }
+        var role = ps.getRole();
+        float c = rnd.nextFloat();
+        float wpn = role == com.andrey.litrpg.stats.Role.TANK ? 0.3f : 0.4f;
+        ItemStack base;
+        if (c < wpn) base = new ItemStack(classWeapon(rnd, level, ps));
+        else if (c < 0.82f) {
+            base = role == com.andrey.litrpg.stats.Role.TANK && rnd.nextInt(6) == 0 ? new ItemStack(Items.SHIELD) : armorBaseStack(rnd, level);
+        } else base = jewelBase(rnd, level);
+        apply(base, rnd, level, rarity);
+        return base;
+    }
+
+    /** Оружие рода, которым сражается класс (до выбора класса — по роли). */
+    private static Item classWeapon(RandomSource rnd, int level, com.andrey.litrpg.stats.PlayerStats ps) {
+        int t = level < 8 ? 0 : level < 20 ? 1 : level < 35 ? 2 : 3;
+        var cls = ps.getPlayerClass();
+        int melee = 1, ranged = 0, magic = 0, stealth = 0;
+        if (cls != null) {
+            melee = cls.styles.getOrDefault(com.andrey.litrpg.stats.Style.MELEE, 0);
+            ranged = cls.styles.getOrDefault(com.andrey.litrpg.stats.Style.RANGED, 0);
+            magic = cls.styles.getOrDefault(com.andrey.litrpg.stats.Style.MAGIC, 0);
+            stealth = cls.styles.getOrDefault(com.andrey.litrpg.stats.Style.STEALTH, 0);
+        } else if (ps.getRole() == com.andrey.litrpg.stats.Role.SUPPORT) magic = 2;
+        int best = Math.max(Math.max(melee, ranged), Math.max(magic, stealth));
+        if (best == ranged && ranged > 0) return rnd.nextInt(4) == 0 ? Items.CROSSBOW : Items.BOW;
+        if (best == magic && magic > 0) return ModItems.APPRENTICE_STAFF.get();
+        if (best == stealth && stealth > 0) return t < 2 ? ModItems.ROGUE_DAGGER.get() : ModItems.SHADOW_DAGGER.get();
+        return rnd.nextInt(3) == 0 ? new Item[]{Items.STONE_AXE, Items.IRON_AXE, Items.DIAMOND_AXE, Items.NETHERITE_AXE}[t]
+                : new Item[]{Items.STONE_SWORD, Items.IRON_SWORD, Items.DIAMOND_SWORD, Items.NETHERITE_SWORD}[t];
+    }
+
     /** Наделить существующий предмет свойствами (например, скрафченный кузнецом). */
     public static void apply(ItemStack stack, RandomSource rnd, int level, Rarity rarity) {
         GearData.Category cat = GearData.category(stack);
@@ -245,15 +288,6 @@ public final class GearGen {
                 d.ability = "frost_nova";
                 title = "Ледяная Скорбь";
             }
-            case "archmage_staff" -> {
-                stack = new ItemStack(ModItems.ARCHMAGE_STAFF.get());
-                d.rarity = Rarity.LEGENDARY; d.level = 30;
-                st(d, Stat.INTELLIGENCE, 16); st(d, Stat.LUCK, 6);
-                d.bonuses.put(GearBonus.SPELL_POWER, 30f); d.bonuses.put(GearBonus.MANA, 80f); d.bonuses.put(GearBonus.MANA_REGEN, 40f);
-                d.passives.add(Passive.ARCANE_ECHO);
-                d.ability = "meteor";
-                title = "Посох Архимага";
-            }
             case "kings_ring" -> {
                 stack = new ItemStack(ModItems.KINGS_RING.get());
                 d.rarity = Rarity.EPIC; d.level = 15;
@@ -288,7 +322,7 @@ public final class GearGen {
 
     private static void st(GearData d, Stat s, int v) { d.stats[s.ordinal()] = v; }
 
-    public static final String[] UNIQUES = {"dawn_blade", "frost_sorrow", "archmage_staff", "kings_ring", "lich_amulet", "heart_of_system"};
+    public static final String[] UNIQUES = {"dawn_blade", "frost_sorrow", "kings_ring", "lich_amulet", "heart_of_system"};
 
     /** Описание (лор) уникального предмета для подсказки. */
     public static String lore(String unique) {

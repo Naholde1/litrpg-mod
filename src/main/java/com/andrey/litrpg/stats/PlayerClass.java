@@ -3,7 +3,6 @@ package com.andrey.litrpg.stats;
 import com.andrey.litrpg.ability.ClassData;
 import com.andrey.litrpg.gear.GearBonus;
 import com.andrey.litrpg.gear.Passive;
-import com.andrey.litrpg.rep.Faction;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -50,9 +49,6 @@ public final class PlayerClass {
     public final int[] unlock;
     public final Map<GearBonus, Float> traitBonus;
     public final Set<Passive> traitPassives;
-    public final Set<Race> races;
-    public final Set<Profession> profs;
-    public final Faction faction;
     /** Условия скрытого класса ('counter:undead>=60'); пусто — обычный класс. */
     public final List<String> hidden;
     public final Invoke invoke;
@@ -88,19 +84,6 @@ public final class PlayerClass {
         }
         traitBonus = Collections.unmodifiableMap(tb);
         traitPassives = Collections.unmodifiableSet(tp);
-        Set<Race> rs = EnumSet.noneOf(Race.class);
-        if (o.has("races")) for (String r : strings(o.getAsJsonArray("races"))) {
-            Race race = Race.byKey(r);
-            if (race != null) rs.add(race);
-        }
-        races = Collections.unmodifiableSet(rs);
-        Set<Profession> ps = EnumSet.noneOf(Profession.class);
-        if (o.has("profs")) for (String r : strings(o.getAsJsonArray("profs"))) {
-            Profession p = Profession.byKey(r);
-            if (p != null) ps.add(p);
-        }
-        profs = Collections.unmodifiableSet(ps);
-        faction = o.has("faction") ? Faction.byKey(o.get("faction").getAsString()) : null;
         hidden = o.has("hidden") ? List.of(strings(o.getAsJsonArray("hidden"))) : List.of();
         if (o.has("invoke")) {
             JsonObject iv = o.getAsJsonObject("invoke");
@@ -164,7 +147,7 @@ public final class PlayerClass {
         return true;
     }
 
-    /** Условие вида 'counter:undead>=60', 'found>=15', 'race:demonkin', 'rep:undead>=300', 'style:night>=500', 'prof:miner>=20', 'title:x'. */
+    /** Условие вида 'style:night>=500', 'level>=20'. */
     private static boolean check(PlayerStats s, String cond) {
         String[] kv = cond.split(":", 2);
         String type = kv[0];
@@ -172,33 +155,12 @@ public final class PlayerClass {
         int ge = rest.indexOf(">=");
         String name = ge >= 0 ? rest.substring(0, ge) : rest;
         int need = ge >= 0 ? Integer.parseInt(rest.substring(ge + 2)) : 0;
-        if (type.startsWith("found>=")) return s.foundCount() >= Integer.parseInt(type.substring(7));
         if (type.startsWith("level>=")) return s.getLevel() >= Integer.parseInt(type.substring(7));
-        return switch (type) {
-            case "counter" -> {
-                Title.Counter c = null;
-                for (Title.Counter x : Title.Counter.values()) if (x.key().equals(name)) c = x;
-                yield c != null && s.getCounter(c) >= need;
-            }
-            case "race" -> s.getRace() != null && s.getRace().key.equals(name);
-            case "rep" -> {
-                Faction f = Faction.byKey(name);
-                yield f != null && s.getRep(f) >= need;
-            }
-            case "style" -> {
-                Style st = Style.byKey(name);
-                yield st != null && s.getStyle(st) >= need;
-            }
-            case "prof" -> {
-                Profession p = Profession.byKey(name);
-                yield p != null && s.getProfLevel(p) >= need;
-            }
-            case "title" -> {
-                Title t = Title.byKey(name);
-                yield t != null && s.hasTitle(t);
-            }
-            default -> false;
-        };
+        if (type.equals("style")) {
+            Style st = Style.byKey(name);
+            return st != null && s.getStyle(st) >= need;
+        }
+        return false;
     }
 
     /** Уровень открытия навыка этого класса (999 — навыка в классе нет). */

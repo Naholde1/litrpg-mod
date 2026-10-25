@@ -1,45 +1,25 @@
 package com.andrey.litrpg.event;
 
 import com.andrey.litrpg.LitRPG;
-import com.andrey.litrpg.entity.GoblinEntity;
-import com.andrey.litrpg.entity.GoblinKingEntity;
-import com.andrey.litrpg.entity.LichEntity;
-import com.andrey.litrpg.entity.LitBoss;
-import com.andrey.litrpg.registry.ModDimensions;
 import com.andrey.litrpg.stats.PlayerStats;
-import com.andrey.litrpg.stats.Race;
 import com.andrey.litrpg.stats.StatsManager;
 import com.andrey.litrpg.stats.StatsProvider;
-import com.andrey.litrpg.stats.Title;
-import com.andrey.litrpg.world.Zone;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobType;
-import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = LitRPG.MODID)
 public class ServerEvents {
-    private static final String ZONE_TAG = "litrpg_zone";
 
     @SubscribeEvent
     public static void attachCaps(AttachCapabilitiesEvent<Entity> event) {
@@ -49,7 +29,7 @@ public class ServerEvents {
         }
     }
 
-    /** Смерть, возвращение из Края и любое другое пересоздание игрока — переносим всё. */
+    /** Возвращение из Края и любое другое пересоздание игрока — переносим всё (в подземелье не умирают). */
     @SubscribeEvent
     public static void onClone(PlayerEvent.Clone event) {
         Player original = event.getOriginal();
@@ -59,10 +39,6 @@ public class ServerEvents {
         now.copyFrom(old);
         // страховка: если данные старого игрока всё же недоступны — берём резервную копию
         if (event.getEntity() instanceof ServerPlayer sp) StatsManager.restoreIfLost(sp);
-        if (event.isWasDeath()) {
-            now.loseXpPercent(0.10);
-            now.setMana(now.getMaxMana() / 2.0);
-        }
         original.invalidateCaps();
     }
 
@@ -77,15 +53,15 @@ public class ServerEvents {
         if (!s.isWelcomed()) {
             s.setWelcomed(true);
             s.setMana(s.getMaxMana());
-            StatsManager.message(player, Component.literal("Инициализация завершена. Добро пожаловать в мир Системы, ")
+            StatsManager.message(player, Component.literal("Инициализация завершена. Добро пожаловать в Подземелье Системы, ")
                     .append(Component.literal(player.getGameProfile().getName()).withStyle(ChatFormatting.GOLD))
                     .append("."));
-            StatsManager.message(player, Component.literal("Убивай монстров, получай опыт и уровни. Каждый уровень даёт 3 очка характеристик."));
-            StatsManager.message(player, Component.literal("K — персонаж, M — карта, Z/X/C/V/B/G — навыки."));
+            StatsManager.message(player, Component.literal("Пять этапов, пятнадцать хранителей. Соберите группу из 3–5 искателей и встаньте на печать у врат."));
+            StatsManager.message(player, Component.literal("K — персонаж и навыки, Alt — рывок, Z X C V B G R H — навыки, Ctrl+1…5 — выбрать союзника для лечения.")
+                    .withStyle(ChatFormatting.GRAY));
         }
         StatsManager.sync(player);
-        StatsManager.broadcastRaces(player.server);
-        if (!s.hasOrigin() || s.getRole() == null && !s.hasClass()) StatsManager.openOriginScreen(player);
+        if (s.getRole() == null) StatsManager.openOriginScreen(player);
         else if (s.canChooseClass()) StatsManager.offerClasses(player);
     }
 
@@ -106,21 +82,13 @@ public class ServerEvents {
             StatsManager.restoreIfLost(player);
             StatsManager.applyAttributes(player);
             player.setHealth(player.getMaxHealth());
-            if (!event.isEndConquered()) {
-                StatsManager.message(player, Component.literal("Вы погибли. Потеряно 10% текущего опыта.").withStyle(ChatFormatting.RED));
-                StatsManager.count(player, Title.Counter.DEATHS, 1);
-            }
             StatsManager.sync(player);
-            PlayerStats s = StatsManager.get(player);
-            if (!s.hasOrigin() || s.getRole() == null && !s.hasClass()) StatsManager.openOriginScreen(player);
-            else if (s.canChooseClass() && !s.getOffers().isEmpty()) StatsManager.offerClasses(player);
         }
     }
 
     @SubscribeEvent
     public static void onChangeDim(PlayerEvent.PlayerChangedDimensionEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            if (event.getTo() == ModDimensions.SHADOW_REALM) StatsManager.count(player, Title.Counter.REALM_VISITS, 1);
             StatsManager.applyAttributes(player);
             StatsManager.sync(player);
         }
@@ -147,64 +115,6 @@ public class ServerEvents {
             s.setMana(s.getMana() + s.getManaRegenPerSecond());
             StatsManager.syncMana(player);
         }
-        if (player.tickCount % 40 == 0) {
-            racePassives(player, s);
-            checkZone(player);
-        }
-    }
-
-    private static void racePassives(ServerPlayer player, PlayerStats s) {
-        Race race = s.getRace();
-        if (race == null) return;
-        switch (race) {
-            case DWARF -> {
-                if (player.getY() < 50) hidden(player, MobEffects.DIG_SPEED, 0);
-            }
-            case BEASTKIN -> hidden(player, MobEffects.JUMP, 0);
-            case DEMONKIN -> {
-                if (player.isOnFire() || player.isInLava()) hidden(player, MobEffects.FIRE_RESISTANCE, 0);
-            }
-            case ELF -> {
-                if (player.level().isNight() || player.getY() < 40) hidden(player, MobEffects.NIGHT_VISION, 0, 300);
-            }
-            default -> {}
-        }
-    }
-
-    private static void hidden(ServerPlayer p, MobEffect effect, int amp) {
-        hidden(p, effect, amp, 100);
-    }
-
-    private static void hidden(ServerPlayer p, MobEffect effect, int amp, int duration) {
-        MobEffectInstance cur = p.getEffect(effect);
-        if (cur == null || cur.getDuration() < duration - 40) {
-            p.addEffect(new MobEffectInstance(effect, duration, amp, true, false, false));
-        }
-    }
-
-    private static void checkZone(ServerPlayer player) {
-        if (com.andrey.litrpg.world.map.SystemWorld.isOverworld(player.serverLevel())) {
-            String region = com.andrey.litrpg.command.ServerEventsRegionName.of(player);
-            String prevR = player.getPersistentData().getString(ZONE_TAG);
-            if (region.equals(prevR)) return;
-            player.getPersistentData().putString(ZONE_TAG, region);
-            if (prevR.isEmpty()) return;
-            boolean city = com.andrey.litrpg.world.map.WorldMap.get().cityAt(player.getX(), player.getZ()) != null;
-            player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 40, 20));
-            player.connection.send(new ClientboundSetTitleTextPacket(Component.literal(region)
-                    .withStyle(city ? ChatFormatting.GOLD : ChatFormatting.YELLOW)));
-            player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(city ? "Город — здесь действуют законы стражи" : "")
-                    .withStyle(ChatFormatting.GRAY)));
-            return;
-        }
-        Zone zone = Zone.at(player.serverLevel(), player.blockPosition());
-        String prev = player.getPersistentData().getString(ZONE_TAG);
-        if (zone.key.equals(prev)) return;
-        player.getPersistentData().putString(ZONE_TAG, zone.key);
-        if (prev.isEmpty()) return;
-        player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 40, 20));
-        player.connection.send(new ClientboundSetTitleTextPacket(Component.translatable(zone.nameKey()).withStyle(zone.color)));
-        player.connection.send(new ClientboundSetSubtitleTextPacket(Component.empty()));
     }
 
     @SubscribeEvent
@@ -212,69 +122,6 @@ public class ServerEvents {
         if (event.getLevel().isClientSide()) return;
         if (event.getEntity() instanceof Mob mob && event.getLevel() instanceof ServerLevel level) {
             MobLevels.assignLevel(mob, level);
-        }
-    }
-
-    @SubscribeEvent
-    public static void onDeath(LivingDeathEvent event) {
-        LivingEntity dead = event.getEntity();
-        if (dead.level().isClientSide() || dead instanceof Player) return;
-
-        if (dead instanceof LitBoss) {
-            // опыт за босса получают все игроки рядом
-            AABB area = dead.getBoundingBox().inflate(48);
-            for (ServerPlayer p : dead.level().getEntitiesOfClass(ServerPlayer.class, area)) {
-                StatsManager.message(p, Component.literal("Босс повержен: ")
-                        .append(dead.getDisplayName().copy().withStyle(ChatFormatting.LIGHT_PURPLE)));
-                StatsManager.giveXp(p, MobLevels.xpReward(dead, StatsManager.get(p).getLevel()));
-                if (dead instanceof GoblinKingEntity) StatsManager.count(p, Title.Counter.GOBLIN_KING, 1);
-                if (dead instanceof LichEntity) StatsManager.count(p, Title.Counter.LICH, 1);
-                StatsManager.count(p, Title.Counter.KILLS, 1);
-                StatsManager.count(p, Title.Counter.BOSSES, 1);
-                if (dead instanceof com.andrey.litrpg.entity.boss.ArchdemonEntity) StatsManager.count(p, Title.Counter.ARCHDEMON, 1);
-                if (dead instanceof com.andrey.litrpg.entity.BossBase boss) {
-                    var dungeon = com.andrey.litrpg.world.Dungeon.byBoss(boss.bossId());
-                    if (dungeon != null) com.andrey.litrpg.rep.RepEvents.bossKilled(p, dungeon.rep);
-                    com.andrey.litrpg.quest.QuestEvents.onBossKill(p, boss.bossId());
-                }
-            }
-            if (dead instanceof com.andrey.litrpg.entity.BossBase boss) {
-                if (boss.getHome() != null && dead.level().getBlockEntity(boss.getHome())
-                        instanceof com.andrey.litrpg.block.BossAltarBlockEntity altar) {
-                    altar.onBossDefeated();
-                }
-                // призванные боссом существа рассыпаются вместе с ним
-                for (var m : dead.level().getEntitiesOfClass(net.minecraft.world.entity.Mob.class, area, boss::isMinion)) {
-                    ((net.minecraft.server.level.ServerLevel) dead.level()).sendParticles(net.minecraft.core.particles.ParticleTypes.POOF,
-                            m.getX(), m.getY() + 0.5, m.getZ(), 8, 0.3, 0.4, 0.3, 0.02);
-                    m.discard();
-                }
-                var server = dead.getServer();
-                if (server != null) {
-                    var killers = dead.level().getEntitiesOfClass(ServerPlayer.class, area);
-                    if (!killers.isEmpty()) {
-                        StringBuilder names = new StringBuilder();
-                        for (ServerPlayer k : killers) names.append(names.length() > 0 ? ", " : "").append(k.getGameProfile().getName());
-                        server.getPlayerList().broadcastSystemMessage(Component.literal("⚔ ").withStyle(ChatFormatting.GOLD)
-                                .append(Component.literal(names.toString()).withStyle(ChatFormatting.YELLOW))
-                                .append(Component.literal(" " + (killers.size() > 1 ? "одолели" : "одолел(а)") + " хранителя: ").withStyle(ChatFormatting.GRAY))
-                                .append(dead.getName().copy().withStyle(ChatFormatting.LIGHT_PURPLE)), false);
-                    }
-                }
-            }
-            return;
-        }
-
-        // опыт делится между всеми, кто наносил урон (и их группами)
-        ServerPlayer player = com.andrey.litrpg.party.DamageTracker.distribute(dead);
-        if (player == null) return;
-        PlayerStats s = StatsManager.get(player);
-        if (dead instanceof Enemy) {
-            StatsManager.count(player, Title.Counter.KILLS, 1);
-            if (dead instanceof GoblinEntity) StatsManager.count(player, Title.Counter.GOBLINS, 1);
-            if (dead.getMobType() == MobType.UNDEAD) StatsManager.count(player, Title.Counter.UNDEAD, 1);
-            if (MobLevels.getRank(dead) != MobLevels.Rank.NORMAL) StatsManager.count(player, Title.Counter.ELITES, 1);
-            if (MobLevels.getLevel(dead) - s.getLevel() >= 10) StatsManager.count(player, Title.Counter.GIANT_KILLS, 1);
         }
     }
 }

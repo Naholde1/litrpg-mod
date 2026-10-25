@@ -4,12 +4,8 @@ import com.andrey.litrpg.LitRPG;
 import com.andrey.litrpg.event.MobLevels;
 import com.andrey.litrpg.stats.PlayerClass;
 import com.andrey.litrpg.stats.PlayerStats;
-import com.andrey.litrpg.stats.Profession;
-import com.andrey.litrpg.stats.Race;
 import com.andrey.litrpg.stats.Stat;
 import com.andrey.litrpg.stats.StatsManager;
-import com.andrey.litrpg.stats.Title;
-import com.andrey.litrpg.world.Zone;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -54,14 +50,8 @@ public class LitRpgCommand {
 
     private static final SuggestionProvider<CommandSourceStack> STATS =
             (c, b) -> SharedSuggestionProvider.suggest(Arrays.stream(Stat.values()).map(s -> s.key), b);
-    private static final SuggestionProvider<CommandSourceStack> RACES =
-            (c, b) -> SharedSuggestionProvider.suggest(Arrays.stream(Race.values()).map(s -> s.key), b);
     private static final SuggestionProvider<CommandSourceStack> CLASSES =
             (c, b) -> SharedSuggestionProvider.suggest(Arrays.stream(PlayerClass.values()).map(s -> s.key), b);
-    private static final SuggestionProvider<CommandSourceStack> PROFS =
-            (c, b) -> SharedSuggestionProvider.suggest(Arrays.stream(Profession.values()).map(s -> s.key), b);
-    private static final SuggestionProvider<CommandSourceStack> TITLES =
-            (c, b) -> SharedSuggestionProvider.suggest(Arrays.stream(Title.values()).map(s -> s.key), b);
     private static final SuggestionProvider<CommandSourceStack> RANKS =
             (c, b) -> SharedSuggestionProvider.suggest(new String[]{"normal", "elite", "champion"}, b);
 
@@ -110,13 +100,6 @@ public class LitRpgCommand {
                                     return each(c, (p, s) -> s.setSpent(st, IntegerArgumentType.getInteger(c, "value")));
                                 })))));
 
-        root.then(Commands.literal("race").then(players()
-                .then(Commands.argument("race", StringArgumentType.word()).suggests(RACES)
-                        .executes(c -> {
-                            Race r = parse(Race.values(), StringArgumentType.getString(c, "race"), x -> x.key);
-                            return each(c, (p, s) -> StatsManager.chooseOrigin(p, r, false));
-                        }))));
-
         root.then(Commands.literal("class")
                 .then(Commands.literal("set").then(players()
                         .then(Commands.argument("class", StringArgumentType.word()).suggests(CLASSES)
@@ -143,7 +126,8 @@ public class LitRpgCommand {
                         .executes(c -> {
                             var r = parse(com.andrey.litrpg.stats.Role.values(), StringArgumentType.getString(c, "role"), x -> x.key);
                             return each(c, (p, s) -> {
-                                s.setRole(r);
+                                if (s.hasClass()) s.setPlayerClass(null);
+                                StatsManager.chooseRole(p, r);
                                 s.setOffers(java.util.List.of());
                             });
                         }))));
@@ -157,52 +141,6 @@ public class LitRpgCommand {
                                     return each(c, (p, s) -> s.getStyles().put(st, IntegerArgumentType.getInteger(c, "value")));
                                 })))));
 
-        root.then(Commands.literal("origin").then(Commands.literal("reset").then(players()
-                .executes(c -> each(c, (p, s) -> {
-                    s.setRace(null);
-                    StatsManager.openOriginScreen(p);
-                })))));
-
-        root.then(Commands.literal("prof")
-                .then(Commands.literal("learn").then(players().then(Commands.argument("profession", StringArgumentType.word()).suggests(PROFS)
-                        .executes(c -> {
-                            Profession pr = parse(Profession.values(), StringArgumentType.getString(c, "profession"), x -> x.key);
-                            return each(c, (p, s) -> s.learn(pr));
-                        }))))
-                .then(Commands.literal("forget").then(players().then(Commands.argument("profession", StringArgumentType.word()).suggests(PROFS)
-                        .executes(c -> {
-                            Profession pr = parse(Profession.values(), StringArgumentType.getString(c, "profession"), x -> x.key);
-                            return each(c, (p, s) -> s.forget(pr));
-                        }))))
-                .then(Commands.literal("level").then(players().then(Commands.argument("profession", StringArgumentType.word()).suggests(PROFS)
-                        .then(Commands.argument("level", IntegerArgumentType.integer(1, Profession.MAX_LEVEL))
-                                .executes(c -> {
-                                    Profession pr = parse(Profession.values(), StringArgumentType.getString(c, "profession"), x -> x.key);
-                                    return each(c, (p, s) -> {
-                                        if (!s.knows(pr)) {
-                                            s.forget(pr);
-                                            if (s.getProfessions().size() >= Profession.MAX_KNOWN) {
-                                                s.forget(s.getProfessions().iterator().next());
-                                            }
-                                            s.learn(pr);
-                                        }
-                                        s.setProfLevel(pr, IntegerArgumentType.getInteger(c, "level"));
-                                    });
-                                }))))));
-
-        root.then(Commands.literal("title")
-                .then(Commands.literal("give").then(players().then(Commands.argument("title", StringArgumentType.word()).suggests(TITLES)
-                        .executes(c -> {
-                            Title t = parse(Title.values(), StringArgumentType.getString(c, "title"), x -> x.key);
-                            for (ServerPlayer p : EntityArgument.getPlayers(c, "players")) StatsManager.grantTitle(p, t);
-                            return 1;
-                        }))))
-                .then(Commands.literal("remove").then(players().then(Commands.argument("title", StringArgumentType.word()).suggests(TITLES)
-                        .executes(c -> {
-                            Title t = parse(Title.values(), StringArgumentType.getString(c, "title"), x -> x.key);
-                            return each(c, (p, s) -> s.removeTitle(t));
-                        })))));
-
         root.then(Commands.literal("mana").then(players().executes(c -> each(c, (p, s) -> s.setMana(s.getMaxMana())))));
         root.then(Commands.literal("cooldowns").then(players().executes(c -> each(c, (p, s) -> s.resetCooldowns()))));
         root.then(Commands.literal("respec").then(players().executes(c -> each(c, (p, s) -> s.respec()))));
@@ -210,33 +148,12 @@ public class LitRpgCommand {
             s.wipe();
             StatsManager.openOriginScreen(p);
         }))));
-        root.then(Commands.literal("quest")
-                .then(Commands.literal("step").then(players().then(Commands.argument("step", IntegerArgumentType.integer(0, 30))
-                        .executes(c -> each(c, (p, s) -> {
-                            s.quests().storyStep = IntegerArgumentType.getInteger(c, "step");
-                            s.quests().story = null;
-                        })))))
-                .then(Commands.literal("finish").then(players().executes(c -> each(c, (p, s) -> {
-                    if (s.quests().story != null) s.quests().story.have = s.quests().story.need;
-                    for (var q : s.quests().active) q.have = q.need;
-                    com.andrey.litrpg.quest.QuestEvents.checkAll(p);
-                }))))
-                .then(Commands.literal("refresh").then(players().executes(c -> each(c, (p, s) -> s.quests().offersDay.clear()))))
-                .then(Commands.literal("board").then(players().then(Commands.argument("faction", StringArgumentType.word())
-                        .executes(c -> each(c, (p, s) -> {
-                            var f = com.andrey.litrpg.rep.Faction.byKey(StringArgumentType.getString(c, "faction"));
-                            if (f == null) return;
-                            com.andrey.litrpg.quest.QuestEvents.ensureFactionOffers(p, f);
-                            StatsManager.syncNow(p);
-                            com.andrey.litrpg.network.ModNetwork.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
-                                    new com.andrey.litrpg.network.OpenQuestsPacket(f.key, f.key, "Вождь", "", -1));
-                        }))))));
         root.then(Commands.literal("codex").then(players().executes(c -> {
             for (ServerPlayer p : EntityArgument.getPlayers(c, "players")) StatsManager.giveCodex(p);
             return 1;
         })));
 
-        root.then(Commands.literal("cast").then(players().then(Commands.argument("slot", IntegerArgumentType.integer(1, 5))
+        root.then(Commands.literal("cast").then(players().then(Commands.argument("slot", IntegerArgumentType.integer(1, 9))
                 .executes(c -> {
                     int slot = IntegerArgumentType.getInteger(c, "slot") - 1;
                     for (ServerPlayer p : EntityArgument.getPlayers(c, "players")) {
@@ -265,28 +182,6 @@ public class LitRpgCommand {
                             return 1;
                         }))));
 
-        root.then(Commands.literal("rep").then(players()
-                .then(Commands.argument("faction", StringArgumentType.word())
-                        .suggests((c, b) -> SharedSuggestionProvider.suggest(Arrays.stream(com.andrey.litrpg.rep.Faction.values()).map(x -> x.key), b))
-                        .then(Commands.argument("value", IntegerArgumentType.integer(-1000, 1000))
-                                .executes(c -> {
-                                    var f = parse(com.andrey.litrpg.rep.Faction.values(), StringArgumentType.getString(c, "faction"), x -> x.key);
-                                    return each(c, (p, s) -> s.setRep(f, IntegerArgumentType.getInteger(c, "value")));
-                                })))));
-
-        root.then(Commands.literal("bloodmoon").executes(c -> {
-            com.andrey.litrpg.world.BloodMoon.force(c.getSource().getLevel());
-            return 1;
-        }));
-
-        root.then(Commands.literal("zone").executes(c -> {
-            ServerPlayer p = c.getSource().getPlayerOrException();
-            int[] lv = Zone.levels(p.serverLevel(), p.blockPosition());
-            c.getSource().sendSuccess(() -> Component.literal(ServerEventsRegionName.of(p))
-                    .append(Component.literal(" — монстры " + lv[0] + "–" + lv[1] + " ур.").withStyle(ChatFormatting.GRAY)), false);
-            return 1;
-        }));
-
         root.then(Commands.literal("spawn")
                 .then(Commands.argument("entity", ResourceArgument.resource(ctx, Registries.ENTITY_TYPE))
                         .suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
@@ -294,6 +189,41 @@ public class LitRpgCommand {
                                 .executes(c -> spawn(c, "normal"))
                                 .then(Commands.argument("rank", StringArgumentType.word()).suggests(RANKS)
                                         .executes(c -> spawn(c, StringArgumentType.getString(c, "rank")))))));
+
+        // ---- прохождение подземелья ----
+        root.then(Commands.literal("run")
+                .then(Commands.literal("status").executes(c -> {
+                    var st = com.andrey.litrpg.run.Run.state(c.getSource().getServer());
+                    c.getSource().sendSuccess(() -> Component.literal("Этап " + st.stage + ", попыток " + (st.wipes + 1) + ", группа " + st.partySize
+                            + ", хранители " + st.deadBosses + ", отряды пали " + st.deadPacks.size() + ", мин. игроков " + st.minPlayers), false);
+                    return 1;
+                }))
+                .then(Commands.literal("stage").then(Commands.argument("n", IntegerArgumentType.integer(1, 5)).executes(c -> {
+                    com.andrey.litrpg.run.Run.enterStage(c.getSource().getServer(), IntegerArgumentType.getInteger(c, "n"));
+                    return 1;
+                })))
+                .then(Commands.literal("wipe").executes(c -> {
+                    com.andrey.litrpg.run.Run.wipe(c.getSource().getServer());
+                    return 1;
+                }))
+                .then(Commands.literal("lobby").executes(c -> {
+                    var st = com.andrey.litrpg.run.Run.state(c.getSource().getServer());
+                    st.stage = 0;
+                    st.clearStage();
+                    for (ServerPlayer p : com.andrey.litrpg.run.Run.party(c.getSource().getServer())) {
+                        com.andrey.litrpg.run.Run.teleport(p, com.andrey.litrpg.run.Layout.get().lobbySpawn);
+                        com.andrey.litrpg.run.Run.restore(p);
+                    }
+                    return 1;
+                }))
+                .then(Commands.literal("minplayers").then(Commands.argument("n", IntegerArgumentType.integer(1, 5)).executes(c -> {
+                    var st = com.andrey.litrpg.run.Run.state(c.getSource().getServer());
+                    st.minPlayers = IntegerArgumentType.getInteger(c, "n");
+                    st.setDirty();
+                    c.getSource().sendSuccess(() -> Component.literal("Минимум игроков для начала: " + st.minPlayers), true);
+                    return 1;
+                })))
+                .then(Commands.literal("claims").then(players().executes(c -> each(c, (p, s) -> s.clearClaims())))));
 
         d.register(root);
     }
@@ -360,23 +290,16 @@ public class LitRpgCommand {
         sb.append(p.getGameProfile().getName()).append(": ур. ").append(s.getLevel())
                 .append(", опыт ").append(s.getXp()).append('/').append(s.xpForNext())
                 .append(", очки ").append(s.getFreePoints());
-        sb.append("\nРаса: ").append(s.getRace() == null ? "—" : Component.translatable(s.getRace().nameKey()).getString());
+        sb.append("\nРоль: ").append(s.getRole() == null ? "—" : s.getRole().title);
         sb.append(", класс: ").append(s.getPlayerClass() == null ? "Новичок" : Component.translatable(s.getPlayerClass().nameKey()).getString());
         sb.append("\nХарактеристики:");
         for (Stat st : Stat.values()) {
             sb.append(' ').append(Component.translatable(st.translationKey()).getString()).append('=').append(s.getStat(st));
         }
-        sb.append("\nПрофессии:");
-        for (Profession pr : s.getProfessions()) {
-            sb.append(' ').append(Component.translatable(pr.nameKey()).getString()).append(" ").append(s.getProfLevel(pr));
-        }
-        sb.append("\nТитулы: ").append(s.getTitles().size());
         var g = s.gear();
         sb.append("\nЭкипировка: сила+").append(g.stats[0]).append(" ловк+").append(g.stats[1]).append(" вын+").append(g.stats[2])
                 .append(" инт+").append(g.stats[3]).append(" удача+").append(g.stats[4]).append(", бонусы ").append(g.bonus)
                 .append(", пассивки ").append(g.passives).append(", наборы ").append(g.setPieces);
-        sb.append("\nРепутация:");
-        for (var f : com.andrey.litrpg.rep.Faction.values()) sb.append(' ').append(f.key).append('=').append(s.getRep(f));
         sb.append("\nСтиль:");
         for (var e : com.andrey.litrpg.stats.ClassOffers.topStyles(s, 10)) {
             sb.append(' ').append(Component.translatable(e.getKey().nameKey()).getString()).append(' ').append(e.getValue()).append('%');

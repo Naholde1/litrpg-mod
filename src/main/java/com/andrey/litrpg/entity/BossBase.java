@@ -68,8 +68,12 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
 
     protected final ServerBossEvent bossEvent;
     protected final List<Skill> skills = new ArrayList<>();
-    /** Алтарь, у которого босс появился (может отсутствовать — призыв предметом или командой). */
+    /** Место хранителя на арене (может отсутствовать — призыв командой). */
     protected BlockPos home;
+    /** Границы арены этапа: за них хранитель не уходит, в них считаются бойцы. */
+    protected com.andrey.litrpg.run.Layout.Box arenaBox;
+    /** Доп. параметры арены из схемы (точки механик, залы второй фазы…). */
+    protected com.google.gson.JsonObject arenaExtra = new com.google.gson.JsonObject();
     protected int phase = 0;
     private Skill casting;
     private int castLeft;
@@ -269,14 +273,13 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
         if (!(level() instanceof ServerLevel sl)) return;
 
         // привязка к арене
-        if (home != null && tickCount % 20 == 0 && distanceToSqr(Vec3.atBottomCenterOf(home)) > 30 * 30) {
-            teleportTo(home.getX() + 0.5, home.getY() + 1, home.getZ() + 0.5);
+        if (tickCount % 20 == 0 && leashed()) {
+            teleportTo(home.getX() + 0.5, home.getY() + 0.1, home.getZ() + 0.5);
             setTarget(null);
         }
         // все ушли — бой сбрасывается, босс восстанавливается
         if (tickCount % 20 == 0) {
-            boolean anyone = !sl.getEntitiesOfClass(Player.class, getBoundingBox().inflate(40),
-                    p -> !p.isSpectator() && !p.isCreative() && p.isAlive()).isEmpty();
+            boolean anyone = !players().isEmpty();
             lonelyTicks = anyone ? 0 : lonelyTicks + 20;
             if (lonelyTicks >= 600 && (getHealth() < getMaxHealth() || phase > 0 || engaged)) resetFight();
         }
@@ -405,7 +408,7 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
         restoreRelics();
         clearTemp();
         for (Skill sk : skills) sk.left = sk.cooldown / 2;
-        if (home != null) teleportTo(home.getX() + 0.5, home.getY() + 1, home.getZ() + 0.5);
+        if (home != null) teleportTo(home.getX() + 0.5, home.getY() + 0.1, home.getZ() + 0.5);
         onReset();
     }
 
@@ -510,23 +513,37 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
 
     // ---------- арена ----------
 
-    /** Центр арены: Печать или место появления. */
+    /** Ушёл с арены (столкнули, увёл кайт) — вернуть. */
+    protected boolean leashed() {
+        if (home == null) return false;
+        if (arenaBox != null) return !arenaBox.aabb().inflate(2).contains(position());
+        return distanceToSqr(Vec3.atBottomCenterOf(home)) > 30 * 30;
+    }
+
+    /** Центр арены: место хранителя или место появления. */
     public Vec3 arena() {
-        if (home != null) return Vec3.atBottomCenterOf(home.above());
+        if (arenaBox != null) return new Vec3(arenaBox.center().x, home != null ? home.getY() : arenaBox.y1(), arenaBox.center().z);
+        if (home != null) return Vec3.atBottomCenterOf(home);
         if (spawnPos == null) spawnPos = position();
         return spawnPos;
     }
 
     /** Игроки и их союзники на арене. */
     protected List<LivingEntity> fighters() {
+        if (arenaBox != null) {
+            return level().getEntitiesOfClass(LivingEntity.class, arenaBox.aabb().inflate(1, 2, 1),
+                    e -> e != this && e.isAlive() && !isMinion(e) && !(e instanceof BossBase)
+                            && !(e instanceof Player p && (p.isCreative() || p.isSpectator()))
+                            && !(e instanceof net.minecraft.world.entity.decoration.ArmorStand)
+                            && !(e instanceof com.andrey.litrpg.run.TraderEntity));
+        }
         return enemiesAround(arena(), 30);
     }
 
     protected List<ServerPlayer> players() {
         if (!(level() instanceof ServerLevel sl)) return List.of();
-        Vec3 c = arena();
-        return sl.getEntitiesOfClass(ServerPlayer.class, new AABB(c, c).inflate(34, 16, 34),
-                p -> p.isAlive() && !p.isCreative() && !p.isSpectator());
+        AABB box = arenaBox != null ? arenaBox.aabb().inflate(1, 2, 1) : new AABB(arena(), arena()).inflate(34, 16, 34);
+        return sl.getEntitiesOfClass(ServerPlayer.class, box, p -> p.isAlive() && !p.isCreative() && !p.isSpectator());
     }
 
     /** Случайный боец, кроме того, кто держит хранителя (обычно — не танк). */
@@ -885,17 +902,53 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
         restrictTo(pos, 24);
     }
 
+    /** Арена этапа (из схемы подземелья). */
+    public void setArena(com.andrey.litrpg.run.Layout.Box box, BlockPos at, com.google.gson.JsonObject extra) {
+        this.arenaBox = box;
+        this.arenaExtra = extra == null ? new com.google.gson.JsonObject() : extra;
+        this.home = at;
+        int r = Math.max(box.x2() - box.x1(), box.z2() - box.z1()) / 2 + 2;
+        restrictTo(at, r);
+        onArena();
+    }
+
+    /** Арена задана (прочитать точки механик из arenaExtra). */
+    protected void onArena() {}
+
+    /** Точка из доп. параметров арены: "name": [x, y, z]. */
+    protected Vec3 point(String name) {
+        if (!arenaExtra.has(name)) return arena();
+        var a = arenaExtra.getAsJsonArray(name);
+        return new Vec3(a.get(0).getAsDouble() + 0.5, a.get(1).getAsDouble(), a.get(2).getAsDouble() + 0.5);
+    }
+
+    /** Список точек: "name": [[x,y,z], ...]. */
+    protected List<Vec3> points(String name) {
+        List<Vec3> out = new ArrayList<>();
+        if (!arenaExtra.has(name)) return out;
+        for (var e : arenaExtra.getAsJsonArray(name)) {
+            var a = e.getAsJsonArray();
+            out.add(new Vec3(a.get(0).getAsDouble() + 0.5, a.get(1).getAsDouble(), a.get(2).getAsDouble() + 0.5));
+        }
+        return out;
+    }
+
     public BlockPos getHome() {
         return home;
     }
 
-    /** Сколько игроков пришло: здоровье не может быть выше 1024, поэтому группа даёт «запас прочности» (+60% за каждого сверх первого). */
+    /**
+     * Размер группы: здоровье не может быть выше 1024, поэтому группа даёт «запас прочности» —
+     * входящий урон делится (выверено под троих; четвёртый и пятый — +30% каждый).
+     */
     protected float partyScale = 1f;
+    protected int partySize = 3;
 
     public void scaleForParty(int players) {
         var inst = getAttribute(Attributes.MAX_HEALTH);
         if (inst != null) inst.removeModifier(PARTY_HP_ID);
-        partyScale = 1f + 0.6f * Math.max(0, players - 1);
+        partySize = players;
+        partyScale = (float) com.andrey.litrpg.run.Run.hpScale(players);
         setHealth(getMaxHealth());
     }
 
@@ -1019,6 +1072,9 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
         if (home != null) tag.put("Home", NbtUtils.writeBlockPos(home));
         tag.putInt("Phase", phase);
         tag.putFloat("Party", partyScale);
+        tag.putInt("PartyN", partySize);
+        if (arenaBox != null) tag.putIntArray("Arena", new int[]{arenaBox.x1(), arenaBox.y1(), arenaBox.z1(), arenaBox.x2(), arenaBox.y2(), arenaBox.z2()});
+        tag.putString("ArenaExtra", arenaExtra.toString());
         tag.putFloat("Barrier", barrier);
         tag.putFloat("BarrierMax", barrierMax);
         tag.putInt("Fight", fightTicks);
@@ -1037,7 +1093,20 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
         super.readAdditionalSaveData(tag);
         if (tag.contains("Home")) setHome(NbtUtils.readBlockPos(tag.getCompound("Home")));
         phase = tag.getInt("Phase");
-        partyScale = tag.contains("Party") ? Math.max(1f, tag.getFloat("Party")) : 1f;
+        partyScale = tag.contains("Party") ? Math.max(0.3f, tag.getFloat("Party")) : 1f;
+        partySize = tag.contains("PartyN") ? tag.getInt("PartyN") : 3;
+        if (tag.contains("Arena")) {
+            int[] a = tag.getIntArray("Arena");
+            arenaBox = new com.andrey.litrpg.run.Layout.Box(a[0], a[1], a[2], a[3], a[4], a[5]);
+        }
+        if (tag.contains("ArenaExtra")) {
+            try {
+                arenaExtra = com.google.gson.JsonParser.parseString(tag.getString("ArenaExtra")).getAsJsonObject();
+            } catch (Exception ignored) {
+                arenaExtra = new com.google.gson.JsonObject();
+            }
+        }
+        if (arenaBox != null) onArena();
         barrier = tag.getFloat("Barrier");
         barrierMax = tag.getFloat("BarrierMax");
         fightTicks = tag.getInt("Fight");

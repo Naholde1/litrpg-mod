@@ -1,8 +1,0 @@
-{
- "type": "litrpg:map_tile",
- "layer": "overworld",
- "biomes": "#litrpg:map_overworld",
- "step": "surface_structures",
- "spawn_overrides": {},
- "terrain_adaptation": "none"
-}
