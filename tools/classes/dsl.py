@@ -15,7 +15,8 @@ ORDER = []  # порядок классов
 KINDS = set("""DASH DASH_STRIKE LEAP_SLAM NOVA MULTI_NOVA STRIKE MULTI_STRIKE BOLT CHAIN LIGHTNING METEOR ZONE ZONE_AT
 ARROWS BARRAGE ARROW_RAIN BUFF_SELF BUFF_ALLIES HEAL HEAL_SELF MEDITATE TAUNT PULL BLINK SHADOW_STEP STEALTH ON_HIT MARK
 PURIFY SUMMON BEAM CONE VORTEX LAUNCH PUSH STUN STASIS WALL SWAP RECALL GRAPPLE CHARM DOMINATE REVEAL STEAL RESET
-SACRIFICE MINE TETHER WARD SHIELD HEAL_TARGET GLOBAL RALLY GATHER ORB INVOKE INTERRUPT REZ""".split())
+SACRIFICE MINE TETHER WARD SHIELD HEAL_TARGET GLOBAL RALLY GATHER ORB INVOKE INTERRUPT REZ
+TARGET_HEAL CAST_HEAL HOT CHAIN_HEAL TARGET_BOLT CAST_BOLT DOT""".split())
 ALIASES = {}  # удалённый класс → замена (у игроков, выбравших его раньше)
 
 ELEMENTS = {'ARCANE', 'FIRE', 'FROST', 'HOLY', 'SHADOW', 'LIGHTNING', 'POISON', 'NATURE', 'EARTH'}
@@ -197,6 +198,14 @@ class Skill:
             'INTERRUPT': f"Прерывание (до {r} бл.): сбивает подготовку навыка хранителя, обычных врагов оглушает"
                          + (f"; {self.dmg()}" if self.pow > 0 else ''),
             'REZ': f"Воскрешает павшего в бою союзника (до {r} бл.) сразу, без обряда",
+            'TARGET_HEAL': f"Мгновенно лечит союзника на {_pct(self.pow)} силы навыка: выбранного (Ctrl+1…5), того, на кого смотрите, "
+                           f"или самого раненого в {r} бл.",
+            'CAST_HEAL': f"Подготовка {d} с (двигаться нельзя): лечит союзника на {_pct(self.pow)} силы навыка",
+            'HOT': f"Лечение со временем: союзник получает {_pct(self.pow)} силы навыка за {d} с",
+            'CHAIN_HEAL': f"Лечит союзника на {_pct(self.pow)} силы навыка и перескакивает ещё на {n - 1} раненых рядом",
+            'TARGET_BOLT': f"Самонаводящийся снаряд в цель под прицелом (до {r} бл.): {self.dmg()}",
+            'CAST_BOLT': f"Подготовка {d} с (двигаться нельзя): мощный снаряд — {self.dmg()}",
+            'DOT': f"Проклятие на цель под прицелом на {d} с: каждую секунду {self.dmg()}",
         }[k]
         if k == 'RECALL' and 'group' in self.flags:
             t = f"Откат времени: вы возвращаетесь на место 3 с назад и лечите {_pct(self.pow)} здоровья, союзники в {r} бл. — {_pct(self.pow * 0.6)}"

@@ -219,7 +219,7 @@ public class CharacterScreen extends SystemScreen {
         return t;
     }
 
-    /** Панель из шести ячеек и восемь навыков класса: клик по навыку, затем по ячейке (или наоборот). */
+    /** Панель из восьми ячеек и шестнадцать навыков класса: клик по навыку, затем по ячейке (или наоборот). */
     private void classSkills(GuiGraphics g, PlayerStats s, PlayerClass cls, int x, int y, int mx, int my) {
         g.drawString(font, "Панель навыков", x, y, UiKit.GOLD, false);
         String hint = pickSkill != null ? "Теперь выберите ячейку" : pickSlot >= 0 ? "Теперь выберите навык" : "ПКМ по ячейке — убрать";
@@ -244,33 +244,35 @@ public class CharacterScreen extends SystemScreen {
             if (a != null && UiKit.inside(mx, my, sx, sy, 28, 28)) tooltip = skillTip(a, cls.unlockOf(a.key), s);
         }
         // черта класса
-        int tx = x + 6 * 34 + 6;
+        int tx = x + Ability.BAR * 34 + 6;
         int tw = left + W - 12 - tx;
         g.drawString(font, Component.literal("✦ ").append(Component.translatable(cls.traitKey())), tx, sy + 2, 0xFFB8E0FF, false);
         UiKit.wrapped(g, font, Component.translatable(cls.traitDescKey()), tx, sy + 13, tw, UiKit.MUTED);
 
         int ly = sy + 36;
         g.fill(x - 2, ly - 3, left + W - 8, ly - 2, UiKit.FRAME_DIM);
-        int colW = (W - 24) / 2;
+        int cols = 4;
+        int colW = (W - 20) / cols;
         for (int i = 0; i < cls.skills.length; i++) {
             Ability a = Ability.byKey(cls.skills[i]);
             if (a == null) continue;
-            int cx = x + (i % 2) * colW;
-            int cy = ly + (i / 2) * 33;
+            int cx = x + (i % cols) * colW;
+            int cy = ly + (i / cols) * 31;
             int need = cls.unlock[i];
             boolean unlocked = s.getLevel() >= need;
             skillIcon(g, a, cx, cy, unlocked, a.key.equals(pickSkill));
             String title = Component.translatable(a.nameKey()).getString();
+            if (font.width(title) > colW - 36) title = font.plainSubstrByWidth(title, colW - 40) + "…";
             g.drawString(font, title, cx + 32, cy + 2, unlocked ? 0xFFE0D0FF : 0xFF777777, false);
             int on = -1;
             for (int k = 0; k < Ability.BAR; k++) if (a.key.equals(s.getBar(k))) on = k;
             String meta;
             int mc;
             if (!unlocked) {
-                meta = "откроется на " + need + " ур.";
+                meta = "с " + need + " ур.";
                 mc = 0xFFFF9800;
             } else if (on >= 0) {
-                meta = "на панели: " + ModKeys.ABILITIES[on].getTranslatedKeyMessage().getString();
+                meta = "клавиша " + ModKeys.ABILITIES[on].getTranslatedKeyMessage().getString();
                 mc = 0xFF9CFF9C;
             } else {
                 meta = (a.hpCost() > 0 ? Math.round(a.hpCost() * 100) + "% HP" : a.manaCost() + " MP") + " • "

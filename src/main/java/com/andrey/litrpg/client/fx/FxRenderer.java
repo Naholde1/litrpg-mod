@@ -214,19 +214,21 @@ public final class FxRenderer {
                 beam(vc, m, s, t, w, cam, r, g, b, a * Math.min(1, fade * 4));
             }
             case Fx.PILLAR -> {
+                a *= inside(cam, p.p[0], p.p[2], p.p[3]);
                 float rise = Math.min(1, life * 5);
                 wall(vc, m, p.p[0], p.p[1], p.p[2], p.p[3], p.p[4] * rise, 24, r, g, b, a * fade);
                 wall(vc, m, p.p[0], p.p[1], p.p[2], p.p[3] * 0.45f, p.p[4] * rise, 16, 1, 1, 1, a * fade * 0.6f);
             }
             case Fx.SPHERE -> {
                 float rad = Mth.lerp(easeOut(life), p.p[3], p.p[4]);
+                a *= inside3(cam, p.p[0], p.p[1], p.p[2], rad);
                 sphere(vc, m, p.p[0], p.p[1], p.p[2], rad, r, g, b, a * fade * 0.7f);
             }
             case Fx.SHIELD -> {
                 Entity ent = mc.level.getEntity(p.a);
                 if (ent == null) return;
                 Vec3 v = ent.getPosition(pt);
-                float pulse = 0.85f + 0.15f * Mth.sin((fx.age + pt) * 0.3f);
+                float pulse = (0.85f + 0.15f * Mth.sin((fx.age + pt) * 0.3f)) * inside3(cam, v.x, v.y + ent.getBbHeight() * 0.5, v.z, p.p[0]);
                 float al = a * Math.min(1, fade * 5) * 0.35f * pulse;
                 sphere(vc, m, v.x, v.y + ent.getBbHeight() * 0.5, v.z, p.p[0], r, g, b, al);
             }
@@ -260,6 +262,18 @@ public final class FxRenderer {
             }
             default -> { }
         }
+    }
+
+    /** Камера внутри столба — почти прозрачно (иначе свой же эффект слепит). */
+    private static float inside(Camera cam, double x, double z, float r) {
+        Vec3 c = cam.getPosition();
+        double d = Math.hypot(c.x - x, c.z - z);
+        return d < r + 0.6 ? 0.12f : d < r + 2 ? (float) (0.12 + 0.88 * (d - r - 0.6) / 1.4) : 1f;
+    }
+
+    private static float inside3(Camera cam, double x, double y, double z, float r) {
+        double d = cam.getPosition().distanceTo(new Vec3(x, y, z));
+        return d < r + 0.4 ? 0.1f : d < r + 2 ? (float) (0.1 + 0.9 * (d - r - 0.4) / 1.6) : 1f;
     }
 
     private static float easeOut(float t) {

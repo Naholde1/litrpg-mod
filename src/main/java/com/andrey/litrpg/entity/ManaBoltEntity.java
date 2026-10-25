@@ -83,10 +83,29 @@ public class ManaBoltEntity extends Fireball {
     }
 
     public void setDamage(float damage) { this.damage = damage; }
+
+    /** Самонаведение (таргетные заклинания): снаряд доворачивает к цели. */
+    private Entity homing;
+    private double homingSpeed = 1.6;
+
+    public void setHoming(Entity target, double speed) {
+        this.homing = target;
+        this.homingSpeed = speed;
+    }
     public void setSplash(float radius) { this.splash = radius; }
 
     @Override
     public void tick() {
+        if (!level().isClientSide && homing != null && homing.isAlive()) {
+            net.minecraft.world.phys.Vec3 to = homing.position().add(0, homing.getBbHeight() * 0.6, 0).subtract(position());
+            if (to.lengthSqr() > 1e-3) {
+                net.minecraft.world.phys.Vec3 want = to.normalize().scale(homingSpeed);
+                net.minecraft.world.phys.Vec3 v = getDeltaMovement().lerp(want, 0.4);
+                setDeltaMovement(v);
+                xPower = yPower = zPower = 0;
+                hurtMarked = true;
+            }
+        }
         super.tick();
         if (!level().isClientSide && tickCount > 100) {
             discard();

@@ -131,6 +131,28 @@ def cache_top():
     return p
 
 
+def potion(liquid, glow):
+    """Пузырёк: горлышко с пробкой, круглое брюшко, жидкость с бликом."""
+    p = canvas()
+    glass = (200, 220, 235, 160)
+    for y in range(16):
+        for x in range(16):
+            d = math.hypot(x - 7.5, y - 10)
+            if d <= 5.2:
+                p[y][x] = glass
+                if d <= 4.4 and y >= 8:
+                    k = 0.75 + 0.25 * (1 - (y - 8) / 8)
+                    p[y][x] = (int(liquid[0] * k), int(liquid[1] * k), int(liquid[2] * k), 255)
+            if 6 <= x <= 9 and 2 <= y <= 5:
+                p[y][x] = glass
+    for x in range(6, 10):
+        p[1][x] = (120, 80, 40, 255)
+        p[2][x] = (150, 100, 50, 255)
+    for (x, y) in ((5, 9), (5, 10), (6, 8)):
+        p[y][x] = glow
+    return p
+
+
 def save(name, px):
     os.makedirs(TEX, exist_ok=True)
     write_png(os.path.join(TEX, name + '.png'), px, 16, 16)
@@ -188,6 +210,10 @@ def main():
     jdump('blockstates/cache.json', {'variants': {f'facing={f}': {'model': 'litrpg:block/cache', 'y': r} for f, r in rot.items()}})
     jdump('models/item/cache.json', {'parent': 'litrpg:block/cache'})
 
+    item_tex = os.path.join(ASSETS, 'textures', 'item')
+    write_png(os.path.join(item_tex, 'health_potion.png'), potion((210, 30, 40), (255, 220, 220, 255)), 16, 16)
+    jdump('models/item/health_potion.json', {'parent': 'minecraft:item/generated', 'textures': {'layer0': 'litrpg:item/health_potion'}})
+    jdump('models/item/trader_spawn_egg.json', {'parent': 'minecraft:item/template_spawn_egg'})
     for lang in ('ru_ru', 'en_us'):
         p = os.path.join(ASSETS, 'lang', lang + '.json')
         d = json.load(open(p, encoding='utf-8'))

@@ -81,6 +81,42 @@ public class AbilityHandler {
                     .withStyle(ChatFormatting.RED), true);
             return;
         }
+        // общий откат 0,5 с между навыками (рывок — вне него)
+        boolean dash = a.kind == Ability.Kind.DASH && a.key.equals(Ability.DASH_KEY);
+        if (!dash && now < player.getPersistentData().getLong(GCD_TAG)) return;
+        if (com.andrey.litrpg.run.Spirits.isSpirit(player)) return;
+        if (!checkCost(player, s, a)) return;
+        if (Casting.isCast(a)) {
+            Casting.start(player, a);
+            return;
+        }
+        if (!dash && Casting.isCasting(player)) Casting.cancel(player, null);
+        complete(player, a);
+    }
+
+    /** Хватает ли маны и здоровья. */
+    private static boolean checkCost(ServerPlayer player, PlayerStats s, Ability a) {
+        if (player.isCreative()) return true;
+        int cost = Math.round(a.mana * (1 - Math.min(40f, s.gear().get(com.andrey.litrpg.gear.GearBonus.MANA_COST)) / 100f));
+        float hp = a.hpCost * player.getMaxHealth();
+        if (a.hpCost > 0 && player.getHealth() <= hp + 1) {
+            player.displayClientMessage(Component.literal("Слишком мало здоровья!").withStyle(ChatFormatting.DARK_RED), true);
+            return false;
+        }
+        if (s.getMana() < cost) {
+            player.displayClientMessage(Component.literal("Недостаточно маны!").withStyle(ChatFormatting.BLUE), true);
+            return false;
+        }
+        return true;
+    }
+
+    public static final String GCD_TAG = "litrpg_gcd";
+
+    /** Применить навык (сразу или после подготовки): цена, перезарядка, эффекты. */
+    public static void complete(ServerPlayer player, Ability a) {
+        PlayerStats s = StatsManager.get(player);
+        long now = player.level().getGameTime();
+        if (!checkCost(player, s, a)) return;
         boolean free = player.isCreative();
         int cost = Math.round(a.mana * (1 - Math.min(40f, s.gear().get(com.andrey.litrpg.gear.GearBonus.MANA_COST)) / 100f));
         float hp = a.hpCost * player.getMaxHealth();
@@ -110,6 +146,8 @@ public class AbilityHandler {
             boost = 1f;
         }
         if (ok) {
+            SkillFx.play(player, a);
+            if (!(a.kind == Ability.Kind.DASH && a.key.equals(Ability.DASH_KEY))) player.getPersistentData().putLong(GCD_TAG, now + 10);
             if (!free) {
                 s.setMana(s.getMana() - cost);
                 if (a.hpCost > 0) player.setHealth(Math.max(1f, player.getHealth() - hp));
@@ -251,6 +289,13 @@ public class AbilityHandler {
             case INVOKE -> invoke(p, s);
             case INTERRUPT -> interrupt(p, s, a);
             case REZ -> rez(p, s, a);
+            case TARGET_HEAL -> Dynamic.targetHeal(p, s, a);
+            case CAST_HEAL -> Dynamic.castHeal(p, s, a);
+            case HOT -> Dynamic.hot(p, s, a);
+            case CHAIN_HEAL -> Dynamic.chainHeal(p, s, a);
+            case TARGET_BOLT -> Dynamic.targetBolt(p, s, a);
+            case CAST_BOLT -> Dynamic.castBolt(p, s, a);
+            case DOT -> Dynamic.dot(p, s, a);
         };
     }
 
@@ -1187,6 +1232,10 @@ public class AbilityHandler {
 
     /** Союзник под прицелом или самый раненый рядом. */
     private static LivingEntity allyTarget(ServerPlayer p, double r, boolean includeSelf) {
+        var data = p.getPersistentData();
+        if (data.hasUUID(com.andrey.litrpg.network.FocusPacket.FOCUS)
+                && p.level().getPlayerByUUID(data.getUUID(com.andrey.litrpg.network.FocusPacket.FOCUS)) instanceof ServerPlayer f
+                && f.isAlive() && !com.andrey.litrpg.run.Spirits.isSpirit(f) && f.distanceTo(p) <= r) return f;
         LivingEntity look = lookTarget(p, r);
         if (look != null && look != p && isAlly(p, look) && !(look instanceof AbstractVillager)) return look;
         LivingEntity best = null;
@@ -1397,7 +1446,7 @@ public class AbilityHandler {
                 && !(e instanceof net.minecraft.world.entity.decoration.ArmorStand);
     }
 
-    static List<LivingEntity> enemiesAround(ServerPlayer p, AABB box) {
+    public static List<LivingEntity> enemiesAround(ServerPlayer p, AABB box) {
         return p.level().getEntitiesOfClass(LivingEntity.class, box, e -> isEnemy(p, e));
     }
 
@@ -1464,7 +1513,7 @@ public class AbilityHandler {
         }
     }
 
-    static void sound(ServerPlayer p, SoundEvent e, float vol, float pitch) {
+    public static void sound(ServerPlayer p, SoundEvent e, float vol, float pitch) {
         p.level().playSound(null, p.getX(), p.getY(), p.getZ(), e, SoundSource.PLAYERS, vol, pitch);
     }
 }

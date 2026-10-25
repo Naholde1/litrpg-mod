@@ -54,6 +54,9 @@ public class ModNetwork {
         CHANNEL.messageBuilder(FocusPacket.class, id++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(FocusPacket::encode).decoder(FocusPacket::new)
                 .consumerMainThread(FocusPacket::handle).add();
+        CHANNEL.messageBuilder(CastPacket.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(CastPacket::encode).decoder(CastPacket::new)
+                .consumerMainThread(CastPacket::handle).add();
         CHANNEL.messageBuilder(FxPacket.class, id++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(FxPacket::encode).decoder(FxPacket::new)
                 .consumerMainThread(FxPacket::handle).add();

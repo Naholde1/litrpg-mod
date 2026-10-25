@@ -11,29 +11,30 @@ sys.path.insert(0, os.path.dirname(__file__))
 from classes import dsl  # noqa: E402
 from classes import legacy_skills, legacy_classes, tanks, damage_melee, damage_ranged, damage_magic, support, hidden, invokers  # noqa: E402,F401
 from classes import pve  # noqa: E402,F401  — переработка под PvE (2.17): правки поверх классов
+from classes import v3  # noqa: E402,F401  — 3.0: 50 классов по 16 навыков + динамичные навыки
 
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 RES = os.path.join(ROOT, 'src', 'main', 'resources')
 LANG = os.path.join(RES, 'assets', 'litrpg', 'lang')
 
-NOVICE = ['dash', 'second_wind']
-NOVICE_UNLOCK = [1, 5]
-# уровни открытия навыков класса по порядку в списке
-UNLOCK = [10, 10, 14, 18, 23, 29, 36, 45]
+NOVICE = ['mend', 'magic_missile']
+NOVICE_UNLOCK = [1, 1]
+# уровни открытия навыков класса по порядку в списке (16 навыков, с 10 по 48 уровень)
+UNLOCK = [10, 10, 10, 12, 14, 16, 18, 20, 23, 26, 29, 32, 36, 40, 44, 48]
 ROLE_RU = {'TANK': 'Танк', 'DAMAGE': 'Боец', 'SUPPORT': 'Поддержка'}
 
 
 def check():
     errors = []
-    used = set(NOVICE)
+    used = set(NOVICE) | {'dash'}
     for key in dsl.ORDER:
         c = dsl.CLASSES[key]
         if c.invoke:
             sk = c.invoke['spheres'] + [c.invoke['cast']] + [x[1] for x in c.invoke['combos']]
         else:
             sk = c.skills
-            if len(sk) != 8:
-                errors.append(f'{key}: {len(sk)} навыков (нужно 8)')
+            if len(sk) != 16:
+                errors.append(f'{key}: {len(sk)} навыков (нужно 16)')
             if len(set(sk)) != len(sk):
                 errors.append(f'{key}: повтор навыка')
         for s in sk:
@@ -51,7 +52,8 @@ def main():
     if errors:
         print('\n'.join(errors))
         sys.exit(1)
-    skills = [s.json() for s in dsl.SKILLS.values()]
+    unused_set = set(unused)
+    skills = [s.json() for s in dsl.SKILLS.values() if s.key not in unused_set]
     classes = []
     for key in dsl.ORDER:
         c = dsl.CLASSES[key]
@@ -73,6 +75,8 @@ def main():
         for k in [k for k in d if k.startswith('ability.litrpg.') or k.startswith('class.litrpg.')]:
             del d[k]
     for s in dsl.SKILLS.values():
+        if s.key in unused_set:
+            continue
         desc = s.desc()
         ru[f'ability.litrpg.{s.key}'], ru[f'ability.litrpg.{s.key}.desc'] = s.ru, desc
         en[f'ability.litrpg.{s.key}'], en[f'ability.litrpg.{s.key}.desc'] = s.en, desc
@@ -103,8 +107,7 @@ def main():
 
     roles = {r: sum(1 for k in dsl.ORDER if dsl.CLASSES[k].role == r and not dsl.CLASSES[k].hidden) for r in ROLE_RU}
     print(f'classes {len(dsl.ORDER)} ({roles}, hidden {len(hid)}), skills {len(dsl.SKILLS)}')
-    if unused:
-        print('не используются:', ' '.join(unused))
+    print(f'в игре навыков: {len(skills)} (не используются и не выгружены: {len(unused)})')
 
 
 if __name__ == '__main__':

@@ -53,6 +53,7 @@ public class HudOverlay {
         g.drawString(font, (int) s.getMana() + " / " + s.getMaxMana() + " MP", x, y, 0xFF9EC5FF, false);
 
         abilities(g, font, s, height);
+        castBar(g, font, width, height, partialTick);
         target(g, font, mc, width);
         party(g, font, y + 14);
     }
@@ -225,6 +226,34 @@ public class HudOverlay {
         g.pose().scale(0.6f, 0.6f, 1f);
         g.drawString(font, hp, -font.width(hp) / 2, 0, 0xFFFFFFFF, true);
         g.pose().popPose();
+    }
+
+    // ---------------- полоса каста ----------------
+
+    private static int castAbility = -1, castTotal, castStart;
+
+    /** Сервер: начат каст навыка (или -1 — окончен/сбит). */
+    public static void cast(int ability, int ticks) {
+        castAbility = ability;
+        castTotal = ticks;
+        castStart = Minecraft.getInstance().player == null ? 0 : Minecraft.getInstance().player.tickCount;
+    }
+
+    private static void castBar(GuiGraphics g, Font font, int width, int height, float pt) {
+        if (castAbility < 0 || Minecraft.getInstance().player == null) return;
+        Ability a = Ability.byId(castAbility);
+        if (a == null) return;
+        float t = (Minecraft.getInstance().player.tickCount - castStart + pt) / Math.max(1, castTotal);
+        if (t > 1.2f) {
+            castAbility = -1;
+            return;
+        }
+        int w = 160, x = width / 2 - w / 2, y = height - 74;
+        g.fill(x - 3, y - 12, x + w + 3, y + 9, 0xB0050A12);
+        UiKit.frame(g, x - 3, y - 12, w + 6, 21, 0xFF4FC3F7);
+        String name = Component.translatable(a.nameKey()).getString();
+        g.drawString(font, name, x + w / 2 - font.width(name) / 2, y - 10, 0xFFFFFFFF, false);
+        UiKit.bar(g, x, y + 1, w, 5, Math.min(1f, t), 0xFF101828, 0xFFFFC040);
     }
 
     private record Aggro(String target, boolean onMe, int percent, long time) {}
