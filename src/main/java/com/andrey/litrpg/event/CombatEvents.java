@@ -70,6 +70,20 @@ public class CombatEvents {
         return (float) (com.andrey.litrpg.stats.StatBreakdown.dodge(s).value() / 100.0);
     }
 
+    /**
+     * Стрелы и снаряды игроков не отскакивают от «неуязвимости после удара»: в группе по цели бьют часто,
+     * и ванильные полсекунды неуязвимости отбрасывали почти каждую стрелу.
+     */
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onProjectileAttack(LivingAttackEvent event) {
+        LivingEntity target = event.getEntity();
+        if (target.level().isClientSide || target instanceof Player) return;
+        DamageSource src = event.getSource();
+        if (src.getEntity() instanceof Player && src.getDirectEntity() instanceof net.minecraft.world.entity.projectile.Projectile) {
+            target.invulnerableTime = 0;
+        }
+    }
+
     @SubscribeEvent
     public static void onAttack(LivingAttackEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
