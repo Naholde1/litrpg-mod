@@ -17,7 +17,7 @@ BIOMES = {
                 'minecraft:music.nether.warped_forest'),
     'temple': (0x0A2230, 0x0E4A6A, 'minecraft:underwater', 0.02, 'minecraft:ambient.underwater.loop', 'minecraft:ambient.underwater.loop.additions.rare',
                'minecraft:music.under_water'),
-    'forges': (0x2A1208, 0x5A2A10, 'minecraft:ash', 0.06, 'minecraft:ambient.basalt_deltas.loop', 'minecraft:ambient.basalt_deltas.mood',
+    'forges': (0x2A1208, 0x3AA8E0, 'minecraft:ash', 0.06, 'minecraft:ambient.basalt_deltas.loop', 'minecraft:ambient.basalt_deltas.mood',
                'minecraft:music.nether.basalt_deltas'),
     'spire': (0x160A24, 0x3A1A5A, 'minecraft:reverse_portal', 0.008, 'minecraft:ambient.crimson_forest.loop', 'minecraft:ambient.crimson_forest.mood',
               'minecraft:music.end'),

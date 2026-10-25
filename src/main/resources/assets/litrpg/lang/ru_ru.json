@@ -2090,5 +2090,13 @@
   "entity.litrpg.leviathan": "Левиафан",
   "item.litrpg.leviathan_spawn_egg": "Яйцо призыва: Левиафан",
   "entity.litrpg.deep_priestess": "Жрица глубин",
-  "item.litrpg.deep_priestess_spawn_egg": "Яйцо призыва: Жрица глубин"
+  "item.litrpg.deep_priestess_spawn_egg": "Яйцо призыва: Жрица глубин",
+  "entity.litrpg.smelter_golem": "Голем-плавильщик",
+  "item.litrpg.smelter_golem_spawn_egg": "Яйцо призыва: Голем-плавильщик",
+  "entity.litrpg.fire_twin_ignis": "Игнис",
+  "item.litrpg.fire_twin_ignis_spawn_egg": "Яйцо призыва: Игнис",
+  "entity.litrpg.fire_twin_cinder": "Синдер",
+  "item.litrpg.fire_twin_cinder_spawn_egg": "Яйцо призыва: Синдер",
+  "entity.litrpg.ash_lord": "Повелитель Пепла",
+  "item.litrpg.ash_lord_spawn_egg": "Яйцо призыва: Повелитель Пепла"
 }

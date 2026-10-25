@@ -52,6 +52,11 @@ public final class Bosses {
         add(r, "tide_warden", "tide_warden", TideWardenEntity::new, 1.4f, 3.8f, false, TideWardenEntity::createAttributes);
         add(r, "leviathan", "leviathan", LeviathanEntity::new, 3.0f, 6.0f, false, LeviathanEntity::createAttributes);
         add(r, "deep_priestess", "deep_priestess", DeepPriestessEntity::new, 0.9f, 3.0f, false, DeepPriestessEntity::createAttributes);
+        // ---- этап 4: Кузни Пепла ----
+        add(r, "smelter_golem", "smelter_golem", SmelterGolemEntity::new, 2.2f, 4.4f, true, SmelterGolemEntity::createAttributes);
+        add(r, "fire_twin_ignis", "fire_twin_ignis", FireTwinEntity::new, 1.0f, 3.2f, true, FireTwinEntity::createAttributes);
+        add(r, "fire_twin_cinder", "fire_twin_cinder", FireTwinEntity::new, 0.8f, 2.6f, true, FireTwinEntity::createAttributes);
+        add(r, "ash_lord", "ash_lord", AshLordEntity::new, 1.4f, 3.8f, true, AshLordEntity::createAttributes);
     }
 
     public static void attributes(EntityAttributeCreationEvent e) {

@@ -41,6 +41,16 @@ MATS.update({
     'robe_sea': G.m_cloth(0x1A3A5A, 0x0A1A2C, tatter=True),
     'pearl': G.m_glow(0xF0F0FF, 0xA0B0D0),
     'gold_trim': G.m_metal(0xB08A30, 0xF0D070, 0x5A4010, rivets=False),
+    # этап 4
+    'forge_iron': G.m_metal(0x3A3438, 0x7A7078, 0x1A1618),
+    'molten': G.m_magma(0x2A1C18, 0xFF8A20, 0xFFE070, crack_amt=0.14),
+    'molten_hot': G.m_glow(0xFFB040, 0xC04010),
+    'ember_plate': G.m_metal(0x5A2010, 0xC86030, 0x2A0C06),
+    'flame': G.m_fire(),
+    'robe_ash': G.m_cloth(0x3A3434, 0x1A1616, tatter=True),
+    'hair_ember': G.m_hair(0xE05A10, 0x7A2008),
+    'skin_ash': G.m_skin(0x8A7A70, 0x5A4C44, spots=0x3A302A, spot_chance=0.1),
+    'obsid': G.m_stone(0x1A1022, 0x0A0612, 0x3A2A4A, cracks=True),
 })
 
 
@@ -253,7 +263,73 @@ def deep_priestess():
     return dict(name='deep_priestess', scale=1.35, shadow=0.7, parts=[body, head, arm, arm_r, staff, orbs] + hair)
 
 
-MODELS = [gatekeeper, twin_morra, twin_vessa, lich_king, dark_witch, tide_warden, leviathan, deep_priestess]
+# ======================= Этап 4 =======================
+
+def smelter_golem():
+    """Голем-плавильщик: широкий чугунный корпус-печь с раскалённым горном в груди, руки-ковши, труба на спине."""
+    leg = Part('leg_l', 'root', (5, 14, 0), [Cube(2, 0, -4, 7, 14, 8, 'forge_iron'), Cube(1, 0, -6, 9, 3, 11, 'forge_iron')],
+               anim=[A('walk', 'x', 0.45)])
+    body = Part('body', 'root', (0, 14, 0), [
+        Cube(-11, 14, -7, 22, 20, 14, 'forge_iron', decals=[('front', 6, 5, 10, 8, 0xFF9A30, True), ('front', 8, 7, 6, 4, 0xFFE070, True)]),
+        Cube(-9, 12, -6, 18, 3, 12, 'molten'),
+        Cube(-12, 30, -8, 24, 4, 16, 'forge_iron'),
+        Cube(-3, 34, 3, 6, 12, 6, 'forge_iron'), Cube(-2, 46, 4, 4, 2, 4, 'molten_hot'),
+    ], anim=[A('idle', 'x', 0.02, 0.07)])
+    head = Part('head', 'body', (0, 34, -2), [
+        Cube(-5, 34, -9, 10, 7, 8, 'forge_iron', decals=[('front', 2, 2, 6, 2, 0xFFB040, True)]),
+        Cube(-6, 39, -10, 12, 2, 10, 'molten'),
+    ], anim=[A('look', 'y', 0.6), A('look', 'x', 0.3)])
+    arm = Part('arm_l', 'body', (13, 31, 0), [
+        Cube(11, 16, -4, 7, 16, 8, 'forge_iron'),
+        Cube(10, 6, -6, 9, 10, 12, 'forge_iron', decals=[('front', 2, 5, 5, 4, 0xFF8A20, True)]),
+        Cube(11, 14, -5, 7, 2, 10, 'molten'),
+    ], anim=[A('walk', 'x', 0.35, phase=math.pi), A('attack', 'x', 1.6), A('cast', 'x', -2.2), A('cast2', 'z', -0.9)])
+    return dict(name='smelter_golem', scale=1.5, shadow=1.3, parts=[leg, mirror(leg, 'leg_r'), body, head, arm, mirror(arm, 'arm_r')])
+
+
+def _recolor(m, name, swap, glow_from=(), glow_to=0):
+    m['name'] = name
+    for p in m['parts']:
+        for c in p.cubes:
+            c.mat = swap.get(c.mat, c.mat)
+            if glow_from:
+                c.decals = [(d[0], d[1], d[2], d[3], d[4], glow_to if d[5] in glow_from else d[5], d[6]) for d in c.decals]
+    return m
+
+
+def fire_twin_ignis():
+    """Игнис: рыцарь в раскалённых латах, корона-пламя, огненный клинок."""
+    m = _recolor(lich_king(), 'fire_twin_ignis',
+                 {'lich_plate': 'ember_plate', 'frost_crown': 'flame', 'lich_cloak': 'robe_crimson', 'runeblade': 'molten_hot', 'skull': 'skin_ash'},
+                 (0x60C8FF, 0xE0F8FF), 0xFFB040)
+    m['scale'] = 1.25
+    return m
+
+
+def fire_twin_cinder():
+    """Синдер: чародейка в пепельном рубище, волосы-угли, посох с огненным черепом."""
+    m = _sister('fire_twin_cinder', 'robe_ash', 'hair_ember', 0xFFA030, 'flame', 'staff')
+    for p in m['parts']:
+        for c in p.cubes:
+            if c.mat == 'skin_pale':
+                c.mat = 'skin_ash'
+    return m
+
+
+def ash_lord():
+    """Повелитель Пепла: огненный владыка в обсидиановых наплечниках с пепельной короной и двуручным клинком."""
+    m = _recolor(G.flame_lord(), 'ash_lord', {'obsidian': 'obsid'})
+    crown = Part('crown', 'head', (0, 44, -1), [Cube(-6, 44, -6, 12, 2, 12, 'obsid'), Cube(-6, 46, -6, 2, 4, 2, 'molten_hot'),
+                                                Cube(4, 46, -6, 2, 4, 2, 'molten_hot'), Cube(-1, 46, -7, 2, 6, 2, 'molten_hot')])
+    sword = Part('sword', 'arm_r', (-12, 12, 0), [Cube(-13, -22, -1, 3, 34, 2, 'molten_hot'), Cube(-16, 11, -2, 9, 2, 4, 'obsid'),
+                                                  Cube(-13, 13, -1, 3, 6, 2, 'obsid')])
+    m['parts'] += [crown, sword]
+    m['scale'] = 1.35
+    return m
+
+
+MODELS = [gatekeeper, twin_morra, twin_vessa, lich_king, dark_witch, tide_warden, leviathan, deep_priestess,
+          smelter_golem, fire_twin_ignis, fire_twin_cinder, ash_lord]
 
 NAMES = {
     'gatekeeper': ('Привратник Костей', 'Bone Gatekeeper'),
@@ -266,6 +342,10 @@ NAMES = {
     'tide_warden': ('Страж приливов', 'Tide Warden'),
     'leviathan': ('Левиафан', 'Leviathan'),
     'deep_priestess': ('Жрица глубин', 'Priestess of the Deep'),
+    'smelter_golem': ('Голем-плавильщик', 'Smelter Golem'),
+    'fire_twin_ignis': ('Игнис', 'Ignis'),
+    'fire_twin_cinder': ('Синдер', 'Cinder'),
+    'ash_lord': ('Повелитель Пепла', 'Ash Lord'),
 }
 
 

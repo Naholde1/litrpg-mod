@@ -5,8 +5,8 @@
   "effects": {
     "fog_color": 2757128,
     "sky_color": 2757128,
-    "water_color": 5909008,
-    "water_fog_color": 5909008,
+    "water_color": 3844320,
+    "water_fog_color": 3844320,
     "mood_sound": {
       "sound": "minecraft:ambient.basalt_deltas.mood",
       "tick_delay": 6000,

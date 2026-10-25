@@ -2083,5 +2083,13 @@
   "entity.litrpg.leviathan": "Leviathan",
   "item.litrpg.leviathan_spawn_egg": "Leviathan Spawn Egg",
   "entity.litrpg.deep_priestess": "Priestess of the Deep",
-  "item.litrpg.deep_priestess_spawn_egg": "Priestess of the Deep Spawn Egg"
+  "item.litrpg.deep_priestess_spawn_egg": "Priestess of the Deep Spawn Egg",
+  "entity.litrpg.smelter_golem": "Smelter Golem",
+  "item.litrpg.smelter_golem_spawn_egg": "Smelter Golem Spawn Egg",
+  "entity.litrpg.fire_twin_ignis": "Ignis",
+  "item.litrpg.fire_twin_ignis_spawn_egg": "Ignis Spawn Egg",
+  "entity.litrpg.fire_twin_cinder": "Cinder",
+  "item.litrpg.fire_twin_cinder_spawn_egg": "Cinder Spawn Egg",
+  "entity.litrpg.ash_lord": "Ash Lord",
+  "item.litrpg.ash_lord_spawn_egg": "Ash Lord Spawn Egg"
 }
