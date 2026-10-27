@@ -1,6 +1,8 @@
 build/
 .gradle/
-run/
+# только служебная папка запуска в корне: без ведущей косой черты правило
+# съедало и пакет исходников src/main/java/com/andrey/litrpg/run/
+/run/
 out/
 *.iml
 .idea/
