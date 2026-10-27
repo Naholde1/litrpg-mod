@@ -130,7 +130,8 @@ public class GatekeeperEntity extends StageBoss {
 
     @Override public int getBossLevel() { return 4; }
     @Override public int getXpReward() { return 0; }
-    @Override protected float ehp() { return 4200; }
+    // первый хранитель: было 4200 — группа за минуту снимала одно деление из десяти, убавлено в 1.5 раза
+    @Override protected float ehp() { return 2800; }
 
     @Override
     protected float[] phaseThresholds() {

@@ -62,6 +62,7 @@ public class StaffItem extends Item {
                 s.setMana(s.getMana() - manaCost);
                 StatsManager.sync(sp);
             }
+            // посох не изнашивается (gear/Indestructible) — вызов остаётся безвредным для не-вечных копий
             stack.hurtAndBreak(1, sp, p -> p.broadcastBreakEvent(hand));
             sp.getCooldowns().addCooldown(this, cooldown);
         }

@@ -100,7 +100,8 @@ public class CharacterScreen extends SystemScreen {
             g.drawString(font, Component.translatable(st.translationKey()), x, ry + 3, 0xFF000000 | st.color, false);
             String v = String.valueOf(s.getStat(st));
             g.drawString(font, v, x + 105 - font.width(v), ry + 3, 0xFFFFFFFF, false);
-            if (UiKit.inside(mx, my, x, ry, 110, 14)) tooltip = Component.translatable(st.descKey());
+            // в подсказке — что характеристика даёт прямо сейчас, теми же числами, что идут в бой
+            if (UiKit.inside(mx, my, x, ry, 110, 14)) tooltip = com.andrey.litrpg.stats.StatBreakdown.effect(s, st);
             if (s.getFreePoints() > 0) {
                 boolean hov = UiKit.inside(mx, my, x + 112, ry, 14, 14);
                 g.fill(x + 112, ry, x + 126, ry + 14, hov ? 0xFF2E7D32 : 0xFF1B4D20);
@@ -120,13 +121,18 @@ public class CharacterScreen extends SystemScreen {
         String[] lines = {
                 String.format("Здоровье: %.0f", hp),
                 String.format("Урон оружием: %.1f", atk),
+                String.format("Ближний бой: +%.0f%%   Стрелы: +%.0f%%",
+                        com.andrey.litrpg.stats.StatBreakdown.meleeDamage(s).value(),
+                        com.andrey.litrpg.stats.StatBreakdown.rangedDamage(s).value()),
                 String.format("Броня: %.1f", armor),
+                String.format("Стойкость: %.0f%%", com.andrey.litrpg.stats.StatBreakdown.resistance(s).value()),
                 String.format("Реген маны: %.1f/с", s.getManaRegenPerSecond()),
                 String.format("Шанс крита: %.1f%%  (x%.2f)", CombatEvents.critChance(s) * 100, CombatEvents.critMultiplier(s)),
                 String.format("Уклонение: %.1f%%", CombatEvents.dodgeChance(s) * 100),
                 String.format("Скорость: %.0f%%", spd),
         };
-        int[] colors = {0xFFFF6B6B, 0xFFE05A47, 0xFFBBBBBB, 0xFF5AA0F0, 0xFFFFD54F, 0xFF5BD16A, 0xFF5BD16A};
+        int[] colors = {0xFFFF6B6B, 0xFFE05A47, 0xFFE05A47, 0xFFBBBBBB, 0xFFBBBBBB, 0xFF5AA0F0, 0xFFFFD54F,
+                0xFF5BD16A, 0xFF5BD16A};
         for (int i = 0; i < lines.length; i++) g.drawString(font, lines[i], dx, dy + i * 11, colors[i], false);
 
         if (s.getRole() != null) {

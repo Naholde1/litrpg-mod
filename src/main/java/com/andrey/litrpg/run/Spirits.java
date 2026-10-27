@@ -46,7 +46,8 @@ public final class Spirits {
     private Spirits() {}
 
     public static final String FALLEN_TAG = "litrpg_fallen_spirit";
-    private static final int REZ_TICKS = 60, REZ_COOLDOWN = 20 * 90;
+    /** Подъём у тела: 3 с на подъём, общий откат 10 с — и у приседания, и у навыка воскрешения. */
+    private static final int REZ_TICKS = 60, REZ_COOLDOWN = 20 * 10;
 
     /** body — где лежит тело; boss — хранитель, в бою с которым пал (или null). */
     private record Spirit(Vec3 body, UUID boss, long since) {}
@@ -61,6 +62,19 @@ public final class Spirits {
 
     public static boolean isSpirit(UUID id) {
         return SPIRITS.containsKey(id);
+    }
+
+    /**
+     * Откат воскрешения — общий для подъёма приседанием и для навыка воскрешения.
+     * Раньше навык откат не проверял и не ставил, поэтому поднимать можно было без перерыва.
+     * Возвращает сколько тиков осталось (0 — готово).
+     */
+    public static long rezCooldown(ServerPlayer p) {
+        return Math.max(0, REZ_CD.getOrDefault(p.getUUID(), 0L) - p.level().getGameTime());
+    }
+
+    private static void startRezCooldown(ServerPlayer p) {
+        REZ_CD.put(p.getUUID(), p.level().getGameTime() + REZ_COOLDOWN);
     }
 
     /** Хранитель в бою рядом с точкой. */
@@ -126,10 +140,10 @@ public final class Spirits {
         for (Map.Entry<UUID, Spirit> en : SPIRITS.entrySet()) {
             Spirit sp = en.getValue();
             if (sp.body.distanceTo(p.position()) > 2.8) continue;
-            long now = p.level().getGameTime();
-            long cd = REZ_CD.getOrDefault(p.getUUID(), 0L);
-            if (cd > now) {
-                p.displayClientMessage(Component.literal("Воскрешение перезаряжается: " + (cd - now) / 20 + " с").withStyle(ChatFormatting.GRAY), true);
+            long left = rezCooldown(p);
+            if (left > 0) {
+                CHANNEL.remove(p.getUUID());
+                p.displayClientMessage(Component.literal("Воскрешение перезаряжается: " + (left / 20 + 1) + " с").withStyle(ChatFormatting.GRAY), true);
                 return;
             }
             int t = CHANNEL.merge(p.getUUID(), 1, Integer::sum);
@@ -138,7 +152,7 @@ public final class Spirits {
                     .withStyle(ChatFormatting.GREEN), true);
             if (t >= REZ_TICKS) {
                 CHANNEL.remove(p.getUUID());
-                REZ_CD.put(p.getUUID(), now + REZ_COOLDOWN);
+                startRezCooldown(p);
                 ServerPlayer dead = p.server.getPlayerList().getPlayer(en.getKey());
                 if (dead != null) revive(dead, 0.4f, "Вас поднял(а) " + p.getName().getString());
                 p.displayClientMessage(Component.literal("Вы воскресили союзника").withStyle(ChatFormatting.GOLD), true);
@@ -148,8 +162,14 @@ public final class Spirits {
         CHANNEL.remove(p.getUUID());
     }
 
-    /** Навык воскрешения: поднять ближайшего павшего в радиусе r сразу. */
+    /** Навык воскрешения: поднять ближайшего павшего в радиусе r сразу. Откат — общий с подъёмом у тела. */
     public static boolean reviveNear(ServerPlayer by, double r) {
+        long left = rezCooldown(by);
+        if (left > 0) {
+            by.displayClientMessage(Component.literal("Воскрешение перезаряжается: " + (left / 20 + 1) + " с")
+                    .withStyle(ChatFormatting.GRAY), true);
+            return false;
+        }
         UUID best = null;
         double bestD = r;
         for (Map.Entry<UUID, Spirit> en : SPIRITS.entrySet()) {
@@ -162,6 +182,7 @@ public final class Spirits {
         if (best == null) return false;
         ServerPlayer dead = by.server.getPlayerList().getPlayer(best);
         if (dead == null) return false;
+        startRezCooldown(by);
         revive(dead, 0.5f, "Вас поднял(а) " + by.getName().getString());
         return true;
     }

@@ -19,6 +19,11 @@ SACRIFICE MINE TETHER WARD SHIELD HEAL_TARGET GLOBAL RALLY GATHER ORB INVOKE INT
 TARGET_HEAL CAST_HEAL HOT CHAIN_HEAL TARGET_BOLT CAST_BOLT DOT""".split())
 ALIASES = {}  # удалённый класс → замена (у игроков, выбравших его раньше)
 
+# Навыки, которые по самой своей сути колдуются, а не бьются: лечение, щиты, воскрешение,
+# очищение. У них нет стихии, поэтому раньше они по умолчанию считались от Силы.
+MAGIC_KINDS = {'HEAL', 'HEAL_SELF', 'HEAL_TARGET', 'TARGET_HEAL', 'CAST_HEAL', 'CHAIN_HEAL', 'HOT',
+               'SHIELD', 'REZ', 'PURIFY'}
+
 ELEMENTS = {'ARCANE', 'FIRE', 'FROST', 'HOLY', 'SHADOW', 'LIGHTNING', 'POISON', 'NATURE', 'EARTH'}
 STATS = {'STR': 'STRENGTH', 'AGI': 'AGILITY', 'VIT': 'VITALITY', 'INT': 'INTELLIGENCE', 'LUCK': 'LUCK'}
 STAT_GEN = {'STRENGTH': 'Силы', 'AGILITY': 'Ловкости', 'VITALITY': 'Выносливости', 'INTELLIGENCE': 'Интеллекта', 'LUCK': 'Удачи'}
@@ -110,7 +115,11 @@ class Skill:
         self.key, self.ru, self.en, self.kind, self.icon = key, ru, en, kind, icon
         self.mana, self.cd = m, cd
         self.el = el
-        self.stat = STATS[st] if st else ('INTELLIGENCE' if el else 'STRENGTH')
+        # по умолчанию навык считается от Силы, а со стихией — от Интеллекта.
+        # Лечение, щиты и воскрешение стихии не имеют, и 43 навыка лекарей из-за этого
+        # считались от Силы: интеллект поддержке ничего не давал. Теперь они тоже от Интеллекта;
+        # явный st= по-прежнему сильнее (целебный дротик следопыта так и остаётся от Ловкости).
+        self.stat = STATS[st] if st else ('INTELLIGENCE' if el or kind in MAGIC_KINDS else 'STRENGTH')
         self.pow, self.rad, self.dur, self.cnt = pw, r, d, n
         self.me, self.foe = parse_fx(me), parse_fx(foe)
         self.flags = fl.split()

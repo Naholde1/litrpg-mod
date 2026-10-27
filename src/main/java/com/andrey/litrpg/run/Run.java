@@ -553,6 +553,9 @@ public final class Run {
 
     private static void resetStage(ServerLevel dl, RunState st, Layout.Stage s) {
         st.clearStage();
+        // новая попытка начинается с чистой таблицы угрозы: иначе хранитель помнил,
+        // кто больше всех надамажил в прошлом заходе, и с порога бежал к нему
+        com.andrey.litrpg.event.Threat.clearAll();
 
         for(Layout.Gate g : s.gates()) {
             setGate(dl, st, g, g.open());

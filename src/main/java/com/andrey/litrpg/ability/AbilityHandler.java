@@ -205,6 +205,12 @@ public class AbilityHandler {
 
     /** Боевое воскрешение: поднять павшего (дух) рядом сразу, без долгого обряда. */
     private static boolean rez(ServerPlayer p, PlayerStats s, Ability a) {
+        long cd = com.andrey.litrpg.run.Spirits.rezCooldown(p);
+        if (cd > 0) {
+            p.displayClientMessage(Component.literal("Воскрешение перезаряжается: " + (cd / 20 + 1) + " с")
+                    .withStyle(ChatFormatting.GRAY), true);
+            return false;
+        }
         if (!com.andrey.litrpg.run.Spirits.reviveNear(p, a.radius)) {
             p.displayClientMessage(Component.literal("Рядом нет павших союзников").withStyle(ChatFormatting.YELLOW), true);
             return false;

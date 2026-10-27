@@ -70,16 +70,35 @@ public class CombatEvents {
         return (float) (com.andrey.litrpg.stats.StatBreakdown.dodge(s).value() / 100.0);
     }
 
+    /** Насколько слабее урон по своим: случайная стрела в спину товарища не должна его валить. */
+    private static final float FRIENDLY_FIRE = 0.15f;
+
+    /** Снаряд игрока или его слуги (скелет некроманта, волк и прочие призванные). */
+    private static boolean fromParty(Entity owner) {
+        if (owner instanceof Player) return true;
+        return owner != null && com.andrey.litrpg.ability.Minions.ownerOf(owner) != null;
+    }
+
     /**
      * Стрелы и снаряды игроков не отскакивают от «неуязвимости после удара»: в группе по цели бьют часто,
      * и ванильные полсекунды неуязвимости отбрасывали почти каждую стрелу.
+     * Снимаем неуязвимость дважды: в момент попадания снаряда (до всей логики урона — именно там
+     * решается, пролетит стрела или отскочит) и в самом событии атаки, на случай чужих источников урона.
      */
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onProjectileImpact(net.minecraftforge.event.entity.ProjectileImpactEvent event) {
+        if (!(event.getRayTraceResult() instanceof net.minecraft.world.phys.EntityHitResult hit)) return;
+        if (!(hit.getEntity() instanceof LivingEntity target) || target instanceof Player) return;
+        if (target.level().isClientSide) return;
+        if (fromParty(event.getProjectile().getOwner())) target.invulnerableTime = 0;
+    }
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onProjectileAttack(LivingAttackEvent event) {
         LivingEntity target = event.getEntity();
         if (target.level().isClientSide || target instanceof Player) return;
         DamageSource src = event.getSource();
-        if (src.getEntity() instanceof Player && src.getDirectEntity() instanceof net.minecraft.world.entity.projectile.Projectile) {
+        if (fromParty(src.getEntity()) && src.getDirectEntity() instanceof net.minecraft.world.entity.projectile.Projectile) {
             target.invulnerableTime = 0;
         }
     }
@@ -131,6 +150,11 @@ public class CombatEvents {
         // ---------- игрок получает урон ----------
         if (target instanceof ServerPlayer victim) {
             PlayerStats vs = StatsManager.get(victim);
+            // свои по своим: в тесных коридорах шальная стрела или взмах по площади выносили товарища
+            if (src.getEntity() != victim && fromParty(src.getEntity())) {
+                event.setAmount(amount * FRIENDLY_FIRE);
+                return;
+            }
             if (src.getEntity() instanceof LivingEntity attacker && !(attacker instanceof Player)) {
                 amount *= incomingMult(vs.getLevel(), MobLevels.getLevel(attacker));
                 if (victim.getPersistentData().getLong(AbilityHandler.REFLECT_TAG) > victim.level().getGameTime()) {
@@ -143,6 +167,8 @@ public class CombatEvents {
                     victim.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 1));
                 }
             }
+            // пассивная стойкость: роль танка и выносливость (видно в окне «K»)
+            amount *= 1f - (float) com.andrey.litrpg.stats.StatBreakdown.resistance(vs).value() / 100f;
             event.setAmount(amount);
             return;
         }
@@ -157,7 +183,10 @@ public class CombatEvents {
         boolean melee = src.getDirectEntity() == player;
         boolean arrow = src.getDirectEntity() instanceof AbstractArrow;
 
-        if (arrow) amount *= 1f + 0.07f * classWeight(s, Style.RANGED);
+        // характеристики идут в урон: Сила — ближний бой, Ловкость — стрельба.
+        // Те же проценты показывает окно персонажа, поэтому цифры в окне и в бою не расходятся.
+        if (melee) amount *= 1f + (float) com.andrey.litrpg.stats.StatBreakdown.meleeDamage(s).value() / 100f;
+        if (arrow) amount *= 1f + (float) com.andrey.litrpg.stats.StatBreakdown.rangedDamage(s).value() / 100f;
 
         long markedUntil = target.getPersistentData().getLong(AbilityHandler.MARK_TAG);
         if (markedUntil > player.level().getGameTime()) amount *= 1.3f;

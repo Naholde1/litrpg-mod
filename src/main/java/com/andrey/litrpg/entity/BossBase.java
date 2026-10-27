@@ -38,7 +38,9 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -409,7 +411,19 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
         clearTemp();
         for (Skill sk : skills) sk.left = sk.cooldown / 2;
         if (home != null) teleportTo(home.getX() + 0.5, home.getY() + 0.1, home.getZ() + 0.5);
+        // новая попытка — чистая таблица угрозы: иначе хранитель с порога бежал к тому,
+        // кто больше всех надамажил в прошлом заходе
+        setTarget(null);
+        com.andrey.litrpg.event.Threat.clear(this);
         onReset();
+    }
+
+    /**
+     * Во сколько раз «сжимается» входящий урон (запас прочности и размер группы).
+     * Нужно системе угрозы, чтобы привести лечение к той же мере, что и урон.
+     */
+    public float threatScale() {
+        return Math.max(1f, toughness() * partyScale);
     }
 
     // ================= урон «по-рейдовому» =================
@@ -438,10 +452,28 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
         return ok;
     }
 
+    /**
+     * Достаёт ли удар из точки до цели. Площадные удары не должны проходить сквозь стены:
+     * колонна, угол коридора и закрытая дверь — законное укрытие. Луч пускаем и в глаза,
+     * и в середину тела (пол, ступени и мелкие уступы не должны «прикрывать»), а если сама
+     * точка удара замурована в блоке — проверку не делаем, иначе механика просто не сработает.
+     */
+    protected boolean reaches(Vec3 from, LivingEntity e) {
+        Vec3 src = from.add(0, 0.6, 0);
+        if (!level().getBlockState(BlockPos.containing(src)).getCollisionShape(level(), BlockPos.containing(src)).isEmpty()) return true;
+        return clearLine(src, e.getEyePosition()) || clearLine(src, e.position().add(0, e.getBbHeight() * 0.5, 0));
+    }
+
+    private boolean clearLine(Vec3 a, Vec3 b) {
+        return level().clip(new ClipContext(a, b, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this))
+                .getType() == HitResult.Type.MISS;
+    }
+
     /** Удар навыка по области. */
     protected int hitAll(Vec3 center, double radius, float power, Consumer<LivingEntity> extra) {
         int n = 0;
         for (LivingEntity e : enemiesAround(center, radius)) {
+            if (!reaches(center, e)) continue;
             if (hit(e, power)) {
                 n++;
                 if (extra != null) extra.accept(e);
@@ -491,7 +523,7 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
     void detonate(Telegraph t) {
         List<LivingEntity> in = new ArrayList<>();
         for (LivingEntity e : enemiesAround(t.center, Math.max(t.r1, 2) + 2)) {
-            if (t.contains(e.position()) && (t.spare == null || !t.spare.test(e))) in.add(e);
+            if (t.contains(e.position()) && reaches(t.center, e) && (t.spare == null || !t.spare.test(e))) in.add(e);
         }
         if (t.soak > 0) {
             if (in.size() < t.soak) {

@@ -3,6 +3,7 @@ package com.andrey.litrpg.event;
 import com.andrey.litrpg.LitRPG;
 import com.andrey.litrpg.ability.Minions;
 import com.andrey.litrpg.ability.Stealth;
+import com.andrey.litrpg.entity.BossBase;
 import com.andrey.litrpg.entity.wild.Species;
 import com.andrey.litrpg.entity.wild.WildMob;
 import com.andrey.litrpg.network.ModNetwork;
@@ -41,7 +42,16 @@ import java.util.WeakHashMap;
  * урон даёт угрозу, лечение союзников в бою — половину (делится между всеми врагами), роль танка — ×5
  * (как стойки танков в WoW), поднятый щит — чуть больше. Моб бьёт того, у кого угроза выше, а сменить цель его заставит
  * только тот, кто перебьёт текущую угрозу на 10% вблизи или на 30% издалека.
- * «Насмешка», «Боевой клич» и «Рёв» сразу делают тебя первым в списке.
+ * «Насмешка», «Боевой клич» и «Рёв» сразу делают тебя первым в списке и на 4 с приклеивают моба к провокатору.
+ *
+ * <p>Угроза — это не сумма за всё время, а «свежесть»: каждые полсекунды таблица тает на 1.5%
+ * (примерно вдвое за 25 с). Поэтому залп в начале боя не держит моба до конца сражения: кто бьёт
+ * и держит сейчас, тот и в цели. Таблица обнуляется со смертью моба, сбросом боя и вайпом —
+ * новая попытка начинается с чистого листа, а не с чужого урона из прошлой.
+ *
+ * <p>Угроза от лечения приводится к той же мере, что и урон: входящий урон хранителей и «крепких»
+ * мобов делится на их запас прочности, поэтому лечение делится на него же — иначе лекарь
+ * с большими цифрами лечения перебивал танка одним заклинанием.
  */
 @Mod.EventBusSubscriber(modid = LitRPG.MODID)
 public final class Threat {
@@ -51,11 +61,21 @@ public final class Threat {
     private static final class Table {
         final Map<UUID, Float> threat = new LinkedHashMap<>();
         long lastHit;
+        /** Провокация: моб приклеен к этому игроку до тика tauntUntil. */
+        UUID taunter;
+        long tauntUntil;
     }
 
     private static final Map<Mob, Table> TABLES = new WeakHashMap<>();
     private static final float MELEE_LEAD = 1.1f, RANGED_LEAD = 1.3f;
     private static final int FORGET_TICKS = 20 * 15, MAX_RANGE = 48;
+    /** Шаг обработки таблиц и затухание угрозы за шаг (0.985 за 0.5 с — вдвое за ~25 с). */
+    private static final int STEP = 10;
+    private static final float DECAY = 0.985f;
+    /** Мелочь ниже этого порога выбрасываем, чтобы таблица не росла. */
+    private static final float MIN_THREAT = 0.5f;
+    /** Сколько моб обязан бить провокатора. */
+    private static final int TAUNT_TICKS = 80;
 
     private static boolean tracked(Mob m) {
         if (m.level().isClientSide || Minions.ownerOf(m) != null) return false;
@@ -77,6 +97,15 @@ public final class Threat {
         if (c != null) k += 0.2f * c.styles.getOrDefault(Style.TANK, 0);
         if (p.isBlocking() || p.getOffhandItem().getItem() instanceof net.minecraft.world.item.ShieldItem) k += 0.3f;
         return k;
+    }
+
+    /**
+     * Во сколько раз урон по этому мобу «сжат» его запасом прочности. Угроза от урона считается
+     * уже по сжатому числу (событие урона приходит после деления), поэтому к лечению применяем то же.
+     */
+    private static float scale(Mob m) {
+        if (m instanceof BossBase b) return Math.max(1f, b.threatScale());
+        return Math.max(1f, m.getPersistentData().getFloat(MobLevels.TOUGH_TAG));
     }
 
     private static void add(Mob m, LivingEntity who, float amount) {
@@ -104,7 +133,7 @@ public final class Threat {
             Table t = TABLES.get(m);
             if (t != null && (t.threat.containsKey(ally.getUUID()) || m.getTarget() == ally)) angry.add(m);
         }
-        for (Mob m : angry) add(m, healer, amount * 0.5f * mult(healer) / angry.size());
+        for (Mob m : angry) add(m, healer, amount * 0.5f * mult(healer) / angry.size() / scale(m));
     }
 
     /** Провокация: моб бросает всё и бьёт провокатора, а тот становится первым в таблице. */
@@ -118,7 +147,20 @@ public final class Threat {
         for (float v : t.threat.values()) top = Math.max(top, v);
         t.threat.put(who.getUUID(), Math.max(t.threat.getOrDefault(who.getUUID(), 0f), top * RANGED_LEAD + 10));
         t.lastHit = m.level().getGameTime();
+        // приклеиваем на 4 с: иначе залп бойца тут же снимал агр обратно и провокация ничего не решала
+        t.taunter = who.getUUID();
+        t.tauntUntil = m.level().getGameTime() + TAUNT_TICKS;
         m.setTarget(who);
+    }
+
+    /** Забыть всё, что моб помнит об угрозе (смерть, сброс боя, вайп). */
+    public static void clear(Mob m) {
+        TABLES.remove(m);
+    }
+
+    /** Полный сброс всех таблиц (новый этап, перезапуск прохождения). */
+    public static void clearAll() {
+        TABLES.clear();
     }
 
     private static LivingEntity resolve(Mob m, UUID id) {
@@ -131,6 +173,14 @@ public final class Threat {
 
     /** Кто сейчас должен быть целью: лидер по угрозе, если он обогнал нынешнюю цель с запасом. */
     private static LivingEntity wanted(Mob m, Table t, LivingEntity current) {
+        // пока держится провокация — цель только провокатор
+        if (t.taunter != null) {
+            if (m.level().getGameTime() < t.tauntUntil) {
+                LivingEntity forced = resolve(m, t.taunter);
+                if (forced != null) return forced;
+            }
+            t.taunter = null;
+        }
         LivingEntity best = null;
         float bestV = 0;
         for (Iterator<Map.Entry<UUID, Float>> it = t.threat.entrySet().iterator(); it.hasNext(); ) {
@@ -183,7 +233,10 @@ public final class Threat {
         if (e.getEntity().level().isClientSide) return;
         if (e.getEntity() instanceof Mob m) TABLES.remove(m);
         UUID id = e.getEntity().getUUID();
-        for (Table t : TABLES.values()) t.threat.remove(id);
+        for (Table t : TABLES.values()) {
+            t.threat.remove(id);
+            if (id.equals(t.taunter)) t.taunter = null;
+        }
     }
 
     /** Для dev-команды devthreat: таблица угрозы моба. */
@@ -195,15 +248,20 @@ public final class Threat {
             Entity e = sl.getEntity(id);
             b.append(e == null ? id.toString().substring(0, 8) : e.getName().getString()).append('=').append(Math.round(v)).append(' ');
         });
+        if (t.taunter != null && m.level().getGameTime() < t.tauntUntil) {
+            Entity e = sl.getEntity(t.taunter);
+            b.append("taunt=").append(e == null ? "?" : e.getName().getString())
+                    .append('/').append((t.tauntUntil - m.level().getGameTime()) / 20).append("s ");
+        }
         return b.append('}').toString();
     }
 
-    /** Раз в полсекунды: смена цели по угрозе, забывание после боя, подсказка в рамке цели. */
+    /** Раз в полсекунды: затухание, смена цели по угрозе, забывание после боя, подсказка в рамке цели. */
     @SubscribeEvent
     public static void onTick(TickEvent.ServerTickEvent e) {
         if (e.phase != TickEvent.Phase.END || TABLES.isEmpty()) return;
         var server = net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer();
-        if (server == null || server.getTickCount() % 10 != 0) return;
+        if (server == null || server.getTickCount() % STEP != 0) return;
         List<Mob> drop = new ArrayList<>();
         for (var en : List.copyOf(TABLES.entrySet())) {
             Mob m = en.getKey();
@@ -217,10 +275,30 @@ public final class Threat {
                 drop.add(m);
                 continue;
             }
+            // хранитель вышел из боя (вайп, сброс этапа, все ушли) — прошлая попытка не должна решать агр
+            if (m instanceof BossBase b && !b.inCombat() && idle > 40) {
+                drop.add(m);
+                continue;
+            }
+            decay(t);
+            if (t.threat.isEmpty()) {
+                drop.add(m);
+                continue;
+            }
             retarget(m);
             sync(m, t);
         }
         for (Mob m : drop) TABLES.remove(m);
+    }
+
+    /** Угроза — мера свежая: старый вклад тает, поэтому цель меняется по тому, кто бьёт сейчас. */
+    private static void decay(Table t) {
+        for (Iterator<Map.Entry<UUID, Float>> it = t.threat.entrySet().iterator(); it.hasNext(); ) {
+            var en = it.next();
+            float v = en.getValue() * DECAY;
+            if (v < MIN_THREAT) it.remove();
+            else en.setValue(v);
+        }
     }
 
     /** Участникам боя — кто у моба в цели и сколько у тебя угрозы относительно лидера. */

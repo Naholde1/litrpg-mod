@@ -127,9 +127,24 @@ public class MobLevels {
         applyScaling(mob, lvl, rank, hpMult);
     }
 
+    /**
+     * Поправка на «не свой» уровень. Числа вида в бестиарии подогнаны под его собственный уровень:
+     * у банши это 40, то есть 40 здоровья и 9 урона — для сорокового уровня. Подземелье же ставит
+     * виды там, где они к месту по духу, и Плакальщица (чемпион, названный мини-босс) оказалась
+     * на первом этаже третьим уровнем: 640 здоровья и удар насмерть по новичку с 26 хп.
+     * Приводим базу вида к уровню спавна, но по корню — иначе вид превращается в пустышку.
+     * Для видов, стоящих на своём уровне или выше, множитель равен 1 и ничего не меняется.
+     */
+    private static double tierFix(Mob mob, int lvl, double perLevel) {
+        if (!(mob instanceof com.andrey.litrpg.entity.wild.WildMob w)) return 1;
+        int design = w.spec().level;
+        if (design <= lvl) return 1;
+        return Math.sqrt((1 + perLevel * (lvl - 1)) / (1 + perLevel * (design - 1)));
+    }
+
     private static void applyScaling(Mob mob, int lvl, Rank rank, double hpMult) {
         int l = lvl - 1;
-        double hpK = (1 + 0.30 * l) * rank.hp * hpMult;
+        double hpK = (1 + 0.30 * l) * rank.hp * hpMult * tierFix(mob, lvl, 0.30);
         AttributeInstance hpAttr = mob.getAttribute(Attributes.MAX_HEALTH);
         double wanted = hpAttr == null ? 0 : hpAttr.getBaseValue() * hpK;
         // выше 1024 Майнкрафт не даёт — остаток уходит в «запас прочности» (входящий урон делится)
@@ -137,7 +152,8 @@ public class MobLevels {
                 AttributeModifier.Operation.MULTIPLY_BASE);
         if (wanted > 1024) mob.getPersistentData().putFloat(TOUGH_TAG, (float) (wanted / 1024));
         else mob.getPersistentData().remove(TOUGH_TAG);
-        mod(mob, Attributes.ATTACK_DAMAGE, DMG_ID, (1 + 0.12 * l) * rank.dmg - 1, AttributeModifier.Operation.MULTIPLY_BASE);
+        mod(mob, Attributes.ATTACK_DAMAGE, DMG_ID, (1 + 0.12 * l) * rank.dmg * tierFix(mob, lvl, 0.12) - 1,
+                AttributeModifier.Operation.MULTIPLY_BASE);
         mod(mob, Attributes.ARMOR, ARMOR_ID, Math.min(20, l * 0.5), AttributeModifier.Operation.ADDITION);
         mod(mob, Attributes.ARMOR_TOUGHNESS, TOUGH_ID, Math.min(10, l * 0.15), AttributeModifier.Operation.ADDITION);
         double speed = Math.min(0.25, l * 0.005) + (hasAffix(mob, Affix.SWIFT) ? 0.35 : 0);

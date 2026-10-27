@@ -2,7 +2,9 @@ package com.andrey.litrpg.stats;
 
 import com.andrey.litrpg.gear.GearBonus;
 import com.andrey.litrpg.gear.PlayerGear;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,11 +100,41 @@ public final class StatBreakdown {
         int lvl = s.getLevel();
         v.add("База", 20);
         v.add("Выносливость ×2", s.getStat(Stat.VITALITY) * 2.0);
+        // роль танка: выносливость для него чуть ценнее (×2,5 вместо ×2)
+        if (s.getRole() == Role.TANK) v.add("Выносливость (танк) ещё ×0.5", s.getStat(Stat.VITALITY) * 0.5);
         v.add("Уровень (+1 за уровень)", lvl - 1);
         int tank = tankWeight(s);
         if (tank > 0) v.add(cls(s), tank * (1 + lvl * 0.15));
         v.add("Экипировка", s.gear().get(GearBonus.HEALTH));
         return v;
+    }
+
+    /** Пассивная стойкость: весь входящий урон слабее на столько процентов. */
+    public static Value resistance(PlayerStats s) {
+        Value v = new Value("Стойкость к урону", "%.0f%%");
+        if (s.getRole() == Role.TANK) v.add("Танк (пассивно)", 8);
+        v.add("Выносливость ×0.1% (до 6%)", Math.min(s.getStat(Stat.VITALITY) * 0.1, 6.0));
+        v.note = "Считается после брони. У хранителей танк и так получает вдвое меньше.";
+        return v.cap(25);
+    }
+
+    /** Прибавка к урону в ближнем бою, % (от Силы). */
+    public static Value meleeDamage(PlayerStats s) {
+        Value v = new Value("Урон в ближнем бою", "+%.0f%%");
+        v.add("Сила ×0.5%", s.getStat(Stat.STRENGTH) * 0.5);
+        int melee = styleWeight(s, Style.MELEE);
+        if (melee > 0) v.add(cls(s), melee * 2.0);
+        v.note = "Сверх прибавки к урону самого оружия.";
+        return v.cap(150);
+    }
+
+    /** Прибавка к урону стрелой, % (от Ловкости). */
+    public static Value rangedDamage(PlayerStats s) {
+        Value v = new Value("Урон стрелой", "+%.0f%%");
+        v.add("Ловкость ×0.4%", s.getStat(Stat.AGILITY) * 0.4);
+        int rg = styleWeight(s, Style.RANGED);
+        if (rg > 0) v.add(cls(s), rg * 7.0);
+        return v.cap(150);
     }
 
     public static int tankWeight(PlayerStats s) {
@@ -220,8 +252,33 @@ public final class StatBreakdown {
 
     /** Все производные значения для окна. */
     public static List<Value> derived(PlayerStats s) {
-        return List.of(health(s), weaponDamage(s), armor(s), critChance(s), critMultiplier(s), dodge(s),
-                moveSpeed(s), attackSpeed(s), maxMana(s), manaRegen(s), spellPower(s), xpBonus(s), lootBonus(s));
+        return List.of(health(s), weaponDamage(s), meleeDamage(s), rangedDamage(s), armor(s), resistance(s),
+                critChance(s), critMultiplier(s), dodge(s), moveSpeed(s), attackSpeed(s), maxMana(s), manaRegen(s),
+                spellPower(s), xpBonus(s), lootBonus(s));
+    }
+
+    /**
+     * Что характеристика даёт прямо сейчас — подсказка в окне прокачки.
+     * Строки собираются из тех же расчётов, что и бой, поэтому «Сила» в окне
+     * всегда показывает ровно то, что действительно идёт в урон.
+     */
+    public static Component effect(PlayerStats s, Stat st) {
+        String prefix = STAT_NAMES[st.ordinal()];
+        MutableComponent out = Component.translatable(st.descKey()).copy().withStyle(ChatFormatting.GRAY);
+        boolean any = false;
+        for (Value v : derived(s)) {
+            for (Part p : v.parts) {
+                if (!p.label().getString().startsWith(prefix)) continue;
+                if (!any) {
+                    out.append(Component.literal("\nСейчас даёт:").withStyle(ChatFormatting.WHITE));
+                    any = true;
+                }
+                out.append(Component.literal("\n • " + v.name + ": " + String.format(v.format, p.value()))
+                        .withStyle(ChatFormatting.AQUA));
+            }
+        }
+        if (!any) out.append(Component.literal("\nПока ничего не даёт").withStyle(ChatFormatting.DARK_GRAY));
+        return out;
     }
 
     /** Все бонусы экипировки, которые не вошли в основные строки. */

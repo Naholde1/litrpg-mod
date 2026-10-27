@@ -666,15 +666,33 @@ public class WildMob extends PathfinderMob implements Animated {
                 return gaze(u);
             }
             case SCREAM -> {
-                if (dist > r) return false;
+                // Вопль плакальщицы раньше бил мгновенно и сквозь стены — ответить было нечем.
+                // Теперь это замах на 1 с: нужна линия взгляда, крик слышно заранее,
+                // его можно прервать оглушением или просто уйти за угол.
+                if (dist > r || !sees) return false;
                 pose(2, 20);
-                for (LivingEntity e : foes(r)) {
-                    e.hurt(damageSources().magic(), dmg() * u.power());
-                    e.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 120, 0));
-                    e.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 30, 0));
+                playSound(SoundEvents.GHAST_WARN, 1.4f, 1.2f);
+                if (level() instanceof ServerLevel warn) {
+                    warn.sendParticles(ParticleTypes.SCULK_SOUL, getX(), getEyeY(), getZ(), 12, 0.6, 0.4, 0.6, 0.01);
                 }
-                playSound(SoundEvents.GHAST_SCREAM, 1.6f, 1.3f);
-                if (level() instanceof ServerLevel sl) sl.sendParticles(ParticleTypes.SCULK_SOUL, getX(), getEyeY(), getZ(), 20, 1.5, 0.6, 1.5, 0.02);
+                for (LivingEntity e : foes(r)) {
+                    if (e instanceof ServerPlayer sp && hasLineOfSight(sp)) {
+                        sp.displayClientMessage(Component.literal(getName().getString() + " набирает воздух — в укрытие!")
+                                .withStyle(ChatFormatting.GOLD), true);
+                    }
+                }
+                com.andrey.litrpg.util.Scheduler.later(20, () -> {
+                    if (!isAlive() || com.andrey.litrpg.ability.SkillEffects.stunned(this)) return;
+                    if (!(level() instanceof ServerLevel sl)) return;
+                    for (LivingEntity e : foes(r)) {
+                        if (!hasLineOfSight(e)) continue;
+                        e.hurt(damageSources().magic(), dmg() * u.power());
+                        e.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 80, 0));
+                        e.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 20, 0));
+                    }
+                    playSound(SoundEvents.GHAST_SCREAM, 1.6f, 1.3f);
+                    sl.sendParticles(ParticleTypes.SCULK_SOUL, getX(), getEyeY(), getZ(), 20, 1.5, 0.6, 1.5, 0.02);
+                });
                 return true;
             }
             case BLINK -> {

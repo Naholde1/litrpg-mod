@@ -75,8 +75,8 @@ public final class BossDamage {
                     Vec3 look = p.getViewVector(1f);
                     Vec3 to = from.subtract(p.position()).normalize();
                     if (look.x * to.x + look.z * to.z > 0.2) {
+                        // щит не изнашивается (gear/Indestructible): в подземелье его негде починить
                         amount *= s.getRole() == Role.TANK ? 0.55f : 0.8f;
-                        p.getUseItem().hurtAndBreak(Math.max(1, (int) (amount / 3)), p, e -> e.broadcastBreakEvent(p.getUsedItemHand()));
                     }
                 }
             }
