@@ -306,6 +306,27 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
         if (engaged && fightTicks > 60 && tickCount % 10 == 0 && (arenaAlt != null || arenaBox != null)) {
             keepInArena(sl);
         }
+        // хранитель сам не стоит за стеной: проверка в мире показала Привратника,
+        // ушедшего на блок за арену и медленно задыхавшегося в камне
+        if (tickCount % 40 == 0 && (arenaAlt != null || arenaBox != null)
+                && !arenaAabb().inflate(0, 2, 0).contains(position())) {
+            Vec3 in = safeSpot(position());
+            teleportTo(in.x, in.y, in.z);
+        }
+        // бой идёт, а цели нет: угроза затухает, и если по хранителю перестали бить,
+        // таблица пустела — он замирал посреди арены и больше ничего не делал
+        if (engaged && tickCount % 20 == 0 && (getTarget() == null || !getTarget().isAlive())) {
+            LivingEntity near = null;
+            double best = Double.MAX_VALUE;
+            for (ServerPlayer p : players()) {
+                double d = distanceToSqr(p);
+                if (d < best) {
+                    best = d;
+                    near = p;
+                }
+            }
+            if (near != null) setTarget(near);
+        }
         // все ушли — бой сбрасывается, босс восстанавливается
         if (tickCount % 20 == 0) {
             boolean anyone = !players().isEmpty();
@@ -737,22 +758,39 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
         return insideSpot(wanted, arenaAabb().inflate(1, 2, 1));
     }
 
-    /** Ближайшее место внутри арены, где можно стоять. */
+    /**
+     * Ближайшее место внутри арены, где можно стоять. Идёт от края к центру: у самого края
+     * зала обычно сплошной камень, и первая проверка в мире показала, что игрока втягивало
+     * в стену и роняло на двенадцать блоков вниз.
+     */
     protected Vec3 insideSpot(Vec3 from, AABB box) {
+        Vec3 c = box.getCenter();
         double x = Mth.clamp(from.x, box.minX + 2, box.maxX - 2);
         double z = Mth.clamp(from.z, box.minZ + 2, box.maxZ - 2);
         double y = Mth.clamp(from.y, box.minY + 1, box.maxY - 1);
+        for (int i = 0; i <= 10; i++) {
+            double t = i / 10.0;
+            Vec3 spot = standAt(x + (c.x - x) * t, y, z + (c.z - z) * t, box);
+            if (spot != null) return spot;
+        }
+        Vec3 middle = standAt(c.x, y, c.z, box);
+        return middle != null ? middle : new Vec3(c.x, y, c.z);
+    }
+
+    /** Место для ног в этой колонке (ищем пол вверх и вниз), иначе null. */
+    private Vec3 standAt(double x, double y, double z, AABB box) {
         BlockPos at = BlockPos.containing(x, y, z);
-        for (int d = 0; d <= 10; d++) {
+        for (int d = 0; d <= 12; d++) {
             for (int s = 0; s < (d == 0 ? 1 : 2); s++) {
-                BlockPos c = at.above(s == 0 ? d : -d);
-                if (level().getBlockState(c).isAir() && level().getBlockState(c.above()).isAir()
-                        && !level().getBlockState(c.below()).isAir()) {
-                    return Vec3.atBottomCenterOf(c);
+                BlockPos p = at.above(s == 0 ? d : -d);
+                if (p.getY() < box.minY - 1 || p.getY() > box.maxY + 1) continue;
+                if (level().getBlockState(p).isAir() && level().getBlockState(p.above()).isAir()
+                        && level().getBlockState(p.below()).isSolid()) {
+                    return Vec3.atBottomCenterOf(p);
                 }
             }
         }
-        return new Vec3(x, y, z);
+        return null;
     }
 
     // ---------- щит, оглушение, подсказки ----------
@@ -1189,9 +1227,19 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
 
     /** Для dev-команды devboss. */
     public String debugState() {
-        return String.format("hp=%.0f/%.0f party=%.1f barrier=%.0f phase=%d relics=%d/%d zones=%d immune=%s stagger=%d fight=%ds enrage=%d target=%s home=%s",
+        return String.format("hp=%.0f/%.0f party=%.1f barrier=%.0f phase=%d relics=%d/%d zones=%d immune=%s stagger=%d fight=%ds enrage=%d"
+                        + " target=%s home=%s at=%d,%d,%d alt=%s broken=%d",
                 getHealth(), getMaxHealth(), partyScale, barrier, phase, relicsAlive(), relics.size(), zones.size(), immune, stagger,
-                fightTicks / 20, enrageStacks(), getTarget() == null ? "-" : getTarget().getName().getString(), home);
+                fightTicks / 20, enrageStacks(), getTarget() == null ? "-" : getTarget().getName().getString(), home,
+                getBlockX(), getBlockY(), getBlockZ(),
+                arenaAlt == null ? "-" : String.format("%d,%d,%d..%d,%d,%d", (int) arenaAlt.minX, (int) arenaAlt.minY, (int) arenaAlt.minZ,
+                        (int) arenaAlt.maxX, (int) arenaAlt.maxY, (int) arenaAlt.maxZ),
+                broken.size());
+    }
+
+    /** Новая попытка этапа: вернуть хранителя и арену в исходный вид. */
+    public void resetAttempt() {
+        resetFight();
     }
 
     /** Идёт ли бой (хранитель кого-то атакует). */

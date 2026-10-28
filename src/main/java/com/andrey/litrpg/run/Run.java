@@ -552,6 +552,16 @@ public final class Run {
     }
 
     private static void resetStage(ServerLevel dl, RunState st, Layout.Stage s) {
+        // Сначала хранители, потом clearStage: он стирает bossMobs, и без этого старый
+        // хранитель оставался на арене с прежним здоровьем и всем, что успел разрушить,
+        // а рядом вставал второй. Группа видела «столбы не восстановились» и двух боссов.
+        for (Layout.Boss b : s.bosses()) {
+            BossBase boss = findBoss(dl, st, s, b);
+            if (boss != null) {
+                boss.resetAttempt();
+            }
+        }
+
         st.clearStage();
         // новая попытка начинается с чистой таблицы угрозы: иначе хранитель помнил,
         // кто больше всех надамажил в прошлом заходе, и с порога бежал к нему
@@ -833,7 +843,15 @@ public final class Run {
                         }
 
                         if (near && dl.isLoaded(b.at().pos())) {
-                            spawnBoss(dl, st, s, b);
+                            // хранитель мог уже стоять на арене (вайп стёр список, чанк
+                            // выгружался) — тогда берём его, а не ставим второго
+                            BossBase found = findBoss(dl, st, s, b);
+                            if (found != null) {
+                                st.bossMobs.put(b.id(), found.getUUID());
+                                st.setDirty();
+                            } else {
+                                spawnBoss(dl, st, s, b);
+                            }
                         }
                     }
                 } else if (e instanceof BossBase) {
@@ -857,6 +875,24 @@ public final class Run {
             }
         }
 
+    }
+
+    /** Хранитель этого этапа, если он уже есть в мире: по записи в состоянии или на арене. */
+    private static BossBase findBoss(ServerLevel dl, RunState st, Layout.Stage s, Layout.Boss b) {
+        UUID id = (UUID)st.bossMobs.get(b.id());
+        Entity known = id == null ? null : dl.getEntity(id);
+        if (known instanceof BossBase kb) {
+            return kb;
+        }
+        AABB box = b.arena() != null ? b.arena().aabb().inflate((double)24.0F, (double)48.0F, (double)24.0F)
+                : new AABB(b.at().vec(), b.at().vec()).inflate((double)48.0F);
+        String tag = s.n() + ":" + b.id();
+        for (BossBase boss : dl.getEntitiesOfClass(BossBase.class, box)) {
+            if (tag.equals(boss.getPersistentData().getString("litrpg_stage_boss"))) {
+                return boss;
+            }
+        }
+        return null;
     }
 
     private static void spawnBoss(ServerLevel dl, RunState st, Layout.Stage s, Layout.Boss b) {
