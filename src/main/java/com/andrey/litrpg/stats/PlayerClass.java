@@ -54,6 +54,8 @@ public final class PlayerClass {
     public final Invoke invoke;
     /** Чем класс платит за способности. */
     public final Resource resource;
+    /** Множитель здоровья класса: 0.7 у тех, кто платит за подвижность хрупкостью. */
+    public final float hpMult;
     private final int index;
 
     private PlayerClass(JsonObject o, int index) {
@@ -64,6 +66,7 @@ public final class PlayerClass {
         primary = Stat.valueOf(o.get("primary").getAsString());
         secondary = Stat.valueOf(o.get("secondary").getAsString());
         resource = o.has("resource") ? Resource.byKey(o.get("resource").getAsString()) : Resource.MANA;
+        hpMult = o.has("hpMult") ? o.get("hpMult").getAsFloat() : 1f;
         Map<Style, Integer> st = new EnumMap<>(Style.class);
         for (var e : o.getAsJsonObject("styles").entrySet()) {
             Style s = Style.byKey(e.getKey());

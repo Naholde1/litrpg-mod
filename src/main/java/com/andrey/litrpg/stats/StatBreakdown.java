@@ -44,6 +44,16 @@ public final class StatBreakdown {
             return this;
         }
 
+        /** Умножить накопленное (хрупкость класса, множители роли) и показать это строкой. */
+        Value mul(String label, double k) {
+            double delta = total * (k - 1);
+            if (Math.abs(delta) > 1e-6) {
+                parts.add(new Part(Component.literal(label), delta));
+                total += delta;
+            }
+            return this;
+        }
+
         Value add(String label, double v) {
             return add(Component.literal(label), v);
         }
@@ -106,6 +116,10 @@ public final class StatBreakdown {
         int tank = tankWeight(s);
         if (tank > 0) v.add(cls(s), tank * (1 + lvl * 0.15));
         v.add("Экипировка", s.gear().get(GearBonus.HEALTH));
+        // класс может быть хрупким по замыслу (Стриж — 70% здоровья обычного бойца):
+        // плоский минус в черте давал на 50 уровне четырнадцать единиц вместо семидесяти
+        float mult = s.getPlayerClass() == null ? 1f : s.getPlayerClass().hpMult;
+        if (mult != 1f) v.mul("Хрупкость класса", mult);
         return v;
     }
 

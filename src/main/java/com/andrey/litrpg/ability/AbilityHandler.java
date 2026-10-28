@@ -104,6 +104,8 @@ public class AbilityHandler {
 
     /** Цена навыка в здоровье: своя у навыка плюс та, которой платит класс «на крови». */
     public static float healthCost(PlayerStats s, Ability a) {
+        // рывок есть у всех и всегда — за него классы «на крови» не платят
+        if (a.key.equals(Ability.DASH_KEY)) return a.hpCost;
         return a.hpCost + s.resource().healthCost(a);
     }
 

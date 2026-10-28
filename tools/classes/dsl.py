@@ -344,7 +344,9 @@ RESOURCE_OF = {k: r for r, keys in RESOURCE.items() for k in keys}
 
 
 def resource_of(c):
-    """Заклинатели сфер всегда на сферах, остальным — по списку, по умолчанию мана."""
+    """Класс может назвать ресурс сам (res=); иначе — по списку, по умолчанию мана."""
+    if getattr(c, 'res', None):
+        return c.res
     if c.invoke:
         return 'orbs'
     return RESOURCE_OF.get(c.key, 'mana')
@@ -353,10 +355,12 @@ def resource_of(c):
 
 class Klass:
     def __init__(self, key, ru, en, role, color, primary, secondary, styles, skills, trait, desc, races='', profs='',
-                 faction=None, hidden=None, hint='', invoke=None):
+                 faction=None, hidden=None, hint='', invoke=None, res=None, hp=1.0):
         if role not in ROLES:
             raise ValueError(f'{key}: role {role}')
         self.key, self.ru, self.en, self.role, self.color = key, ru, en, role, color
+        self.res = res          # чем класс платит: 'mana', 'rage', 'health', 'charges', 'orbs', 'form'
+        self.hp = hp            # множитель здоровья класса (0.7 — хрупкий по замыслу)
         self.primary, self.secondary = STATS[primary], STATS[secondary]
         sw = styles.split()
         self.styles = {sw[i]: int(sw[i + 1]) for i in range(0, len(sw), 2)}
@@ -401,6 +405,7 @@ class Klass:
     def json(self, unlock):
         o = {'key': self.key, 'color': self.color, 'role': self.role, 'primary': self.primary, 'secondary': self.secondary,
              'resource': resource_of(self),
+             'hpMult': getattr(self, 'hp', 1.0),
              'styles': self.styles, 'skills': self.skills, 'unlock': unlock[:len(self.skills)],
              'trait': {'bonus': self.trait_bonus, 'passives': self.trait_passives}}
         if self.races:

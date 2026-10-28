@@ -12,6 +12,7 @@ from classes import dsl  # noqa: E402
 from classes import legacy_skills, legacy_classes, tanks, damage_melee, damage_ranged, damage_magic, support, hidden, invokers  # noqa: E402,F401
 from classes import pve  # noqa: E402,F401  — переработка под PvE (2.17): правки поверх классов
 from classes import v3  # noqa: E402,F401  — 3.0: 50 классов по 16 навыков + динамичные навыки
+from classes import v4  # noqa: E402,F401  — 4.0: 27 классов по 12 навыков, у каждого свой ресурс
 
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 RES = os.path.join(ROOT, 'src', 'main', 'resources')
@@ -19,8 +20,9 @@ LANG = os.path.join(RES, 'assets', 'litrpg', 'lang')
 
 NOVICE = ['mend', 'magic_missile']
 NOVICE_UNLOCK = [1, 1]
-# уровни открытия навыков класса по порядку в списке (16 навыков, с 10 по 48 уровень)
-UNLOCK = [10, 10, 10, 12, 14, 16, 18, 20, 23, 26, 29, 32, 36, 40, 44, 48]
+# уровни открытия навыков класса по порядку в списке (12 навыков, с 10 по 46 уровень)
+SKILLS_PER_CLASS = 12
+UNLOCK = [10, 10, 10, 13, 16, 19, 22, 26, 30, 34, 40, 46]
 ROLE_RU = {'TANK': 'Танк', 'DAMAGE': 'Боец', 'SUPPORT': 'Поддержка'}
 
 
@@ -33,8 +35,8 @@ def check():
             sk = c.invoke['spheres'] + [c.invoke['cast']] + [x[1] for x in c.invoke['combos']]
         else:
             sk = c.skills
-            if len(sk) != 16:
-                errors.append(f'{key}: {len(sk)} навыков (нужно 16)')
+            if len(sk) != SKILLS_PER_CLASS:
+                errors.append(f'{key}: {len(sk)} навыков (нужно {SKILLS_PER_CLASS})')
             if len(set(sk)) != len(sk):
                 errors.append(f'{key}: повтор навыка')
         for s in sk:
