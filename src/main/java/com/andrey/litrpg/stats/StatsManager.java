@@ -231,6 +231,30 @@ public class StatsManager {
     }
 
     /** Сгенерировать (если ещё нет) предложения и открыть окно выбора класса. */
+    /** Классы, которые уже носят товарищи: их не предложить и не выбрать. */
+    public static java.util.Set<String> takenClasses(ServerPlayer self) {
+        java.util.Set<String> taken = new java.util.HashSet<>();
+        for (ServerPlayer p : self.server.getPlayerList().getPlayers()) {
+            if (p == self) continue;
+            PlayerClass c = get(p).getPlayerClass();
+            if (c != null) taken.add(c.key);
+        }
+        return taken;
+    }
+
+    /**
+     * Занятые классы: и те, что уже носят, и те, что лежат у товарища в предложениях.
+     * Иначе двое, выбирающие одновременно, могли взять одно и то же.
+     */
+    public static java.util.Set<String> busyClasses(ServerPlayer self) {
+        java.util.Set<String> busy = takenClasses(self);
+        for (ServerPlayer p : self.server.getPlayerList().getPlayers()) {
+            if (p == self) continue;
+            for (PlayerClass c : get(p).getOffers()) busy.add(c.key);
+        }
+        return busy;
+    }
+
     public static void offerClasses(ServerPlayer player) {
         PlayerStats s = get(player);
         if (!s.canChooseClass()) return;
@@ -239,12 +263,13 @@ public class StatsManager {
             return;
         }
         if (s.getOffers().isEmpty()) {
-            s.setOffers(ClassOffers.generate(s, player.getRandom()));
+            s.setOffers(ClassOffers.generate(s, player.getRandom(), busyClasses(player)));
             player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 70, 20));
             player.connection.send(new ClientboundSetTitleTextPacket(
                     Component.literal("ВЫБОР КЛАССА").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD)));
             player.connection.send(new ClientboundSetSubtitleTextPacket(
-                    Component.literal("Система подобрала " + s.getOffers().size() + " классов под твой стиль").withStyle(ChatFormatting.GRAY)));
+                    Component.literal("Система подобрала " + s.getOffers().size()
+                            + " под твой стиль — и ни одного из тех, что уже взяли товарищи").withStyle(ChatFormatting.GRAY)));
             message(player, Component.literal("Доступен выбор класса! Окно откроется само, а позже — клавиша K."));
             sync(player);
         }

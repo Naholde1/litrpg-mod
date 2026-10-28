@@ -24,6 +24,15 @@ public class ChooseClassPacket {
         if (player == null || c == null) return;
         PlayerStats s = StatsManager.get(player);
         if (!s.canChooseClass() || !s.getOffers().contains(c)) return;
+        // товарищ мог взять этот класс, пока окно было открыто
+        if (StatsManager.takenClasses(player).contains(c.key)) {
+            player.displayClientMessage(net.minecraft.network.chat.Component
+                    .literal("Этот класс уже взял кто-то из отряда — Система подберёт другие.")
+                    .withStyle(net.minecraft.ChatFormatting.GOLD), false);
+            s.setOffers(java.util.List.of());
+            StatsManager.offerClasses(player);
+            return;
+        }
         StatsManager.chooseClass(player, c, true);
     }
 }

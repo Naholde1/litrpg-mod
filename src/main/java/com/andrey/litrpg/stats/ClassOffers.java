@@ -9,16 +9,21 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Подбор классов на 10 уровне. Система оценивает каждый класс выбранной роли сразу по нескольким признакам:
+ * Подбор классов на 10 уровне. Система оценивает каждый класс выбранной роли по трём признакам:
  * <ul>
- *   <li>стиль игры в первом этапе подземелья (ближний бой, стрельба, магия, лечение, защита, скрытность…) — 70%;</li>
- *   <li>во что вложены очки характеристик — 30%.</li>
+ *   <li>стиль игры в первом этапе подземелья (ближний бой, стрельба, магия, лечение, защита, скрытность…) — 60%;</li>
+ *   <li>во что вложены очки характеристик — 25%;</li>
+ *   <li>совпал ли главный стиль игрока с главным стилем класса — 15%.</li>
  * </ul>
- * Предлагаются пять классов: три лучших, один из следующих шести (для разнообразия) и пятый —
- * открытый скрытый класс, а если его нет — ещё один из близких.
+ * Совпадение стиля считается косинусом, а он редко опускается ниже половины: без возведения
+ * в степень почти все классы роли набирали близкие оценки, и двое игроков получали одинаковые
+ * предложения. Теперь разница между «почти подходит» и «подходит» заметна.
+ * <p>
+ * Класс уникален на группу: занятый товарищем — и даже просто предложенный ему, пока он не выбрал, —
+ * другому не предлагается. Предлагается три класса: два лучших и один из следующих четырёх.
  */
 public final class ClassOffers {
-    public static final int COUNT = 5;
+    public static final int COUNT = 3;
 
     private ClassOffers() {}
 
@@ -52,31 +57,67 @@ public final class ClassOffers {
         return Math.min(1, prim * 1.4 + sec * 0.7);
     }
 
+    /** Главный стиль класса совпал с главным стилем игрока (0, 0.45 или 1). */
+    public static double signature(PlayerStats s, PlayerClass c) {
+        Style top = null;
+        int best = 0;
+        for (Map.Entry<Style, Integer> e : c.styles.entrySet()) {
+            if (e.getValue() > best) {
+                best = e.getValue();
+                top = e.getKey();
+            }
+        }
+        if (top == null) return 0;
+        List<Map.Entry<Style, Integer>> mine = topStyles(s, 3);
+        if (mine.isEmpty()) return 0;
+        if (mine.get(0).getKey() == top) return 1;
+        for (int i = 1; i < mine.size(); i++) {
+            if (mine.get(i).getKey() == top) return 0.45;
+        }
+        return 0;
+    }
+
     public static double score(PlayerStats s, PlayerClass c) {
-        return styleScore(s, c) * 0.7 + statScore(s, c) * 0.3;
+        // косинус стиля редко бывает ниже 0,5 — степень растягивает разницу
+        double sharp = Math.pow(styleScore(s, c), 2.2);
+        return sharp * 0.6 + statScore(s, c) * 0.25 + signature(s, c) * 0.15;
     }
 
     public static List<PlayerClass> generate(PlayerStats s, RandomSource rnd) {
+        return generate(s, rnd, java.util.Set.of());
+    }
+
+    /**
+     * Три класса на выбор. {@code busy} — ключи классов, которые заняты товарищами или
+     * уже предложены им: один класс на группу, кто выбрал первым, тот его и занял.
+     */
+    public static List<PlayerClass> generate(PlayerStats s, RandomSource rnd, java.util.Set<String> busy) {
         Role role = s.getRole() != null ? s.getRole() : Role.DAMAGE;
         List<PlayerClass> pool = new ArrayList<>();
         List<PlayerClass> hidden = new ArrayList<>();
         Map<PlayerClass, Double> score = new HashMap<>();
         for (PlayerClass c : PlayerClass.all()) {
             // небольшой шум, чтобы при равном стиле предложения отличались
-            score.put(c, score(s, c) + rnd.nextDouble() * 0.03);
+            score.put(c, score(s, c) + rnd.nextDouble() * 0.015);
+            if (busy.contains(c.key)) continue;
             if (c.isHidden()) {
                 if (c.hiddenUnlocked(s)) hidden.add(c);
             } else if (c.role == role) {
                 pool.add(c);
             }
         }
+        // если роль выбрана вся (маленьких ролей на большую группу не хватило) — не оставлять ни с чем
+        if (pool.isEmpty() && hidden.isEmpty()) {
+            for (PlayerClass c : PlayerClass.all()) {
+                if (!c.isHidden() && c.role == role) pool.add(c);
+            }
+        }
         Comparator<PlayerClass> best = Comparator.comparingDouble((PlayerClass c) -> score.get(c)).reversed();
         pool.sort(best);
         hidden.sort(best);
 
-        List<PlayerClass> result = new ArrayList<>(pool.subList(0, Math.min(3, pool.size())));
-        List<PlayerClass> rest = new ArrayList<>(pool.subList(result.size(), Math.min(result.size() + 6, pool.size())));
-        if (!rest.isEmpty()) result.add(rest.remove(rnd.nextInt(rest.size())));
+        List<PlayerClass> result = new ArrayList<>(pool.subList(0, Math.min(2, pool.size())));
+        List<PlayerClass> rest = new ArrayList<>(pool.subList(result.size(), Math.min(result.size() + 4, pool.size())));
         if (!hidden.isEmpty()) result.add(hidden.get(0));
         else if (!rest.isEmpty()) result.add(rest.get(rnd.nextInt(rest.size())));
         return result;

@@ -113,11 +113,15 @@ public final class DevCommands {
                     continue;
                 }
                 if (line.startsWith("devoffers")) {
-                    // devoffers — показать, что Система предложит Dev и почему
+                    // devoffers [класс,класс] — что Система предложит Dev и почему;
+                    // через запятую можно перечислить классы, будто их уже взяли товарищи
                     var p = server.getPlayerList().getPlayerByName("Dev");
                     if (p == null) continue;
                     var st = com.andrey.litrpg.stats.StatsManager.get(p);
-                    var list = com.andrey.litrpg.stats.ClassOffers.generate(st, p.getRandom());
+                    String busyArg = line.length() > 9 ? line.substring(9).trim() : "";
+                    var busy = new java.util.HashSet<>(com.andrey.litrpg.stats.StatsManager.busyClasses(p));
+                    if (!busyArg.isEmpty()) busy.addAll(java.util.Arrays.asList(busyArg.split(",")));
+                    var list = com.andrey.litrpg.stats.ClassOffers.generate(st, p.getRandom(), busy);
                     for (var c : list) {
                         LitRPG.LOGGER.info("[dev] offer {} role={} score={} {}", c.key, c.role,
                                 String.format("%.3f", com.andrey.litrpg.stats.ClassOffers.score(st, c)),
