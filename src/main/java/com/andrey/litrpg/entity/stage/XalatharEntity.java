@@ -49,7 +49,6 @@ public class XalatharEntity extends StageBoss {
     private int heartTicks;
     private boolean endCast;
     private final List<Vec3> lights = new ArrayList<>();
-    private final Map<BlockPos, BlockState> crumbled = new HashMap<>();
 
     public XalatharEntity(EntityType<? extends Monster> type, Level level) {
         super(type, level, BossEvent.BossBarColor.PURPLE);
@@ -146,8 +145,7 @@ public class XalatharEntity extends StageBoss {
             if (d <= 12.3) continue;
             BlockState st = level().getBlockState(p);
             if (st.isAir()) continue;
-            crumbled.put(p.immutable(), st);
-            level().setBlock(p, Blocks.AIR.defaultBlockState(), 2);
+            breakBlock(p);
         }
         if (level() instanceof ServerLevel sl) sl.sendParticles(ParticleTypes.REVERSE_PORTAL, c.x, y, c.z, 200, 14, 1, 14, 0.2);
         shoutAll("КРАХ! Край площадки рухнул в пустоту!");
@@ -155,8 +153,7 @@ public class XalatharEntity extends StageBoss {
     }
 
     private void restore() {
-        for (var e : crumbled.entrySet()) level().setBlock(e.getKey(), e.getValue(), 2);
-        crumbled.clear();
+        restoreBroken();
     }
 
     // ---------------- сердце ----------------
@@ -174,6 +171,7 @@ public class XalatharEntity extends StageBoss {
         moveGroup(points("heart_spots"), arenaBox.aabb().inflate(0, 10, 0));
         Vec3 c = point("heart");
         teleportTo(c.x, c.y, c.z);
+        setAltArena(heartBox(), c);
         moveLights();
         shoutAll("Сердце Бездны! Тьма жжёт — держитесь в светлых кругах, они перемещаются.");
     }
@@ -280,6 +278,7 @@ public class XalatharEntity extends StageBoss {
             for (int i = 0; i < 5; i++) spots.add(c.add(-6 + i * 3, 0, 10));
             moveGroup(spots, heartBox());
         }
+        clearAltArena();
         heart = false;
         endCast = false;
         lights.clear();

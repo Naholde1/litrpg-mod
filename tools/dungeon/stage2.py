@@ -147,8 +147,8 @@ def camp_decor(m):
         for dx in range(-2, 3):
             m.set(X(dx), Y, Z(dz), 'minecraft:stripped_spruce_log', axis='x')
     for dz in range(1, 7):
+        # ровный пол без полублоков: на полублоках группа спотыкалась и застревала
         m.set(X(-7), Y, Z(dz), 'minecraft:spruce_planks')
-        m.slab(X(-7), Y + 1, Z(dz), 'minecraft:spruce_slab')
     for i in range(6):
         a = math.pi * 2 * i / 6
         m.set(X(round(math.cos(a) * 8)), Y + 3, Z(8 + round(math.sin(a) * 8)), 'minecraft:shroomlight')

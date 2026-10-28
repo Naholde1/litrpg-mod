@@ -118,6 +118,7 @@ public class DeepPriestessEntity extends StageBoss {
         moveGroup(points("dome_spots"), arenaBox.aabb());
         Vec3 c = point("dome");
         teleportTo(c.x, c.y, c.z);
+        setAltArena(domeBox(), c);
         for (ServerPlayer p : players()) p.addEffect(new MobEffectInstance(MobEffects.CONDUIT_POWER, 20 * 3, 0, false, false));
         shoutAll("Дно моря! Протечки в стекле — не стойте под ними. Давление растёт — спешите!");
         sound(SoundEvents.AMBIENT_UNDERWATER_ENTER, 3f, 0.4f);
@@ -131,6 +132,7 @@ public class DeepPriestessEntity extends StageBoss {
         List<Vec3> spots = new ArrayList<>();
         for (int i = 0; i < 5; i++) spots.add(altar.add(-6 + i * 3, -1, 10));
         moveGroup(spots, domeBox());
+        clearAltArena();
         teleportTo(altar.x, altar.y, altar.z);
         adds(EntityType.DROWNED, altar, 4, 6, MobLevels.Rank.ELITE, null);
         stagger(60, "Жрицу выбросило из глубин — она оглушена!");

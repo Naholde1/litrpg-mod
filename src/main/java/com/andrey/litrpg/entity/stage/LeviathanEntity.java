@@ -46,7 +46,6 @@ public class LeviathanEntity extends StageBoss {
     private int state;
     private int stateTicks;
     private int spot;
-    private final List<BlockPos> drained = new ArrayList<>();
 
     public LeviathanEntity(EntityType<? extends Monster> type, Level level) {
         super(type, level, BossEvent.BossBarColor.BLUE);
@@ -198,15 +197,11 @@ public class LeviathanEntity extends StageBoss {
         stateTicks = 0;
         immune = null;
         zones.clear();
-        drained.clear();
         if (arenaExtra.has("pool")) {
             var a = arenaExtra.getAsJsonArray("pool");
             for (BlockPos p : BlockPos.betweenClosed(a.get(0).getAsInt(), a.get(1).getAsInt(), a.get(2).getAsInt(),
                     a.get(3).getAsInt(), a.get(4).getAsInt(), a.get(5).getAsInt())) {
-                if (level().getBlockState(p).is(Blocks.WATER)) {
-                    drained.add(p.immutable());
-                    level().setBlock(p, Blocks.AIR.defaultBlockState(), 2);
-                }
+                if (level().getBlockState(p).is(Blocks.WATER)) breakBlock(p);
             }
         }
         Vec3 c = poolCenter();
@@ -218,8 +213,7 @@ public class LeviathanEntity extends StageBoss {
     }
 
     private void refill() {
-        for (BlockPos p : drained) if (level().getBlockState(p).isAir()) level().setBlock(p, Blocks.WATER.defaultBlockState(), 2);
-        drained.clear();
+        restoreBroken();
     }
 
     private void tide() {

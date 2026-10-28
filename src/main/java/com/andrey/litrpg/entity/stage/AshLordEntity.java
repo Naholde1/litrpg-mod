@@ -43,7 +43,6 @@ import java.util.Map;
  */
 public class AshLordEntity extends StageBoss {
     private boolean caldera;
-    private final Map<BlockPos, BlockState> fallen = new HashMap<>();
     private final List<Integer> standing = new ArrayList<>();
     private int waveTicks;
 
@@ -146,8 +145,7 @@ public class AshLordEntity extends StageBoss {
         for (BlockPos p : BlockPos.betweenClosed(x1, y, z1, x2, y, z2)) {
             BlockState st = level().getBlockState(p);
             if (st.isAir()) continue;
-            fallen.put(p.immutable(), st);
-            level().setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+            breakBlock(p);
         }
         if (level() instanceof ServerLevel sl) {
             sl.sendParticles(ParticleTypes.LAVA, (x1 + x2) / 2.0, y, (z1 + z2) / 2.0, 60, (x2 - x1) / 2.0, 0.5, (z2 - z1) / 2.0, 0.1);
@@ -157,8 +155,7 @@ public class AshLordEntity extends StageBoss {
     }
 
     private void restoreFloor() {
-        for (var e : fallen.entrySet()) level().setBlock(e.getKey(), e.getValue(), 3);
-        fallen.clear();
+        restoreBroken();
         standing.clear();
     }
 
@@ -177,6 +174,7 @@ public class AshLordEntity extends StageBoss {
         moveGroup(points("caldera_spots"), arenaBox.aabb().inflate(0, 6, 0));
         Vec3 c = point("caldera");
         teleportTo(c.x, c.y, c.z);
+        setAltArena(calderaBox(), c);
         shoutAll("Кальдера! Островки в лаве. Огненные волны пойдут от центра — прыгайте через кольца.");
         sound(SoundEvents.LAVA_AMBIENT, 3f, 0.4f);
     }
@@ -261,6 +259,7 @@ public class AshLordEntity extends StageBoss {
             for (int i = 0; i < 5; i++) spots.add(t.add(-6 + i * 3, 0, 16));
             moveGroup(spots, calderaBox());
         }
+        clearAltArena();
         caldera = false;
     }
 

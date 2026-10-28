@@ -37,6 +37,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
@@ -103,6 +104,23 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
     private boolean engaged;
     /** Узлы силы на арене: позиция → исходный блок (чтобы вернуть после сброса). */
     protected final Map<BlockPos, BlockState> relics = new HashMap<>();
+    /**
+     * Разрушенное хранителем: позиция → блок, что там был. Колонны, пол, мосты, слитая вода.
+     * Хранится в NBT: раньше каждый хранитель вёл свой список в памяти, и при выгрузке чанка
+     * (вайп, выход из подземелья) список терялся — вторая попытка начиналась на разбитой арене.
+     */
+    protected final Map<BlockPos, BlockState> broken = new HashMap<>();
+    /**
+     * Вторая локация боя: Фиал Лича, Изнанка ведьмы, купол Жрицы, кальдера, осколки миров,
+     * Сердце Бездны. Пока задана — она и есть арена.
+     * <p>
+     * Все шесть залов лежат вне {@link #arenaBox}, поэтому без этого хранителя тянуло
+     * назад привязкой к арене, бойцов в новой локации он не видел и через полминуты
+     * сбрасывал бой — группа оставалась запертой в зале без хранителя и без выхода.
+     */
+    protected AABB arenaAlt;
+    /** Точка, к которой привязан хранитель во второй локации. */
+    protected Vec3 arenaAltAnchor;
     private boolean relicsScanned;
     private int relicsAlive = -1;
     private final Map<UUID, Long> hinted = new HashMap<>();
@@ -276,8 +294,17 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
 
         // привязка к арене
         if (tickCount % 20 == 0 && leashed()) {
-            teleportTo(home.getX() + 0.5, home.getY() + 0.1, home.getZ() + 0.5);
-            setTarget(null);
+            Vec3 back = arenaAltAnchor != null ? arenaAltAnchor
+                    : home != null ? new Vec3(home.getX() + 0.5, home.getY() + 0.1, home.getZ() + 0.5) : null;
+            if (back != null) {
+                teleportTo(back.x, back.y, back.z);
+                setTarget(null);
+            }
+        }
+        // арена закрыта: бой пошёл — не уйти и не отстать. Первые три секунды свободны,
+        // чтобы случайный агр можно было отыграть назад
+        if (engaged && fightTicks > 60 && tickCount % 10 == 0 && (arenaAlt != null || arenaBox != null)) {
+            keepInArena(sl);
         }
         // все ушли — бой сбрасывается, босс восстанавливается
         if (tickCount % 20 == 0) {
@@ -395,6 +422,21 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
 
     /** Полный сброс боя: здоровье, фазы, щиты, узлы силы. */
     protected void resetFight() {
+        // группа могла остаться во второй локации: вернуть её в зал. Без этого бой
+        // сбрасывался, а выйти оттуда было нельзя — тупик до перезахода в игру
+        AABB wasAlt = arenaAlt;
+        arenaAlt = null;
+        arenaAltAnchor = null;
+        if (wasAlt != null && level() instanceof ServerLevel sl) {
+            AABB main = arenaBox != null ? arenaBox.aabb().inflate(1, 2, 1)
+                    : new AABB(arena(), arena()).inflate(10, 6, 10);
+            Vec3 to = insideSpot(main.getCenter(), main);
+            for (ServerPlayer p : sl.getEntitiesOfClass(ServerPlayer.class, wasAlt.inflate(4))) {
+                if (p.isCreative() || p.isSpectator()) continue;
+                p.teleportTo(to.x, to.y, to.z);
+                p.fallDistance = 0;
+            }
+        }
         setHealth(getMaxHealth());
         phase = 0;
         casting = null;
@@ -408,6 +450,7 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
         engaged = false;
         fightTicks = 0;
         restoreRelics();
+        restoreBroken();
         clearTemp();
         for (Skill sk : skills) sk.left = sk.cooldown / 2;
         if (home != null) teleportTo(home.getX() + 0.5, home.getY() + 0.1, home.getZ() + 0.5);
@@ -547,6 +590,7 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
 
     /** Ушёл с арены (столкнули, увёл кайт) — вернуть. */
     protected boolean leashed() {
+        if (arenaAlt != null) return !arenaAlt.inflate(2).contains(position());
         if (home == null) return false;
         if (arenaBox != null) return !arenaBox.aabb().inflate(2).contains(position());
         return distanceToSqr(Vec3.atBottomCenterOf(home)) > 30 * 30;
@@ -554,6 +598,7 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
 
     /** Центр арены: место хранителя или место появления. */
     public Vec3 arena() {
+        if (arenaAltAnchor != null) return arenaAltAnchor;
         if (arenaBox != null) return new Vec3(arenaBox.center().x, home != null ? home.getY() : arenaBox.y1(), arenaBox.center().z);
         if (home != null) return Vec3.atBottomCenterOf(home);
         if (spawnPos == null) spawnPos = position();
@@ -562,8 +607,8 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
 
     /** Игроки и их союзники на арене. */
     protected List<LivingEntity> fighters() {
-        if (arenaBox != null) {
-            return level().getEntitiesOfClass(LivingEntity.class, arenaBox.aabb().inflate(1, 2, 1),
+        if (arenaAlt != null || arenaBox != null) {
+            return level().getEntitiesOfClass(LivingEntity.class, arenaAabb().inflate(1, 2, 1),
                     e -> e != this && e.isAlive() && !isMinion(e) && !(e instanceof BossBase)
                             && !(e instanceof Player p && (p.isCreative() || p.isSpectator()))
                             && !(e instanceof net.minecraft.world.entity.decoration.ArmorStand)
@@ -574,7 +619,8 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
 
     protected List<ServerPlayer> players() {
         if (!(level() instanceof ServerLevel sl)) return List.of();
-        AABB box = arenaBox != null ? arenaBox.aabb().inflate(1, 2, 1) : new AABB(arena(), arena()).inflate(34, 16, 34);
+        AABB box = arenaAlt != null || arenaBox != null ? arenaAabb().inflate(1, 2, 1)
+                : new AABB(arena(), arena()).inflate(34, 16, 34);
         return sl.getEntitiesOfClass(ServerPlayer.class, box, p -> p.isAlive() && !p.isCreative() && !p.isSpectator());
     }
 
@@ -615,6 +661,98 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
             if (!level().getBlockState(p).is(ModBlocks.RELIC.get())) level().setBlock(p, st, 3);
         });
         relicsAlive = relics.size();
+    }
+
+    /** Границы арены сейчас: вторая локация, если бой перенесён в неё. */
+    protected AABB arenaAabb() {
+        if (arenaAlt != null) return arenaAlt;
+        if (arenaBox != null) return arenaBox.aabb();
+        Vec3 c = arena();
+        return new AABB(c, c).inflate(34, 16, 34);
+    }
+
+    /** Перенести бой во вторую локацию: теперь она — арена. */
+    protected void setAltArena(AABB box, Vec3 anchor) {
+        arenaAlt = box;
+        arenaAltAnchor = anchor;
+    }
+
+    /** Бой вернулся в основной зал. */
+    protected void clearAltArena() {
+        arenaAlt = null;
+        arenaAltAnchor = null;
+    }
+
+    // ---------- разрушенное хранителем ----------
+
+    /** Хранитель ломает блок арены; что было — запомнить, чтобы вернуть к новой попытке. */
+    protected void breakBlock(BlockPos p) {
+        BlockState st = level().getBlockState(p);
+        if (st.isAir()) return;
+        broken.putIfAbsent(p.immutable(), st);
+        level().setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+    }
+
+    /** Заменить блок арены (залить лавой, слить воду) — вернётся к новой попытке. */
+    protected void replaceBlock(BlockPos p, BlockState st) {
+        broken.putIfAbsent(p.immutable(), level().getBlockState(p));
+        level().setBlock(p, st, 3);
+    }
+
+    /** Вернуть арену в целый вид. */
+    protected void restoreBroken() {
+        broken.forEach((p, st) -> {
+            if (level().getBlockState(p) != st) level().setBlock(p, st, 3);
+        });
+        broken.clear();
+    }
+
+    // ---------- закрытая арена ----------
+
+    /**
+     * Пока бой идёт, арена закрыта: вышел — вернём, подошёл близко — затянем внутрь.
+     * Иначе хранителя уводили за дверь, а опоздавший оставался снаружи и смотрел.
+     */
+    private void keepInArena(ServerLevel sl) {
+        AABB box = arenaAabb().inflate(1, 2, 1);
+        for (ServerPlayer p : sl.getEntitiesOfClass(ServerPlayer.class, box.inflate(8, 6, 8))) {
+            if (p.isCreative() || p.isSpectator() || !p.isAlive() || box.contains(p.position())) continue;
+            Vec3 to = insideSpot(p.position(), box);
+            sl.sendParticles(ParticleTypes.REVERSE_PORTAL, p.getX(), p.getY() + 1, p.getZ(), 24, 0.4, 0.8, 0.4, 0.1);
+            p.teleportTo(to.x, to.y, to.z);
+            p.fallDistance = 0;
+            sl.sendParticles(ParticleTypes.REVERSE_PORTAL, to.x, to.y + 1, to.z, 24, 0.4, 0.8, 0.4, 0.1);
+            soundAt(to, SoundEvents.ENDERMAN_TELEPORT, 1.2f, 0.7f);
+            p.displayClientMessage(Component.literal("Арена закрыта: бой с «" + getName().getString() + "» уже идёт.")
+                    .withStyle(ChatFormatting.GOLD), true);
+        }
+    }
+
+    /**
+     * Куда хранителю можно прыгнуть: точка внутри арены, где есть место стоять.
+     * Рывки считались как «позиция плюс 20-24 блока по направлению» без всякой проверки,
+     * и в тесном зале хранитель улетал в камень за стеной — невидимый и недосягаемый.
+     */
+    protected Vec3 safeSpot(Vec3 wanted) {
+        return insideSpot(wanted, arenaAabb().inflate(1, 2, 1));
+    }
+
+    /** Ближайшее место внутри арены, где можно стоять. */
+    protected Vec3 insideSpot(Vec3 from, AABB box) {
+        double x = Mth.clamp(from.x, box.minX + 2, box.maxX - 2);
+        double z = Mth.clamp(from.z, box.minZ + 2, box.maxZ - 2);
+        double y = Mth.clamp(from.y, box.minY + 1, box.maxY - 1);
+        BlockPos at = BlockPos.containing(x, y, z);
+        for (int d = 0; d <= 10; d++) {
+            for (int s = 0; s < (d == 0 ? 1 : 2); s++) {
+                BlockPos c = at.above(s == 0 ? d : -d);
+                if (level().getBlockState(c).isAir() && level().getBlockState(c.above()).isAir()
+                        && !level().getBlockState(c.below()).isAir()) {
+                    return Vec3.atBottomCenterOf(c);
+                }
+            }
+        }
+        return new Vec3(x, y, z);
     }
 
     // ---------- щит, оглушение, подсказки ----------
@@ -1118,6 +1256,35 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
             rl.add(t);
         });
         tag.put("Relics", rl);
+        ListTag bk = new ListTag();
+        broken.forEach((p, st) -> {
+            CompoundTag t = NbtUtils.writeBlockPos(p);
+            t.put("S", NbtUtils.writeBlockState(st));
+            bk.add(t);
+        });
+        tag.put("Broken", bk);
+        ListTag tb = new ListTag();
+        for (TempBlock t : temp) {
+            CompoundTag c = NbtUtils.writeBlockPos(t.pos());
+            c.put("S", NbtUtils.writeBlockState(t.was()));
+            c.putLong("U", t.until());
+            tb.add(c);
+        }
+        tag.put("Temp", tb);
+        tag.putBoolean("Engaged", engaged);
+        if (arenaAlt != null) {
+            tag.putDouble("AltX1", arenaAlt.minX);
+            tag.putDouble("AltY1", arenaAlt.minY);
+            tag.putDouble("AltZ1", arenaAlt.minZ);
+            tag.putDouble("AltX2", arenaAlt.maxX);
+            tag.putDouble("AltY2", arenaAlt.maxY);
+            tag.putDouble("AltZ2", arenaAlt.maxZ);
+        }
+        if (arenaAltAnchor != null) {
+            tag.putDouble("AltAX", arenaAltAnchor.x);
+            tag.putDouble("AltAY", arenaAltAnchor.y);
+            tag.putDouble("AltAZ", arenaAltAnchor.z);
+        }
     }
 
     @Override
@@ -1150,6 +1317,28 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
             relics.put(NbtUtils.readBlockPos(t), NbtUtils.readBlockState(level().holderLookup(Registries.BLOCK), t.getCompound("S")));
         }
         if (!relics.isEmpty()) relicsScanned = true;
+        broken.clear();
+        ListTag bk = tag.getList("Broken", Tag.TAG_COMPOUND);
+        for (int i = 0; i < bk.size(); i++) {
+            CompoundTag t = bk.getCompound(i);
+            broken.put(NbtUtils.readBlockPos(t),
+                    NbtUtils.readBlockState(level().holderLookup(Registries.BLOCK), t.getCompound("S")));
+        }
+        temp.clear();
+        ListTag tb = tag.getList("Temp", Tag.TAG_COMPOUND);
+        for (int i = 0; i < tb.size(); i++) {
+            CompoundTag c = tb.getCompound(i);
+            temp.add(new TempBlock(NbtUtils.readBlockPos(c),
+                    NbtUtils.readBlockState(level().holderLookup(Registries.BLOCK), c.getCompound("S")), c.getLong("U")));
+        }
+        engaged = tag.getBoolean("Engaged");
+        if (tag.contains("AltX1")) {
+            arenaAlt = new AABB(tag.getDouble("AltX1"), tag.getDouble("AltY1"), tag.getDouble("AltZ1"),
+                    tag.getDouble("AltX2"), tag.getDouble("AltY2"), tag.getDouble("AltZ2"));
+        }
+        if (tag.contains("AltAX")) {
+            arenaAltAnchor = new Vec3(tag.getDouble("AltAX"), tag.getDouble("AltAY"), tag.getDouble("AltAZ"));
+        }
         bossEvent.setName(getDisplayName());
     }
 }

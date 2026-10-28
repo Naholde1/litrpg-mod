@@ -47,7 +47,6 @@ import java.util.UUID;
  */
 public class GatekeeperEntity extends StageBoss {
     private final List<BlockPos> pillars = new ArrayList<>();
-    private final Map<BlockPos, BlockState> fallen = new HashMap<>();
     private UUID chainA, chainB;
     private int chainTicks;
     private Vec3 leapTo;
@@ -184,7 +183,7 @@ public class GatekeeperEntity extends StageBoss {
 
     private BlockPos standingPillar() {
         List<BlockPos> ok = new ArrayList<>();
-        for (BlockPos p : pillars) if (!fallen.containsKey(p.above(2)) && !level().getBlockState(p.above(2)).isAir()) ok.add(p);
+        for (BlockPos p : pillars) if (!broken.containsKey(p.above(2)) && !level().getBlockState(p.above(2)).isAir()) ok.add(p);
         if (ok.isEmpty()) return null;
         ok.sort((a, b) -> Double.compare(a.distSqr(blockPosition()), b.distSqr(blockPosition())));
         return ok.get(Math.min(ok.size() - 1, random.nextInt(Math.min(3, ok.size()))));
@@ -200,8 +199,7 @@ public class GatekeeperEntity extends StageBoss {
                     BlockPos b = pl.offset(dx, y, dz);
                     BlockState st = level().getBlockState(b);
                     if (st.isAir()) continue;
-                    fallen.put(b.immutable(), st);
-                    level().setBlock(b, Blocks.AIR.defaultBlockState(), 3);
+                    breakBlock(b);
                     if (y % 3 == 0) sl.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, st), b.getX() + 0.5, b.getY() + 0.5, b.getZ() + 0.5,
                             12, 0.5, 0.5, 0.5, 0.1);
                 }
@@ -218,8 +216,7 @@ public class GatekeeperEntity extends StageBoss {
     }
 
     private void restorePillars() {
-        fallen.forEach((p, st) -> level().setBlock(p, st, 3));
-        fallen.clear();
+        restoreBroken();
     }
 
     // ---------------- оковы ----------------

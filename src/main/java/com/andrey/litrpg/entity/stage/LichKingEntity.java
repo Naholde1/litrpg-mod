@@ -50,7 +50,6 @@ public class LichKingEntity extends StageBoss {
     private int vaultTicks;
     private int howls;
     private boolean lastOrder;
-    private final Map<BlockPos, BlockState> crumbled = new HashMap<>();
     private int crumbleIdx;
 
     public LichKingEntity(EntityType<? extends Monster> type, Level level) {
@@ -179,6 +178,7 @@ public class LichKingEntity extends StageBoss {
         shout("Вы хотели увидеть моё сердце? Смотрите!");
         moveGroup(points("platforms"), arenaBox.aabb());
         teleportTo(v.x + 1.5, v.y, v.z + 1.5);
+        setAltArena(vaultBox(), new Vec3(v.x + 1.5, v.y, v.z + 1.5));
         Fx.pillar(level(), v, 1.2, 12, 60, 0xD08A30E0);
         adds(ModEntities.FROST_WRAITH.get(), v, 2, 6, MobLevels.Rank.NORMAL, null);
         shoutAll("Фиал! Разбейте филактерию в центре (ломайте блок). Платформы рушатся — не стойте на треснувших.");
@@ -213,8 +213,7 @@ public class LichKingEntity extends StageBoss {
         for (BlockPos p : BlockPos.betweenClosed(b.offset(-3, 0, -3), b.offset(3, 0, 3))) {
             BlockState st = level().getBlockState(p);
             if (st.isAir() || p.distSqr(b) > 9 || st.is(Blocks.OBSIDIAN)) continue;
-            crumbled.put(p.immutable(), st);
-            level().setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+            breakBlock(p);
         }
         burst(ParticleTypes.CLOUD, c, 30, 1.5, 0.05);
         sound(SoundEvents.DEEPSLATE_BRICKS_BREAK, 2f, 0.5f);
@@ -222,8 +221,12 @@ public class LichKingEntity extends StageBoss {
     }
 
     private void restoreCrumbled() {
-        crumbled.forEach((p, st) -> level().setBlock(p, st, 3));
-        crumbled.clear();
+        restoreBroken();
+    }
+
+    private AABB vaultBox() {
+        return arenaExtra.has("vault_box") ? box(arenaExtra.getAsJsonArray("vault_box"))
+                : new AABB(relicPos(), relicPos()).inflate(16);
     }
 
     private void leaveVault() {
@@ -231,11 +234,11 @@ public class LichKingEntity extends StageBoss {
         immune = null;
         restoreCrumbled();
         shout("Нет… НЕТ! Без сердца я всё ещё король!");
-        AABB vaultBox = arenaExtra.has("vault_box") ? box(arenaExtra.getAsJsonArray("vault_box")) : new AABB(relicPos(), relicPos()).inflate(16);
         Vec3 th = point("throne");
         List<Vec3> spots = new ArrayList<>();
         for (int i = 0; i < 5; i++) spots.add(th.add(-6 + i * 3, 0, 18));
-        moveGroup(spots, vaultBox);
+        moveGroup(spots, vaultBox());
+        clearAltArena();
         teleportTo(th.x, th.y, th.z);
         clearAdds();
         stagger(80, "Филактерия разбита — Король оглушён!");

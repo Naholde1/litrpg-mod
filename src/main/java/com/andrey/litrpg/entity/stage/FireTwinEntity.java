@@ -58,8 +58,9 @@ public class FireTwinEntity extends StageBoss {
                     .begin(t -> {
                         LivingEntity v = randomOther();
                         Vec3 d = dirTo(v == null ? t : v);
-                        line(position(), d, 22, 1.6, 22, 0.9f).color(Telegraph.ORANGE);
-                        dashTo = position().add(d.scale(20));
+                        dashTo = safeSpot(position().add(d.scale(20)));
+                        line(position(), d, dashTo.subtract(position()).horizontalDistance() + 2, 1.6, 22, 0.9f)
+                                .color(Telegraph.ORANGE);
                     })
                     .act(t -> {
                         if (dashTo == null) return;
@@ -103,7 +104,7 @@ public class FireTwinEntity extends StageBoss {
                     .act(t -> {
                         FireTwinEntity s = sibling();
                         if (s == null) return;
-                        Vec3 at = position().add(dirTo(t).scale(-2));
+                        Vec3 at = safeSpot(position().add(dirTo(t).scale(-2)));
                         fxBeam(s.position().add(0, 1, 0), at.add(0, 1, 0), 0.8, 12, 0xE0FFC040);
                         s.teleportTo(at.x, at.y, at.z);
                         shoutAll("Синдер зовёт брата — Игнис рядом с ней! Разведите их!");

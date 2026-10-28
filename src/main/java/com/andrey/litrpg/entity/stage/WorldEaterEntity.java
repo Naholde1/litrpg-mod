@@ -150,6 +150,8 @@ public class WorldEaterEntity extends StageBoss {
         moveGroup(spots, from);
         Vec3 c = point(key);
         teleportTo(c.x, c.y, c.z);
+        if (to == 0) clearAltArena();
+        else setAltArena(currentBox(), c);
         if (to == 1) {
             doused = 0;
             lightBraziers(true);
@@ -303,6 +305,7 @@ public class WorldEaterEntity extends StageBoss {
             for (int i = 0; i < 5; i++) spots.add(h.add(-6 + i * 3, 0, 10));
             moveGroup(spots, currentBox());
         }
+        clearAltArena();
         world = 0;
         frost.clear();
         lightBraziers(true);

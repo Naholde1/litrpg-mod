@@ -53,8 +53,10 @@ public class DarkWitchEntity extends StageBoss {
                     if (v == null) return;
                     v.addEffect(new MobEffectInstance(MobEffects.WITHER, 200, 1));
                     Fx.mark(level(), v, 0.5, 1, 200, 0xD08A30E0);
-                    Fx.tether(level(), this, v, 0.15, 14, 0xC08A30E0);
-                    tip(v, "Порча! Держитесь ближе к лекарю.", ChatFormatting.DARK_PURPLE);
+                    Fx.tether(level(), this, v, 0.15, 22, 0xC08A30E0);
+                    corrupted = v.getUUID();
+                    corruptTicks = 200;
+                    tip(v, "Порча! Отбегите от ведьмы дальше 12 блоков — связь порвётся.", ChatFormatting.DARK_PURPLE);
                 });
         skill("Котёл", 200, 20, 2).first(100)
                 .begin(t -> {
@@ -76,10 +78,12 @@ public class DarkWitchEntity extends StageBoss {
         skill("Метла", 340, 24, 1).first(160)
                 .begin(t -> {
                     Vec3 dir = dirTo(t);
-                    line(position(), dir, 26, 1.8, 24, 0.8f).color(Telegraph.PURPLE);
-                    broomTo = position().add(dir.scale(24));
+                    broomTo = safeSpot(position().add(dir.scale(24)));
+                    line(position(), dir, broomTo.subtract(position()).horizontalDistance() + 2, 1.8, 24, 0.8f)
+                            .color(Telegraph.PURPLE);
                 })
                 .act(t -> {
+                    if (broomTo == null) return;
                     fxBeam(chest(), broomTo.add(0, 1, 0), 0.6, 10, 0xD08A30E0);
                     teleportTo(broomTo.x, broomTo.y, broomTo.z);
                     sound(SoundEvents.PHANTOM_FLAP, 2f, 0.6f);
@@ -96,6 +100,9 @@ public class DarkWitchEntity extends StageBoss {
     }
 
     private Vec3 broomTo;
+    /** Кого держит «Порча» и сколько ей осталось: связь рвётся, если отбежать. */
+    private java.util.UUID corrupted;
+    private int corruptTicks;
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
@@ -143,6 +150,7 @@ public class DarkWitchEntity extends StageBoss {
         moveGroup(spots, arenaBox.aabb());
         Vec3 u = point("under");
         teleportTo(u.x, u.y, u.z);
+        setAltArena(underBox(), u);
         var panther = ModEntities.WILD.get("shadow_panther");
         if (panther != null) adds(panther.get(), u, 2, 4, MobLevels.Rank.NORMAL, null);
         shoutAll("Изнанка! Держитесь у огней — во тьме вы горите. Огни гаснут каждые 20 с.");
@@ -154,12 +162,17 @@ public class DarkWitchEntity extends StageBoss {
         Vec3 hut = point("hut");
         List<Vec3> spots = new ArrayList<>();
         for (int i = 0; i < 5; i++) spots.add(hut.add(-6 + i * 3, -3, 14));
-        AABB under = arenaExtra.has("under_box") ? box(arenaExtra.getAsJsonArray("under_box")) : new AABB(point("under"), point("under")).inflate(18);
-        moveGroup(spots, under);
+        moveGroup(spots, underBox());
+        clearAltArena();
         teleportTo(hut.x, hut.y, hut.z);
         clearAdds();
         lightWells(true);
         stagger(60, "Ведьму выбросило из Изнанки — она оглушена!");
+    }
+
+    private AABB underBox() {
+        return arenaExtra.has("under_box") ? box(arenaExtra.getAsJsonArray("under_box"))
+                : new AABB(point("under"), point("under")).inflate(18);
     }
 
     private static AABB box(com.google.gson.JsonArray a) {
@@ -208,6 +221,36 @@ public class DarkWitchEntity extends StageBoss {
     @Override
     protected void bossTick() {
         if (part == 1) underTick();
+        corruptTick();
+    }
+
+    /**
+     * «Порча» — связь, а не просто проклятие: пока жертва рядом с ведьмой, иссушение тянет
+     * из неё жизнь, но стоит отбежать на 12 блоков — связь рвётся и порча уходит. Раньше
+     * нить была только картинкой, и разорвать её было нельзя ничем.
+     */
+    private void corruptTick() {
+        if (corruptTicks <= 0 || corrupted == null) return;
+        LivingEntity v = level() instanceof net.minecraft.server.level.ServerLevel sl
+                && sl.getEntity(corrupted) instanceof LivingEntity le ? le : null;
+        if (v == null || !v.isAlive()) {
+            corrupted = null;
+            corruptTicks = 0;
+            return;
+        }
+        if (v.distanceTo(this) > 12) {
+            v.removeEffect(MobEffects.WITHER);
+            tip(v, "Связь порвана — порча ушла.", ChatFormatting.GREEN);
+            corrupted = null;
+            corruptTicks = 0;
+            return;
+        }
+        corruptTicks--;
+        if (corruptTicks % 20 == 0) Fx.tether(level(), this, v, 0.15, 22, 0xC08A30E0);
+        if (corruptTicks <= 0) {
+            v.removeEffect(MobEffects.WITHER);
+            corrupted = null;
+        }
     }
 
     @Override
