@@ -135,6 +135,10 @@ public final class Ability {
     boolean phase = false;
     /** Урон растёт со скоростью бега. */
     boolean speedScale = false;
+    /** Облик: держится, пока есть шкала, а не отведённые секунды. */
+    public boolean form = false;
+    /** Призыв-турель: стоит на месте и стреляет сам. */
+    public boolean turret = false;
     /** Доля здоровья вместо маны. */
     float hpCost = 0;
     /** Сколько приёмов серии даёт навык. */
@@ -210,6 +214,8 @@ public final class Ability {
                         case "group" -> a.group = true;
                         case "phase" -> a.phase = true;
                         case "speed" -> a.speedScale = true;
+                        case "form" -> a.form = true;
+                        case "turret" -> a.turret = true;
                         default -> { }
                     }
                 }

@@ -148,6 +148,12 @@ public class PlayerStats {
     /** Когда класс был в бою (для ярости): игровое время последнего удара. */
     public long lastCombat;
 
+    /** Ключ надетого облика (Оборотень, Дух) или null. */
+    private String form;
+
+    public String getForm() { return form; }
+    public void setForm(String key) { form = key; }
+
     // старые имена: ими пользуется весь код навыков, менять их незачем
     public double getMana() { return getResource(); }
     public void setMana(double m) { setResource(m); }
@@ -164,6 +170,7 @@ public class PlayerStats {
 
     public void setPlayerClass(PlayerClass c) {
         playerClass = c;
+        form = null;          // облик чужого класса не переносится
         java.util.Arrays.fill(bar, null);
         java.util.Arrays.fill(invoked, null);
         orbs.clear();
@@ -300,6 +307,7 @@ public class PlayerStats {
         for (Stat s : Stat.values()) st.putInt(s.key, spent[s.ordinal()]);
         tag.put("spent", st);
         tag.putDouble("mana", mana);
+        if (form != null) tag.putString("form", form);
         tag.putBoolean("welcomed", welcomed);
         tag.putBoolean("kit", kitGiven);
         if (role != null) tag.putString("role", role.key);
@@ -339,6 +347,7 @@ public class PlayerStats {
             for (Stat s : Stat.values()) spent[s.ordinal()] = tag.getInt(s.key);
         }
         mana = tag.getDouble("mana");
+        form = tag.contains("form") ? tag.getString("form") : null;
         welcomed = tag.getBoolean("welcomed");
         kitGiven = tag.getBoolean("kit");
         role = Role.byKey(tag.getString("role"));

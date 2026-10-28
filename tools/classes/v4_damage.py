@@ -130,17 +130,20 @@ K('ws_claw', 'Когти', 'Claws', 'STRIKE', '🐾', m=0, cd=3.5, st='AGI', pw=
 K('ws_pounce', 'Прыжок', 'Pounce', 'DASH_STRIKE', '⇶', m=0, cd=7, st='AGI', pw=1.2, r=3.4, f='Зверь накрывает цель с разбега')
 K('ws_snap', 'Хватка челюстей', 'Jaw Snap', 'INTERRUPT', '✖', m=10, cd=14, r=4, f='Зубы на горле сбивают чтение')
 K('ws_wolf', 'Облик волка', 'Wolf Form', 'BUFF_SELF', '🐺', m=15, cd=20, d=14, me='spd 14 2; haste 14 1',
+  fl='form',
   f='Быстрый и злой: бьёт часто, держит плохо')
 K('ws_bear', 'Облик медведя', 'Bear Form', 'BUFF_SELF', '🐻', m=15, cd=20, d=14, me='str 14 2; res 14 1; slow 14 0',
+  fl='form',
   f='Тяжёлый и медленный: бьёт редко и страшно')
 K('ws_raven', 'Облик ворона', 'Raven Form', 'BUFF_SELF', '🐦', m=15, cd=20, d=14, me='slowfall 14 0; jump 14 2; spd 14 1',
+  fl='form',
   f='Лёгкий: прыгает далеко и падает мягко')
 K('ws_rend', 'Рвать', 'Rend', 'DOT', '〰', m=15, cd=12, pw=0.55, r=4.5, d=10, f='Рваная рана кровит')
 K('ws_howl', 'Вой', 'Howl', 'TAUNT', '❗', m=15, cd=20, r=12, d=6, foe='weak 6 1', f='Вой достаёт до костей')
 K('ws_frenzy', 'Звериный раж', 'Beast Frenzy', 'MULTI_NOVA', '✺', m=25, cd=24, st='AGI', pw=0.85, r=4.5, n=3,
   f='Зверь крутится волчком среди врагов')
 K('ws_alpha', 'Вожак', 'Alpha', 'SUMMON', '🐺', m=35, cd=70, sm='minecraft:wolf', n=3, d=45, f='Стая выходит на зов')
-K('ws_primal', 'Первобытный облик', 'Primal Form', 'BUFF_SELF', '♆', m=60, cd=110, d=14,
+K('ws_primal', 'Первобытный облик', 'Primal Form', 'BUFF_SELF', '♆', m=60, cd=110, d=14, fl='form',
   me='str 14 2; spd 14 2; res 14 1; regen 14 1', f='Все три облика разом, пока хватает шкалы')
 K('ws_leap', 'Полёт ворона', 'Raven Flight', 'BLINK', '⤴', m=15, cd=16, r=14, f='Короткий перелёт над строем')
 C('werebeast', 'Оборотень', 'Werebeast', 'DAMAGE', 0x7D6608, 'AGI', 'STR', 'melee 4 beast 4 night 2',
@@ -153,7 +156,7 @@ C('werebeast', 'Оборотень', 'Werebeast', 'DAMAGE', 0x7D6608, 'AGI', 'ST
 K('mc_bolt', 'Болт', 'Bolt Shot', 'TARGET_BOLT', '✦', m=0, cd=1.4, st='AGI', pw=0.75, r=28, f='Короткий выстрел из наручного арбалета')
 K('mc_roll', 'Откат', 'Roll Out', 'DASH', '⇶', m=0, cd=7, f='Перекат с колена')
 K('mc_jam', 'Заклинить', 'Jam', 'INTERRUPT', '✖', m=20, cd=14, r=12, f='Болт в руку — и чтение сорвано')
-K('mc_turret', 'Турель', 'Turret', 'SUMMON', '⚙', m=20, cd=30, sm='minecraft:snow_golem', n=1, d=40,
+K('mc_turret', 'Турель', 'Turret', 'SUMMON', '⚙', m=20, cd=30, sm='minecraft:snow_golem', n=1, d=40, fl='turret',
   f='Станок сам выбирает цель и бьёт очередями')
 K('mc_mine', 'Мина', 'Mine', 'MINE', '◍', m=20, cd=16, pw=1.5, r=3.5, d=30, foe='slow 4 2',
   f='Невидимая пластина под ногами')
@@ -166,7 +169,7 @@ K('mc_oil', 'Масло и искра', 'Oil and Spark', 'ZONE_AT', '🔥', m=20
   f='Лужа масла вспыхивает от искры')
 K('mc_mortar', 'Мортира', 'Mortar', 'METEOR', '◉', m=40, cd=60, st='AGI', pw=2.2, r=5, f='Навесной выстрел в отмеченную точку')
 K('mc_arsenal', 'Полный арсенал', 'Full Arsenal', 'SUMMON', '⚑', m=40, cd=110, sm='minecraft:snow_golem', n=3, d=45,
-  f='Три станка разом по краям арены')
+  fl='turret', f='Три станка разом по краям арены')
 K('mc_overclock', 'Разгон', 'Overclock', 'BUFF_SELF', '✦', m=20, cd=30, d=10, me='haste 10 2; spd 10 1',
   f='Механизмы работают вдвое быстрее, пока не перегрелись')
 C('machinist', 'Механик', 'Machinist', 'DAMAGE', 0xB7950B, 'AGI', 'INT', 'ranged 4 craft 4 solo 2',

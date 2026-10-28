@@ -45,6 +45,11 @@ import java.util.UUID;
 public final class Minions {
     public static final String OWNER_TAG = "litrpg_owner";
     public static final String EXPIRE_TAG = "litrpg_expire";
+    /** Турель: не ходит, сама выбирает цель и бьёт очередями. Ключ навыка — чем именно бьёт. */
+    public static final String TURRET_TAG = "litrpg_turret";
+    /** Как часто турель стреляет и как далеко достаёт. */
+    private static final int TURRET_PERIOD = 20;
+    private static final double TURRET_RANGE = 22;
     private static final UUID HP_ID = UUID.fromString("c2b8f1a4-3d1e-4b9a-9f0e-7a6d5c4b3a21");
     private static final UUID DMG_ID = UUID.fromString("c2b8f1a4-3d1e-4b9a-9f0e-7a6d5c4b3a22");
 
@@ -76,11 +81,56 @@ public final class Minions {
             mob.getPersistentData().putInt("litrpg_lvl", lvl);
             mob.finalizeSpawn(level, level.getCurrentDifficultyAt(mob.blockPosition()), MobSpawnType.MOB_SUMMONED, null, null);
             prepare(mob, p, lvl);
+            if (a.turret) makeTurret(mob, a);
             level.addFreshEntity(mob);
             level.sendParticles(ParticleTypes.SOUL, mob.getX(), mob.getY() + 0.5, mob.getZ(), 15, 0.4, 0.6, 0.4, 0.02);
         }
         level.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.EVOKER_PREPARE_SUMMON, SoundSource.PLAYERS, 1f, 1.2f);
         return true;
+    }
+
+    /**
+     * Турель: стоит там, где поставили, и сама бьёт. Цели ищет штатный поиск прислужника,
+     * а стреляет она отдельным тиком — обычные мобы бьют только вплотную.
+     */
+    private static void makeTurret(Mob mob, Ability a) {
+        mob.getPersistentData().putString(TURRET_TAG, a.key);
+        mob.setCustomName(Component.literal("Турель").withStyle(ChatFormatting.GOLD));
+        mob.setCustomNameVisible(true);
+        mob.setNoGravity(false);
+        // ходить ей незачем: всё, что делает турель, делает её выстрел
+        mob.goalSelector.removeAllGoals(g -> true);
+        AttributeInstance speed = mob.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (speed != null) speed.setBaseValue(0);
+        AttributeInstance follow = mob.getAttribute(Attributes.FOLLOW_RANGE);
+        if (follow != null) follow.setBaseValue(TURRET_RANGE);
+    }
+
+    /** Выстрел турели: раз в секунду по ближайшему врагу в пределах досягаемости. */
+    private static void turretShot(Mob turret, ServerPlayer owner) {
+        if (!(turret.level() instanceof ServerLevel sl)) return;
+        Ability a = Ability.byKey(turret.getPersistentData().getString(TURRET_TAG));
+        if (a == null) return;
+        LivingEntity target = turret.getTarget();
+        if (target == null || !target.isAlive() || turret.distanceTo(target) > TURRET_RANGE) {
+            target = null;
+            double best = TURRET_RANGE * TURRET_RANGE;
+            for (Mob e : sl.getEntitiesOfClass(Mob.class, turret.getBoundingBox().inflate(TURRET_RANGE),
+                    x -> x.isAlive() && x instanceof Enemy && ownerOf(x) == null)) {
+                double d = e.distanceToSqr(turret);
+                if (d < best && turret.hasLineOfSight(e)) {
+                    best = d;
+                    target = e;
+                }
+            }
+            turret.setTarget(target);
+        }
+        if (target == null || !turret.hasLineOfSight(target)) return;
+        float dmg = AbilityHandler.base(com.andrey.litrpg.stats.StatsManager.get(owner), a) * 0.6f;
+        com.andrey.litrpg.fx.Fx.beam(sl, turret.getEyePosition(), target.position().add(0, target.getBbHeight() / 2, 0),
+                0.18, 6, 0xC0FFD060);
+        AbilityHandler.hurt(owner, a, target, dmg);
+        sl.playSound(null, turret.getX(), turret.getY(), turret.getZ(), SoundEvents.CROSSBOW_SHOOT, SoundSource.PLAYERS, 0.7f, 1.4f);
     }
 
     /** Подчинить моба на время: он становится прислужником и уходит, когда воля ослабнет. */
@@ -153,6 +203,12 @@ public final class Minions {
         if (owner == null || e.level().getGameTime() > expire || owner.level() != e.level()) {
             ((ServerLevel) e.level()).sendParticles(ParticleTypes.SOUL, e.getX(), e.getY() + 0.5, e.getZ(), 10, 0.3, 0.5, 0.3, 0.02);
             e.discard();
+            return;
+        }
+        boolean turret = e.getPersistentData().contains(TURRET_TAG);
+        if (turret) {
+            // турель стоит там, где её поставили, и стреляет сама
+            if (e instanceof Mob m) turretShot(m, owner);
             return;
         }
         if (e instanceof Mob m && e.distanceToSqr(owner) > 24 * 24) {

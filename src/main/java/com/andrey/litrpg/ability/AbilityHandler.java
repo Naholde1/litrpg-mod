@@ -342,7 +342,7 @@ public class AbilityHandler {
     }
 
     /** Нанести урон навыка с учётом стихии. @return нанесён ли урон */
-    private static boolean hurt(ServerPlayer p, Ability a, LivingEntity e, float dmg) {
+    static boolean hurt(ServerPlayer p, Ability a, LivingEntity e, float dmg) {
         Element el = a.element;
         if (a.speedScale) dmg *= speedMult(p);
         if (el == Element.HOLY && e.getMobType() == MobType.UNDEAD) dmg *= 2f;
@@ -778,6 +778,8 @@ public class AbilityHandler {
     // ================= баффы и поддержка =================
 
     private static boolean buffSelf(ServerPlayer p, Ability a) {
+        // облик — не бафф на время, а состояние: держится, пока есть шкала
+        if (a.form) return Forms.toggle(p, StatsManager.get(p), a);
         applySelf(a, p);
         if (a.reflect) p.getPersistentData().putLong(REFLECT_TAG, p.level().getGameTime() + a.duration);
         p.serverLevel().sendParticles(ParticleTypes.TOTEM_OF_UNDYING, p.getX(), p.getY() + 1, p.getZ(), 20, 0.4, 0.6, 0.4, 0.2);

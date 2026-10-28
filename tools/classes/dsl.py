@@ -124,7 +124,8 @@ class Skill:
         self.me, self.foe = parse_fx(me), parse_fx(foe)
         self.flags = fl.split()
         for x in self.flags:
-            if x.split(':')[0] not in ('exec', 'back', 'steal', 'pierce', 'reflect', 'finish', 'perfoe', 'nostyle', 'group', 'phase', 'speed'):
+            if x.split(':')[0] not in ('exec', 'back', 'steal', 'pierce', 'reflect', 'finish', 'perfoe', 'nostyle',
+                                       'group', 'phase', 'speed', 'form', 'turret'):
                 raise ValueError(f'{key}: unknown flag {x}')
         self.onhit, self.summon, self.wall = oh, sm, wall
         if sm and sm not in SUMMON_RU:
@@ -232,6 +233,10 @@ class Skill:
             parts.append("возвращает половину полученного урона")
         if 'phase' in fl:
             parts.append("сквозь врагов, на миг неуязвим")
+        if 'form' in fl:
+            parts.append("держится, пока есть шкала (повторное нажатие снимает)")
+        if 'turret' in fl:
+            parts.append("стоит на месте и стреляет сама")
         if 'speed' in fl:
             parts.append("урон растёт со скоростью бега")
         if 'perfoe' in fl:

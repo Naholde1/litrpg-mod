@@ -125,6 +125,8 @@ public class ServerEvents {
         } else if (was < s.getMaxResource()) {
             s.setResource(was + s.getResourceRegen());
         }
+        // облик держится, пока есть шкала: тратим и обновляем эффекты
+        com.andrey.litrpg.ability.Forms.tick(player, s);
         if (Math.abs(s.getResource() - was) > 0.001) StatsManager.syncMana(player);
     }
 

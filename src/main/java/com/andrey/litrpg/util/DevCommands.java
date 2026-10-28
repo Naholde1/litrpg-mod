@@ -178,13 +178,14 @@ public final class DevCommands {
                         if (!s.isEmpty()) inv.append(i).append('=').append(s.getHoverName().getString()).append(' ');
                     }
                     var ps = com.andrey.litrpg.stats.StatsManager.get(p);
-                    LitRPG.LOGGER.info("[dev] who {} dim={} alive={} spirit={} stage={} class={} res={} {}/{} regen={} calm={}t inv: {}",
+                    LitRPG.LOGGER.info("[dev] who {} dim={} alive={} spirit={} stage={} class={} res={} {}/{} regen={} calm={}t form={} inv: {}",
                             p.blockPosition(), p.level().dimension().location(),
                             p.isAlive(), com.andrey.litrpg.run.Spirits.isSpirit(p), com.andrey.litrpg.run.Run.state(server).stage,
                             ps.getPlayerClass() == null ? "-" : ps.getPlayerClass().key,
                             ps.resource(), String.format("%.1f", ps.getResource()), ps.getMaxResource(),
                             String.format("%.2f", ps.getResourceRegen()),
-                            p.level().getGameTime() - ps.lastCombat, inv);
+                            p.level().getGameTime() - ps.lastCombat,
+                            ps.getForm() == null ? "-" : ps.getForm(), inv);
                     continue;
                 }
                 if (line.equals("devthreat")) {
