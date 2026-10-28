@@ -135,16 +135,26 @@ public class PlayerStats {
 
     // ---------- мана ----------
 
-    public double getMana() { return Math.min(mana, getMaxMana()); }
-    public void setMana(double m) { mana = Math.max(0, Math.min(m, getMaxMana())); }
-
-    public int getMaxMana() {
-        return (int) Math.round(StatBreakdown.maxMana(this).value());
+    /** Ресурс класса: мана, ярость, заряды, сферы, облик или здоровье. */
+    public Resource resource() {
+        return playerClass == null ? Resource.MANA : playerClass.resource;
     }
 
-    public double getManaRegenPerSecond() {
-        return StatBreakdown.manaRegen(this).value();
-    }
+    public double getResource() { return Math.min(mana, getMaxResource()); }
+    public void setResource(double v) { mana = Math.max(0, Math.min(v, getMaxResource())); }
+    public int getMaxResource() { return Math.max(1, resource().max(this)); }
+    public double getResourceRegen() { return resource().regen(this); }
+
+    /** Когда класс был в бою (для ярости): игровое время последнего удара. */
+    public long lastCombat;
+
+    // старые имена: ими пользуется весь код навыков, менять их незачем
+    public double getMana() { return getResource(); }
+    public void setMana(double m) { setResource(m); }
+
+    public int getMaxMana() { return getMaxResource(); }
+
+    public double getManaRegenPerSecond() { return getResourceRegen(); }
 
     // ---------- роль, класс ----------
 
@@ -162,6 +172,9 @@ public class PlayerStats {
             role = c.role;
             fillBar();
         }
+        // шкала нового класса начинается по-своему: ярость — с нуля, её копят в бою,
+        // остальные — полной, иначе после смены класса нечем драться
+        mana = resource() == Resource.RAGE ? 0 : getMaxResource();
     }
 
     // ---------- панель навыков ----------

@@ -126,7 +126,10 @@ public class CharacterScreen extends SystemScreen {
                         com.andrey.litrpg.stats.StatBreakdown.rangedDamage(s).value()),
                 String.format("Броня: %.1f", armor),
                 String.format("Стойкость: %.0f%%", com.andrey.litrpg.stats.StatBreakdown.resistance(s).value()),
-                String.format("Реген маны: %.1f/с", s.getManaRegenPerSecond()),
+                String.format("%s: %.1f/с", s.resource() == com.andrey.litrpg.stats.Resource.RAGE
+                        ? "Ярость за удар" : "Восстановление (" + s.resource().title.toLowerCase() + ")",
+                        s.resource() == com.andrey.litrpg.stats.Resource.RAGE
+                                ? com.andrey.litrpg.stats.Resource.RAGE_ON_HIT : s.getResourceRegen()),
                 String.format("Шанс крита: %.1f%%  (x%.2f)", CombatEvents.critChance(s) * 100, CombatEvents.critMultiplier(s)),
                 String.format("Уклонение: %.1f%%", CombatEvents.dodgeChance(s) * 100),
                 String.format("Скорость: %.0f%%", spd),

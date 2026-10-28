@@ -328,6 +328,29 @@ PROFS = ('miner', 'blacksmith', 'alchemist', 'hunter', 'herbalist')
 FACTIONS = ('kingdom', 'goblins', 'piglins', 'illagers', 'undead', 'wilds', 'elves', 'dwarves', 'orcs', 'beastkin', 'demonkin')
 
 
+# Чем класс платит за способности. Шесть семейств вместо общей маны: мана копится сама,
+# ярость — от ударов и утекает вне боя, заряды восстанавливаются по одной ячейке,
+# сферы копятся навыками, облик тратится, пока его держишь, здоровье платит жизнью.
+RESOURCE = {
+    'rage': ['warrior', 'berserker', 'blademaster', 'executioner', 'demon_hunter'],
+    'health': ['blood_knight', 'death_knight', 'warlock', 'shadow_priest'],
+    'charges': ['guardian', 'paladin', 'ironclad', 'stone_warden', 'ursine_guardian', 'treant',
+                'frost_giant', 'dragon_knight', 'graviton', 'monk', 'assassin', 'shadowblade',
+                'ranger', 'sniper', 'frost_archer', 'wind_ranger', 'gunslinger', 'bomber'],
+    'orbs': ['astromancer', 'necromancer'],
+    'form': ['beastmaster', 'druid', 'chronorunner'],
+}
+RESOURCE_OF = {k: r for r, keys in RESOURCE.items() for k in keys}
+
+
+def resource_of(c):
+    """Заклинатели сфер всегда на сферах, остальным — по списку, по умолчанию мана."""
+    if c.invoke:
+        return 'orbs'
+    return RESOURCE_OF.get(c.key, 'mana')
+
+
+
 class Klass:
     def __init__(self, key, ru, en, role, color, primary, secondary, styles, skills, trait, desc, races='', profs='',
                  faction=None, hidden=None, hint='', invoke=None):
@@ -377,6 +400,7 @@ class Klass:
 
     def json(self, unlock):
         o = {'key': self.key, 'color': self.color, 'role': self.role, 'primary': self.primary, 'secondary': self.secondary,
+             'resource': resource_of(self),
              'styles': self.styles, 'skills': self.skills, 'unlock': unlock[:len(self.skills)],
              'trait': {'bonus': self.trait_bonus, 'passives': self.trait_passives}}
         if self.races:

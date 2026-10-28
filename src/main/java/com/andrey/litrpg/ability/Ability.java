@@ -101,10 +101,13 @@ public final class Ability {
     /** Навыки новичка (до выбора класса). */
     public static final String[] NOVICE;
     public static final int[] NOVICE_UNLOCK;
-    /** Ячеек на панели навыков (клавиши Z X C V B G R H). */
-    public static final int BAR = 8;
-    /** Особая «ячейка» рывка (Alt): у всех и всегда — навык dash. */
-    public static final int DASH_SLOT = 8;
+    /**
+     * Ячеек на панели навыков (клавиши Z X C V B G). Шесть, а не восемь: восьми хватало,
+     * чтобы жать всё подряд без выбора, а набор собирается из двенадцати навыков класса.
+     */
+    public static final int BAR = 6;
+    /** Особая «ячейка» рывка (Alt): у всех и всегда — навык dash, сверх шести. */
+    public static final int DASH_SLOT = 6;
     public static final String DASH_KEY = "dash";
 
     public final String key;

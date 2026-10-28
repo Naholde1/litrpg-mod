@@ -139,6 +139,10 @@ public class CombatEvents {
             event.setAmount(amount);
         }
 
+        // ярость: классы на ярости копят её в бою — и своим ударом, и полученным
+        rage(target, com.andrey.litrpg.stats.Resource.RAGE_ON_TAKEN);
+        if (src.getEntity() instanceof LivingEntity hitter) rage(hitter, com.andrey.litrpg.stats.Resource.RAGE_ON_HIT);
+
         // эффекты отряда: Заслон (−10%/ур.), Уязвимость (+10%/ур.)
         int bw = com.andrey.litrpg.registry.ModEffects.level(target, com.andrey.litrpg.registry.ModEffects.BULWARK);
         int vu = com.andrey.litrpg.registry.ModEffects.level(target, com.andrey.litrpg.registry.ModEffects.VULNERABILITY);
@@ -295,5 +299,20 @@ public class CombatEvents {
                 }
             });
         }
+    }
+
+    /**
+     * Прибавить ярость, если класс ею платит, и отметить, что бой идёт.
+     * Вне боя ярость утекает ({@link com.andrey.litrpg.stats.Resource#RAGE_DECAY}),
+     * поэтому берсерк теряет силу, если остановился.
+     */
+    private static void rage(LivingEntity e, float amount) {
+        if (!(e instanceof net.minecraft.server.level.ServerPlayer p)) return;
+        var st = com.andrey.litrpg.stats.StatsManager.get(p);
+        if (st.resource() != com.andrey.litrpg.stats.Resource.RAGE) return;
+        st.lastCombat = p.level().getGameTime();
+        if (st.getResource() >= st.getMaxResource()) return;
+        st.setResource(st.getResource() + amount);
+        com.andrey.litrpg.stats.StatsManager.syncMana(p);
     }
 }

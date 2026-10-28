@@ -47,10 +47,11 @@ public class HudOverlay {
         float xpFrac = s.getLevel() >= PlayerStats.MAX_LEVEL ? 1f : s.getXp() / (float) s.xpForNext();
         UiKit.bar(g, x, y, panelW, 4, xpFrac, 0xFF1F3A1F, 0xFF66DD44);
         y += 7;
-        float manaFrac = (float) (s.getMana() / Math.max(1, s.getMaxMana()));
-        UiKit.bar(g, x, y, panelW, 5, manaFrac, 0xFF1A2340, 0xFF3D8BFF);
+        com.andrey.litrpg.stats.Resource res = s.resource();
+        float manaFrac = (float) (s.getResource() / Math.max(1, s.getMaxResource()));
+        UiKit.bar(g, x, y, panelW, 5, manaFrac, res.back, res.color);
         y += 8;
-        g.drawString(font, (int) s.getMana() + " / " + s.getMaxMana() + " MP", x, y, 0xFF9EC5FF, false);
+        g.drawString(font, (int) s.getResource() + " / " + s.getMaxResource() + " " + res.tag, x, y, res.color, false);
 
         abilities(g, font, s, height);
         castBar(g, font, width, height, partialTick);
@@ -65,7 +66,8 @@ public class HudOverlay {
         int ay = height - slot - 6;
         var cls = s.getPlayerClass();
         int accent = cls != null ? cls.color : 0x4FC3F7;
-        int slots = cls == null ? Ability.NOVICE.length : Ability.BAR;
+        int slots = Math.min(cls == null ? Ability.NOVICE.length : Ability.BAR, ModKeys.ABILITIES.length);
+        com.andrey.litrpg.stats.Resource res = s.resource();
         for (int i = 0; i <= slots; i++) {
             boolean dash = i == slots;
             Ability a = s.barSkill(dash ? Ability.DASH_SLOT : i);
@@ -83,7 +85,7 @@ public class HudOverlay {
             int need = Ability.unlockLevel(cls, a);
             boolean unlocked = s.getLevel() >= need;
             int cd = ClientData.COOLDOWN[a.ordinal()];
-            boolean enoughMana = s.getMana() >= a.manaCost();
+            boolean enoughMana = s.getResource() >= res.cost(a);
 
             int bg = !unlocked ? 0xFF303030 : enoughMana ? 0xFF2A1E4A : 0xFF1C1C34;
             g.fill(sx, ay, sx + slot, ay + slot, bg);

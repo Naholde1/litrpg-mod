@@ -22,8 +22,6 @@ public class ModKeys {
             new KeyMapping("key.litrpg.ability4", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, CATEGORY),
             new KeyMapping("key.litrpg.ability5", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, CATEGORY),
             new KeyMapping("key.litrpg.ability6", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, CATEGORY),
-            new KeyMapping("key.litrpg.ability7", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, CATEGORY),
-            new KeyMapping("key.litrpg.ability8", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_H, CATEGORY),
     };
     /** Ctrl+1…5 — выбрать союзника из рамок группы (таргетные лечения и щиты летят в него). Ctrl+` — снять выбор. */
     public static final KeyMapping[] FOCUS = new KeyMapping[6];

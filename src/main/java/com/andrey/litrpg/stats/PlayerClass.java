@@ -52,6 +52,8 @@ public final class PlayerClass {
     /** Условия скрытого класса ('counter:undead>=60'); пусто — обычный класс. */
     public final List<String> hidden;
     public final Invoke invoke;
+    /** Чем класс платит за способности. */
+    public final Resource resource;
     private final int index;
 
     private PlayerClass(JsonObject o, int index) {
@@ -61,6 +63,7 @@ public final class PlayerClass {
         role = Role.byKey(o.get("role").getAsString());
         primary = Stat.valueOf(o.get("primary").getAsString());
         secondary = Stat.valueOf(o.get("secondary").getAsString());
+        resource = o.has("resource") ? Resource.byKey(o.get("resource").getAsString()) : Resource.MANA;
         Map<Style, Integer> st = new EnumMap<>(Style.class);
         for (var e : o.getAsJsonObject("styles").entrySet()) {
             Style s = Style.byKey(e.getKey());

@@ -158,7 +158,8 @@ public class StatsManager {
         PlayerStats s = get(player);
         applyAttributes(player);
         player.setHealth(player.getMaxHealth());
-        s.setMana(s.getMaxMana());
+        // ярость начинается с нуля — её копят в бою; остальные шкалы полные
+        s.setResource(s.resource() == Resource.RAGE ? 0 : s.getMaxResource());
 
         player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 50, 20));
         player.connection.send(new ClientboundSetTitleTextPacket(
@@ -258,7 +259,8 @@ public class StatsManager {
         s.resetCooldowns();
         applyAttributes(player);
         player.setHealth(player.getMaxHealth());
-        s.setMana(s.getMaxMana());
+        // ярость начинается с нуля — её копят в бою; остальные шкалы полные
+        s.setResource(s.resource() == Resource.RAGE ? 0 : s.getMaxResource());
         player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 60, 20));
         player.connection.send(new ClientboundSetTitleTextPacket(
                 Component.translatable(cls.nameKey()).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)));
@@ -268,7 +270,7 @@ public class StatsManager {
                 .append(Component.translatable(cls.nameKey()).withStyle(ChatFormatting.GOLD))
                 .append(cls.isInvoker()
                         ? ". Z, X, C — сферы, V — Призыв (сплетает три сферы в заклинание), B и G — сплетённые заклинания."
-                        : ". Шестнадцать навыков открываются с 10 по 48 уровень; в бою работают восемь на панели (Z X C V B G R H) и рывок (Alt)."
+                        : ". Навыки открываются с 10 по 48 уровень; в бою работают шесть на панели (Z X C V B G) и рывок (Alt), он сверх шести."
                         + " Сменить их можно вне боя: K → «Навыки»."));
         if (first && giveKit) giveClassKit(player, cls);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),

@@ -81,7 +81,8 @@ public class AbilityHandler {
                     .withStyle(ChatFormatting.RED), true);
             return;
         }
-        // общий откат 0,5 с между навыками (рывок — вне него)
+        // общий откат 1 с между навыками (рывок — вне него): без него восемь способностей
+        // с откатом по 5 с давали непрерывный спам без единой паузы
         boolean dash = a.kind == Ability.Kind.DASH && a.key.equals(Ability.DASH_KEY);
         if (!dash && now < player.getPersistentData().getLong(GCD_TAG)) return;
         if (com.andrey.litrpg.run.Spirits.isSpirit(player)) return;
@@ -94,17 +95,30 @@ public class AbilityHandler {
         complete(player, a);
     }
 
-    /** Хватает ли маны и здоровья. */
+    /** Цена навыка в ресурсе класса (в данных навыка она записана в мане). */
+    public static int cost(PlayerStats s, Ability a) {
+        int base = s.resource().cost(a);
+        if (!s.resource().cheapened()) return base;
+        return Math.round(base * (1 - Math.min(40f, s.gear().get(com.andrey.litrpg.gear.GearBonus.MANA_COST)) / 100f));
+    }
+
+    /** Цена навыка в здоровье: своя у навыка плюс та, которой платит класс «на крови». */
+    public static float healthCost(PlayerStats s, Ability a) {
+        return a.hpCost + s.resource().healthCost(a);
+    }
+
+    /** Хватает ли ресурса и здоровья. */
     private static boolean checkCost(ServerPlayer player, PlayerStats s, Ability a) {
         if (player.isCreative()) return true;
-        int cost = Math.round(a.mana * (1 - Math.min(40f, s.gear().get(com.andrey.litrpg.gear.GearBonus.MANA_COST)) / 100f));
-        float hp = a.hpCost * player.getMaxHealth();
-        if (a.hpCost > 0 && player.getHealth() <= hp + 1) {
+        int cost = cost(s, a);
+        float hp = healthCost(s, a) * player.getMaxHealth();
+        if (hp > 0 && player.getHealth() <= hp + 1) {
             player.displayClientMessage(Component.literal("Слишком мало здоровья!").withStyle(ChatFormatting.DARK_RED), true);
             return false;
         }
-        if (s.getMana() < cost) {
-            player.displayClientMessage(Component.literal("Недостаточно маны!").withStyle(ChatFormatting.BLUE), true);
+        if (s.getResource() < cost) {
+            player.displayClientMessage(Component.literal("Не хватает " + s.resource().genitive + "!")
+                    .withStyle(ChatFormatting.BLUE), true);
             return false;
         }
         return true;
@@ -118,14 +132,16 @@ public class AbilityHandler {
         long now = player.level().getGameTime();
         if (!checkCost(player, s, a)) return;
         boolean free = player.isCreative();
-        int cost = Math.round(a.mana * (1 - Math.min(40f, s.gear().get(com.andrey.litrpg.gear.GearBonus.MANA_COST)) / 100f));
-        float hp = a.hpCost * player.getMaxHealth();
-        if (!free && a.hpCost > 0 && player.getHealth() <= hp + 1) {
+        int cost = cost(s, a);
+        float hpFrac = healthCost(s, a);
+        float hp = hpFrac * player.getMaxHealth();
+        if (!free && hpFrac > 0 && player.getHealth() <= hp + 1) {
             player.displayClientMessage(Component.literal("Слишком мало здоровья!").withStyle(ChatFormatting.DARK_RED), true);
             return;
         }
-        if (!free && s.getMana() < cost) {
-            player.displayClientMessage(Component.literal("Недостаточно маны!").withStyle(ChatFormatting.BLUE), true);
+        if (!free && s.getResource() < cost) {
+            player.displayClientMessage(Component.literal("Не хватает " + s.resource().genitive + "!")
+                    .withStyle(ChatFormatting.BLUE), true);
             return;
         }
         // серия: добивание усилено накопленными приёмами
@@ -147,10 +163,10 @@ public class AbilityHandler {
         }
         if (ok) {
             SkillFx.play(player, a);
-            if (!(a.kind == Ability.Kind.DASH && a.key.equals(Ability.DASH_KEY))) player.getPersistentData().putLong(GCD_TAG, now + 10);
+            if (!(a.kind == Ability.Kind.DASH && a.key.equals(Ability.DASH_KEY))) player.getPersistentData().putLong(GCD_TAG, now + 20);
             if (!free) {
-                s.setMana(s.getMana() - cost);
-                if (a.hpCost > 0) player.setHealth(Math.max(1f, player.getHealth() - hp));
+                s.setResource(s.getResource() - cost);
+                if (hpFrac > 0) player.setHealth(Math.max(1f, player.getHealth() - hp));
             }
             if (a.finisher && spent > 0) s.clearCombo();
             if (a.combo > 0) s.addCombo(a.combo, now);

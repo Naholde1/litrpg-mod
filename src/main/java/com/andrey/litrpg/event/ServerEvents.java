@@ -57,7 +57,7 @@ public class ServerEvents {
                     .append(Component.literal(player.getGameProfile().getName()).withStyle(ChatFormatting.GOLD))
                     .append("."));
             StatsManager.message(player, Component.literal("Пять этапов, пятнадцать хранителей. Соберите группу из 3–5 искателей и встаньте на печать у врат."));
-            StatsManager.message(player, Component.literal("K — персонаж и навыки, Alt — рывок, Z X C V B G R H — навыки, Ctrl+1…5 — выбрать союзника для лечения.")
+            StatsManager.message(player, Component.literal("K — персонаж и навыки, Alt — рывок, Z X C V B G — навыки, Ctrl+1…5 — выбрать союзника для лечения.")
                     .withStyle(ChatFormatting.GRAY));
         }
         StatsManager.sync(player);
@@ -111,10 +111,21 @@ public class ServerEvents {
         if (event.phase != TickEvent.Phase.END || !(event.player instanceof ServerPlayer player)) return;
         if (player.tickCount % 20 != 0) return;
         PlayerStats s = StatsManager.get(player);
-        if (s.getMana() < s.getMaxMana()) {
-            s.setMana(s.getMana() + s.getManaRegenPerSecond());
-            StatsManager.syncMana(player);
+        double was = s.getResource();
+        com.andrey.litrpg.stats.Resource r = s.resource();
+        if (r.mirrorsHealth()) {
+            // шкала класса «на здоровье» — это само здоровье
+            s.setResource(100.0 * player.getHealth() / Math.max(1f, player.getMaxHealth()));
+        } else if (r == com.andrey.litrpg.stats.Resource.RAGE) {
+            // ярость не копится сама: вне боя она утекает
+            if (!com.andrey.litrpg.ability.SkillEffects.inCombat(player)
+                    && player.level().getGameTime() - s.lastCombat > com.andrey.litrpg.stats.Resource.RAGE_CALM_TICKS) {
+                s.setResource(was - com.andrey.litrpg.stats.Resource.RAGE_DECAY);
+            }
+        } else if (was < s.getMaxResource()) {
+            s.setResource(was + s.getResourceRegen());
         }
+        if (Math.abs(s.getResource() - was) > 0.001) StatsManager.syncMana(player);
     }
 
     @SubscribeEvent

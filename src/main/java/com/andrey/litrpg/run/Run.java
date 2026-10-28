@@ -342,8 +342,10 @@ public final class Run {
 
             if (t % 20L == 0L && !SkillEffects.inCombat(p)) {
                 PlayerStats ps = StatsManager.get(p);
-                if (ps.getMana() < (double)ps.getMaxMana()) {
-                    ps.setMana(ps.getMana() + (double)ps.getMaxMana() * 0.04);
+                // только тем, кто копит сам: ярость вне боя должна утекать, а не доливаться,
+                // заряды и сферы идут своим счётом
+                if (ps.resource().restoresOutOfCombat() && ps.getResource() < (double)ps.getMaxResource()) {
+                    ps.setResource(ps.getResource() + (double)ps.getMaxResource() * 0.04);
                     StatsManager.syncMana(p);
                 }
             }
