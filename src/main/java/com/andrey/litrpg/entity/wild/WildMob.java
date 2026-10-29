@@ -341,6 +341,28 @@ public class WildMob extends PathfinderMob implements Animated {
         idleTicks = 0;
     }
 
+    /**
+     * Низкий полёт на первых этажах. Летучий вид, поставленный далеко ниже своего уровня
+     * (Плакальщица рассчитана на 40-й, а стоит на первом), просто висел над отрядом, которому
+     * на 3–5 уровне нечем его достать: ни лука, ни заклинаний почти ни у кого. Теперь он
+     * держится не выше двух блоков над полом, пока сам не дорос до десятого уровня.
+     */
+    private void keepLow(Species s) {
+        if (s.fly <= 0 || com.andrey.litrpg.event.MobLevels.getLevel(this) >= 10) return;
+        double floor = Double.NaN;
+        var pos = blockPosition();
+        for (int d = 1; d <= 8; d++) {
+            var below = pos.below(d);
+            if (!level().getBlockState(below).isAir()) {
+                floor = below.getY() + 1;
+                break;
+            }
+        }
+        if (Double.isNaN(floor) || getY() - floor <= 2.0) return;
+        setDeltaMovement(getDeltaMovement().x, Math.min(-0.25, getDeltaMovement().y), getDeltaMovement().z);
+        hasImpulse = true;
+    }
+
     @Override
     protected void customServerAiStep() {
         super.customServerAiStep();
@@ -357,6 +379,7 @@ public class WildMob extends PathfinderMob implements Animated {
         if (poseTicks > 0 && --poseTicks == 0) entityData.set(POSE, 0);
         for (int i = 0; i < cds.length; i++) if (cds[i] > 0) cds[i]--;
         if (gcd > 0) gcd--;
+        keepLow(s);
         passives(s);
         LivingEntity t = getTarget();
         if (t != null && (!t.isAlive() || t instanceof Player p && (p.isCreative() || p.isSpectator()))) {
@@ -702,6 +725,10 @@ public class WildMob extends PathfinderMob implements Animated {
             }
             case BLINK -> {
                 if (dist > r || dist < 4) return false;
+                // Перенос за спину — приём не для первых этажей: отряду на 3–5 уровне нечем
+                // наказать того, кто ушёл из-под удара. Вид, поставленный ниже десятого
+                // уровня, обходится своими руками.
+                if (com.andrey.litrpg.event.MobLevels.getLevel(this) < 10) return false;
                 // Перенос за спину — не мгновенный: полсекунды он виден и слышен обеим сторонам.
                 // Без этого Плакальщица появлялась за лекарем из ниоткуда и успевала ударить
                 // раньше, чем отряд понимал, что она вообще сдвинулась.
