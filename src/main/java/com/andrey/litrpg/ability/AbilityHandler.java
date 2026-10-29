@@ -143,6 +143,10 @@ public class AbilityHandler {
         return true;
     }
 
+    static {
+        Special.init();
+    }
+
     public static final String GCD_TAG = "litrpg_gcd";
     /** Когда игрок последний раз применил способность (для закона воздержания). */
     public static final String LAST_CAST_TAG = "litrpg_last_cast";
@@ -283,6 +287,9 @@ public class AbilityHandler {
     }
 
     private static boolean execute(ServerPlayer p, PlayerStats s, Ability a) {
+        // у способности может быть своя механика — тогда общий вид не работает вовсе
+        Boolean own = Special.run(p, s, a);
+        if (own != null) return own;
         return switch (a.kind) {
             case DASH -> dash(p, a);
             case DASH_STRIKE -> dashStrike(p, s, a);

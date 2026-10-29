@@ -170,6 +170,27 @@ public final class DevCommands {
                     }
                     continue;
                 }
+                if (line.startsWith("devability ")) {
+                    // devability <ключ> — применить навык по имени, минуя панель
+                    var p = server.getPlayerList().getPlayerByName("Dev");
+                    if (p == null) continue;
+                    var ab = com.andrey.litrpg.ability.Ability.byKey(line.substring(11).trim());
+                    if (ab == null) {
+                        LitRPG.LOGGER.info("[dev] ability: нет такого навыка");
+                        continue;
+                    }
+                    var st = com.andrey.litrpg.stats.StatsManager.get(p);
+                    var foes = p.serverLevel().getEntitiesOfClass(net.minecraft.world.entity.Mob.class,
+                            p.getBoundingBox().inflate(20), m -> com.andrey.litrpg.ability.AbilityHandler.isEnemy(p, m));
+                    foes.sort(java.util.Comparator.comparingDouble(m -> m.distanceToSqr(p)));
+                    if (!foes.isEmpty()) {
+                        p.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, foes.get(0).getEyePosition());
+                    }
+                    boolean ok = com.andrey.litrpg.ability.AbilityHandler.devExecute(p, ab);
+                    LitRPG.LOGGER.info("[dev] ability {} своя={} сработал={}", ab.key,
+                            com.andrey.litrpg.ability.Special.has(ab), ok);
+                    continue;
+                }
                 if (line.equals("devbar")) {
                     var p = server.getPlayerList().getPlayerByName("Dev");
                     if (p == null) continue;
