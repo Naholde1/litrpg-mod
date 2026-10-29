@@ -153,7 +153,7 @@ public final class RunLoot {
         if (piece != null) {
             ItemStack part = new ItemStack((ItemLike) ((RegistryObject) ModItems.TEMPLATE_ITEMS.get(piece.id)).get());
             GearGen.apply(part, rnd, level, atLeast(r, piece.minRarity));
-            item(p, part, "Часть облачения класса");
+            item(p, part, piece.cls != null ? "Легендарная вещь класса" : "Часть облачения класса");
         }
         if (finalBoss && rnd.nextFloat() < 0.5F + luck(p)) {
             item(p, GearGen.personal(rnd, level, atLeast(GearGen.rollRarity(rnd, 2.0F, false), Rarity.RARE), ps), "Сокровищница хранителя");
@@ -185,12 +185,21 @@ public final class RunLoot {
         return (ItemTemplates.Def)from.get(rnd.nextInt(from.size()));
     }
 
-    /** Предмет из классового облачения (набор назван ключом класса). */
+    /** Вещь, привязанная к классу: часть облачения (набор назван ключом класса) или легендарка. */
     private static boolean isClassSet(ItemTemplates.Def d) {
-        return d.set != null && com.andrey.litrpg.stats.PlayerClass.byKey(d.set) != null;
+        return d.cls != null || d.set != null && com.andrey.litrpg.stats.PlayerClass.byKey(d.set) != null;
     }
 
-    /** Часть облачения этого игрока среди добычи хранителя, если она там есть. */
+    /** Чья это классовая вещь. */
+    private static String classOf(ItemTemplates.Def d) {
+        if (d.cls != null) {
+            return d.cls;
+        }
+
+        return d.set != null && com.andrey.litrpg.stats.PlayerClass.byKey(d.set) != null ? d.set : null;
+    }
+
+    /** Классовая вещь этого игрока среди добычи хранителя, если она там есть. */
     private static ItemTemplates.Def classSetPiece(List<ItemTemplates.Def> pool, PlayerStats ps) {
         if (ps.getPlayerClass() == null) {
             return null;
@@ -199,7 +208,7 @@ public final class RunLoot {
         String key = ps.getPlayerClass().key;
 
         for(ItemTemplates.Def d : pool) {
-            if (key.equals(d.set)) {
+            if (key.equals(classOf(d))) {
                 return d;
             }
         }

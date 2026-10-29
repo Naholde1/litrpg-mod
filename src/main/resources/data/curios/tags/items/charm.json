@@ -65,6 +65,27 @@
     "litrpg:set_wellspring_charm",
     "litrpg:set_darkpriest_charm",
     "litrpg:set_oracle_charm",
-    "litrpg:set_alchemist_charm"
+    "litrpg:set_alchemist_charm",
+    "litrpg:legend_warden",
+    "litrpg:legend_bloodknight",
+    "litrpg:legend_lawgiver",
+    "litrpg:legend_totemist",
+    "litrpg:legend_graviton",
+    "litrpg:legend_mirrorknight",
+    "litrpg:legend_monk",
+    "litrpg:legend_summoner",
+    "litrpg:legend_werebeast",
+    "litrpg:legend_machinist",
+    "litrpg:legend_plaguelord",
+    "litrpg:legend_spirit",
+    "litrpg:legend_astromancer",
+    "litrpg:legend_sniper",
+    "litrpg:legend_pyromancer",
+    "litrpg:legend_chronologist",
+    "litrpg:legend_skald",
+    "litrpg:legend_wellspring",
+    "litrpg:legend_darkpriest",
+    "litrpg:legend_oracle",
+    "litrpg:legend_alchemist"
   ]
 }

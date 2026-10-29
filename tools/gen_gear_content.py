@@ -494,8 +494,19 @@ TOKENS = [
 CURIO_TAG = {'ring': 'ring', 'necklace': 'necklace', 'belt': 'belt', 'bracelet': 'bracelet', 'charm': 'charm', 'back': 'back', 'hands': 'hands'}
 
 
+def class_rows():
+    """Состав классов оттуда же, откуда его берёт gen_classes.py: имена и роли не разойдутся."""
+    from classes import dsl
+    from classes import legacy_skills, legacy_classes, tanks, damage_melee, damage_ranged, damage_magic  # noqa: F401
+    from classes import support, hidden, invokers, pve, v3, v4  # noqa: F401
+    rows = []
+    for key in dsl.ORDER:
+        c = dsl.CLASSES[key]
+        rows.append((key, c.ru, c.en, c.role, dsl.resource_of(c)))
+    return rows
+
+
 def class_sets_for_classes():
-    """Берём состав классов там же, где его берёт gen_classes.py, чтобы имена и роли совпадали."""
     import class_sets
     from classes import dsl
     from classes import legacy_skills, legacy_classes, tanks, damage_melee, damage_ranged, damage_magic  # noqa: F401
@@ -599,6 +610,23 @@ def main():
         e = dict(id=it['id'], kind=it['kind'], tier=it['tier'], implicit={},
                  set=it['set'], min='epic', boss=it['boss'], roles=it['roles'])
         tags[CURIO_TAG[it['kind']]].append('litrpg:' + it['id'])
+        items_json.append(e)
+
+    # легендарки: по одной на класс, с хранителей четвёртого этапа
+    import class_legendary
+    for it in class_legendary.build(class_rows()):
+        pal = palette(it['pal'][0], it['pal'][1], it['pal'][2])
+        texture(it['id'], render(it['shape'], pal))
+        model(it['id'], handheld=it['kind'] in ('sword', 'axe', 'staff', 'dagger'))
+        ru['item.litrpg.' + it['id']] = it['ru']
+        en['item.litrpg.' + it['id']] = it['en']
+        e = dict(id=it['id'], kind=it['kind'], tier=it['tier'], implicit=it['implicit'],
+                 min='legendary', boss=it['boss'], cls=it['cls'], passive=it['passive'], roles=it['roles'])
+        if 'damage' in it:
+            e['damage'] = it['damage']
+            e['speed'] = it['speed']
+        if it['kind'] in CURIO_TAG:
+            tags[CURIO_TAG[it['kind']]].append('litrpg:' + it['id'])
         items_json.append(e)
 
     # жетоны и монеты

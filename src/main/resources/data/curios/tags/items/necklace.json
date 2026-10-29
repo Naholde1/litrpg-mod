@@ -59,6 +59,7 @@
     "litrpg:set_wellspring_necklace",
     "litrpg:set_darkpriest_necklace",
     "litrpg:set_oracle_necklace",
-    "litrpg:set_alchemist_necklace"
+    "litrpg:set_alchemist_necklace",
+    "litrpg:legend_symbiote"
   ]
 }

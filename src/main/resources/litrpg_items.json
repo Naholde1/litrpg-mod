@@ -3716,6 +3716,446 @@
    "roles": [
     "support"
    ]
+  },
+  {
+   "id": "legend_warden",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "resist": 6,
+    "health_regen": 2
+   },
+   "min": "legendary",
+   "boss": "smelter_golem",
+   "cls": "warden",
+   "passive": "thorns",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "legend_bloodknight",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "resist": 6,
+    "health_regen": 2
+   },
+   "min": "legendary",
+   "boss": "smelter_golem",
+   "cls": "bloodknight",
+   "passive": "berserker",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "legend_lawgiver",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "resist": 6,
+    "health_regen": 2
+   },
+   "min": "legendary",
+   "boss": "smelter_golem",
+   "cls": "lawgiver",
+   "passive": "mana_shield",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "legend_totemist",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "resist": 6,
+    "health_regen": 2
+   },
+   "min": "legendary",
+   "boss": "smelter_golem",
+   "cls": "totemist",
+   "passive": "regeneration",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "legend_symbiote",
+   "kind": "necklace",
+   "tier": 38,
+   "implicit": {
+    "resist": 6,
+    "health_regen": 2
+   },
+   "min": "legendary",
+   "boss": "smelter_golem",
+   "cls": "symbiote",
+   "passive": "phoenix",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "legend_graviton",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "resist": 6,
+    "health_regen": 2
+   },
+   "min": "legendary",
+   "boss": "smelter_golem",
+   "cls": "graviton",
+   "passive": "giant_slayer",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "legend_mirrorknight",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "resist": 6,
+    "health_regen": 2
+   },
+   "min": "legendary",
+   "boss": "smelter_golem",
+   "cls": "mirrorknight",
+   "passive": "thorns",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "legend_swift",
+   "kind": "dagger",
+   "tier": 38,
+   "implicit": {
+    "crit_damage": 20,
+    "dmg_elite": 12
+   },
+   "min": "legendary",
+   "boss": "fire_twin_ignis",
+   "cls": "swift",
+   "passive": "fury_swipes",
+   "roles": [
+    "damage"
+   ],
+   "damage": 6,
+   "speed": -1.6
+  },
+  {
+   "id": "legend_berserker",
+   "kind": "axe",
+   "tier": 38,
+   "implicit": {
+    "crit_damage": 20,
+    "dmg_elite": 12
+   },
+   "min": "legendary",
+   "boss": "fire_twin_ignis",
+   "cls": "berserker",
+   "passive": "executioner",
+   "roles": [
+    "damage"
+   ],
+   "damage": 11,
+   "speed": -3.0
+  },
+  {
+   "id": "legend_monk",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "crit_damage": 20,
+    "dmg_elite": 12
+   },
+   "min": "legendary",
+   "boss": "fire_twin_ignis",
+   "cls": "monk",
+   "passive": "chain_spark",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "legend_summoner",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "crit_damage": 20,
+    "dmg_elite": 12
+   },
+   "min": "legendary",
+   "boss": "fire_twin_ignis",
+   "cls": "summoner",
+   "passive": "soul_eater",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "legend_werebeast",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "crit_damage": 20,
+    "dmg_elite": 12
+   },
+   "min": "legendary",
+   "boss": "fire_twin_ignis",
+   "cls": "werebeast",
+   "passive": "momentum",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "legend_machinist",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "crit_damage": 20,
+    "dmg_elite": 12
+   },
+   "min": "legendary",
+   "boss": "fire_twin_ignis",
+   "cls": "machinist",
+   "passive": "treasure_hunter",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "legend_plaguelord",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "crit_damage": 20,
+    "dmg_elite": 12
+   },
+   "min": "legendary",
+   "boss": "fire_twin_ignis",
+   "cls": "plaguelord",
+   "passive": "regeneration",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "legend_spirit",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "crit_damage": 20,
+    "dmg_elite": 12
+   },
+   "min": "legendary",
+   "boss": "fire_twin_ignis",
+   "cls": "spirit",
+   "passive": "mana_shield",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "legend_shade",
+   "kind": "dagger",
+   "tier": 38,
+   "implicit": {
+    "crit_damage": 20,
+    "dmg_elite": 12
+   },
+   "min": "legendary",
+   "boss": "fire_twin_ignis",
+   "cls": "shade",
+   "passive": "venom",
+   "roles": [
+    "damage"
+   ],
+   "damage": 6,
+   "speed": -1.6
+  },
+  {
+   "id": "legend_astromancer",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "crit_damage": 20,
+    "dmg_elite": 12
+   },
+   "min": "legendary",
+   "boss": "fire_twin_ignis",
+   "cls": "astromancer",
+   "passive": "chain_spark",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "legend_sniper",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "crit_damage": 20,
+    "dmg_elite": 12
+   },
+   "min": "legendary",
+   "boss": "fire_twin_ignis",
+   "cls": "sniper",
+   "passive": "executioner",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "legend_executioner",
+   "kind": "axe",
+   "tier": 38,
+   "implicit": {
+    "crit_damage": 20,
+    "dmg_elite": 12
+   },
+   "min": "legendary",
+   "boss": "fire_twin_ignis",
+   "cls": "executioner",
+   "passive": "fury_swipes",
+   "roles": [
+    "damage"
+   ],
+   "damage": 11,
+   "speed": -3.0
+  },
+  {
+   "id": "legend_pyromancer",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "crit_damage": 20,
+    "dmg_elite": 12
+   },
+   "min": "legendary",
+   "boss": "fire_twin_ignis",
+   "cls": "pyromancer",
+   "passive": "fireproof",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "legend_healer",
+   "kind": "hands",
+   "tier": 38,
+   "implicit": {
+    "heal_power": 15,
+    "cooldown": 8
+   },
+   "min": "legendary",
+   "boss": "ash_lord",
+   "cls": "healer",
+   "passive": "phoenix",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "legend_chronologist",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "heal_power": 15,
+    "cooldown": 8
+   },
+   "min": "legendary",
+   "boss": "ash_lord",
+   "cls": "chronologist",
+   "passive": "focus_aura",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "legend_skald",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "heal_power": 15,
+    "cooldown": 8
+   },
+   "min": "legendary",
+   "boss": "ash_lord",
+   "cls": "skald",
+   "passive": "mana_aura",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "legend_wellspring",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "heal_power": 15,
+    "cooldown": 8
+   },
+   "min": "legendary",
+   "boss": "ash_lord",
+   "cls": "wellspring",
+   "passive": "mana_shield",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "legend_darkpriest",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "heal_power": 15,
+    "cooldown": 8
+   },
+   "min": "legendary",
+   "boss": "ash_lord",
+   "cls": "darkpriest",
+   "passive": "thorns",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "legend_oracle",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "heal_power": 15,
+    "cooldown": 8
+   },
+   "min": "legendary",
+   "boss": "ash_lord",
+   "cls": "oracle",
+   "passive": "night_eye",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "legend_alchemist",
+   "kind": "charm",
+   "tier": 38,
+   "implicit": {
+    "heal_power": 15,
+    "cooldown": 8
+   },
+   "min": "legendary",
+   "boss": "ash_lord",
+   "cls": "alchemist",
+   "passive": "regeneration",
+   "roles": [
+    "support"
+   ]
   }
  ],
  "sets": [
