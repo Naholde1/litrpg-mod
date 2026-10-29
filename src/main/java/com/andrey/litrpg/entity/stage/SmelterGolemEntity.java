@@ -91,7 +91,7 @@ public class SmelterGolemEntity extends StageBoss {
 
     @Override public int getBossLevel() { return 34; }
     @Override public int getXpReward() { return 0; }
-    @Override protected float ehp() { return 30000; }
+    @Override protected float ehp() { return 70000; }
     @Override public boolean fireImmune() { return true; }
 
     @Override

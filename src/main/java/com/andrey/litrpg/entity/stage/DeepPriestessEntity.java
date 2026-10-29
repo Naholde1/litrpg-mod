@@ -93,7 +93,7 @@ public class DeepPriestessEntity extends StageBoss {
 
     @Override public int getBossLevel() { return 30; }
     @Override public int getXpReward() { return 0; }
-    @Override protected float ehp() { return 25000; }
+    @Override protected float ehp() { return 50000; }
     @Override protected int enrageTicks() { return 20 * 60 * 7; }
     @Override public boolean canBreatheUnderwater() { return true; }
 

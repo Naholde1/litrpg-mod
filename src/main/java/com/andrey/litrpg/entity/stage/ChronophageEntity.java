@@ -107,7 +107,7 @@ public class ChronophageEntity extends StageBoss {
 
     @Override public int getBossLevel() { return 44; }
     @Override public int getXpReward() { return 0; }
-    @Override protected float ehp() { return 34000; }
+    @Override protected float ehp() { return 100000; }
 
     @Override
     protected float[] phaseThresholds() {

@@ -196,6 +196,10 @@ public abstract class StageBoss extends BossBase {
                     tag.accept(m);
                     m.setSize(2, true);
                     m.setCustomName(net.minecraft.network.chat.Component.literal("Пепельная бомба"));
+                    // магма-куб прыгает медленнее, чем отряд отходит: за минуту боя ни одна
+                    // бомба не доставала до игрока, и вся механика просто не наступала
+                    var sp = m.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);
+                    if (sp != null) sp.setBaseValue(sp.getBaseValue() * 2.2);
                 });
                 tell("Пепельные бомбы! Рядом с вами они взрываются — разбегайтесь или бейте издалека.");
             }
@@ -238,7 +242,8 @@ public abstract class StageBoss extends BossBase {
                     m.setTarget(null);
                     m.getNavigation().moveTo(this, 1.0);
                     if (m.distanceTo(this) < 2.8) {
-                        heal(getMaxHealth() * 0.05f);
+                        // по 3%: четверо доходили за восемь секунд и возвращали пятую часть боя
+                        heal(getMaxHealth() * 0.03f);
                         fxBeam(chestOf(m), chest(), 0.3, 10, 0xC060C0FF);
                         level().playSound(null, blockPosition(), SoundEvents.DROWNED_AMBIENT_WATER, net.minecraft.sounds.SoundSource.HOSTILE, 1.5f, 0.6f);
                         tell("Прилив дошёл — хранитель лечится.");

@@ -584,14 +584,23 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
         return zone(Telegraph.Shape.LINE, c, len, halfWidth, delay, power).dir(dir);
     }
 
+    /** Во сколько раз больнее бьёт разметка, от которой было время уйти. */
+    public static final float LETHAL_TELEGRAPH = 2.2f;
+
     void detonate(Telegraph t) {
         List<LivingEntity> in = new ArrayList<>();
         for (LivingEntity e : enemiesAround(t.center, Math.max(t.r1, 2) + 2)) {
             if (t.contains(e.position()) && reaches(t.center, e) && (t.spare == null || !t.spare.test(e))) in.add(e);
         }
+        // Разметка, которая висела полторы секунды и больше, — это предупреждение, а не
+        // неизбежность: кто в ней остался, тот ошибся, и за ошибку убивает. Удары «на сполох»
+        // (меньше 30 тиков) и круги, которые надо разделить, остаются как были — в них стоят
+        // по замыслу, а не по невнимательности.
+        float lethal = t.total >= 30 ? LETHAL_TELEGRAPH : 1f;
         if (t.soak > 0) {
             if (in.size() < t.soak) {
-                for (LivingEntity e : fighters()) if (hit(e, t.power) && t.extra != null) t.extra.accept(e);
+                // круг не разделили — это тоже ошибка, и она стоит жизни
+                for (LivingEntity e : fighters()) if (hit(e, t.power * LETHAL_TELEGRAPH) && t.extra != null) t.extra.accept(e);
                 shoutAll("Удар не разделили — нужно " + t.soak + " в круге! Досталось всем.");
             } else {
                 float each = t.power * t.soak / in.size();
@@ -600,7 +609,7 @@ public abstract class BossBase extends Monster implements LitBoss, Animated {
         } else if (t.power > 0 || t.extra != null) {
             for (LivingEntity e : in) {
                 if (t.power > 0) {
-                    if (hit(e, t.power) && t.extra != null) t.extra.accept(e);
+                    if (hit(e, t.power * lethal) && t.extra != null) t.extra.accept(e);
                 } else if (t.extra != null) t.extra.accept(e);
             }
         }

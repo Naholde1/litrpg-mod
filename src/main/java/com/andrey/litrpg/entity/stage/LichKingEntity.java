@@ -124,7 +124,7 @@ public class LichKingEntity extends StageBoss {
 
     @Override public int getBossLevel() { return 10; }
     @Override public int getXpReward() { return 0; }
-    @Override protected float ehp() { return 9500; }
+    @Override protected float ehp() { return 10000; }
     @Override protected int enrageTicks() { return 20 * 60 * 7; }
 
     @Override

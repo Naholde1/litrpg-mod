@@ -117,7 +117,7 @@ public class LeviathanEntity extends StageBoss {
 
     @Override public int getBossLevel() { return 27; }
     @Override public int getXpReward() { return 0; }
-    @Override protected float ehp() { return 20000; }
+    @Override protected float ehp() { return 48000; }
     @Override public boolean canBreatheUnderwater() { return true; }
     @Override public boolean isPushedByFluid() { return false; }
 

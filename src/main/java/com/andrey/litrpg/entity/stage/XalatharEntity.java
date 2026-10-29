@@ -118,7 +118,7 @@ public class XalatharEntity extends StageBoss {
 
     @Override public int getBossLevel() { return 50; }
     @Override public int getXpReward() { return 0; }
-    @Override protected float ehp() { return 60000; }
+    @Override protected float ehp() { return 116000; }
     @Override protected int enrageTicks() { return 20 * 60 * 9; }
 
     @Override

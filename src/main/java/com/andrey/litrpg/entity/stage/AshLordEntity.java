@@ -102,7 +102,7 @@ public class AshLordEntity extends StageBoss {
 
     @Override public int getBossLevel() { return 40; }
     @Override public int getXpReward() { return 0; }
-    @Override protected float ehp() { return 42000; }
+    @Override protected float ehp() { return 90000; }
     @Override protected int enrageTicks() { return 20 * 60 * 8; }
     @Override public boolean fireImmune() { return true; }
 
