@@ -135,4 +135,17 @@ public class ClientForgeEvents {
         Waypoints.clearLoaded();
         com.andrey.litrpg.client.map.MapCache.reset();
     }
+
+    /**
+     * Сердца и иконки голода убраны: здоровье показывается числом и полосой,
+     * а голод в подземелье не нужен — он только мешал читать экран.
+     */
+    @SubscribeEvent
+    public static void onOverlay(net.minecraftforge.client.event.RenderGuiOverlayEvent.Pre event) {
+        var id = event.getOverlay().id();
+        if (id.equals(net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.PLAYER_HEALTH.id())
+                || id.equals(net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.FOOD_LEVEL.id())) {
+            event.setCanceled(true);
+        }
+    }
 }

@@ -95,7 +95,10 @@ public class AbilityHandler {
         // общий откат 1 с между навыками (рывок — вне него): без него восемь способностей
         // с откатом по 5 с давали непрерывный спам без единой паузы
         boolean dash = a.kind == Ability.Kind.DASH && a.key.equals(Ability.DASH_KEY);
-        if (!dash && now < player.getPersistentData().getLong(GCD_TAG)) return;
+        // сферы и сплетение — не удары, а набор сочетания: держать их за общим откатом
+        // значило заставлять астроманта ждать секунду на каждой из трёх сфер
+        boolean weaving = a.kind == Ability.Kind.ORB || a.kind == Ability.Kind.INVOKE;
+        if (!dash && !weaving && now < player.getPersistentData().getLong(GCD_TAG)) return;
         if (com.andrey.litrpg.run.Spirits.isSpirit(player)) return;
         if (!checkCost(player, s, a)) return;
         if (Casting.isCast(a)) {
@@ -108,6 +111,9 @@ public class AbilityHandler {
 
     /** Цена навыка в ресурсе класса (в данных навыка она записана в мане). */
     public static int cost(PlayerStats s, Ability a) {
+        // рывок есть у всех и всегда: за него не платят ничем. Берсерк иначе не мог
+        // им пользоваться — ярость нужна на удары, а в начале боя её просто нет
+        if (a.key.equals(Ability.DASH_KEY)) return 0;
         int base = s.resource().cost(a);
         if (!s.resource().cheapened()) return base;
         return Math.round(base * (1 - Math.min(40f, s.gear().get(com.andrey.litrpg.gear.GearBonus.MANA_COST)) / 100f));
@@ -171,14 +177,22 @@ public class AbilityHandler {
             boost *= 1 + 0.2f * Math.min(5, Math.max(0, foes - 1));
         }
         boolean ok;
+        boolean wasSprinting = player.isSprinting();
         try {
             ok = execute(player, s, a);
         } finally {
             boost = 1f;
         }
+        // Ванильное правило «удар сбивает бег» ломало Стрижа: у него урон растёт со
+        // скоростью, а каждая способность ставила его на шаг. Способность не должна
+        // стоить разбега.
+        if (wasSprinting && !player.isSprinting()) player.setSprinting(true);
         if (ok) {
             SkillFx.play(player, a);
-            if (!(a.kind == Ability.Kind.DASH && a.key.equals(Ability.DASH_KEY))) player.getPersistentData().putLong(GCD_TAG, now + 20);
+            if (!(a.kind == Ability.Kind.DASH && a.key.equals(Ability.DASH_KEY))
+                    && a.kind != Ability.Kind.ORB && a.kind != Ability.Kind.INVOKE) {
+                player.getPersistentData().putLong(GCD_TAG, now + 20);
+            }
             if (!free) {
                 s.setResource(s.getResource() - cost);
                 if (hpFrac > 0) player.setHealth(Math.max(1f, player.getHealth() - hp));

@@ -84,7 +84,9 @@ public class CharacterScreen extends SystemScreen {
         boolean max = s.getLevel() >= PlayerStats.MAX_LEVEL;
         g.drawString(font, "Опыт: " + (max ? "МАКС." : s.getXp() + " / " + xpNeed), bx, y, 0xFF88EE66, false);
         UiKit.bar(g, bx, y + 11, 180, 5, max ? 1f : s.getXp() / (float) xpNeed, 0xFF1F3A1F, 0xFF66DD44);
-        g.drawString(font, "Мана: " + (int) s.getMana() + " / " + s.getMaxMana(), bx, y + 20, 0xFF5AA0F0, false);
+        var resShown = s.resource();
+        g.drawString(font, resShown.title + ": " + (int) s.getResource() + " / " + s.getMaxResource(),
+                bx, y + 20, resShown.color, false);
         UiKit.bar(g, bx, y + 31, 180, 5, (float) (s.getMana() / Math.max(1, s.getMaxMana())), 0xFF1A2340, 0xFF3D8BFF);
 
         int sy = y + 46;
@@ -221,7 +223,7 @@ public class CharacterScreen extends SystemScreen {
     private Component skillTip(Ability a, int need, PlayerStats s) {
         var t = Component.translatable(a.nameKey()).withStyle(ChatFormatting.LIGHT_PURPLE).copy()
                 .append(Component.literal("\n").append(Component.translatable(a.descKey())).withStyle(ChatFormatting.GRAY));
-        String cost = a.hpCost() > 0 ? Math.round(a.hpCost() * 100) + "% здоровья" : a.manaCost() + " маны";
+        String cost = costText(a);
         t.append(Component.literal("\n" + cost + " • перезарядка " + String.format("%.1f", a.cooldown() / 20.0) + " с")
                 .withStyle(ChatFormatting.BLUE));
         if (s.getLevel() < need) t.append(Component.literal("\nОткроется на уровне " + need).withStyle(ChatFormatting.GOLD));
@@ -356,6 +358,19 @@ public class CharacterScreen extends SystemScreen {
             g.drawString(font, meta, cx + 38, cy + 11, unlocked ? 0xFF5AA0F0 : 0xFFFF9800, false);
             if (UiKit.inside(mx, my, cx, cy, colW - 4, 24)) tooltip = skillTip(a, c.level(), s);
         }
+    }
+
+    /** Цена способности словами того ресурса, которым платит класс. */
+    private static String costText(com.andrey.litrpg.ability.Ability a) {
+        var st = ClientData.STATS;
+        var res = st.resource();
+        if (res.mirrorsHealth()) {
+            float hp = a.hpCost() + res.healthCost(a);
+            return hp > 0 ? Math.round(hp * 100) + "% здоровья" : "бесплатно";
+        }
+        if (a.hpCost() > 0) return Math.round(a.hpCost() * 100) + "% здоровья";
+        int c = res.cost(a);
+        return c <= 0 ? "бесплатно" : c + " " + res.genitive;
     }
 
     private static int orbColor(int i) {

@@ -24,7 +24,7 @@ public enum Resource {
     FORM("form", "Облик", "ОБ", "облика", 0xFF5BD16A, 0xFF163A1C);
 
     /** Сколько секунд восстанавливается один заряд. */
-    private static final double CHARGE_SECONDS = 7.5;
+    private static final double CHARGE_SECONDS = 6;
     /** Ярость за свой удар и за полученный. */
     public static final float RAGE_ON_HIT = 6;
     public static final float RAGE_ON_TAKEN = 4;
@@ -68,7 +68,7 @@ public enum Resource {
             // сферы — механика сплетения, их всегда три
             case ORBS -> 3;
             // ячейка сверх четырёх — только за очень весомую экипировку, и не больше двух
-            case CHARGES -> 4 + (int) Math.min(2, gear / 120);
+            case CHARGES -> 6 + (int) Math.min(2, gear / 120);
             default -> 100 + s.getLevel() / 2 + (int) (gear / 4);
         };
     }

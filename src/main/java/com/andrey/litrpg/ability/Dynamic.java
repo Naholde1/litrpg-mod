@@ -44,19 +44,14 @@ public final class Dynamic {
             Player f = p.level().getPlayerByUUID(data.getUUID(FocusPacket.FOCUS));
             if (f instanceof ServerPlayer fp && fp.isAlive() && !Spirits.isSpirit(fp) && fp.distanceTo(p) <= range) return fp;
         }
+        // под прицелом: союзник-игрок или свой прислужник
         LivingEntity look = AbilityHandler.lookTarget(p, range);
-        if (look instanceof Player lp && lp != p && !lp.isSpectator()) return look;
-        LivingEntity best = p;
-        float bf = p.getHealth() / Math.max(1f, p.getMaxHealth()) + 0.03f;
-        for (Player o : p.level().players()) {
-            if (o == p || o.isSpectator() || !o.isAlive() || o.distanceTo(p) > range) continue;
-            float f = o.getHealth() / Math.max(1f, o.getMaxHealth());
-            if (f < bf) {
-                bf = f;
-                best = o;
-            }
+        if (look != null && look != p && look.isAlive() && !look.isSpectator()
+                && (look instanceof Player || AbilityHandler.isAlly(p, look))) {
+            return look;
         }
-        return best;
+        // автонаводки нет: не выбрал и ни на кого не смотришь — лечишь себя
+        return p;
     }
 
     /** Враг под прицелом; если промах — ближайший к линии взгляда в конусе 14° (видимый). */

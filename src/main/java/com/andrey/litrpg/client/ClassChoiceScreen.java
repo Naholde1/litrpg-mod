@@ -103,7 +103,7 @@ public class ClassChoiceScreen extends SystemScreen {
             g.drawString(font, lv, cx + colW - 6 - font.width(lv), cy, 0xFF7A8A96, false);
             if (UiKit.inside(mx, my, cx, cy - 1, colW - 4, 10)) {
                 hovered = Component.translatable(a.nameKey()).getString() + " — " + Component.translatable(a.descKey()).getString()
-                        + "\n" + (a.hpCost() > 0 ? Math.round(a.hpCost() * 100) + "% здоровья" : a.manaCost() + " маны")
+                        + "\n" + (a.hpCost() > 0 ? Math.round(a.hpCost() * 100) + "% здоровья" : a.manaCost() + " " + ClientData.STATS.resource().genitive)
                         + ", перезарядка " + String.format("%.0f", a.cooldown() / 20.0) + " с";
             }
         }

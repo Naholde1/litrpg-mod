@@ -20,6 +20,7 @@ public class HudOverlay {
         if (mc.player == null || mc.options.hideGui || mc.player.isSpectator()) return;
         Font font = mc.font;
         PlayerStats s = ClientData.STATS;
+        health(g, font, mc.player, width, height);
 
         int x = 6;
         int y = 6;
@@ -64,6 +65,28 @@ public class HudOverlay {
         castBar(g, font, width, height, partialTick);
         target(g, font, mc, width);
         party(g, font, y + 14);
+    }
+
+    /**
+     * Здоровье над поясом: число, максимум и процентная полоса вместо сердец.
+     * Сердца плохо читались, когда здоровья стало много, и считать их в бою некогда.
+     */
+    private static void health(GuiGraphics g, Font font, Player p, int width, int height) {
+        int hp = (int) Math.ceil(p.getHealth());
+        int max = (int) Math.ceil(p.getMaxHealth());
+        int absorb = (int) Math.ceil(p.getAbsorptionAmount());
+        float frac = max <= 0 ? 0 : Math.min(1f, p.getHealth() / (float) max);
+        int w = 90;
+        int x = width / 2 - 91;
+        int y = height - 39;
+        // цвет меняется с запасом: зелёный — спокойно, красный — пора лечиться
+        int fill = frac > 0.6f ? 0xFF4CAF50 : frac > 0.3f ? 0xFFFFC107 : 0xFFE53935;
+        g.fill(x - 1, y - 1, x + w + 1, y + 7, 0xC0000000);
+        UiKit.bar(g, x, y, w, 6, frac, 0xFF2A1010, fill);
+        String text = hp + " / " + max + (absorb > 0 ? " +" + absorb : "");
+        g.drawString(font, text, x + 3, y - 1, 0xFFFFFFFF, true);
+        String pct = Math.round(frac * 100) + "%";
+        g.drawString(font, pct, x + w - font.width(pct) - 3, y - 1, 0xFFE0E0E0, true);
     }
 
     /** Панель навыков (снизу слева): шесть ячеек, над ними — сферы заклинателя или приёмы серии. */
