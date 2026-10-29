@@ -98,7 +98,7 @@ public class TideWardenEntity extends StageBoss {
 
     @Override public int getBossLevel() { return 24; }
     @Override public int getXpReward() { return 0; }
-    @Override protected float ehp() { return 40000; }
+    @Override protected float ehp() { return 32000; }
     @Override public boolean canBreatheUnderwater() { return true; }
 
     @Override

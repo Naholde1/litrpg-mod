@@ -116,7 +116,7 @@ public class DarkWitchEntity extends StageBoss {
 
     @Override public int getBossLevel() { return 20; }
     @Override public int getXpReward() { return 0; }
-    @Override protected float ehp() { return 30000; }
+    @Override protected float ehp() { return 24000; }
     @Override protected int enrageTicks() { return 20 * 60 * 7; }
 
     @Override

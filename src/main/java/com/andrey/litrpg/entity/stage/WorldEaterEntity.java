@@ -103,7 +103,7 @@ public class WorldEaterEntity extends StageBoss {
 
     @Override public int getBossLevel() { return 47; }
     @Override public int getXpReward() { return 0; }
-    @Override protected float ehp() { return 108000; }
+    @Override protected float ehp() { return 86400; }
     @Override public boolean fireImmune() { return true; }
     @Override protected int enrageTicks() { return 20 * 60 * 7; }
 

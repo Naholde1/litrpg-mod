@@ -129,7 +129,7 @@ public class TwinNecromancerEntity extends StageBoss {
 
     @Override public int getBossLevel() { return 7; }
     @Override public int getXpReward() { return 0; }
-    @Override protected float ehp() { return 4300; }
+    @Override protected float ehp() { return 3440; }
 
     @Override
     protected float[] phaseThresholds() {

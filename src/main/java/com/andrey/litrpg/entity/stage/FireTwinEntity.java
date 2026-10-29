@@ -130,7 +130,7 @@ public class FireTwinEntity extends StageBoss {
 
     @Override public int getBossLevel() { return 37; }
     @Override public int getXpReward() { return 0; }
-    @Override protected float ehp() { return 40000; }
+    @Override protected float ehp() { return 32000; }
     @Override public boolean fireImmune() { return true; }
 
     @Override

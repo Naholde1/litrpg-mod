@@ -92,7 +92,7 @@ public class RotEntEntity extends StageBoss {
 
     @Override public int getBossLevel() { return 17; }
     @Override public int getXpReward() { return 0; }
-    @Override protected float ehp() { return 24000; }
+    @Override protected float ehp() { return 19200; }
 
     @Override
     protected float[] phaseThresholds() {

@@ -88,7 +88,7 @@ public class SpiderQueenEntity extends StageBoss {
 
     @Override public int getBossLevel() { return 14; }
     @Override public int getXpReward() { return 0; }
-    @Override protected float ehp() { return 18000; }
+    @Override protected float ehp() { return 14400; }
 
     @Override
     protected float[] phaseThresholds() {

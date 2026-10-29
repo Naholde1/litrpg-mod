@@ -48,14 +48,13 @@ public final class Spirits {
     private Spirits() {}
 
     public static final String FALLEN_TAG = "litrpg_fallen_spirit";
-    /** Подъём у тела: 3 с на подъём, общий откат 10 с — и у приседания, и у навыка воскрешения. */
     /**
-     * Воскрешение в бою: поддержка поднимает павшего за 10 секунд, и следующий подъём —
-     * через 30. Длинный каст — цена за то, что это работает прямо под хранителем: лекарь
-     * на эти десять секунд выпадает из боя, и отряд должен его прикрыть.
+     * Воскрешение в бою умеют все, но по-разному. Поддержка — за 3 секунды и раз в 10:
+     * это её работа. Боец и танк — за 10 секунд и раз в 30: поднять товарища они могут,
+     * но платят за это выпадением из боя, и лекарь всё равно делает это втрое быстрее.
      */
-    public static final int REZ_TICKS = 20 * 10;
-    private static final int REZ_COOLDOWN = 20 * 30;
+    private static final int REZ_TICKS_SUPPORT = 20 * 3, REZ_TICKS_OTHER = 20 * 10;
+    private static final int REZ_CD_SUPPORT = 20 * 10, REZ_CD_OTHER = 20 * 30;
     /** Докуда достаёт от тела: меньше — и любой толчок хранителя сбивал подъём. */
     private static final double REZ_RANGE = 4.0;
     /** Насколько быстро утекает прогресс, если встал или отошёл (10 с набора — 2,5 с паузы). */
@@ -85,8 +84,14 @@ public final class Spirits {
         return Math.max(0, REZ_CD.getOrDefault(p.getUUID(), 0L) - p.level().getGameTime());
     }
 
+    /** Сколько тиков занимает подъём у этого игрока: у поддержки 3 с, у остальных 10 с. */
+    public static int rezTicks(ServerPlayer p) {
+        return StatsManager.get(p).getRole() == Role.SUPPORT ? REZ_TICKS_SUPPORT : REZ_TICKS_OTHER;
+    }
+
     private static void startRezCooldown(ServerPlayer p) {
-        REZ_CD.put(p.getUUID(), p.level().getGameTime() + REZ_COOLDOWN);
+        int cd = StatsManager.get(p).getRole() == Role.SUPPORT ? REZ_CD_SUPPORT : REZ_CD_OTHER;
+        REZ_CD.put(p.getUUID(), p.level().getGameTime() + cd);
     }
 
     /** Хранитель в бою рядом с точкой. */
@@ -129,8 +134,8 @@ public final class Spirits {
             if (o == p) continue;
             boolean healer = StatsManager.get(o).getRole() == Role.SUPPORT;
             o.sendSystemMessage(Component.literal("✝ " + p.getName().getString() + " пал. ").withStyle(ChatFormatting.RED)
-                    .append(Component.literal(healer ? "Встаньте у тела и держите присед 10 с — поднимете даже в бою!"
-                                    : "Поддержка может его воскресить, не выходя из боя.")
+                    .append(Component.literal(healer ? "Встаньте у тела и держите присед 3 с — поднимете даже в бою!"
+                                    : "Присядьте у тела на 10 с — поднимете даже в бою (лекарь втрое быстрее).")
                             .withStyle(healer ? ChatFormatting.GREEN : ChatFormatting.GRAY)));
         }
         p.level().playSound(null, p.blockPosition(), SoundEvents.SOUL_ESCAPE, SoundSource.PLAYERS, 1.5f, 0.7f);
@@ -145,11 +150,12 @@ public final class Spirits {
             spiritTick(p, s);
             return;
         }
-        // поддержка воскрешает: присела у тела павшего
-        if (!p.isCrouching() || !p.isAlive() || p.isSpectator() || StatsManager.get(p).getRole() != Role.SUPPORT) {
+        // поднять павшего может любой: присел у тела и держит. У поддержки это втрое быстрее
+        if (!p.isCrouching() || !p.isAlive() || p.isSpectator()) {
             fade(p);
             return;
         }
+        int need = rezTicks(p);
         for (Map.Entry<UUID, Spirit> en : SPIRITS.entrySet()) {
             Spirit sp = en.getValue();
             if (sp.body.distanceTo(p.position()) > REZ_RANGE) continue;
@@ -161,11 +167,11 @@ public final class Spirits {
             }
             int t = CHANNEL.merge(p.getUUID(), 1, Integer::sum);
             p.serverLevel().sendParticles(ParticleTypes.END_ROD, sp.body.x, sp.body.y + 0.5, sp.body.z, 3, 0.4, 0.4, 0.4, 0.02);
-            int bars = Math.min(10, t * 10 / REZ_TICKS);
+            int bars = Math.min(10, t * 10 / need);
             p.displayClientMessage(Component.literal("Воскрешение: " + "█".repeat(bars) + "░".repeat(10 - bars)
-                            + "  " + ((REZ_TICKS - t) / 20 + 1) + " с")
+                            + "  " + Math.max(0, (need - t) / 20 + 1) + " с")
                     .withStyle(ChatFormatting.GREEN), true);
-            if (t >= REZ_TICKS) {
+            if (t >= need) {
                 CHANNEL.remove(p.getUUID());
                 startRezCooldown(p);
                 ServerPlayer dead = p.server.getPlayerList().getPlayer(en.getKey());

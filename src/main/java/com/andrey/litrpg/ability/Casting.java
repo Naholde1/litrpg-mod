@@ -48,7 +48,7 @@ public final class Casting {
             cancel(p, cur.a == a ? "Заклинание отменено" : null);
             if (cur.a == a) return;
         }
-        int want = a.kind == Ability.Kind.REZ ? com.andrey.litrpg.run.Spirits.REZ_TICKS : a.duration;
+        int want = a.kind == Ability.Kind.REZ ? com.andrey.litrpg.run.Spirits.rezTicks(p) : a.duration;
         int ticks = Math.max(6, Math.round(want * castSpeed(p)));
         CASTS.put(p.getUUID(), new Cast(a, ticks, p.position(), p.level().getGameTime()));
         ModNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> p), new CastPacket(a.ordinal(), ticks));
