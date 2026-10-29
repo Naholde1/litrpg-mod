@@ -80,7 +80,7 @@ public final class Dynamic {
         return Fx.color(a.element == null ? "HEAL" : a.element.name());
     }
 
-    private static int healColor(Ability a) {
+    static int healColor(Ability a) {
         if (a.element == null) return Fx.color("HEAL");
         return switch (a.element) {
             case HOLY -> 0xD0FFE890;

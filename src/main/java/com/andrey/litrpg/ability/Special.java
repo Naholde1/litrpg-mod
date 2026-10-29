@@ -46,6 +46,10 @@ public final class Special {
         Astromancer.register();
         Swift.register();
         Machinist.register();
+        Berserker.register();
+        Healer.register();
+        Alchemist.register();
+        Sniper.register();
     }
 
     /** Трогается при загрузке класса, чтобы статический блок отработал. */

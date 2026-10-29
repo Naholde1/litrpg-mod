@@ -30,6 +30,8 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.UUID;
 
 /**
@@ -185,6 +187,22 @@ public final class Spirits {
         startRezCooldown(by);
         revive(dead, 0.5f, "Вас поднял(а) " + by.getName().getString());
         return true;
+    }
+
+    /** Поднять всех павших, чьи тела в радиусе r от точки (без отката воскрешения). @return сколько поднято */
+    public static int reviveAll(ServerPlayer by, Vec3 c, double r, float hp, String why) {
+        List<UUID> ids = new ArrayList<>();
+        for (Map.Entry<UUID, Spirit> en : SPIRITS.entrySet()) {
+            if (en.getValue().body.distanceTo(c) <= r) ids.add(en.getKey());
+        }
+        int n = 0;
+        for (UUID id : ids) {
+            ServerPlayer dead = by.server.getPlayerList().getPlayer(id);
+            if (dead == null) continue;
+            revive(dead, hp, why);
+            n++;
+        }
+        return n;
     }
 
     private static void spiritTick(ServerPlayer p, Spirit s) {

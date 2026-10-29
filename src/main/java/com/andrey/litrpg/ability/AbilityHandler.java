@@ -1312,7 +1312,7 @@ public class AbilityHandler {
     }
 
     /** Союзник под прицелом или самый раненый рядом. */
-    private static LivingEntity allyTarget(ServerPlayer p, double r, boolean includeSelf) {
+    static LivingEntity allyTarget(ServerPlayer p, double r, boolean includeSelf) {
         var data = p.getPersistentData();
         if (data.hasUUID(com.andrey.litrpg.network.FocusPacket.FOCUS)
                 && p.level().getPlayerByUUID(data.getUUID(com.andrey.litrpg.network.FocusPacket.FOCUS)) instanceof ServerPlayer f
@@ -1503,7 +1503,7 @@ public class AbilityHandler {
 
     // ================= вспомогательное =================
 
-    private static boolean noTarget(ServerPlayer p) {
+    static boolean noTarget(ServerPlayer p) {
         p.displayClientMessage(Component.literal("Нет цели").withStyle(ChatFormatting.YELLOW), true);
         return false;
     }
