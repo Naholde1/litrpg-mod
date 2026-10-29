@@ -183,10 +183,12 @@ public class AbilityHandler {
         }
         boolean ok;
         boolean wasSprinting = player.isSprinting();
+        durBoost = s.rankDuration(a);
         try {
             ok = execute(player, s, a);
         } finally {
             boost = 1f;
+            durBoost = 1f;
         }
         // Ванильное правило «удар сбивает бег» ломало Стрижа: у него урон растёт со
         // скоростью, а каждая способность ставила его на шаг. Способность не должна
@@ -207,7 +209,8 @@ public class AbilityHandler {
             s.addStyle(Style.MAGIC, a.mana / 4);
             var g = s.gear();
             int cd = Math.round(a.cooldown * (1 - Math.min(50f, g.get(com.andrey.litrpg.gear.GearBonus.COOLDOWN)) / 100f)
-                    * (1 - 0.1f * Math.min(4, com.andrey.litrpg.registry.ModEffects.level(player, com.andrey.litrpg.registry.ModEffects.FOCUS))));
+                    * (1 - 0.1f * Math.min(4, com.andrey.litrpg.registry.ModEffects.level(player, com.andrey.litrpg.registry.ModEffects.FOCUS)))
+                    * s.rankCooldown(a));
             if (g.has(com.andrey.litrpg.gear.Passive.ARCANE_ECHO) && player.getRandom().nextFloat() < 0.15f) {
                 cd = 0;
                 player.displayClientMessage(Component.literal("Магическое эхо!").withStyle(ChatFormatting.LIGHT_PURPLE), true);
@@ -374,7 +377,8 @@ public class AbilityHandler {
             default -> 0.7f;
         };
         float v = 4 + (float) s.statPower(a.scale) * k + s.getLevel() * 0.5f;
-        return v * boost;
+        // ранг навыка (очки класса): +8% силы за ранг — и урону, и лечению, и щитам
+        return v * boost * s.rankPower(a);
     }
 
     private static DamageSource source(ServerPlayer p, Ability a) {
@@ -398,12 +402,18 @@ public class AbilityHandler {
         return ok;
     }
 
+    /**
+     * Длительность эффектов навыка от его ранга. Выставляется на время применения навыка
+     * (как {@link #boost}); отложенные удары идут уже без неё.
+     */
+    private static float durBoost = 1f;
+
     static void applyFoe(Ability a, LivingEntity e, ServerPlayer p) {
-        for (Ability.Fx fx : a.enemy) e.addEffect(new MobEffectInstance(fx.effect(), fx.duration(), fx.amplifier()), p);
+        for (Ability.Fx fx : a.enemy) e.addEffect(new MobEffectInstance(fx.effect(), Math.round(fx.duration() * durBoost), fx.amplifier()), p);
     }
 
     static void applySelf(Ability a, LivingEntity e) {
-        for (Ability.Fx fx : a.self) e.addEffect(new MobEffectInstance(fx.effect(), fx.duration(), fx.amplifier()));
+        for (Ability.Fx fx : a.self) e.addEffect(new MobEffectInstance(fx.effect(), Math.round(fx.duration() * durBoost), fx.amplifier()));
     }
 
     private static ParticleOptions particle(Element el) {

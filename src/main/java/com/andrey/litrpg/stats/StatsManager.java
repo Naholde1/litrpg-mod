@@ -172,7 +172,8 @@ public class StatsManager {
 
         message(player, Component.literal("Поздравляем! Достигнут уровень ")
                 .append(Component.literal(String.valueOf(to)).withStyle(ChatFormatting.GOLD))
-                .append(". Свободных очков: " + s.getFreePoints() + " (окно персонажа: K)"));
+                .append(". Свободных очков: " + s.getFreePoints() + " (окно персонажа: K)")
+                .append(s.hasClass() ? ". Очков класса: " + s.getClassPoints() + " (K → «Навыки»)" : ""));
 
         PlayerClass cls = s.getPlayerClass();
         java.util.List<String> keys = new java.util.ArrayList<>();

@@ -96,6 +96,10 @@ public final class Shop {
         if (ps.hasClass()) {
             out.add(new Offer(20, ItemStack.EMPTY, 150 * stage, false, "class", "Сменить класс и роль (уровень и вещи остаются)"));
         }
+        if (ps.hasRanks()) {
+            out.add(new Offer(24, ItemStack.EMPTY, 60 * stage, false, "ranks",
+                    "Забыть ранги навыков: все " + ps.classPointsSpent() + " очк. класса вернутся"));
+        }
 
         return out;
     }
@@ -185,6 +189,16 @@ public final class Shop {
                         p.level().playSound((Player)null, t.blockPosition(), SoundEvents.ANVIL_USE, SoundSource.NEUTRAL, 1.0F, 0.8F);
                         StatsManager.message(p, Component.literal("Уровень вещи поднят до " + lvl + ": ")
                                 .append(st.getHoverName()).withStyle(ChatFormatting.GOLD));
+                        open(p, t);
+                        return;
+                    }
+
+                    if (o.action().equals("ranks")) {
+                        StatsManager.get(p).resetRanks();
+                        StatsManager.sync(p);
+                        p.level().playSound((Player)null, t.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.NEUTRAL, 1.0F, 0.8F);
+                        StatsManager.message(p, Component.literal("Торговец поит вас горьким отваром: ранги навыков забыты, очки класса свободны.")
+                                .withStyle(ChatFormatting.GOLD));
                         open(p, t);
                         return;
                     }

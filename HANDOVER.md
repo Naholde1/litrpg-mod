@@ -22,7 +22,7 @@ swift's whole kit get their own mechanics».
 $env:JAVA_HOME="C:\Users\arsen\.litrpg-tools\jdk-17.0.20.1+1"; .\gradlew.bat build --no-daemon
 ```
 
-Готовый мод — `build/libs/litrpg-system-3.1.0.jar`. Положить в `%APPDATA%\.minecraft\mods`,
+Готовый мод — `build/libs/litrpg-system-3.2.0.jar`. Положить в `%APPDATA%\.minecraft\mods`,
 рядом нужны `curios-forge-5.14.1+1.20.1.jar`, `Patchouli-1.20.1-84-FORGE.jar`,
 `jei-1.20.1-forge-15.20.0.106.jar`.
 
@@ -139,7 +139,12 @@ execute at Dev run summon minecraft:zombie ~ ~ ~4 {Attributes:[{Name:"generic.ma
 
 ### 3.2. Обещано и не сделано
 
-1. **Прокачка умений (2 очка класса за уровень).** Этого нет вообще: в `PlayerStats` есть только
+1. ✅ **Сделано (3.2):** очки класса — 2 за уровень с 10-го (`PlayerStats.classPointsEarned`), ранги 1–5
+   (ранг n стоит n очков): +8% силы, −4% отката, +6% длительности эффектов за ранг
+   (`AbilityHandler.base`, `complete`, `applySelf/applyFoe`). Кнопки «+» во вкладке «Навыки»
+   (`RankSkillPacket`), сброс — у торговца (`Shop`, предложение 24), команды
+   `litrpg class rank|unrank`. Длительность зон и HoT (`a.duration`) от ранга пока не растёт.
+   Было: **Прокачка умений (2 очка класса за уровень).** Этого нет вообще: в `PlayerStats` есть только
    очки характеристик (`freePoints`, `POINTS_PER_LEVEL = 10`). Нужны отдельные очки класса,
    ранги навыков (урон/откат/длительность за ранг), экран прокачки и сброс за деньги
    у торговца.

@@ -93,7 +93,7 @@ public class ShopScreen extends SystemScreen {
                 boolean bh = afford && UiKit.inside(mx, my, bx, by, bw, 16);
                 g.fill(bx, by, bx + bw, by + 16, !afford ? 0x80101820 : bh ? 0xF0204A30 : 0xE0122636);
                 UiKit.frame(g, bx, by, bw, 16, afford ? accent : UiKit.FRAME_DIM);
-                String btn = o.action().isEmpty() ? "Купить" : "Сменить";
+                String btn = o.action().isEmpty() ? "Купить" : o.action().equals("ranks") ? "Забыть" : "Сменить";
                 g.drawString(font, btn, bx + bw / 2 - font.width(btn) / 2, by + 4, afford ? 0xFFFFFFFF : UiKit.MUTED, false);
                 if (afford) hits.add(new Hit(bx, by, bw, 16, o.id()));
             }

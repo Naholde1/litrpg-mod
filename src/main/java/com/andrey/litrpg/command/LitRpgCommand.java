@@ -118,7 +118,12 @@ public class LitRpgCommand {
                 .then(Commands.literal("clear").then(players().executes(c -> each(c, (p, s) -> {
                     s.setPlayerClass(null);
                     s.setOffers(java.util.List.of());
-                })))));
+                }))))
+                // ранги навыков: поднять за очки класса (как кнопка «+» в окне) или сбросить
+                .then(Commands.literal("rank").then(players()
+                        .then(Commands.argument("skill", StringArgumentType.word())
+                                .executes(c -> each(c, (p, s) -> s.rankUp(StringArgumentType.getString(c, "skill")))))))
+                .then(Commands.literal("unrank").then(players().executes(c -> each(c, (p, s) -> s.resetRanks())))));
 
         root.then(Commands.literal("role").then(players()
                 .then(Commands.argument("role", StringArgumentType.word())

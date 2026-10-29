@@ -53,6 +53,9 @@ public class PlayerStats {
     /** Сводка надетой экипировки. Не сохраняется — пересчитывается по инвентарю. */
     private final com.andrey.litrpg.gear.PlayerGear gear = new com.andrey.litrpg.gear.PlayerGear();
 
+    /** Ранги навыков класса (ключ навыка → ранг 1…MAX_RANK). Сбрасываются при смене класса и у торговца. */
+    private final Map<String, Integer> ranks = new java.util.HashMap<>();
+
     /** Время (gameTime), когда способность снова станет доступна. Не сохраняется. */
     private final long[] cooldownEnd = new long[Ability.count()];
 
@@ -146,6 +149,52 @@ public class PlayerStats {
         freePoints += total;
     }
 
+    // ---------- ранги навыков ----------
+
+    /** Очков класса за уровень, начиная с уровня выбора класса. */
+    public static final int CLASS_POINTS_PER_LEVEL = 2;
+    public static final int MAX_RANK = 5;
+    /** Что даёт каждый ранг: сила навыка, сокращение отката, длительность эффектов. */
+    public static final float RANK_POWER = 0.08f;
+    public static final float RANK_COOLDOWN = 0.04f;
+    public static final float RANK_DURATION = 0.06f;
+
+    public int getRank(String key) { return key == null ? 0 : ranks.getOrDefault(key, 0); }
+
+    /** Цена следующего ранга: ранг n стоит n очков (до пятого — 15 очков на навык). */
+    public static int rankCost(int nextRank) { return nextRank; }
+
+    /** Очков класса заработано всего: два за каждый уровень с 10-го. */
+    public int classPointsEarned() {
+        return playerClass == null ? 0 : Math.max(0, level - CLASS_LEVEL + 1) * CLASS_POINTS_PER_LEVEL;
+    }
+
+    public int classPointsSpent() {
+        int n = 0;
+        for (int r : ranks.values()) n += r * (r + 1) / 2;
+        return n;
+    }
+
+    public int getClassPoints() { return Math.max(0, classPointsEarned() - classPointsSpent()); }
+
+    /** Поднять ранг навыка своего класса. @return получилось ли */
+    public boolean rankUp(String key) {
+        Ability a = Ability.byKey(key);
+        if (a == null || playerClass == null || !isUnlocked(a) || a.key.equals(Ability.DASH_KEY)) return false;
+        int next = getRank(key) + 1;
+        if (next > MAX_RANK || getClassPoints() < rankCost(next)) return false;
+        ranks.put(key, next);
+        return true;
+    }
+
+    public boolean hasRanks() { return !ranks.isEmpty(); }
+    public void resetRanks() { ranks.clear(); }
+
+    /** Множители навыка от его ранга. */
+    public float rankPower(Ability a) { return 1f + RANK_POWER * getRank(a.key); }
+    public float rankCooldown(Ability a) { return 1f - RANK_COOLDOWN * getRank(a.key); }
+    public float rankDuration(Ability a) { return 1f + RANK_DURATION * getRank(a.key); }
+
     // ---------- мана ----------
 
     /** Ресурс класса: мана, ярость, заряды, сферы, облик или здоровье. */
@@ -188,6 +237,7 @@ public class PlayerStats {
         java.util.Arrays.fill(invoked, null);
         orbs.clear();
         combo = 0;
+        ranks.clear();        // ранги вложены в навыки прежнего класса
         if (c != null) {
             role = c.role;
             fillBar();
@@ -333,6 +383,9 @@ public class PlayerStats {
         for (String b : invoked) il.add(StringTag.valueOf(b == null ? "" : b));
         tag.put("invoked", il);
         tag.putInt("combo", combo);
+        CompoundTag rk = new CompoundTag();
+        ranks.forEach(rk::putInt);
+        tag.put("ranks", rk);
 
         ListTag cl = new ListTag();
         for (String c : claims) cl.add(StringTag.valueOf(c));
@@ -381,6 +434,12 @@ public class PlayerStats {
             invoked[i] = k.isEmpty() || Ability.byKey(k) == null ? null : k;
         }
         combo = tag.getInt("combo");
+        ranks.clear();
+        CompoundTag rk = tag.getCompound("ranks");
+        for (String k : rk.getAllKeys()) {
+            int r = Math.max(0, Math.min(MAX_RANK, rk.getInt(k)));
+            if (r > 0 && Ability.byKey(k) != null) ranks.put(k, r);
+        }
         // персонажи до 2.15: навыки раскладываются на панель сами
         if (playerClass != null && !tag.contains("bar")) fillBar();
 

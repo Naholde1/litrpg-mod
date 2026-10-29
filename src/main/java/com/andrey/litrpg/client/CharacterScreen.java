@@ -94,6 +94,10 @@ public class CharacterScreen extends SystemScreen {
         int pointsColor = s.getFreePoints() > 0 ? 0xFF7CFC00 : UiKit.MUTED;
         g.drawString(font, "Свободные очки: " + s.getFreePoints(), x, sy, pointsColor, false);
         if (s.getFreePoints() > 0) g.drawString(font, "Shift — по 5", x + 110, sy, UiKit.MUTED, false);
+        if (s.hasClass()) {
+            String cp = "Очки класса: " + s.getClassPoints();
+            g.drawString(font, cp, left + W - 12 - font.width(cp), sy, s.getClassPoints() > 0 ? 0xFF7CFC00 : UiKit.MUTED, false);
+        }
 
         Stat[] stats = Stat.values();
         for (int i = 0; i < stats.length; i++) {
@@ -227,9 +231,18 @@ public class CharacterScreen extends SystemScreen {
         var t = Component.translatable(a.nameKey()).withStyle(ChatFormatting.LIGHT_PURPLE).copy()
                 .append(Component.literal("\n").append(Component.translatable(a.descKey())).withStyle(ChatFormatting.GRAY));
         String cost = costText(a);
-        t.append(Component.literal("\n" + cost + " • перезарядка " + String.format("%.1f", a.cooldown() / 20.0) + " с")
+        t.append(Component.literal("\n" + cost + " • перезарядка " + String.format("%.1f", a.cooldown() * s.rankCooldown(a) / 20.0) + " с")
                 .withStyle(ChatFormatting.BLUE));
         if (s.getLevel() < need) t.append(Component.literal("\nОткроется на уровне " + need).withStyle(ChatFormatting.GOLD));
+        int r = s.getRank(a.key);
+        if (s.hasClass() && !a.key.equals(Ability.DASH_KEY)) {
+            String txt = r > 0
+                    ? String.format("\nРанг %d/%d: сила +%.0f%%, откат −%.0f%%, эффекты +%.0f%%", r, PlayerStats.MAX_RANK,
+                    r * PlayerStats.RANK_POWER * 100, r * PlayerStats.RANK_COOLDOWN * 100, r * PlayerStats.RANK_DURATION * 100)
+                    : String.format("\nРанг 0/%d. Каждый ранг: сила +%.0f%%, откат −%.0f%%, эффекты +%.0f%%", PlayerStats.MAX_RANK,
+                    PlayerStats.RANK_POWER * 100, PlayerStats.RANK_COOLDOWN * 100, PlayerStats.RANK_DURATION * 100);
+            t.append(Component.literal(txt).withStyle(r > 0 ? ChatFormatting.YELLOW : ChatFormatting.DARK_GRAY));
+        }
         return t;
     }
 
@@ -271,7 +284,7 @@ public class CharacterScreen extends SystemScreen {
             Ability a = Ability.byKey(cls.skills[i]);
             if (a == null) continue;
             int cx = x + (i % cols) * colW;
-            int cy = ly + (i / cols) * 31;
+            int cy = ly + (i / cols) * 36;
             int need = cls.unlock[i];
             boolean unlocked = s.getLevel() >= need;
             skillIcon(g, a, cx, cy, unlocked, a.key.equals(pickSkill));
@@ -290,14 +303,51 @@ public class CharacterScreen extends SystemScreen {
                 mc = 0xFF9CFF9C;
             } else {
                 meta = (a.hpCost() > 0 ? Math.round(a.hpCost() * 100) + "% HP" : a.manaCost() + " MP") + " • "
-                        + String.format("%.0f", a.cooldown() / 20.0) + " с";
+                        + String.format("%.0f", a.cooldown() * s.rankCooldown(a) / 20.0) + " с";
                 mc = 0xFF5AA0F0;
             }
             g.drawString(font, meta, cx + 32, cy + 13, mc, false);
-            if (UiKit.inside(mx, my, cx, cy, colW - 4, 30)) tooltip = skillTip(a, need, s);
-            if (unlocked) hits.add(new Hit(cx, cy, colW - 4, 30, () -> clickSkill(a.key)));
+            if (unlocked) rankWidget(g, s, a, cx + 32, cy + 24, cx + colW - 18, cy + 22, mx, my);
+            if (tooltip == null && UiKit.inside(mx, my, cx, cy, colW - 4, 34)) tooltip = skillTip(a, need, s);
+            if (unlocked) hits.add(new Hit(cx, cy, colW - 4, 34, () -> clickSkill(a.key)));
         }
-        g.drawString(font, "Менять навыки можно только вне боя.", x, top + H - 14, UiKit.MUTED, false);
+        classPointsLine(g, s, x);
+    }
+
+    /** Строка очков класса внизу вкладки. */
+    private void classPointsLine(GuiGraphics g, PlayerStats s, int x) {
+        int pts = s.getClassPoints();
+        String head = "Очки класса: " + pts;
+        g.drawString(font, head, x, top + H - 14, pts > 0 ? 0xFF7CFC00 : UiKit.MUTED, false);
+        g.drawString(font, "  • 2 за уровень, ранг n стоит n очков • менять и качать — вне боя",
+                x + font.width(head), top + H - 14, UiKit.MUTED, false);
+    }
+
+    /**
+     * Пять делений ранга и кнопка «+». Кнопка добавляется в hits раньше самой ячейки,
+     * поэтому клик по ней не выбирает навык для панели.
+     */
+    private void rankWidget(GuiGraphics g, PlayerStats s, Ability a, int px, int py, int bx, int by, int mx, int my) {
+        int r = s.getRank(a.key);
+        for (int k = 0; k < PlayerStats.MAX_RANK; k++) {
+            int ox = px + k * 7;
+            g.fill(ox, py, ox + 5, py + 4, k < r ? UiKit.GOLD : 0xFF3A3A3A);
+        }
+        if (r >= PlayerStats.MAX_RANK) return;
+        int cost = PlayerStats.rankCost(r + 1);
+        boolean can = s.getClassPoints() >= cost;
+        boolean hov = UiKit.inside(mx, my, bx, by, 10, 10);
+        g.fill(bx, by, bx + 10, by + 10, can ? (hov ? 0xFF2E7D32 : 0xFF1B4D20) : 0xFF2A2A2A);
+        UiKit.frame(g, bx, by, 10, 10, can ? 0xFF7CFC00 : UiKit.FRAME_DIM);
+        g.drawString(font, "+", bx + 3, by + 1, can ? 0xFFFFFFFF : 0xFF666666, false);
+        if (hov) {
+            tooltip = Component.literal("Ранг " + (r + 1) + ": стоит " + cost + " очк. класса"
+                    + (can ? "" : " (у вас " + s.getClassPoints() + ")"))
+                    .withStyle(can ? ChatFormatting.GREEN : ChatFormatting.RED);
+        }
+        if (can) {
+            hits.add(new Hit(bx, by, 10, 10, () -> ModNetwork.CHANNEL.sendToServer(new com.andrey.litrpg.network.RankSkillPacket(a.key))));
+        }
     }
 
     private void clickSlot(int slot) {
@@ -359,8 +409,10 @@ public class CharacterScreen extends SystemScreen {
             g.drawString(font, title, cx + 38, cy + 1, unlocked ? 0xFFE0D0FF : 0xFF777777, false);
             String meta = unlocked ? a.manaCost() + " MP • " + String.format("%.0f", a.cooldown() / 20.0) + " с" : "с " + c.level() + " ур.";
             g.drawString(font, meta, cx + 38, cy + 11, unlocked ? 0xFF5AA0F0 : 0xFFFF9800, false);
-            if (UiKit.inside(mx, my, cx, cy, colW - 4, 24)) tooltip = skillTip(a, c.level(), s);
+            if (unlocked) rankWidget(g, s, a, cx + colW - 64, cy + 13, cx + colW - 18, cy + 2, mx, my);
+            if (tooltip == null && UiKit.inside(mx, my, cx, cy, colW - 4, 24)) tooltip = skillTip(a, c.level(), s);
         }
+        classPointsLine(g, s, x);
     }
 
     /** Цена способности словами того ресурса, которым платит класс. */
