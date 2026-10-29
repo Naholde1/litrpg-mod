@@ -36,7 +36,9 @@ public final class Casting {
     }
 
     public static boolean isCast(Ability a) {
-        return a.kind == Ability.Kind.CAST_HEAL || a.kind == Ability.Kind.CAST_BOLT;
+        // Подъём павшего — обряд, а не кнопка: десять секунд на месте, как и у приседа
+        // у тела. Иначе боевое воскрешение ничего не стоило бы, кроме откатa.
+        return a.kind == Ability.Kind.CAST_HEAL || a.kind == Ability.Kind.CAST_BOLT || a.kind == Ability.Kind.REZ;
     }
 
     /** Начать подготовку. @return true — началась (или отменена повторным нажатием) */
@@ -46,7 +48,8 @@ public final class Casting {
             cancel(p, cur.a == a ? "Заклинание отменено" : null);
             if (cur.a == a) return;
         }
-        int ticks = Math.max(6, Math.round(a.duration * castSpeed(p)));
+        int want = a.kind == Ability.Kind.REZ ? com.andrey.litrpg.run.Spirits.REZ_TICKS : a.duration;
+        int ticks = Math.max(6, Math.round(want * castSpeed(p)));
         CASTS.put(p.getUUID(), new Cast(a, ticks, p.position(), p.level().getGameTime()));
         ModNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> p), new CastPacket(a.ordinal(), ticks));
         AbilityHandler.sound(p, SoundEvents.ENCHANTMENT_TABLE_USE, 0.6f, 1.5f);

@@ -49,7 +49,17 @@ public final class Spirits {
 
     public static final String FALLEN_TAG = "litrpg_fallen_spirit";
     /** Подъём у тела: 3 с на подъём, общий откат 10 с — и у приседания, и у навыка воскрешения. */
-    private static final int REZ_TICKS = 60, REZ_COOLDOWN = 20 * 10;
+    /**
+     * Воскрешение в бою: поддержка поднимает павшего за 10 секунд, и следующий подъём —
+     * через 30. Длинный каст — цена за то, что это работает прямо под хранителем: лекарь
+     * на эти десять секунд выпадает из боя, и отряд должен его прикрыть.
+     */
+    public static final int REZ_TICKS = 20 * 10;
+    private static final int REZ_COOLDOWN = 20 * 30;
+    /** Докуда достаёт от тела: меньше — и любой толчок хранителя сбивал подъём. */
+    private static final double REZ_RANGE = 4.0;
+    /** Насколько быстро утекает прогресс, если встал или отошёл (10 с набора — 2,5 с паузы). */
+    private static final int REZ_FADE = 4;
 
     /** body — где лежит тело; boss — хранитель, в бою с которым пал (или null). */
     private record Spirit(Vec3 body, UUID boss, long since) {}
@@ -119,7 +129,8 @@ public final class Spirits {
             if (o == p) continue;
             boolean healer = StatsManager.get(o).getRole() == Role.SUPPORT;
             o.sendSystemMessage(Component.literal("✝ " + p.getName().getString() + " пал. ").withStyle(ChatFormatting.RED)
-                    .append(Component.literal(healer ? "Встаньте у тела и присядьте на 3 с — воскресите!" : "Поддержка может его воскресить.")
+                    .append(Component.literal(healer ? "Встаньте у тела и держите присед 10 с — поднимете даже в бою!"
+                                    : "Поддержка может его воскресить, не выходя из боя.")
                             .withStyle(healer ? ChatFormatting.GREEN : ChatFormatting.GRAY)));
         }
         p.level().playSound(null, p.blockPosition(), SoundEvents.SOUL_ESCAPE, SoundSource.PLAYERS, 1.5f, 0.7f);
@@ -136,12 +147,12 @@ public final class Spirits {
         }
         // поддержка воскрешает: присела у тела павшего
         if (!p.isCrouching() || !p.isAlive() || p.isSpectator() || StatsManager.get(p).getRole() != Role.SUPPORT) {
-            CHANNEL.remove(p.getUUID());
+            fade(p);
             return;
         }
         for (Map.Entry<UUID, Spirit> en : SPIRITS.entrySet()) {
             Spirit sp = en.getValue();
-            if (sp.body.distanceTo(p.position()) > 2.8) continue;
+            if (sp.body.distanceTo(p.position()) > REZ_RANGE) continue;
             long left = rezCooldown(p);
             if (left > 0) {
                 CHANNEL.remove(p.getUUID());
@@ -150,7 +161,9 @@ public final class Spirits {
             }
             int t = CHANNEL.merge(p.getUUID(), 1, Integer::sum);
             p.serverLevel().sendParticles(ParticleTypes.END_ROD, sp.body.x, sp.body.y + 0.5, sp.body.z, 3, 0.4, 0.4, 0.4, 0.02);
-            p.displayClientMessage(Component.literal("Воскрешение: " + "█".repeat(t * 10 / REZ_TICKS) + "░".repeat(10 - t * 10 / REZ_TICKS))
+            int bars = Math.min(10, t * 10 / REZ_TICKS);
+            p.displayClientMessage(Component.literal("Воскрешение: " + "█".repeat(bars) + "░".repeat(10 - bars)
+                            + "  " + ((REZ_TICKS - t) / 20 + 1) + " с")
                     .withStyle(ChatFormatting.GREEN), true);
             if (t >= REZ_TICKS) {
                 CHANNEL.remove(p.getUUID());
@@ -161,7 +174,20 @@ public final class Spirits {
             }
             return;
         }
-        CHANNEL.remove(p.getUUID());
+        fade(p);
+    }
+
+    /**
+     * Прогресс подъёма не обнуляется с первого же толчка: он утекает. Десять секунд каста
+     * под хранителем иначе не набрать — любой отскок, прыжок через разметку или сбитый
+     * присед начинали бы всё заново.
+     */
+    private static void fade(ServerPlayer p) {
+        Integer t = CHANNEL.get(p.getUUID());
+        if (t == null) return;
+        int left = t - REZ_FADE;
+        if (left <= 0) CHANNEL.remove(p.getUUID());
+        else CHANNEL.put(p.getUUID(), left);
     }
 
     /** Навык воскрешения: поднять ближайшего павшего в радиусе r сразу. Откат — общий с подъёмом у тела. */
