@@ -46,6 +46,14 @@ public class ModItems {
             () -> new ManaPotionItem(new Item.Properties().stacksTo(8)));
     public static final RegistryObject<Item> SCROLL_OF_OBLIVION = ITEMS.register("scroll_of_oblivion",
             () -> new ScrollOfOblivionItem(new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
+    // ---- лавка привала: ключи и косметика ----
+    public static final RegistryObject<Item> CACHE_KEY = ITEMS.register("cache_key",
+            () -> new com.andrey.litrpg.item.TooltipItem(new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON),
+                    "Носите с собой: следующий тайник отдаст вещь получше и ещё одну сверху. Ключ при этом ломается."));
+    public static final RegistryObject<Item> TRAIL_SCROLL = ITEMS.register("trail_scroll",
+            () -> new com.andrey.litrpg.item.CosmeticItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), false));
+    public static final RegistryObject<Item> TITLE_SCROLL = ITEMS.register("title_scroll",
+            () -> new com.andrey.litrpg.item.CosmeticItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), true));
     // ---- трофеи на продажу ----
     public static final RegistryObject<Item> SOUL_SHARD = ITEMS.register("soul_shard",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));

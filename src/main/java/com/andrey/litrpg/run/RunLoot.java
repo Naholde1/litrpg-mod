@@ -216,6 +216,14 @@ public final class RunLoot {
         return null;
     }
 
+    /** Ячейка с ключом тайника в инвентаре, или -1. */
+    private static int keySlot(ServerPlayer p) {
+        for (int i = 0; i < p.getInventory().getContainerSize(); i++) {
+            if (p.getInventory().getItem(i).is(ModItems.CACHE_KEY.get())) return i;
+        }
+        return -1;
+    }
+
     public static boolean cache(ServerPlayer p, int tier, BlockPos pos) {
         Layout.Stage s = Layout.get().stageAt((double)pos.getX(), (double)pos.getY(), (double)pos.getZ());
         if (s == null) {
@@ -238,6 +246,20 @@ public final class RunLoot {
 
             if (tier >= 2) {
                 give(p, new ItemStack(rnd.nextBoolean() ? (ItemLike)ModItems.ASCENSION_STONE.get() : (ItemLike)ModItems.SCROLL_OF_OBLIVION.get()));
+            }
+
+            // ключ тайника из лавки: ещё одна вещь, на ступень реже, и вдвое монет
+            int slot = keySlot(p);
+            if (slot >= 0) {
+                p.getInventory().getItem(slot).shrink(1);
+                Rarity better = atLeast(GearGen.rollRarity(rnd, 1.2F + 0.25F * (float)s.n() + (float)tier * 0.6F + luck(p), true),
+                        tier >= 1 ? Rarity.EPIC : Rarity.RARE);
+                item(p, GearGen.personal(rnd, itemLevel(s, rnd), better, ps), "Ключ тайника");
+                for(ItemStack c : coins((10 + rnd.nextInt(15)) * s.n() * (1 + tier))) {
+                    give(p, c);
+                }
+                p.level().playSound(null, pos, net.minecraft.sounds.SoundEvents.CHAIN_BREAK, net.minecraft.sounds.SoundSource.BLOCKS, 1f, 1.4f);
+                p.displayClientMessage(Component.literal("Ключ провернулся и сломался — тайник отдал больше.").withStyle(ChatFormatting.GOLD), true);
             }
 
             return true;

@@ -80,6 +80,14 @@ public final class Shop {
         out.add(new Offer(14, new ItemStack((ItemLike)ModItems.SCROLL_OF_OBLIVION.get()), 90 * stage, false, "", ""));
         out.add(new Offer(15, new ItemStack(Items.ARROW, 64), 6 * stage, false, "", ""));
         out.add(new Offer(16, new ItemStack((ItemLike)ModItems.DIVINE_SPARK.get()), 1200 * stage, false, "", ""));
+        // ключ тайника и косметика: два следа и два титула на этап (у каждого этапа свои)
+        out.add(new Offer(17, new ItemStack((ItemLike)ModItems.CACHE_KEY.get()), 80 * stage, false, "", ""));
+        var trails = com.andrey.litrpg.item.CosmeticItem.Trail.values();
+        out.add(new Offer(30, com.andrey.litrpg.item.CosmeticItem.trail(ModItems.TRAIL_SCROLL.get(), trails[(stage * 2) % trails.length]), 150 * stage, false, "", ""));
+        out.add(new Offer(31, com.andrey.litrpg.item.CosmeticItem.trail(ModItems.TRAIL_SCROLL.get(), trails[(stage * 2 + 1) % trails.length]), 150 * stage, false, "", ""));
+        String[] titles = com.andrey.litrpg.item.CosmeticItem.TITLES[Math.max(0, Math.min(stage, com.andrey.litrpg.item.CosmeticItem.TITLES.length - 1))];
+        out.add(new Offer(32, com.andrey.litrpg.item.CosmeticItem.title(ModItems.TITLE_SCROLL.get(), titles[0]), 300 * stage, false, "", ""));
+        out.add(new Offer(33, com.andrey.litrpg.item.CosmeticItem.title(ModItems.TITLE_SCROLL.get(), titles[1]), 300 * stage, false, "", ""));
 
         // услуги привала: работают с вещью в руке
         ItemStack held = p.getMainHandItem();

@@ -1718,5 +1718,8 @@
   "class.litrpg.alchemist": "Алхимик",
   "class.litrpg.alchemist.desc": "Сила в том, что наварено заранее: фляги лечат, жгут и слепят. Единственный, кто живёт экономикой.",
   "class.litrpg.alchemist.trait": "Полная сумка",
-  "class.litrpg.alchemist.trait.desc": "+8% силы навыков, +10% шанса добычи"
+  "class.litrpg.alchemist.trait.desc": "+8% силы навыков, +10% шанса добычи",
+  "item.litrpg.cache_key": "Ключ тайника",
+  "item.litrpg.trail_scroll": "Свиток следа",
+  "item.litrpg.title_scroll": "Свиток титула"
 }

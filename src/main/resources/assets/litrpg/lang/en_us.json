@@ -1711,5 +1711,8 @@
   "class.litrpg.alchemist": "Alchemist",
   "class.litrpg.alchemist.desc": "Сила в том, что наварено заранее: фляги лечат, жгут и слепят. Единственный, кто живёт экономикой.",
   "class.litrpg.alchemist.trait": "Полная сумка",
-  "class.litrpg.alchemist.trait.desc": "+8% силы навыков, +10% шанса добычи"
+  "class.litrpg.alchemist.trait.desc": "+8% силы навыков, +10% шанса добычи",
+  "item.litrpg.cache_key": "Cache Key",
+  "item.litrpg.trail_scroll": "Trail Scroll",
+  "item.litrpg.title_scroll": "Title Scroll"
 }
