@@ -50,6 +50,13 @@ public final class Special {
         Healer.register();
         Alchemist.register();
         Sniper.register();
+        Warden.register();
+        BloodKnight.register();
+        Lawgiver.register();
+        Symbiote.register();
+        Graviton.register();
+        MirrorKnight.register();
+        StoneKit.register();
     }
 
     /** Трогается при загрузке класса, чтобы статический блок отработал. */

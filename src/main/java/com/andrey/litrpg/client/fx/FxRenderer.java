@@ -260,6 +260,164 @@ public final class FxRenderer {
                 } else v = new Vec3(p.p[3], p.p[4], p.p[5]);
                 helix(vc, m, v.x, v.y, v.z, p.p[0], p.p[1] * Math.min(1, life * 2), p.p[2], (fx.age + pt) * 0.25f, r, g, b, a * fade);
             }
+            case Fx.BOLT -> {
+                Vec3 s = new Vec3(p.p[0], p.p[1], p.p[2]), t = new Vec3(p.p[3], p.p[4], p.p[5]);
+                float jit = p.p.length > 7 ? p.p[7] : 0.5f;
+                // зигзаг перескакивает каждые два тика: зерно — номер «кадра»
+                java.util.Random rnd = new java.util.Random(fx.age / 2 * 7919L + (long) (p.p[0] * 31 + p.p[2]));
+                int seg = 9;
+                Vec3 prev = s;
+                float fl = a * (fade > 0.5f ? 1 : fade * 2) * (0.75f + 0.25f * rnd.nextFloat());
+                for (int i = 1; i <= seg; i++) {
+                    Vec3 nxt = s.lerp(t, (double) i / seg);
+                    if (i < seg) nxt = nxt.add((rnd.nextFloat() - 0.5f) * jit * 2, (rnd.nextFloat() - 0.5f) * jit * 2, (rnd.nextFloat() - 0.5f) * jit * 2);
+                    beam(vc, m, prev, nxt, p.p[6], cam, r, g, b, fl);
+                    beam(vc, m, prev, nxt, p.p[6] * 0.35f, cam, 1, 1, 1, fl);
+                    // отросток
+                    if (i < seg && rnd.nextFloat() < 0.3f) {
+                        Vec3 br = nxt.add((rnd.nextFloat() - 0.5f) * jit * 4, (rnd.nextFloat() - 0.6f) * jit * 3, (rnd.nextFloat() - 0.5f) * jit * 4);
+                        beam(vc, m, nxt, br, p.p[6] * 0.5f, cam, r, g, b, fl * 0.6f);
+                    }
+                    prev = nxt;
+                }
+            }
+            case Fx.RUNES -> {
+                double x = p.p[0], z = p.p[2];
+                float y = p.p[1] + 0.07f, rad = p.p[3] * Math.min(1, life * 6);
+                int pts = Math.max(3, (int) p.p[4]);
+                float spin = (fx.age + pt) * 0.03f * (p.p.length > 5 ? p.p[5] : 1);
+                float al = a * Math.min(1, fade * 4);
+                annulus(vc, m, x, y, z, rad - 0.1f, rad, 64, r, g, b, al);
+                annulus(vc, m, x, y, z, rad * 0.82f - 0.06f, rad * 0.82f, 64, r, g, b, al * 0.8f);
+                annulus(vc, m, x, y, z, rad * 0.3f - 0.06f, rad * 0.3f, 32, r, g, b, al * 0.7f);
+                // звезда: каждый луч соединяет вершину с вершиной через одну
+                for (int i = 0; i < pts; i++) {
+                    double a0 = spin + Math.PI * 2 * i / pts, a1 = spin + Math.PI * 2 * (i + 2) / pts;
+                    segment(vc, m, x + Math.cos(a0) * rad * 0.82, y, z + Math.sin(a0) * rad * 0.82,
+                            x + Math.cos(a1) * rad * 0.82, z + Math.sin(a1) * rad * 0.82, 0.06f, r, g, b, al);
+                }
+                // засечки-руны по внешнему поясу, вращаются навстречу
+                int ticksN = pts * 4;
+                for (int i = 0; i < ticksN; i++) {
+                    double an = -spin * 1.5 + Math.PI * 2 * i / ticksN;
+                    float len = (i % 3 == 0) ? 0.14f : 0.07f;
+                    double cx = Math.cos(an), sz = Math.sin(an);
+                    segment(vc, m, x + cx * (rad * 0.91 - len), y, z + sz * (rad * 0.91 - len),
+                            x + cx * (rad * 0.91 + len), z + sz * (rad * 0.91 + len), 0.05f, r, g, b, al);
+                }
+                // лёгкое свечение над кругом
+                wall(vc, m, x, y, z, rad, 0.6f, 48, r, g, b, al * 0.35f);
+            }
+            case Fx.SHARDS -> {
+                java.util.Random rnd = new java.util.Random((long) p.p[6] * 31 + 7);
+                int n = (int) p.p[4];
+                float h = p.p[5];
+                float rise = easeOut(Math.min(1, life * 5));
+                float al = a * (life < 0.7f ? 1 : (1 - life) / 0.3f);
+                for (int i = 0; i < n; i++) {
+                    double an = rnd.nextDouble() * Math.PI * 2, d = Math.sqrt(rnd.nextDouble()) * p.p[3];
+                    double x = p.p[0] + Math.cos(an) * d, z = p.p[2] + Math.sin(an) * d;
+                    float hh = h * (0.5f + rnd.nextFloat() * 0.7f) * rise;
+                    float w = 0.12f + rnd.nextFloat() * 0.18f;
+                    double lean = (rnd.nextDouble() - 0.5) * 0.6;
+                    spike(vc, m, x, p.p[1], z, w, hh, lean * Math.cos(an + 1), lean * Math.sin(an + 1), r, g, b, al);
+                }
+            }
+            case Fx.WAVE -> {
+                double x = p.p[0], z = p.p[2];
+                float y = p.p[1];
+                float dx = p.p[3], dz = p.p[4], len = p.p[5], hw = p.p[6], h = p.p[7];
+                float l2 = Mth.sqrt(dx * dx + dz * dz);
+                if (l2 < 1e-3) return;
+                dx /= l2;
+                dz /= l2;
+                float at = len * easeOut(life);
+                double cx = x + dx * at, cz = z + dz * at;
+                double nx = -dz, nz = dx;
+                int seg = 16;
+                float al = a * (life < 0.8f ? 1 : (1 - life) / 0.2f);
+                for (int i = 0; i < seg; i++) {
+                    float u0 = -1 + 2f * i / seg, u1 = -1 + 2f * (i + 1) / seg;
+                    // гребень выгнут вперёд к середине
+                    double b0 = (1 - u0 * u0) * 0.8, b1 = (1 - u1 * u1) * 0.8;
+                    double x0 = cx + nx * u0 * hw + dx * b0, z0 = cz + nz * u0 * hw + dz * b0;
+                    double x1 = cx + nx * u1 * hw + dx * b1, z1 = cz + nz * u1 * hw + dz * b1;
+                    float h0 = h * (0.6f + 0.4f * (float) (1 - u0 * u0)), h1 = h * (0.6f + 0.4f * (float) (1 - u1 * u1));
+                    v(vc, m, x0, y, z0, r, g, b, al);
+                    v(vc, m, x1, y, z1, r, g, b, al);
+                    v(vc, m, x1 - dx * 0.4, y + h1, z1 - dz * 0.4, 1, 1, 1, al * 0.2f);
+                    v(vc, m, x0 - dx * 0.4, y + h0, z0 - dz * 0.4, 1, 1, 1, al * 0.2f);
+                }
+                // след на полу
+                rect(vc, m, x, y + 0.05f, z, dx, dz, Math.max(0, at - 2.5f), at, hw, r, g, b, al * 0.25f);
+            }
+            case Fx.CHAINS -> {
+                Entity ea = mc.level.getEntity(p.a), eb = mc.level.getEntity(p.b);
+                if (ea == null || eb == null) return;
+                Vec3 s = ea.getPosition(pt).add(0, ea.getBbHeight() * 0.55, 0), t = eb.getPosition(pt).add(0, eb.getBbHeight() * 0.55, 0);
+                Vec3 dir = t.subtract(s);
+                double len = dir.length();
+                if (len < 0.3) return;
+                float link = p.p[0];
+                int n = Math.max(2, (int) (len / link));
+                Vec3 step = dir.scale(1.0 / n);
+                Vec3 u = dir.normalize();
+                Vec3 side = u.cross(new Vec3(0, 1, 0));
+                if (side.lengthSqr() < 1e-4) side = new Vec3(1, 0, 0);
+                side = side.normalize();
+                Vec3 up = u.cross(side).normalize();
+                float al = a * Math.min(1, fade * 4);
+                // провис цепи посередине
+                for (int i = 0; i < n; i++) {
+                    double sag0 = Math.sin(Math.PI * i / n) * len * 0.06, sag1 = Math.sin(Math.PI * (i + 1) / n) * len * 0.06;
+                    Vec3 c0 = s.add(step.scale(i)).subtract(0, sag0, 0), c1 = s.add(step.scale(i + 1)).subtract(0, sag1, 0);
+                    Vec3 mid = c0.add(c1).scale(0.5);
+                    Vec3 ax = (i % 2 == 0 ? side : up).scale(link * 0.28);
+                    Vec3 half = c1.subtract(c0).scale(0.55);
+                    // звено — ромб в плоскости, чередуется
+                    quad(vc, m, mid.x, mid.y, mid.z, ax, half, r, g, b, al);
+                    quad(vc, m, mid.x, mid.y, mid.z, ax.scale(0.5), half.scale(0.7), 0, 0, 0, 0);
+                }
+            }
+            case Fx.ORBIT -> {
+                Entity ent = mc.level.getEntity(p.a);
+                if (ent == null) return;
+                Vec3 v = ent.getPosition(pt);
+                int n = Math.max(1, (int) p.p[1]);
+                float rad = p.p[0], h = p.p[2], sz = p.p[3];
+                float spin = (fx.age + pt) * 0.15f;
+                float al = a * Math.min(1, fade * 5);
+                Vec3 toCam = cam.getPosition().subtract(v).normalize();
+                Vec3 side = toCam.cross(new Vec3(0, 1, 0));
+                if (side.lengthSqr() < 1e-6) side = new Vec3(1, 0, 0);
+                side = side.normalize();
+                Vec3 up = side.cross(toCam).normalize();
+                for (int i = 0; i < n; i++) {
+                    double an = spin + Math.PI * 2 * i / n;
+                    double ox = v.x + Math.cos(an) * rad, oz = v.z + Math.sin(an) * rad;
+                    double oy = v.y + h + 0.15 * Math.sin(spin * 2 + i);
+                    quad(vc, m, ox, oy, oz, side.scale(sz), up.scale(sz), r, g, b, al);
+                    quad(vc, m, ox, oy, oz, side.scale(sz * 0.45), up.scale(sz * 0.45), 1, 1, 1, al);
+                    // хвост
+                    double an2 = an - 0.35;
+                    beam(vc, m, new Vec3(ox, oy, oz), new Vec3(v.x + Math.cos(an2) * rad, oy, v.z + Math.sin(an2) * rad), sz * 0.8f, cam, r, g, b, al * 0.5f);
+                }
+            }
+            case Fx.BURST -> {
+                java.util.Random rnd = new java.util.Random((long) p.p[5] * 131 + 3);
+                int n = (int) p.p[4];
+                float grow = easeOut(Math.min(1, life * 3));
+                float al = a * fade;
+                Vec3 c0 = new Vec3(p.p[0], p.p[1], p.p[2]);
+                for (int i = 0; i < n; i++) {
+                    double th = rnd.nextDouble() * Math.PI * 2, ph = (rnd.nextDouble() - 0.35) * Math.PI * 0.8;
+                    Vec3 d = new Vec3(Math.cos(th) * Math.cos(ph), Math.sin(ph), Math.sin(th) * Math.cos(ph));
+                    float l = p.p[3] * (0.5f + rnd.nextFloat() * 0.5f);
+                    Vec3 from = c0.add(d.scale(l * grow * 0.35)), to = c0.add(d.scale(l * grow));
+                    beam(vc, m, from, to, 0.09f, cam, r, g, b, al);
+                    beam(vc, m, from, to, 0.035f, cam, 1, 1, 1, al);
+                }
+            }
             default -> { }
         }
     }
@@ -468,6 +626,33 @@ public final class FxRenderer {
                 v(vc, m, x1, y + h * u1 + 0.12, z1, r, g, b, al1);
                 v(vc, m, x1, y + h * u1, z1, r, g, b, al1);
             }
+        }
+    }
+
+    /** Плоская полоса на высоте y между двумя точками. */
+    private static void segment(VertexConsumer vc, Matrix4f m, double x0, float y, double z0, double x1, double z1, float hw,
+                                float r, float g, float b, float a) {
+        double dx = x1 - x0, dz = z1 - z0, l = Math.sqrt(dx * dx + dz * dz);
+        if (l < 1e-4 || a <= 0.003f) return;
+        double nx = -dz / l * hw, nz = dx / l * hw;
+        v(vc, m, x0 + nx, y, z0 + nz, r, g, b, a);
+        v(vc, m, x0 - nx, y, z0 - nz, r, g, b, a);
+        v(vc, m, x1 - nx, y, z1 - nz, r, g, b, a);
+        v(vc, m, x1 + nx, y, z1 + nz, r, g, b, a);
+    }
+
+    /** Кристалл: четырёхгранная пирамида с наклоном, светлее к вершине. */
+    private static void spike(VertexConsumer vc, Matrix4f m, double x, double y, double z, float w, float h, double lx, double lz,
+                              float r, float g, float b, float a) {
+        if (h <= 0.01f || a <= 0.003f) return;
+        double tx = x + lx * h, ty = y + h, tz = z + lz * h;
+        double[][] base = {{x + w, z}, {x, z + w}, {x - w, z}, {x, z - w}};
+        for (int i = 0; i < 4; i++) {
+            double[] p0 = base[i], p1 = base[(i + 1) % 4];
+            v(vc, m, p0[0], y, p0[1], r, g, b, a * 0.9f);
+            v(vc, m, p1[0], y, p1[1], r, g, b, a * 0.9f);
+            v(vc, m, tx, ty, tz, 1, 1, 1, a);
+            v(vc, m, tx, ty, tz, 1, 1, 1, a);
         }
     }
 

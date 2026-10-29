@@ -32,6 +32,13 @@ public final class Fx {
     public static final int MARK = 10;     // знак над головой сущности a: размер, вид знака
     public static final int SPIRAL = 11;   // спираль вокруг сущности a (или точки): радиус, высота, витки
     public static final int FOLLOW = 12;   // разметка круга под сущностью a: r (ползёт за ней)
+    public static final int BOLT = 13;     // молния: x1 y1 z1, x2 y2 z2, ширина, излом (зигзаг меняется каждые 2 тика)
+    public static final int RUNES = 14;    // магический круг: x y z, r, лучей звезды, скорость вращения
+    public static final int SHARDS = 15;   // кристаллы из земли: x y z, r, число, высота, зерно
+    public static final int WAVE = 16;     // стена-волна: x y z, dx dz, длина пути, полуширина, высота
+    public static final int CHAINS = 17;   // цепь из звеньев между сущностями a и b: размер звена
+    public static final int ORBIT = 18;    // шары, кружащие вокруг сущности a: радиус, число, высота, размер
+    public static final int BURST = 19;    // звезда лучей из точки: x y z, длина, число лучей, зерно
 
     public static final int NONE = -1;
 
@@ -122,6 +129,45 @@ public final class Fx {
 
     public static void spiral(Level l, Entity e, double r, double h, double turns, int ticks, int color) {
         send(l, e.position(), SPIRAL, ticks, color, e.getId(), NONE, (float) r, (float) h, (float) turns, 0, 0, 0);
+    }
+
+    /** Молния между точками: ломаная, которая перескакивает каждые два тика. */
+    public static void bolt(Level l, Vec3 a, Vec3 b, double width, int ticks, int color) {
+        send(l, a, BOLT, ticks, color, NONE, NONE, (float) a.x, (float) a.y, (float) a.z, (float) b.x, (float) b.y, (float) b.z, (float) width,
+                (float) Math.min(1.2, a.distanceTo(b) * 0.12));
+    }
+
+    /** Магический круг на полу: кольца, звезда из n лучей и засечки, вращается. */
+    public static void runes(Level l, Vec3 c, double r, int points, int ticks, int color) {
+        send(l, c, RUNES, ticks, color, NONE, NONE, (float) c.x, (float) c.y, (float) c.z, (float) r, points, 1f);
+    }
+
+    /** Кристаллы-шипы, вырастающие из земли в круге r. */
+    public static void shards(Level l, Vec3 c, double r, int count, double h, int ticks, int color) {
+        send(l, c, SHARDS, ticks, color, NONE, NONE, (float) c.x, (float) c.y, (float) c.z, (float) r, count, (float) h,
+                (float) ((c.x * 31 + c.z * 17) % 997));
+    }
+
+    /** Стена-волна, катящаяся от точки по направлению dir. */
+    public static void wave(Level l, Vec3 c, Vec3 dir, double len, double halfWidth, double h, int ticks, int color) {
+        send(l, c, WAVE, ticks, color, NONE, NONE, (float) c.x, (float) c.y, (float) c.z, (float) dir.x, (float) dir.z, (float) len,
+                (float) halfWidth, (float) h);
+    }
+
+    /** Цепь из звеньев между двумя сущностями. */
+    public static void chains(Level l, Entity a, Entity b, double link, int ticks, int color) {
+        send(l, a.position(), CHAINS, ticks, color, a.getId(), b.getId(), (float) link);
+    }
+
+    /** Шары, кружащие вокруг сущности. */
+    public static void orbit(Level l, Entity e, double r, int count, double h, double size, int ticks, int color) {
+        send(l, e.position(), ORBIT, ticks, color, e.getId(), NONE, (float) r, count, (float) h, (float) size);
+    }
+
+    /** Звезда лучей из точки (вспышка удара). */
+    public static void burst(Level l, Vec3 c, double len, int rays, int ticks, int color) {
+        send(l, c, BURST, ticks, color, NONE, NONE, (float) c.x, (float) c.y, (float) c.z, (float) len, rays,
+                (float) ((c.x * 13 + c.y * 7 + c.z * 3) % 101));
     }
 
     public static void spiralAt(Level l, Vec3 c, double r, double h, double turns, int ticks, int color) {
