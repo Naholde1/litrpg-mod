@@ -36,6 +36,7 @@ public final class Forms {
         if (was != null) clear(p, Ability.byKey(was));
         s.setForm(a.key);
         apply(p, a);
+        broadcast(p, a.key);
         p.serverLevel().sendParticles(ParticleTypes.POOF, p.getX(), p.getY() + 1, p.getZ(), 30, 0.5, 0.7, 0.5, 0.05);
         p.level().playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.WOLF_GROWL, SoundSource.PLAYERS, 1f, 0.8f);
         p.displayClientMessage(Component.translatable(a.nameKey()).withStyle(ChatFormatting.GREEN)
@@ -60,6 +61,8 @@ public final class Forms {
         }
         s.setResource(left);
         apply(p, a);
+        // повторяем раз в секунду: тот, кто только что подошёл, тоже должен увидеть зверя
+        broadcast(p, key);
     }
 
     /** Снять облик (смерть, смена класса, конец шкалы). */
@@ -69,11 +72,19 @@ public final class Forms {
         s.setForm(null);
         Ability a = Ability.byKey(key);
         if (a != null) clear(p, a);
+        broadcast(p, null);
         if (why != null) {
             p.displayClientMessage(Component.literal(why).withStyle(ChatFormatting.GRAY), true);
             p.level().playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.FOX_AMBIENT, SoundSource.PLAYERS, 0.8f, 1.2f);
         }
         StatsManager.sync(p);   // клиенту нужен сам факт облика, а не только шкала
+    }
+
+    /** Сообщить всем, кто видит игрока, какой на нём облик (или что облика нет). */
+    public static void broadcast(ServerPlayer p, String key) {
+        com.andrey.litrpg.network.ModNetwork.CHANNEL.send(
+                net.minecraftforge.network.PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> p),
+                new com.andrey.litrpg.network.FormPacket(p.getUUID(), key));
     }
 
     private static void apply(ServerPlayer p, Ability a) {

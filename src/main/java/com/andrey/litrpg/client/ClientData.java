@@ -20,6 +20,8 @@ public class ClientData {
     public static int stage = 0;
     /** Выбранный союзник для таргетных навыков (null — по взгляду). */
     public static UUID focus;
+    /** Кто сейчас в облике: игрок → ключ облика. Нужно, чтобы рисовать зверя вместо человека. */
+    public static final java.util.Map<UUID, String> FORMS = new java.util.HashMap<>();
 
     public static void update(CompoundTag data, int[] cooldowns) {
         if (data != null) STATS.load(data);

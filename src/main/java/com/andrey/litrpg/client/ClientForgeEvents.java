@@ -107,6 +107,11 @@ public class ClientForgeEvents {
                     Minimap.cycleZoom();
                 } else if (what.equals("close")) {
                     mc.setScreen(null);
+                } else if (what.startsWith("cam")) {
+                    // вид от третьего лица: только так видно собственный облик
+                    mc.options.setCameraType(what.endsWith("1")
+                            ? net.minecraft.client.CameraType.FIRST_PERSON
+                            : net.minecraft.client.CameraType.THIRD_PERSON_BACK);
                 }
             } catch (Exception ignored) {
             }
