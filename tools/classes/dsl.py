@@ -132,6 +132,9 @@ class Skill:
             raise ValueError(f'{key}: unknown summon {sm}')
         self.flavor, self.raw = f, raw
         self.hp, self.combo = hp, combo
+        # у способностей со своей механикой (ability/Special) общий вид ничего не говорит —
+        # их механика описывается словами отдельно (classes/v4_mech.py)
+        self.mech_text = None
 
     # ---------- описание ----------
     def dmg(self, k=1.0):
@@ -261,7 +264,7 @@ class Skill:
     def desc(self):
         if self.raw:
             return self.raw
-        m = self.mechanics()
+        m = self.mech_text or self.mechanics()
         return (self.flavor.rstrip('.') + '. ' + m[0].upper() + m[1:]) if self.flavor else m[0].upper() + m[1:]
 
     def json(self):
@@ -286,6 +289,11 @@ class Skill:
         if self.combo:
             o['combo'] = self.combo
         return o
+
+
+def MECH(key, text):
+    """Описание своей механики способности (вместо описания общего вида движка)."""
+    SKILLS[key].mech_text = text
 
 
 def K(key, ru, en, kind, icon, **kw):

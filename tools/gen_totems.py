@@ -98,7 +98,26 @@ def totem_wind():
     return base_pillar('totem_wind', g, top, face)
 
 
-MODELS = [totem_guard, totem_fury, totem_mending, totem_wind]
+def machinist_turret():
+    """Турель Механика: тренога из бронзы, поворотная голова с двумя стволами и горящим прицелом."""
+    g = 0xFFC040
+    legs = gb.Part('legs', 'root', (0, 0, 0), [
+        gb.Cube(-6, 0, -1, 3, 6, 2, 'bronze_dark'), gb.Cube(3, 0, -1, 3, 6, 2, 'bronze_dark'),
+        gb.Cube(-1, 0, 3, 2, 6, 3, 'bronze_dark'),
+        gb.Cube(-3, 5, -3, 6, 3, 6, 'bronze'),
+    ])
+    post = gb.Part('post', 'root', (0, 8, 0), [gb.Cube(-1.5, 8, -1.5, 3, 5, 3, 'axe_metal')])
+    head = gb.Part('head', 'root', (0, 14, 0), [
+        gb.Cube(-4, 13, -4, 8, 6, 8, 'bronze', decals=[('front', 2, 1, 4, 2, g, True), ('back', 1, 1, 6, 4, 0x3A2A10, False)]),
+        gb.Cube(-3, 14, -11, 2, 2, 7, 'axe_metal'), gb.Cube(1, 14, -11, 2, 2, 7, 'axe_metal'),
+        gb.Cube(-3.5, 13.5, -12, 7, 3, 1, 'bronze_dark', decals=[('front', 1, 1, 1, 1, g, True), ('front', 5, 1, 1, 1, g, True)]),
+        gb.Cube(-2, 19, -1, 4, 2, 4, 'bronze_dark', decals=[('top', 1, 1, 2, 2, g, True)]),
+        gb.Cube(4, 14, -2, 2, 4, 5, 'leather_dark'),
+    ], anim=[gb.A('look', 'y'), gb.A('look', 'x', 0.4), gb.A('attack', 'z', 0.15)])
+    return dict(name='machinist_turret', scale=1.0, shadow=0.5, parts=[legs, post, head])
+
+
+MODELS = [totem_guard, totem_fury, totem_mending, totem_wind, machinist_turret]
 
 
 def main():

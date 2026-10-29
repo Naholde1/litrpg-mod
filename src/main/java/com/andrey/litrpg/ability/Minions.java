@@ -205,6 +205,8 @@ public final class Minions {
             e.discard();
             return;
         }
+        // тотемы и станки вкопаны там, где их поставили: за хозяином они не ходят
+        if (e instanceof com.andrey.litrpg.entity.TotemEntity) return;
         boolean turret = e.getPersistentData().contains(TURRET_TAG);
         if (turret) {
             // турель стоит там, где её поставили, и стреляет сама

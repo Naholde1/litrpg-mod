@@ -87,7 +87,7 @@ public class CharacterScreen extends SystemScreen {
         var resShown = s.resource();
         g.drawString(font, resShown.title + ": " + (int) s.getResource() + " / " + s.getMaxResource(),
                 bx, y + 20, resShown.color, false);
-        UiKit.bar(g, bx, y + 31, 180, 5, (float) (s.getMana() / Math.max(1, s.getMaxMana())), 0xFF1A2340, 0xFF3D8BFF);
+        UiKit.bar(g, bx, y + 31, 180, 5, (float) (s.getResource() / Math.max(1, s.getMaxResource())), resShown.back, resShown.color);
 
         int sy = y + 46;
         g.fill(x - 2, sy - 4, left + W - 8, sy - 3, UiKit.FRAME_DIM);
@@ -128,7 +128,10 @@ public class CharacterScreen extends SystemScreen {
                         com.andrey.litrpg.stats.StatBreakdown.rangedDamage(s).value()),
                 String.format("Броня: %.1f", armor),
                 String.format("Стойкость: %.0f%%", com.andrey.litrpg.stats.StatBreakdown.resistance(s).value()),
-                String.format("%s: %.1f/с", s.resource() == com.andrey.litrpg.stats.Resource.RAGE
+                s.resource() == com.andrey.litrpg.stats.Resource.CHARGES
+                        ? String.format("Заряд: раз в %.1f с, ячеек %d (+1 за 10 ур.)",
+                        com.andrey.litrpg.stats.Resource.chargeSeconds(s), s.getMaxResource())
+                        : String.format("%s: %.1f/с", s.resource() == com.andrey.litrpg.stats.Resource.RAGE
                         ? "Ярость за удар" : "Восстановление (" + s.resource().title.toLowerCase() + ")",
                         s.resource() == com.andrey.litrpg.stats.Resource.RAGE
                                 ? com.andrey.litrpg.stats.Resource.RAGE_ON_HIT : s.getResourceRegen()),

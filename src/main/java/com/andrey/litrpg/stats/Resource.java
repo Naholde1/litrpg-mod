@@ -67,17 +67,27 @@ public enum Resource {
             case MANA -> (int) Math.round(StatBreakdown.maxMana(s).value());
             // сферы — механика сплетения, их всегда три
             case ORBS -> 3;
-            // ячейка сверх четырёх — только за очень весомую экипировку, и не больше двух
-            case CHARGES -> 6 + (int) Math.min(2, gear / 120);
+            // +1 ячейка за каждые 10 уровней после десятого (на 50-м — 10) и до двух — за весомую экипировку
+            case CHARGES -> chargeSlots(s) + (int) Math.min(2, gear / 120);
             default -> 100 + s.getLevel() / 2 + (int) (gear / 4);
         };
+    }
+
+    /** Ячейки зарядов от уровня (без экипировки). */
+    public static int chargeSlots(PlayerStats s) {
+        return 6 + Math.max(0, s.getLevel() - 10) / 10;
+    }
+
+    /** За сколько секунд восстанавливается одна ячейка: с уровнем быстрее, с 6 до 3,5 с. */
+    public static double chargeSeconds(PlayerStats s) {
+        return CHARGE_SECONDS - 2.5 * Math.min(1, Math.max(0, s.getLevel() - 1) / 49.0);
     }
 
     /** Сколько прибавляется само по себе за секунду. */
     public double regen(PlayerStats s) {
         return switch (this) {
             case MANA -> StatBreakdown.manaRegen(s).value();
-            case CHARGES -> 1.0 / CHARGE_SECONDS;
+            case CHARGES -> 1.0 / chargeSeconds(s);
             case FORM -> 6;
             // ярость копится в бою, сферы — от навыков, здоровье — это само здоровье
             case RAGE, HEALTH, ORBS -> 0;

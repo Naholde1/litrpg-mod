@@ -398,11 +398,11 @@ public class AbilityHandler {
         return ok;
     }
 
-    private static void applyFoe(Ability a, LivingEntity e, ServerPlayer p) {
+    static void applyFoe(Ability a, LivingEntity e, ServerPlayer p) {
         for (Ability.Fx fx : a.enemy) e.addEffect(new MobEffectInstance(fx.effect(), fx.duration(), fx.amplifier()), p);
     }
 
-    private static void applySelf(Ability a, LivingEntity e) {
+    static void applySelf(Ability a, LivingEntity e) {
         for (Ability.Fx fx : a.self) e.addEffect(new MobEffectInstance(fx.effect(), fx.duration(), fx.amplifier()));
     }
 
@@ -1127,8 +1127,12 @@ public class AbilityHandler {
 
     /** Поменяться местами с целью. */
     private static boolean swap(ServerPlayer p, PlayerStats s, Ability a) {
+        // меняться можно и с врагом, и с союзником: союзник под прицелом или выбранный Ctrl+1…5
         LivingEntity t = lookTarget(p, a.radius);
-        if (t == null || t == p || t instanceof Player) return noTarget(p);
+        if (t == null || t == p || t instanceof AbstractVillager || t instanceof ServerPlayer sp && com.andrey.litrpg.run.Spirits.isSpirit(sp)) {
+            t = allyTarget(p, a.radius, false);
+        }
+        if (t == null || t == p || t.isSpectator() || t instanceof ServerPlayer sp2 && com.andrey.litrpg.run.Spirits.isSpirit(sp2)) return noTarget(p);
         Vec3 mine = p.position();
         Vec3 theirs = t.position();
         ServerLevel level = p.serverLevel();
@@ -1141,6 +1145,13 @@ public class AbilityHandler {
             float dmg = base(s, a) * a.power;
             if (dmg > 0) hurt(p, a, t, dmg);
             else applyFoe(a, t, p);
+        } else {
+            // союзника выдернули из-под удара: мгновение защиты, чтобы механика не догнала его на новом месте
+            t.fallDistance = 0;
+            t.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 30, 2, false, false, true));
+            com.andrey.litrpg.fx.Fx.beam(level, mine.add(0, 1, 0), theirs.add(0, 1, 0), 0.25, 10, 0xC060E0A0);
+            if (t instanceof ServerPlayer ally) ally.displayClientMessage(net.minecraft.network.chat.Component.literal(p.getName().getString()
+                    + " занял ваше место!").withStyle(net.minecraft.ChatFormatting.GREEN), true);
         }
         applySelf(a, p);
         sound(p, SoundEvents.ENDERMAN_TELEPORT, 1f, 0.8f);

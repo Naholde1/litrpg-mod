@@ -90,7 +90,7 @@ public class ModEntities {
             }));
         }
         com.andrey.litrpg.entity.stage.Bosses.register(ModEntities::boss);
-        for (String id : new String[]{"totem_guard", "totem_fury", "totem_mending", "totem_wind"}) {
+        for (String id : new String[]{"totem_guard", "totem_fury", "totem_mending", "totem_wind", "machinist_turret"}) {
             TOTEMS.put(id, ENTITY_TYPES.register(id, () -> EntityType.Builder
                     .of(com.andrey.litrpg.entity.TotemEntity::new, MobCategory.MISC)
                     .sized(0.8f, 2.2f).clientTrackingRange(10).noSummon().build(id)));

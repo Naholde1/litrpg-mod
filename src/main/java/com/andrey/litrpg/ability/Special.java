@@ -45,6 +45,7 @@ public final class Special {
         Totems.register();
         Astromancer.register();
         Swift.register();
+        Machinist.register();
     }
 
     /** Трогается при загрузке класса, чтобы статический блок отработал. */

@@ -13,6 +13,7 @@ from classes import legacy_skills, legacy_classes, tanks, damage_melee, damage_r
 from classes import pve  # noqa: E402,F401  — переработка под PvE (2.17): правки поверх классов
 from classes import v3  # noqa: E402,F401  — 3.0: 50 классов по 16 навыков + динамичные навыки
 from classes import v4  # noqa: E402,F401  — 4.0: 27 классов по 12 навыков, у каждого свой ресурс
+from classes import v4_mech  # noqa: E402,F401  — описания способностей со своей механикой
 
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 RES = os.path.join(ROOT, 'src', 'main', 'resources')
