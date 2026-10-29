@@ -60,11 +60,11 @@ K('lw_strike', 'Удар буквой закона', 'Letter of the Law', 'STRIK
 K('lw_summon', 'Повестка', 'Summons', 'TAUNT', '✉', m=0, cd=9, r=12, d=6, foe='glow 6 0', me='res 6 0',
   f='Закон требует явиться — и враги являются')
 K('lw_silence', 'Закон тишины', 'Law of Silence', 'INTERRUPT', '✖', m=20, cd=14, r=8, f='Чтение заклинаний объявлено вне закона')
-K('lw_stillness', 'Закон покоя', 'Law of Stillness', 'ZONE', '◌', m=20, cd=28, el='HOLY', st='VIT', pw=0.3, r=6, d=10,
+K('lw_stillness', 'Закон покоя', 'Law of Stillness', 'ZONE', '◌', m=20, cd=28, el='HOLY', st='VIT', pw=0.3, r=6, d=10, fl='law:stillness',
   foe='slow 10 2', f='Внутри круга бегать запрещено — и это касается всех')
-K('lw_temperance', 'Закон воздержания', 'Law of Temperance', 'BUFF_ALLIES', '⚖', m=20, cd=30, r=12, d=14,
+K('lw_temperance', 'Закон воздержания', 'Law of Temperance', 'BUFF_ALLIES', '⚖', m=20, cd=30, r=12, d=14, fl='law:temperance',
   me='res 14 1; fatigue 14 0', f='Отряд бьёт реже, но держит куда больше')
-K('lw_wrath', 'Закон возмездия', 'Law of Retribution', 'BUFF_ALLIES', '⚔', m=20, cd=30, r=12, d=14,
+K('lw_wrath', 'Закон возмездия', 'Law of Retribution', 'BUFF_ALLIES', '⚔', m=20, cd=30, r=12, d=14, fl='law:retribution',
   me='str 14 1; vuln 14 1', f='Отряд бьёт сильнее, но и получает больше')
 K('lw_seal', 'Печать на уста', 'Seal of Lips', 'STUN', '✧', m=20, cd=20, el='HOLY', st='VIT', pw=1.2, r=5, d=2,
   f='Приговор оглушает')

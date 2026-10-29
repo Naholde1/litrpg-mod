@@ -51,7 +51,14 @@ public class HudOverlay {
         float manaFrac = (float) (s.getResource() / Math.max(1, s.getMaxResource()));
         UiKit.bar(g, x, y, panelW, 5, manaFrac, res.back, res.color);
         y += 8;
-        g.drawString(font, (int) s.getResource() + " / " + s.getMaxResource() + " " + res.tag, x, y, res.color, false);
+        String bar = (int) s.getResource() + " / " + s.getMaxResource() + " " + res.tag;
+        if (s.getForm() != null) {
+            Ability fa = Ability.byKey(s.getForm());
+            if (fa != null) {
+                bar += " · " + net.minecraft.network.chat.Component.translatable(fa.nameKey()).getString();
+            }
+        }
+        g.drawString(font, bar, x, y, res.color, false);
 
         abilities(g, font, s, height);
         castBar(g, font, width, height, partialTick);

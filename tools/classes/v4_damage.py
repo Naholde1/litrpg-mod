@@ -211,7 +211,7 @@ K('sp_touch', 'Касание', 'Touch', 'TARGET_BOLT', '✦', m=0, cd=1.6, el='
   f='Слабое касание: сам дух почти не бьёт')
 K('sp_drift', 'Просочиться', 'Drift', 'BLINK', '≫', m=0, cd=8, r=14, fl='phase', f='Дух проходит сквозь тела и камень')
 K('sp_wail', 'Вой духа', 'Spirit Wail', 'INTERRUPT', '✖', m=10, cd=14, r=12, f='Голос из ниоткуда обрывает чтение')
-K('sp_possess', 'Вселиться', 'Possess', 'DOMINATE', '☯', m=35, cd=35, r=14, d=25,
+K('sp_possess', 'Вселиться', 'Possess', 'DOMINATE', '☯', m=35, cd=35, r=14, d=25, fl='possess',
   f='Дух входит в монстра и дерётся его телом и его ударами')
 K('sp_mimic', 'Чужая повадка', 'Borrowed Trick', 'ON_HIT', '✦', m=15, cd=20, d=12, n=5, oh='ARCANE',
   f='Дух повторяет приём того, в ком сидел')
@@ -224,7 +224,7 @@ K('sp_shell', 'Пустая оболочка', 'Empty Shell', 'SUMMON', '♟', m
   f='Брошенные тела встают и идут за духом')
 K('sp_legion', 'Хор мёртвых', 'Chorus of the Dead', 'GLOBAL', '☠', m=55, cd=75, el='SHADOW', pw=1.3, r=16,
   f='Все, в ком дух успел побывать, кричат разом')
-K('sp_deep', 'Глубокое вселение', 'Deep Possession', 'DOMINATE', '⛓', m=70, cd=120, r=16, d=40,
+K('sp_deep', 'Глубокое вселение', 'Deep Possession', 'DOMINATE', '⛓', m=70, cd=120, r=16, d=40, fl='possess',
   f='Дух берёт даже мини-хранителя, если уже убивал его')
 K('sp_fade', 'Истончиться', 'Thin Out', 'STEALTH', '◌', m=20, cd=30, d=8, me='invis 8 0; spd 8 1',
   f='Дух почти исчезает и проходит мимо')

@@ -127,6 +127,8 @@ public class AbilityHandler {
     }
 
     public static final String GCD_TAG = "litrpg_gcd";
+    /** Когда игрок последний раз применил способность (для закона воздержания). */
+    public static final String LAST_CAST_TAG = "litrpg_last_cast";
 
     /** Применить навык (сразу или после подготовки): цена, перезарядка, эффекты. */
     public static void complete(ServerPlayer player, Ability a) {
@@ -181,6 +183,9 @@ public class AbilityHandler {
                 player.displayClientMessage(Component.literal("Магическое эхо!").withStyle(ChatFormatting.LIGHT_PURPLE), true);
             }
             s.setCooldownEnd(a, now + cd);
+            player.getPersistentData().putLong(LAST_CAST_TAG, now);
+            // объявленный закон начинает следить за отрядом сам
+            if (a.law != null) Laws.declare(player, a);
             StatsManager.sync(player);
         }
     }
@@ -1179,6 +1184,8 @@ public class AbilityHandler {
             return false;
         }
         Minions.dominate(m, p, a.duration);
+        // Дух не просто подчиняет — он входит внутрь и дерётся этим телом
+        if (a.possess) Possession.start(p, m, a.duration);
         p.serverLevel().sendParticles(ParticleTypes.SOUL_FIRE_FLAME, m.getX(), m.getY() + 1, m.getZ(), 40, 0.4, 0.6, 0.4, 0.03);
         sound(p, SoundEvents.EVOKER_PREPARE_WOLOLO, 1f, 1f);
         return true;

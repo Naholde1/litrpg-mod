@@ -139,6 +139,10 @@ public final class Ability {
     public boolean form = false;
     /** Призыв-турель: стоит на месте и стреляет сам. */
     public boolean turret = false;
+    /** Объявляемый закон (Законник): stillness, temperance, retribution. */
+    public String law = null;
+    /** Подчинение с вселением (Дух): входит в носителя и дерётся его телом. */
+    public boolean possess = false;
     /** Доля здоровья вместо маны. */
     float hpCost = 0;
     /** Сколько приёмов серии даёт навык. */
@@ -203,6 +207,10 @@ public final class Ability {
             if (o.has("el")) a.element = Element.valueOf(o.get("el").getAsString());
             if (o.has("flags")) {
                 for (String f : strings(o.getAsJsonArray("flags"))) {
+                    if (f.startsWith("law:")) {
+                        a.law = f.substring(4);
+                        continue;
+                    }
                     switch (f) {
                         case "exec" -> a.execute = true;
                         case "back" -> a.backstab = true;
@@ -216,6 +224,7 @@ public final class Ability {
                         case "speed" -> a.speedScale = true;
                         case "form" -> a.form = true;
                         case "turret" -> a.turret = true;
+                        case "possess" -> a.possess = true;
                         default -> { }
                     }
                 }

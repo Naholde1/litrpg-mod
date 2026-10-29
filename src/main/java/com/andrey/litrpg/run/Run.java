@@ -344,7 +344,9 @@ public final class Run {
                 PlayerStats ps = StatsManager.get(p);
                 // только тем, кто копит сам: ярость вне боя должна утекать, а не доливаться,
                 // заряды и сферы идут своим счётом
-                if (ps.resource().restoresOutOfCombat() && ps.getResource() < (double)ps.getMaxResource()) {
+                if (ps.resource().restoresOutOfCombat() && ps.getForm() == null
+                        && !com.andrey.litrpg.ability.Possession.active(p)
+                        && ps.getResource() < (double)ps.getMaxResource()) {
                     ps.setResource(ps.getResource() + (double)ps.getMaxResource() * 0.04);
                     StatsManager.syncMana(p);
                 }

@@ -162,7 +162,9 @@ public final class DevCommands {
                     StringBuilder b = new StringBuilder();
                     for (int i = 0; i < com.andrey.litrpg.ability.Ability.BAR; i++) {
                         var a = st.barSkill(i);
-                        b.append(i).append('=').append(a == null ? "-" : a.key).append(' ');
+                        b.append(i).append('=').append(a == null ? "-" : a.key);
+                        if (a != null && (a.form || a.turret)) b.append(a.form ? "[облик]" : "[турель]");
+                        b.append(' ');
                     }
                     LitRPG.LOGGER.info("[dev] bar class={} role={} lvl={} {}", st.getPlayerClass() == null ? "-" : st.getPlayerClass().key,
                             st.getRole(), st.getLevel(), b);

@@ -122,11 +122,18 @@ public class ServerEvents {
                     && player.level().getGameTime() - s.lastCombat > com.andrey.litrpg.stats.Resource.RAGE_CALM_TICKS) {
                 s.setResource(was - com.andrey.litrpg.stats.Resource.RAGE_DECAY);
             }
-        } else if (was < s.getMaxResource()) {
+        } else if (was < s.getMaxResource() && s.getForm() == null
+                && !com.andrey.litrpg.ability.Possession.active(player)) {
+            // пока облик надет, шкала только тратится: иначе расход и восстановление
+            // гасят друг друга и облик держится вечно
             s.setResource(was + s.getResourceRegen());
         }
         // облик держится, пока есть шкала: тратим и обновляем эффекты
         com.andrey.litrpg.ability.Forms.tick(player, s);
+        // объявленный закон сам проверяет, кто его соблюдает
+        com.andrey.litrpg.ability.Laws.tick(player);
+        // Дух сидит в носителе, пока есть шкала
+        com.andrey.litrpg.ability.Possession.tick(player, s);
         if (Math.abs(s.getResource() - was) > 0.001) StatsManager.syncMana(player);
     }
 

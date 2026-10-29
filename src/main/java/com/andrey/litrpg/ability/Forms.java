@@ -73,13 +73,38 @@ public final class Forms {
             p.displayClientMessage(Component.literal(why).withStyle(ChatFormatting.GRAY), true);
             p.level().playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.FOX_AMBIENT, SoundSource.PLAYERS, 0.8f, 1.2f);
         }
-        StatsManager.syncMana(p);
+        StatsManager.sync(p);   // клиенту нужен сам факт облика, а не только шкала
     }
 
     private static void apply(ServerPlayer p, Ability a) {
         for (Ability.Fx fx : a.self) {
             p.addEffect(new MobEffectInstance(fx.effect(), REFRESH, fx.amplifier(), false, false, true));
         }
+        show(p, a);
+    }
+
+    /**
+     * Облик должен быть виден со стороны, а не только в цифрах: пока он держится,
+     * вокруг игрока идут свои частицы, и каждый облик — свои.
+     */
+    private static void show(ServerPlayer p, Ability a) {
+        var sl = p.serverLevel();
+        var kind = a.key.substring(a.key.lastIndexOf('_') + 1);
+        net.minecraft.core.particles.SimpleParticleType dust = switch (kind) {
+            case "wolf" -> ParticleTypes.CLOUD;
+            case "bear" -> ParticleTypes.CRIT;
+            case "raven" -> ParticleTypes.SQUID_INK;
+            default -> ParticleTypes.SOUL_FIRE_FLAME;
+        };
+        int color = switch (kind) {
+            case "wolf" -> 0xC0D8E8F0;
+            case "bear" -> 0xC08B5A2B;
+            case "raven" -> 0xC0303040;
+            default -> 0xC0FFB040;
+        };
+        // кольцо под ногами и облачко по силуэту — видно и самому, и товарищам
+        com.andrey.litrpg.fx.Fx.ring(sl, p.position().add(0, 0.1, 0), 0.5, 1.1, 22, color);
+        sl.sendParticles(dust, p.getX(), p.getY() + 1.0, p.getZ(), 14, 0.35, 0.7, 0.35, 0.01);
     }
 
     private static void clear(ServerPlayer p, Ability a) {
