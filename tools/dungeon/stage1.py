@@ -384,6 +384,15 @@ def bridge(m, st):
         for z in range(-205, -184):
             for x in range(x1, x2 + 1):
                 m.set(X(x), YH + 4, Z(z), 'minecraft:polished_blackstone_bricks')
+    # пещера подходит к решётке шире прохода — замуровываем всё вокруг, иначе решётку обходят сбоку и поверху
+    wall = m.themes['s1_abyss'].wall
+    for z in range(-173, -167):
+        for x in range(-14, 15):
+            for y in range(YH - 1, YH + 13):
+                if abs(x) <= 2 and YH <= y <= YH + 5:
+                    continue
+                if m.is_open(X(x), y, Z(z)) or (X(x), y, Z(z)) in m.open:
+                    m.set(X(x), y, Z(z), Theme.pick(wall, X(x), y, Z(z), m.seed))
     # решётка перед мостом (открывает загадка Зала Огней)
     st.gate('s1_bridgegate', [X(-2), YH, Z(-171), X(2), YH + 4, Z(-171)], 'minecraft:iron_bars')
     m.sign(X(3), YH + 2, Z(-166), ['Решётку держат', 'огни Катакомб.', 'Запад → Зал Огней'], facing='south')

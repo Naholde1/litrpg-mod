@@ -37,9 +37,9 @@ def build():
                          floor=[('minecraft:moss_block', 5), ('minecraft:rooted_dirt', 2), ('minecraft:coarse_dirt', 1), ('minecraft:mossy_cobblestone', 1)],
                          ceil=[('minecraft:deepslate', 4), ('minecraft:moss_block', 1)], seed=22))
     web = m.theme(Theme('s2_web', [('minecraft:deepslate', 3), ('minecraft:tuff', 2), ('minecraft:smooth_basalt', 1)],
-                        floor=[('minecraft:mud', 2), ('minecraft:podzol', 2), ('minecraft:moss_block', 1)], seed=23))
+                        floor=[('minecraft:muddy_mangrove_roots', 2), ('minecraft:podzol', 2), ('minecraft:moss_block', 1)], seed=23))
     bog = m.theme(Theme('s2_bog', [('minecraft:mud_bricks', 2), ('minecraft:deepslate', 3), ('minecraft:moss_block', 2)],
-                        floor=[('minecraft:mud', 5), ('minecraft:packed_mud', 2), ('minecraft:moss_block', 1)], seed=24))
+                        floor=[('minecraft:packed_mud', 5), ('minecraft:muddy_mangrove_roots', 2), ('minecraft:moss_block', 1)], seed=24))
     moon = m.theme(Theme('s2_moon', [('minecraft:calcite', 3), ('minecraft:smooth_quartz', 1), ('minecraft:diorite', 1)],
                          floor=[('minecraft:polished_diorite', 3), ('minecraft:calcite', 1)], ceil='minecraft:calcite', seed=25))
     grove = m.theme(Theme('s2_grove', [('minecraft:deepslate', 3), ('minecraft:dark_oak_wood', 1), ('minecraft:moss_block', 2)],
@@ -214,7 +214,7 @@ def arena1(m, st):
     for i in range(4):
         a = math.pi / 4 + math.pi / 2 * i
         x, z = round(cx + math.cos(a) * 15), round(cz + math.sin(a) * 15)
-        m.set(X(x), YF, Z(z), 'minecraft:mud')
+        m.set(X(x), YF, Z(z), 'minecraft:muddy_mangrove_roots')
         m.set(X(x), YF + 1, Z(z), 'litrpg:relic', kind='web')
         sacs.append([X(x), YF + 1, Z(z)])
     for i in range(10):
