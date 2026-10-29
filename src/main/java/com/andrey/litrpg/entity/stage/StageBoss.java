@@ -188,6 +188,10 @@ public abstract class StageBoss extends BossBase {
                 for (Vec3 c : ring(4, 11)) adds(EntityType.DROWNED, c, 1, 14, MobLevels.Rank.NORMAL, m -> {
                     tag.accept(m);
                     m.setCustomName(net.minecraft.network.chat.Component.literal("Несущий прилив"));
+                    // идут тяжело, с ношей: иначе все четверо доходили за восемь секунд,
+                    // а теперь, с выросшей живучестью мобов, их бы и не успели перебить
+                    m.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                            net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 20 * 60, 1, false, false, true));
                 });
                 tell("Несущие прилив идут к хранителю: каждый дошедший его лечит!");
             }

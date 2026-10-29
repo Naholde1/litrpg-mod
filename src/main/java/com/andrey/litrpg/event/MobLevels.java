@@ -144,7 +144,10 @@ public class MobLevels {
 
     private static void applyScaling(Mob mob, int lvl, Rank rank, double hpMult) {
         int l = lvl - 1;
-        double hpK = (1 + 0.30 * l) * rank.hp * hpMult * tierFix(mob, lvl, 0.30);
+        // По 0,30 за уровень отряд из трёх сносил засаду за десяток секунд: живучесть мобов
+        // отставала от роста урона игроков (замеры 29.10: 13 ед./с на 10 уровне против 149
+        // на 50-м). По 0,70 засада держится полминуты и успевает стать опасной.
+        double hpK = (1 + 0.70 * l) * rank.hp * hpMult * tierFix(mob, lvl, 0.30);
         AttributeInstance hpAttr = mob.getAttribute(Attributes.MAX_HEALTH);
         double wanted = hpAttr == null ? 0 : hpAttr.getBaseValue() * hpK;
         // выше 1024 Майнкрафт не даёт — остаток уходит в «запас прочности» (входящий урон делится)

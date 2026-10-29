@@ -50,6 +50,12 @@ public final class MiniFights {
         return out;
     }
 
+    /**
+     * Урон приёма — доля максимального здоровья цели. Приёмы мини-хранителей размечены
+     * заранее (секунда с лишним на то, чтобы уйти, отпрыгнуть или повернуться), поэтому
+     * доли высокие: попасть под них — ошибка, а ошибка здесь стоит жизни. Мягкие значения
+     * остаются там, где игрок сделал правильное движение, но не идеально.
+     */
     private static void hurt(Mob m, ServerPlayer p, float frac) {
         p.invulnerableTime = 0;
         p.hurt(m.damageSources().mobAttack(m), p.getMaxHealth() * frac);
@@ -107,7 +113,7 @@ public final class MiniFights {
             sl.playSound(null, m.blockPosition(), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 1f, 0.7f);
             for (ServerPlayer p : near(m, r + 1)) {
                 if (p.position().distanceTo(c) > r) continue;
-                hurt(m, p, 0.3f);
+                hurt(m, p, 0.9f);
                 Vec3 k = p.position().subtract(c).multiply(1, 0, 1).normalize().scale(1.2);
                 p.setDeltaMovement(k.x, 0.5, k.z);
                 p.hurtMarked = true;
@@ -133,7 +139,7 @@ public final class MiniFights {
                 Vec3 rel = p.position().subtract(from);
                 double along = rel.dot(u);
                 if (along < 0 || along > len || rel.subtract(u.scale(along)).multiply(1, 0, 1).length() > 1.4) continue;
-                hurt(m, p, 0.25f);
+                hurt(m, p, 0.7f);
             }
         });
     }
@@ -184,7 +190,7 @@ public final class MiniFights {
             Fx.slash(sl, p.position().add(0, 1, 0), face, 1.6, 120, 0, 8, 0xE0A040FF);
             // кто успел обернуться (смотрит на тень) — получает вдвое меньше
             boolean facing = p.getLookAngle().dot(behind.subtract(p.position()).normalize()) > 0.3;
-            hurt(m, p, facing ? 0.12f : 0.25f);
+            hurt(m, p, facing ? 0.25f : 0.85f);
             m.setTarget(p);
         });
     }
@@ -201,7 +207,7 @@ public final class MiniFights {
                 sl.playSound(null, m.blockPosition(), SoundEvents.DEEPSLATE_BREAK, SoundSource.HOSTILE, 1.5f, 0.6f);
                 for (ServerPlayer p : near(m, r + 2)) {
                     double d = p.position().distanceTo(c);
-                    if (Math.abs(d - r) <= 1 && p.onGround()) hurt(m, p, 0.2f);
+                    if (Math.abs(d - r) <= 1 && p.onGround()) hurt(m, p, 0.6f);
                 }
             });
         }
