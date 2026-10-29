@@ -79,11 +79,45 @@ public final class Shop {
         out.add(new Offer(13, new ItemStack((ItemLike)ModItems.ASCENSION_STONE.get()), 180 * stage, false, "", ""));
         out.add(new Offer(14, new ItemStack((ItemLike)ModItems.SCROLL_OF_OBLIVION.get()), 90 * stage, false, "", ""));
         out.add(new Offer(15, new ItemStack(Items.ARROW, 64), 6 * stage, false, "", ""));
+        out.add(new Offer(16, new ItemStack((ItemLike)ModItems.DIVINE_SPARK.get()), 1200 * stage, false, "", ""));
+
+        // услуги привала: работают с вещью в руке
+        ItemStack held = p.getMainHandItem();
+        com.andrey.litrpg.gear.GearData hd = com.andrey.litrpg.gear.GearData.get(held);
+        out.add(new Offer(21, ItemStack.EMPTY, 0, false, "anvil", "Наковальня: камни перековки и возвышения"));
+        if (hd != null) {
+            out.add(new Offer(22, ItemStack.EMPTY, reforgePrice(held, hd), false, "reforge",
+                    "Перековать «" + held.getHoverName().getString() + "»: все свойства заменятся новыми"));
+            if (hd.level < ps.getLevel()) {
+                out.add(new Offer(23, ItemStack.EMPTY, upgradePrice(hd), false, "upgrade",
+                        "Поднять уровень вещи до " + Math.min(ps.getLevel(), hd.level + LEVEL_STEP) + " (дорого)"));
+            }
+        }
         if (ps.hasClass()) {
             out.add(new Offer(20, ItemStack.EMPTY, 150 * stage, false, "class", "Сменить класс и роль (уровень и вещи остаются)"));
         }
 
         return out;
+    }
+
+    /** На сколько поднимается уровень вещи за один раз. */
+    public static final int LEVEL_STEP = 5;
+    /** Сколько раз вещь уже перековывали (цена растёт). */
+    private static final String REFORGE_TAG = "litrpg_reforges";
+
+    private static int reforges(ItemStack st) {
+        return st.getOrCreateTag().getInt(REFORGE_TAG);
+    }
+
+    /** Цена перековки: каждая следующая дороже, чтобы не крутить рулетку бесконечно. */
+    public static int reforgePrice(ItemStack st, com.andrey.litrpg.gear.GearData d) {
+        int base = 40 + d.level * 6 + d.rarity.ordinal() * 45;
+        return Math.round(base * (float)Math.pow(1.6, Math.min(6, reforges(st))));
+    }
+
+    /** Цена подъёма уровня: намеренно очень дорого — это долгая цель для монет. */
+    public static int upgradePrice(com.andrey.litrpg.gear.GearData d) {
+        return 300 + d.level * 90 + d.rarity.ordinal() * 400;
     }
 
     public static void open(ServerPlayer p, TraderEntity t) {
@@ -106,6 +140,52 @@ public final class Shop {
                 if (o != null && (!o.once() || !o.stack().isEmpty())) {
                     if (!Wallet.pay(p, o.price())) {
                         p.displayClientMessage(Component.literal("Не хватает монет: нужно " + Wallet.format(o.price())).withStyle(ChatFormatting.RED), true);
+                        return;
+                    }
+
+                    if (o.action().equals("anvil")) {
+                        // наковальни в подземелье нет, а камни перековки и возвышения работают
+                        // только на ней — торговец даёт свою
+                        p.openMenu(new net.minecraft.world.SimpleMenuProvider(
+                                (id, inv, pl) -> new net.minecraft.world.inventory.AnvilMenu(id, inv,
+                                        net.minecraft.world.inventory.ContainerLevelAccess.create(p.level(), t.blockPosition())),
+                                Component.literal("Наковальня привала")));
+                        return;
+                    }
+
+                    if (o.action().equals("reforge")) {
+                        ItemStack st = p.getMainHandItem();
+                        com.andrey.litrpg.gear.GearData d = com.andrey.litrpg.gear.GearData.get(st);
+                        if (d == null) {
+                            return;
+                        }
+
+                        int done = st.getOrCreateTag().getInt(REFORGE_TAG);
+                        st.removeTagKey(com.andrey.litrpg.gear.GearData.TAG);
+                        st.resetHoverName();
+                        GearGen.apply(st, p.getRandom(), d.level, d.rarity);
+                        st.getOrCreateTag().putInt(REFORGE_TAG, done + 1);
+                        p.level().playSound((Player)null, t.blockPosition(), SoundEvents.ANVIL_USE, SoundSource.NEUTRAL, 1.0F, 1.2F);
+                        StatsManager.message(p, Component.literal("Перековано: ").append(st.getHoverName()).withStyle(ChatFormatting.GOLD));
+                        open(p, t);
+                        return;
+                    }
+
+                    if (o.action().equals("upgrade")) {
+                        ItemStack st = p.getMainHandItem();
+                        com.andrey.litrpg.gear.GearData d = com.andrey.litrpg.gear.GearData.get(st);
+                        if (d == null) {
+                            return;
+                        }
+
+                        int lvl = Math.min(StatsManager.get(p).getLevel(), d.level + LEVEL_STEP);
+                        st.removeTagKey(com.andrey.litrpg.gear.GearData.TAG);
+                        st.resetHoverName();
+                        GearGen.apply(st, p.getRandom(), lvl, d.rarity);
+                        p.level().playSound((Player)null, t.blockPosition(), SoundEvents.ANVIL_USE, SoundSource.NEUTRAL, 1.0F, 0.8F);
+                        StatsManager.message(p, Component.literal("Уровень вещи поднят до " + lvl + ": ")
+                                .append(st.getHoverName()).withStyle(ChatFormatting.GOLD));
+                        open(p, t);
                         return;
                     }
 

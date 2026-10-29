@@ -155,6 +155,21 @@ public final class DevCommands {
                     LitRPG.LOGGER.info("[dev] skills {}..{} ok={} declined={} failed={} declined: {}", from, to, ok, no, fail, bad);
                     continue;
                 }
+                if (line.startsWith("devshop")) {
+                    // devshop [этап] — что предлагает торговец и почём
+                    var p = server.getPlayerList().getPlayerByName("Dev");
+                    if (p == null) continue;
+                    int st = line.length() > 8 ? Integer.parseInt(line.substring(8).trim()) : 1;
+                    var held = p.getMainHandItem();
+                    LitRPG.LOGGER.info("[dev] shop stage {} в руке {} цена продажи {}", st,
+                            held.getHoverName().getString(), com.andrey.litrpg.gear.SellPrices.stack(held));
+                    for (var o : com.andrey.litrpg.run.Shop.offers(p, st)) {
+                        LitRPG.LOGGER.info("[dev]   offer {} {} {} {}", o.id(),
+                                o.stack().isEmpty() ? "-" : o.stack().getHoverName().getString(),
+                                o.price(), o.action().isEmpty() ? "" : o.action() + " / " + o.label());
+                    }
+                    continue;
+                }
                 if (line.equals("devbar")) {
                     var p = server.getPlayerList().getPlayerByName("Dev");
                     if (p == null) continue;

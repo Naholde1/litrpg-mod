@@ -96,10 +96,39 @@ public final class SellPrices {
         put("minecraft:heart_of_the_sea", 150);
     }
 
-    /** Ценность одной штуки в медяках (0 — торговцам не нужно). */
+    /**
+     * Ценность одной штуки в медяках. Экипировка считается по редкости и уровню:
+     * в таблице её нет и быть не может — она создаётся на ходу, — а без этого торговец
+     * отвечал «это мне ни к чему» на всё, что падает с хранителей.
+     */
     public static float unit(ItemStack s) {
         if (s.isEmpty()) return 0;
-        return PRICE.getOrDefault(ForgeRegistries.ITEMS.getKey(s.getItem()), 0f);
+        // классовое облачение и легендарка класса не продаются: их по одной на игру,
+        // и обратно их не вернуть — случайный Shift+ПКМ не должен это стоить
+        if (s.getItem() instanceof TemplateItem t && t.def() != null
+                && (t.def().cls != null || t.def().set != null && com.andrey.litrpg.stats.PlayerClass.byKey(t.def().set) != null)) {
+            return 0;
+        }
+        GearData d = GearData.get(s);
+        if (d != null) {
+            // уникальное и божественное не продаём: такое не восстановить
+            if (d.unique != null || d.rarity == Rarity.DIVINE) return 0;
+            float byRarity = switch (d.rarity) {
+                case COMMON -> 6;
+                case UNCOMMON -> 14;
+                case RARE -> 34;
+                case EPIC -> 80;
+                case LEGENDARY -> 220;
+                default -> 6;
+            };
+            return byRarity * (1 + d.level * 0.12f);
+        }
+        float listed = PRICE.getOrDefault(ForgeRegistries.ITEMS.getKey(s.getItem()), 0f);
+        if (listed > 0) return listed;
+        // всё прочее с прочностью (ванильные инструменты и броня) торговец тоже берёт,
+        // пусть и за гроши: иначе «продать можно всё» было бы неправдой
+        if (s.isDamageableItem()) return 2 + s.getMaxDamage() * 0.02f;
+        return 0;
     }
 
     /** Ценность всей стопки в медяках без учёта репутации. */

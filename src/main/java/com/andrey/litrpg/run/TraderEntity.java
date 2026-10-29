@@ -78,7 +78,12 @@ public class TraderEntity extends PathfinderMob {
     private void sell(ServerPlayer p, ItemStack held) {
         int price = SellPrices.stack(held);
         if (price <= 0) {
-            p.displayClientMessage(Component.literal("«Это мне ни к чему.»").withStyle(ChatFormatting.GRAY), true);
+            boolean own = held.getItem() instanceof com.andrey.litrpg.gear.TemplateItem t && t.def() != null
+                    && (t.def().cls != null || t.def().set != null
+                        && com.andrey.litrpg.stats.PlayerClass.byKey(t.def().set) != null);
+            p.displayClientMessage(Component.literal(own
+                    ? "«Своё облачение носи сам — такого второго не будет.»"
+                    : "«Это мне ни к чему.»").withStyle(ChatFormatting.GRAY), true);
         } else {
             String name = held.getHoverName().getString();
             held.setCount(0);
