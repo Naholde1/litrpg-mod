@@ -494,6 +494,19 @@ TOKENS = [
 CURIO_TAG = {'ring': 'ring', 'necklace': 'necklace', 'belt': 'belt', 'bracelet': 'bracelet', 'charm': 'charm', 'back': 'back', 'hands': 'hands'}
 
 
+def class_sets_for_classes():
+    """Берём состав классов там же, где его берёт gen_classes.py, чтобы имена и роли совпадали."""
+    import class_sets
+    from classes import dsl
+    from classes import legacy_skills, legacy_classes, tanks, damage_melee, damage_ranged, damage_magic  # noqa: F401
+    from classes import support, hidden, invokers, pve, v3, v4  # noqa: F401
+    rows = []
+    for key in dsl.ORDER:
+        c = dsl.CLASSES[key]
+        rows.append((key, c.ru, c.en, c.role, dsl.resource_of(c)))
+    return class_sets.build(rows)
+
+
 def main():
     items_json, sets_json = [], []
     ru = json.load(open(os.path.join(ASSETS, 'lang', 'ru_ru.json'), encoding='utf-8'))
@@ -575,6 +588,19 @@ def main():
         if roles: e['roles'] = roles
         items_json.append(e)
 
+    # классовые сеты: четыре части на класс с хранителей этапов 1-3
+    class_items, class_sets = class_sets_for_classes()
+    for it in class_items:
+        pal = palette(it['pal'][0], it['pal'][1], it['pal'][2])
+        texture(it['id'], render(it['shape'], pal))
+        model(it['id'])
+        ru['item.litrpg.' + it['id']] = it['ru']
+        en['item.litrpg.' + it['id']] = it['en']
+        e = dict(id=it['id'], kind=it['kind'], tier=it['tier'], implicit={},
+                 set=it['set'], min='epic', boss=it['boss'], roles=it['roles'])
+        tags[CURIO_TAG[it['kind']]].append('litrpg:' + it['id'])
+        items_json.append(e)
+
     # жетоны и монеты
     for id, rname, ename, shape, p in TOKENS:
         pal = palette(p[0], p[1] if len(p) > 1 else 'ruby', p[2] if len(p) > 2 else 'leather')
@@ -584,7 +610,7 @@ def main():
         en['item.litrpg.' + id] = ename
 
     # наборы: список предметов
-    for s in SETS:
+    for s in SETS + class_sets:
         members = [i['id'] for i in items_json if i.get('set') == s['id']]
         sets_json.append(dict(id=s['id'], title=s['title'], items=members, tiers=s['tiers']))
 

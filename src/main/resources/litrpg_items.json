@@ -2420,6 +2420,1302 @@
    "roles": [
     "support"
    ]
+  },
+  {
+   "id": "set_warden_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "warden",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_warden_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "warden",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_warden_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "warden",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_warden_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "warden",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_bloodknight_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "bloodknight",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_bloodknight_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "bloodknight",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_bloodknight_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "bloodknight",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_bloodknight_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "bloodknight",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_lawgiver_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "lawgiver",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_lawgiver_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "lawgiver",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_lawgiver_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "lawgiver",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_lawgiver_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "lawgiver",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_totemist_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "totemist",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_totemist_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "totemist",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_totemist_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "totemist",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_totemist_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "totemist",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_symbiote_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "symbiote",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_symbiote_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "symbiote",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_symbiote_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "symbiote",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_symbiote_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "symbiote",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_graviton_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "graviton",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_graviton_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "graviton",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_graviton_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "graviton",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_graviton_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "graviton",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_mirrorknight_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "mirrorknight",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_mirrorknight_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "mirrorknight",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_mirrorknight_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "mirrorknight",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_mirrorknight_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "mirrorknight",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "tank"
+   ]
+  },
+  {
+   "id": "set_swift_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "swift",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_swift_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "swift",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_swift_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "swift",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_swift_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "swift",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_berserker_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "berserker",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_berserker_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "berserker",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_berserker_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "berserker",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_berserker_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "berserker",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_monk_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "monk",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_monk_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "monk",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_monk_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "monk",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_monk_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "monk",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_summoner_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "summoner",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_summoner_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "summoner",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_summoner_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "summoner",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_summoner_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "summoner",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_werebeast_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "werebeast",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_werebeast_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "werebeast",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_werebeast_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "werebeast",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_werebeast_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "werebeast",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_machinist_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "machinist",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_machinist_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "machinist",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_machinist_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "machinist",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_machinist_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "machinist",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_plaguelord_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "plaguelord",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_plaguelord_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "plaguelord",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_plaguelord_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "plaguelord",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_plaguelord_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "plaguelord",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_spirit_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "spirit",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_spirit_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "spirit",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_spirit_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "spirit",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_spirit_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "spirit",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_shade_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "shade",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_shade_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "shade",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_shade_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "shade",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_shade_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "shade",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_astromancer_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "astromancer",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_astromancer_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "astromancer",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_astromancer_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "astromancer",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_astromancer_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "astromancer",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_sniper_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "sniper",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_sniper_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "sniper",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_sniper_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "sniper",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_sniper_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "sniper",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_executioner_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "executioner",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_executioner_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "executioner",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_executioner_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "executioner",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_executioner_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "executioner",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_pyromancer_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "pyromancer",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_pyromancer_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "pyromancer",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_pyromancer_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "pyromancer",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_pyromancer_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "pyromancer",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "damage"
+   ]
+  },
+  {
+   "id": "set_healer_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "healer",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_healer_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "healer",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_healer_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "healer",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_healer_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "healer",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_chronologist_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "chronologist",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_chronologist_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "chronologist",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_chronologist_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "chronologist",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_chronologist_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "chronologist",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_skald_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "skald",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_skald_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "skald",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_skald_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "skald",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_skald_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "skald",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_wellspring_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "wellspring",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_wellspring_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "wellspring",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_wellspring_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "wellspring",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_wellspring_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "wellspring",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_darkpriest_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "darkpriest",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_darkpriest_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "darkpriest",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_darkpriest_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "darkpriest",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_darkpriest_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "darkpriest",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_oracle_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "oracle",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_oracle_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "oracle",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_oracle_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "oracle",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_oracle_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "oracle",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_alchemist_necklace",
+   "kind": "necklace",
+   "tier": 8,
+   "implicit": {},
+   "set": "alchemist",
+   "min": "epic",
+   "boss": "gatekeeper",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_alchemist_bracelet",
+   "kind": "bracelet",
+   "tier": 14,
+   "implicit": {},
+   "set": "alchemist",
+   "min": "epic",
+   "boss": "lich_king",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_alchemist_belt",
+   "kind": "belt",
+   "tier": 22,
+   "implicit": {},
+   "set": "alchemist",
+   "min": "epic",
+   "boss": "dark_witch",
+   "roles": [
+    "support"
+   ]
+  },
+  {
+   "id": "set_alchemist_charm",
+   "kind": "charm",
+   "tier": 30,
+   "implicit": {},
+   "set": "alchemist",
+   "min": "epic",
+   "boss": "deep_priestess",
+   "roles": [
+    "support"
+   ]
   }
  ],
  "sets": [
@@ -2959,6 +4255,735 @@
       "crit_damage": 20
      },
      "passive": "executioner"
+    }
+   ]
+  },
+  {
+   "id": "warden",
+   "title": "Облачение: Стражник",
+   "items": [
+    "set_warden_necklace",
+    "set_warden_bracelet",
+    "set_warden_belt",
+    "set_warden_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "resist": 4,
+      "cooldown": 8
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "resist": 6,
+      "res_magic": 12
+     },
+     "passive": "guard_aura"
+    }
+   ]
+  },
+  {
+   "id": "bloodknight",
+   "title": "Облачение: Кровавый рыцарь",
+   "items": [
+    "set_bloodknight_necklace",
+    "set_bloodknight_bracelet",
+    "set_bloodknight_belt",
+    "set_bloodknight_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "resist": 4,
+      "health_regen": 1.5
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "resist": 6,
+      "res_magic": 12
+     },
+     "passive": "soul_eater"
+    }
+   ]
+  },
+  {
+   "id": "lawgiver",
+   "title": "Облачение: Законник",
+   "items": [
+    "set_lawgiver_necklace",
+    "set_lawgiver_bracelet",
+    "set_lawgiver_belt",
+    "set_lawgiver_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "resist": 4,
+      "cooldown": 8
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "resist": 6,
+      "res_magic": 12
+     },
+     "passive": "focus_aura"
+    }
+   ]
+  },
+  {
+   "id": "totemist",
+   "title": "Облачение: Каменный тотемщик",
+   "items": [
+    "set_totemist_necklace",
+    "set_totemist_bracelet",
+    "set_totemist_belt",
+    "set_totemist_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "resist": 4,
+      "cooldown": 8
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "resist": 6,
+      "res_magic": 12
+     },
+     "passive": "thorns"
+    }
+   ]
+  },
+  {
+   "id": "symbiote",
+   "title": "Облачение: Симбиот",
+   "items": [
+    "set_symbiote_necklace",
+    "set_symbiote_bracelet",
+    "set_symbiote_belt",
+    "set_symbiote_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "resist": 4,
+      "move_speed": 6
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "resist": 6,
+      "res_magic": 12
+     },
+     "passive": "regeneration"
+    }
+   ]
+  },
+  {
+   "id": "graviton",
+   "title": "Облачение: Гравитон",
+   "items": [
+    "set_graviton_necklace",
+    "set_graviton_bracelet",
+    "set_graviton_belt",
+    "set_graviton_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "resist": 4,
+      "mana_regen": 12
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "resist": 6,
+      "res_magic": 12
+     },
+     "passive": "mana_shield"
+    }
+   ]
+  },
+  {
+   "id": "mirrorknight",
+   "title": "Облачение: Зерцало",
+   "items": [
+    "set_mirrorknight_necklace",
+    "set_mirrorknight_bracelet",
+    "set_mirrorknight_belt",
+    "set_mirrorknight_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "resist": 4,
+      "lifesteal": 4
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "resist": 6,
+      "res_magic": 12
+     },
+     "passive": "phoenix"
+    }
+   ]
+  },
+  {
+   "id": "swift",
+   "title": "Облачение: Стриж",
+   "items": [
+    "set_swift_necklace",
+    "set_swift_bracelet",
+    "set_swift_belt",
+    "set_swift_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "crit_chance": 5,
+      "mana_regen": 12
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "crit_damage": 25,
+      "dmg_elite": 10
+     },
+     "passive": "momentum"
+    }
+   ]
+  },
+  {
+   "id": "berserker",
+   "title": "Облачение: Берсерк",
+   "items": [
+    "set_berserker_necklace",
+    "set_berserker_bracelet",
+    "set_berserker_belt",
+    "set_berserker_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "crit_chance": 5,
+      "lifesteal": 4
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "crit_damage": 25,
+      "dmg_elite": 10
+     },
+     "passive": "berserker"
+    }
+   ]
+  },
+  {
+   "id": "monk",
+   "title": "Облачение: Монах",
+   "items": [
+    "set_monk_necklace",
+    "set_monk_bracelet",
+    "set_monk_belt",
+    "set_monk_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "crit_chance": 5,
+      "cooldown": 8
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "crit_damage": 25,
+      "dmg_elite": 10
+     },
+     "passive": "arcane_echo"
+    }
+   ]
+  },
+  {
+   "id": "summoner",
+   "title": "Облачение: Призыватель",
+   "items": [
+    "set_summoner_necklace",
+    "set_summoner_bracelet",
+    "set_summoner_belt",
+    "set_summoner_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "crit_chance": 5,
+      "spell_power": 10
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "crit_damage": 25,
+      "dmg_elite": 10
+     },
+     "passive": "mana_aura"
+    }
+   ]
+  },
+  {
+   "id": "werebeast",
+   "title": "Облачение: Оборотень",
+   "items": [
+    "set_werebeast_necklace",
+    "set_werebeast_bracelet",
+    "set_werebeast_belt",
+    "set_werebeast_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "crit_chance": 5,
+      "move_speed": 6
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "crit_damage": 25,
+      "dmg_elite": 10
+     },
+     "passive": "fury_swipes"
+    }
+   ]
+  },
+  {
+   "id": "machinist",
+   "title": "Облачение: Механик",
+   "items": [
+    "set_machinist_necklace",
+    "set_machinist_bracelet",
+    "set_machinist_belt",
+    "set_machinist_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "crit_chance": 5,
+      "cooldown": 8
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "crit_damage": 25,
+      "dmg_elite": 10
+     },
+     "passive": "chain_spark"
+    }
+   ]
+  },
+  {
+   "id": "plaguelord",
+   "title": "Облачение: Чумной владыка",
+   "items": [
+    "set_plaguelord_necklace",
+    "set_plaguelord_bracelet",
+    "set_plaguelord_belt",
+    "set_plaguelord_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "crit_chance": 5,
+      "mana_regen": 12
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "crit_damage": 25,
+      "dmg_elite": 10
+     },
+     "passive": "venom"
+    }
+   ]
+  },
+  {
+   "id": "spirit",
+   "title": "Облачение: Дух",
+   "items": [
+    "set_spirit_necklace",
+    "set_spirit_bracelet",
+    "set_spirit_belt",
+    "set_spirit_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "crit_chance": 5,
+      "move_speed": 6
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "crit_damage": 25,
+      "dmg_elite": 10
+     },
+     "passive": "night_eye"
+    }
+   ]
+  },
+  {
+   "id": "shade",
+   "title": "Облачение: Тень",
+   "items": [
+    "set_shade_necklace",
+    "set_shade_bracelet",
+    "set_shade_belt",
+    "set_shade_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "crit_chance": 5,
+      "cooldown": 8
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "crit_damage": 25,
+      "dmg_elite": 10
+     },
+     "passive": "executioner"
+    }
+   ]
+  },
+  {
+   "id": "astromancer",
+   "title": "Облачение: Астромант",
+   "items": [
+    "set_astromancer_necklace",
+    "set_astromancer_bracelet",
+    "set_astromancer_belt",
+    "set_astromancer_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "crit_chance": 5,
+      "spell_power": 10
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "crit_damage": 25,
+      "dmg_elite": 10
+     },
+     "passive": "arcane_echo"
+    }
+   ]
+  },
+  {
+   "id": "sniper",
+   "title": "Облачение: Снайпер",
+   "items": [
+    "set_sniper_necklace",
+    "set_sniper_bracelet",
+    "set_sniper_belt",
+    "set_sniper_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "crit_chance": 5,
+      "cooldown": 8
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "crit_damage": 25,
+      "dmg_elite": 10
+     },
+     "passive": "giant_slayer"
+    }
+   ]
+  },
+  {
+   "id": "executioner",
+   "title": "Облачение: Палач",
+   "items": [
+    "set_executioner_necklace",
+    "set_executioner_bracelet",
+    "set_executioner_belt",
+    "set_executioner_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "crit_chance": 5,
+      "lifesteal": 4
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "crit_damage": 25,
+      "dmg_elite": 10
+     },
+     "passive": "soul_eater"
+    }
+   ]
+  },
+  {
+   "id": "pyromancer",
+   "title": "Облачение: Пиромант",
+   "items": [
+    "set_pyromancer_necklace",
+    "set_pyromancer_bracelet",
+    "set_pyromancer_belt",
+    "set_pyromancer_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "crit_chance": 5,
+      "mana_regen": 12
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "crit_damage": 25,
+      "dmg_elite": 10
+     },
+     "passive": "flame_touch"
+    }
+   ]
+  },
+  {
+   "id": "healer",
+   "title": "Облачение: Лекарь",
+   "items": [
+    "set_healer_necklace",
+    "set_healer_bracelet",
+    "set_healer_belt",
+    "set_healer_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "heal_power": 10,
+      "mana_regen": 12
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "heal_power": 15,
+      "cooldown": 8
+     },
+     "passive": "regeneration"
+    }
+   ]
+  },
+  {
+   "id": "chronologist",
+   "title": "Облачение: Хронолог",
+   "items": [
+    "set_chronologist_necklace",
+    "set_chronologist_bracelet",
+    "set_chronologist_belt",
+    "set_chronologist_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "heal_power": 10,
+      "cooldown": 8
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "heal_power": 15,
+      "cooldown": 8
+     },
+     "passive": "arcane_echo"
+    }
+   ]
+  },
+  {
+   "id": "skald",
+   "title": "Облачение: Скальд",
+   "items": [
+    "set_skald_necklace",
+    "set_skald_bracelet",
+    "set_skald_belt",
+    "set_skald_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "heal_power": 10,
+      "move_speed": 6
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "heal_power": 15,
+      "cooldown": 8
+     },
+     "passive": "war_aura"
+    }
+   ]
+  },
+  {
+   "id": "wellspring",
+   "title": "Облачение: Источник",
+   "items": [
+    "set_wellspring_necklace",
+    "set_wellspring_bracelet",
+    "set_wellspring_belt",
+    "set_wellspring_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "heal_power": 10,
+      "mana_regen": 12
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "heal_power": 15,
+      "cooldown": 8
+     },
+     "passive": "mana_aura"
+    }
+   ]
+  },
+  {
+   "id": "darkpriest",
+   "title": "Облачение: Теневой жрец",
+   "items": [
+    "set_darkpriest_necklace",
+    "set_darkpriest_bracelet",
+    "set_darkpriest_belt",
+    "set_darkpriest_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "heal_power": 10,
+      "health_regen": 1.5
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "heal_power": 15,
+      "cooldown": 8
+     },
+     "passive": "soul_eater"
+    }
+   ]
+  },
+  {
+   "id": "oracle",
+   "title": "Облачение: Оракул",
+   "items": [
+    "set_oracle_necklace",
+    "set_oracle_bracelet",
+    "set_oracle_belt",
+    "set_oracle_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "heal_power": 10,
+      "cooldown": 8
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "heal_power": 15,
+      "cooldown": 8
+     },
+     "passive": "focus_aura"
+    }
+   ]
+  },
+  {
+   "id": "alchemist",
+   "title": "Облачение: Алхимик",
+   "items": [
+    "set_alchemist_necklace",
+    "set_alchemist_bracelet",
+    "set_alchemist_belt",
+    "set_alchemist_charm"
+   ],
+   "tiers": [
+    {
+     "pieces": 2,
+     "mods": {
+      "heal_power": 10,
+      "cooldown": 8
+     }
+    },
+    {
+     "pieces": 4,
+     "mods": {
+      "heal_power": 15,
+      "cooldown": 8
+     },
+     "passive": "treasure_hunter"
     }
    ]
   }

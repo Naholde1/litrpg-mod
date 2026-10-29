@@ -148,6 +148,13 @@ public final class RunLoot {
         }
 
         item(p, loot, b.id().isEmpty() ? "Хранитель" : "Трофей хранителя");
+        // часть классового набора — сверх обычного трофея: ради неё этого хранителя и бьют
+        ItemTemplates.Def piece = classSetPiece(pool, ps);
+        if (piece != null) {
+            ItemStack part = new ItemStack((ItemLike) ((RegistryObject) ModItems.TEMPLATE_ITEMS.get(piece.id)).get());
+            GearGen.apply(part, rnd, level, atLeast(r, piece.minRarity));
+            item(p, part, "Часть облачения класса");
+        }
         if (finalBoss && rnd.nextFloat() < 0.5F + luck(p)) {
             item(p, GearGen.personal(rnd, level, atLeast(GearGen.rollRarity(rnd, 2.0F, false), Rarity.RARE), ps), "Сокровищница хранителя");
         }
@@ -164,6 +171,11 @@ public final class RunLoot {
         String role = ps.getRole() == null ? "" : ps.getRole().key;
 
         for(ItemTemplates.Def d : pool) {
+            // чужое классовое облачение не предлагаем никому: оно выдаётся отдельно и только своему
+            if (isClassSet(d)) {
+                continue;
+            }
+
             if (d.roles == null || d.roles.isEmpty() || d.roles.contains(role)) {
                 fit.add(d);
             }
@@ -171,6 +183,28 @@ public final class RunLoot {
 
         List<ItemTemplates.Def> from = fit.isEmpty() ? pool : fit;
         return (ItemTemplates.Def)from.get(rnd.nextInt(from.size()));
+    }
+
+    /** Предмет из классового облачения (набор назван ключом класса). */
+    private static boolean isClassSet(ItemTemplates.Def d) {
+        return d.set != null && com.andrey.litrpg.stats.PlayerClass.byKey(d.set) != null;
+    }
+
+    /** Часть облачения этого игрока среди добычи хранителя, если она там есть. */
+    private static ItemTemplates.Def classSetPiece(List<ItemTemplates.Def> pool, PlayerStats ps) {
+        if (ps.getPlayerClass() == null) {
+            return null;
+        }
+
+        String key = ps.getPlayerClass().key;
+
+        for(ItemTemplates.Def d : pool) {
+            if (key.equals(d.set)) {
+                return d;
+            }
+        }
+
+        return null;
     }
 
     public static boolean cache(ServerPlayer p, int tier, BlockPos pos) {
