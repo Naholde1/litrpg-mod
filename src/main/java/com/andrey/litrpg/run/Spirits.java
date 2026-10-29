@@ -81,7 +81,25 @@ public final class Spirits {
      * Возвращает сколько тиков осталось (0 — готово).
      */
     public static long rezCooldown(ServerPlayer p) {
-        return Math.max(0, REZ_CD.getOrDefault(p.getUUID(), 0L) - p.level().getGameTime());
+        long left = REZ_CD.getOrDefault(p.getUUID(), 0L) - p.level().getGameTime();
+        if (left <= 0) return 0;
+        // Откат хранился как «тик, в который он кончится», а список живёт в памяти игры,
+        // а не в сохранении. Стоило перезайти в мир, где игровое время меньше, — и у лекаря
+        // оставалось пятьсот секунд отката вместо десяти. Больше своего предела он быть
+        // не может: всё, что выше, — остаток от прошлого мира.
+        if (left > REZ_CD_OTHER) {
+            REZ_CD.remove(p.getUUID());
+            return 0;
+        }
+        return left;
+    }
+
+    /** Выход из мира: списки духов и откатов живут в памяти, в новом мире они чужие. */
+    @SubscribeEvent
+    public static void onStopping(net.minecraftforge.event.server.ServerStoppingEvent e) {
+        SPIRITS.clear();
+        CHANNEL.clear();
+        REZ_CD.clear();
     }
 
     /** Сколько тиков занимает подъём у этого игрока: у поддержки 3 с, у остальных 10 с. */
