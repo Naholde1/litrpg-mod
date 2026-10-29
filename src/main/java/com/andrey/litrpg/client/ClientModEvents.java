@@ -36,6 +36,7 @@ public class ClientModEvents {
         ModEntities.WILD.forEach((id, t) -> event.registerEntityRenderer(t.get(), ctx -> new DataBossRenderer<>(ctx, id)));
         ModEntities.BOSSES.forEach((id, t) -> event.registerEntityRenderer(t.get(),
                 ctx -> new DataBossRenderer<>(ctx, com.andrey.litrpg.entity.stage.Bosses.model(id))));
+        ModEntities.TOTEMS.forEach((id, t) -> event.registerEntityRenderer(t.get(), ctx -> new DataBossRenderer<>(ctx, id)));
     }
 
     @SubscribeEvent
@@ -46,6 +47,7 @@ public class ClientModEvents {
             String model = com.andrey.litrpg.entity.stage.Bosses.model(id);
             if (!names.contains(model)) names.add(model);
         }
+        names.addAll(ModEntities.TOTEMS.keySet());
         for (String name : names) {
             event.registerLayerDefinition(DataBossRenderer.layer(name), () -> com.andrey.litrpg.client.model.DataModel.createLayer(name));
         }

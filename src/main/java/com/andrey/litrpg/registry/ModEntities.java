@@ -63,6 +63,12 @@ public class ModEntities {
     /** Хранители этапов подземелья (id → тип); модель и текстура — boss_models/ID.json, textures/entity/boss/ID.png. */
     public static final Map<String, RegistryObject<EntityType<? extends BossBase>>> BOSSES = new LinkedHashMap<>();
 
+    /**
+     * Тотемы тотемщика: отдельный тип на каждый вид, потому что у каждого своя модель
+     * и своя текстура (tools/gen_totems.py → boss_models/totem_*.json).
+     */
+    public static final Map<String, RegistryObject<EntityType<com.andrey.litrpg.entity.TotemEntity>>> TOTEMS = new LinkedHashMap<>();
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     private static <T extends BossBase> RegistryObject<EntityType<T>> boss(String id, EntityType.EntityFactory<T> f, float w, float h, boolean fire) {
         RegistryObject<EntityType<T>> ro = ENTITY_TYPES.register(id, () -> {
@@ -84,6 +90,11 @@ public class ModEntities {
             }));
         }
         com.andrey.litrpg.entity.stage.Bosses.register(ModEntities::boss);
+        for (String id : new String[]{"totem_guard", "totem_fury", "totem_mending", "totem_wind"}) {
+            TOTEMS.put(id, ENTITY_TYPES.register(id, () -> EntityType.Builder
+                    .of(com.andrey.litrpg.entity.TotemEntity::new, MobCategory.MISC)
+                    .sized(0.8f, 2.2f).clientTrackingRange(10).noSummon().build(id)));
+        }
     }
 
     /** Регистратор хранителей (у каждого этапа — свой список в {@link com.andrey.litrpg.entity.stage.Bosses}). */

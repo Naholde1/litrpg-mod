@@ -46,17 +46,20 @@ public final class Totems {
 
     /** Что тотем даёт вокруг себя. */
     public enum Kind {
-        GUARD("Тотем защиты", 0xC05DADE2),
-        FURY("Тотем ярости", 0xC0E74C3C),
-        MENDING("Тотем восстановления", 0xC07CFC66),
-        WIND("Тотем ветра", 0xC0F5E6A8);
+        GUARD("Тотем защиты", 0xC05DADE2, "totem_guard"),
+        FURY("Тотем ярости", 0xC0E74C3C, "totem_fury"),
+        MENDING("Тотем восстановления", 0xC07CFC66, "totem_mending"),
+        WIND("Тотем ветра", 0xC0F5E6A8, "totem_wind");
 
         public final String title;
         public final int color;
+        /** Свой тип сущности: у каждого вида своя модель и текстура. */
+        public final String entity;
 
-        Kind(String title, int color) {
+        Kind(String title, int color, String entity) {
             this.title = title;
             this.color = color;
+            this.entity = entity;
         }
 
         static Kind byName(String s) {
@@ -80,7 +83,7 @@ public final class Totems {
         List<Mob> out = new ArrayList<>();
         if (!(p.level() instanceof ServerLevel sl)) return out;
         for (Mob m : sl.getEntitiesOfClass(Mob.class, p.getBoundingBox().inflate(64),
-                e -> e.isAlive() && e.getPersistentData().contains(TAG)
+                e -> e.isAlive() && e instanceof com.andrey.litrpg.entity.TotemEntity
                         && p.getUUID().equals(Minions.ownerOf(e)))) {
             out.add(m);
         }
@@ -97,7 +100,8 @@ public final class Totems {
             }
         }
         Vec3 at = spot(p);
-        Entity raw = EntityType.SNOW_GOLEM.create(sl);
+        var type = com.andrey.litrpg.registry.ModEntities.TOTEMS.get(kind.entity);
+        Entity raw = type == null ? null : type.get().create(sl);
         if (!(raw instanceof Mob totem)) return false;
         totem.moveTo(at.x, at.y, at.z, p.getYRot(), 0);
         totem.getPersistentData().putUUID(Minions.OWNER_TAG, p.getUUID());
@@ -107,7 +111,6 @@ public final class Totems {
         totem.getPersistentData().putInt("litrpg_lvl", s.getLevel());
         totem.finalizeSpawn(sl, sl.getCurrentDifficultyAt(totem.blockPosition()), MobSpawnType.MOB_SUMMONED, null, null);
         totem.setCustomName(Component.literal(kind.title).withStyle(ChatFormatting.AQUA));
-        totem.setCustomNameVisible(true);
         totem.setPersistenceRequired();
         totem.goalSelector.removeAllGoals(g -> true);
         totem.targetSelector.removeAllGoals(g -> true);
@@ -175,7 +178,7 @@ public final class Totems {
         for (ServerLevel sl : server.getAllLevels()) {
             for (Mob t : sl.getEntitiesOfClass(Mob.class, new net.minecraft.world.phys.AABB(
                     -3.0E7, sl.getMinBuildHeight(), -3.0E7, 3.0E7, sl.getMaxBuildHeight(), 3.0E7),
-                    e -> e.isAlive() && e.getPersistentData().contains(TAG))) {
+                    e -> e.isAlive() && e instanceof com.andrey.litrpg.entity.TotemEntity)) {
                 aura(sl, t);
             }
         }

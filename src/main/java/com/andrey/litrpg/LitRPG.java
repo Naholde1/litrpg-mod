@@ -64,5 +64,8 @@ public class LitRPG {
             event.put(ModEntities.WILD.get(s.id).get(), com.andrey.litrpg.entity.wild.WildMob.attributes(s).build());
         }
         com.andrey.litrpg.entity.stage.Bosses.attributes(event);
+        for (var t : ModEntities.TOTEMS.values()) {
+            event.put(t.get(), com.andrey.litrpg.entity.TotemEntity.createAttributes().build());
+        }
     }
 }
