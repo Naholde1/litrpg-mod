@@ -14,6 +14,8 @@ public enum GearBonus {
     MANA("mana", "маны", false, Slot.JEWEL),
     MANA_REGEN("mana_regen", "восстановления маны", true, Slot.JEWEL),
     SPELL_POWER("spell_power", "силы навыков", true, Slot.ANY),
+    HEAL_POWER("heal_power", "силы лечения", true, Slot.ANY),
+    RESIST("resist", "защиты от всего урона", true, Slot.ARMOR),
     COOLDOWN("cooldown", "сокращения перезарядки", true, Slot.JEWEL),
     XP("xp", "опыта", true, Slot.JEWEL),
     LOOT("loot", "шанса добычи", true, Slot.JEWEL),
@@ -77,7 +79,8 @@ public enum GearBonus {
             case CRIT_CHANCE, DODGE -> 2 + lvl * 0.06f;
             case CRIT_DAMAGE -> 8 + lvl * 0.3f;
             case LIFESTEAL -> 2 + lvl * 0.05f;
-            case MANA_REGEN, SPELL_POWER, XP, LOOT -> 5 + lvl * 0.2f;
+            case MANA_REGEN, SPELL_POWER, HEAL_POWER, XP, LOOT -> 5 + lvl * 0.2f;
+            case RESIST -> 1.5f + lvl * 0.05f;
             case COOLDOWN -> 3 + lvl * 0.1f;
             case DMG_UNDEAD, DMG_ARTHROPOD, DMG_ILLAGER, DMG_GOBLIN, DMG_BEAST, DMG_NETHER, DMG_HUMANOID -> 8 + lvl * 0.3f;
             case DMG_ELITE -> 5 + lvl * 0.2f;
@@ -90,6 +93,7 @@ public enum GearBonus {
         };
         v *= mult * (0.75f + rnd * 0.5f);
         if (this == MANA_COST || this == COOLDOWN) v = Math.min(v, 40);
+        if (this == RESIST) v = Math.min(v, 12);
         return percent || this == HEALTH || this == MANA ? Math.round(v) : Math.round(v * 10) / 10f;
     }
 

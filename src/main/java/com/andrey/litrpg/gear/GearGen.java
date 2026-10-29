@@ -121,18 +121,13 @@ public final class GearGen {
         d.rarity = rarity;
         d.level = Math.max(1, level);
         float m = rarity.mult;
-        int[] weights = switch (cat) {
-            case WEAPON -> new int[]{3, 3, 1, 2, 1};
-            case ARMOR -> new int[]{2, 2, 3, 2, 1};
-            case JEWEL -> new int[]{2, 2, 2, 2, 2};
-        };
-        for (int i = 0; i < rarity.stats; i++) {
-            int s = pick(rnd, weights);
-            d.stats[s] += Math.max(1, Math.round((1 + level * 0.1f) * m * (0.7f + rnd.nextFloat() * 0.6f)));
-        }
+        // Чистых характеристик предметы больше не дают: количество (сколько у тебя здоровья,
+        // маны, урона) идёт от уровня и вложенных очков, а предметы дают проценты и свойства.
+        // Прежние ячейки под характеристики стали дополнительными бонусами.
         List<GearBonus> pool = new ArrayList<>();
         for (GearBonus b : GearBonus.values()) if (b.fits(cat)) pool.add(b);
-        for (int i = 0; i < rarity.bonuses && !pool.isEmpty(); i++) {
+        int rolls = rarity.stats + rarity.bonuses;
+        for (int i = 0; i < rolls && !pool.isEmpty(); i++) {
             GearBonus b = pool.remove(rnd.nextInt(pool.size()));
             d.bonuses.put(b, b.roll(level, m, rnd.nextFloat()));
         }

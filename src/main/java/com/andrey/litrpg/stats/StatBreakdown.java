@@ -109,9 +109,9 @@ public final class StatBreakdown {
         Value v = new Value("Здоровье", "%.0f");
         int lvl = s.getLevel();
         v.add("База", 20);
-        v.add("Выносливость ×2", s.getStat(Stat.VITALITY) * 2.0);
+        v.add("Выносливость ×0.6", s.statPower(Stat.VITALITY) * 2.0);
         // роль танка: выносливость для него чуть ценнее (×2,5 вместо ×2)
-        if (s.getRole() == Role.TANK) v.add("Выносливость (танк) ещё ×0.5", s.getStat(Stat.VITALITY) * 0.5);
+        if (s.getRole() == Role.TANK) v.add("Выносливость (танк) ещё ×0.15", s.statPower(Stat.VITALITY) * 0.5);
         v.add("Уровень (+1 за уровень)", lvl - 1);
         int tank = tankWeight(s);
         if (tank > 0) v.add(cls(s), tank * (1 + lvl * 0.15));
@@ -127,7 +127,8 @@ public final class StatBreakdown {
     public static Value resistance(PlayerStats s) {
         Value v = new Value("Стойкость к урону", "%.0f%%");
         if (s.getRole() == Role.TANK) v.add("Танк (пассивно)", 8);
-        v.add("Выносливость ×0.1% (до 6%)", Math.min(s.getStat(Stat.VITALITY) * 0.1, 6.0));
+        v.add("Выносливость ×0.03% (до 6%)", Math.min(s.statPower(Stat.VITALITY) * 0.1, 6.0));
+        v.add("Экипировка", s.gear().get(GearBonus.RESIST));
         v.note = "Считается после брони. У хранителей танк и так получает вдвое меньше.";
         return v.cap(25);
     }
@@ -135,7 +136,7 @@ public final class StatBreakdown {
     /** Прибавка к урону в ближнем бою, % (от Силы). */
     public static Value meleeDamage(PlayerStats s) {
         Value v = new Value("Урон в ближнем бою", "+%.0f%%");
-        v.add("Сила ×0.5%", s.getStat(Stat.STRENGTH) * 0.5);
+        v.add("Сила ×0.15%", s.statPower(Stat.STRENGTH) * 0.5);
         int melee = styleWeight(s, Style.MELEE);
         if (melee > 0) v.add(cls(s), melee * 2.0);
         v.note = "Сверх прибавки к урону самого оружия.";
@@ -145,7 +146,7 @@ public final class StatBreakdown {
     /** Прибавка к урону стрелой, % (от Ловкости). */
     public static Value rangedDamage(PlayerStats s) {
         Value v = new Value("Урон стрелой", "+%.0f%%");
-        v.add("Ловкость ×0.4%", s.getStat(Stat.AGILITY) * 0.4);
+        v.add("Ловкость ×0.12%", s.statPower(Stat.AGILITY) * 0.4);
         int rg = styleWeight(s, Style.RANGED);
         if (rg > 0) v.add(cls(s), rg * 7.0);
         return v.cap(150);
@@ -158,7 +159,7 @@ public final class StatBreakdown {
     /** Прибавка к урону оружием. */
     public static Value weaponDamage(PlayerStats s) {
         Value v = new Value("Урон оружием (прибавка)", "+%.1f");
-        v.add("Сила ×0.4", s.getStat(Stat.STRENGTH) * 0.4);
+        v.add("Сила ×0.12", s.statPower(Stat.STRENGTH) * 0.4);
         v.add("Экипировка", s.gear().get(GearBonus.DAMAGE));
         v.note = "К урону самого оружия. Удар кулаком — 1 ед. базы.";
         return v;
@@ -166,7 +167,7 @@ public final class StatBreakdown {
 
     public static Value armor(PlayerStats s) {
         Value v = new Value("Броня (прибавка)", "+%.1f");
-        v.add("Выносливость ×0.2 (до 12)", Math.min(s.getStat(Stat.VITALITY) * 0.2, 12.0));
+        v.add("Выносливость ×0.06 (до 12)", Math.min(s.statPower(Stat.VITALITY) * 0.2, 12.0));
         int tank = tankWeight(s);
         if (tank > 0) v.add(cls(s), tank * 0.8);
         v.add("Свойства экипировки", s.gear().get(GearBonus.ARMOR));
@@ -177,14 +178,14 @@ public final class StatBreakdown {
     /** Скорость бега, % сверх обычной. */
     public static Value moveSpeed(PlayerStats s) {
         Value v = new Value("Скорость бега", "+%.0f%%");
-        v.add("Ловкость ×0.6% (до 50%)", Math.min(s.getStat(Stat.AGILITY) * 0.6, 50));
+        v.add("Ловкость ×0.18% (до 50%)", Math.min(s.statPower(Stat.AGILITY) * 0.6, 50));
         v.add("Экипировка", s.gear().get(GearBonus.MOVE_SPEED));
         return v;
     }
 
     public static Value attackSpeed(PlayerStats s) {
         Value v = new Value("Скорость атаки", "+%.0f%%");
-        v.add("Ловкость ×1.2% (до 80%)", Math.min(s.getStat(Stat.AGILITY) * 1.2, 80));
+        v.add("Ловкость ×0.36% (до 80%)", Math.min(s.statPower(Stat.AGILITY) * 1.2, 80));
         v.add("Экипировка", s.gear().get(GearBonus.ATTACK_SPEED));
         return v;
     }
@@ -192,8 +193,8 @@ public final class StatBreakdown {
     public static Value critChance(PlayerStats s) {
         Value v = new Value("Шанс крита", "%.1f%%");
         v.add("База", 5);
-        v.add("Удача ×0.6%", s.getStat(Stat.LUCK) * 0.6);
-        v.add("Ловкость ×0.2%", s.getStat(Stat.AGILITY) * 0.2);
+        v.add("Удача ×0.18%", s.statPower(Stat.LUCK) * 0.6);
+        v.add("Ловкость ×0.06%", s.statPower(Stat.AGILITY) * 0.2);
         int st = styleWeight(s, Style.STEALTH), rg = styleWeight(s, Style.RANGED);
         if (st + rg > 0) v.add(cls(s), st * 3 + rg * 1.5);
         v.add("Экипировка", s.gear().get(GearBonus.CRIT_CHANCE));
@@ -203,15 +204,15 @@ public final class StatBreakdown {
     public static Value critMultiplier(PlayerStats s) {
         Value v = new Value("Сила крита", "x%.2f");
         v.add("База", 1.5);
-        v.add("Удача ×0.01", s.getStat(Stat.LUCK) * 0.01);
+        v.add("Удача ×0.003", s.statPower(Stat.LUCK) * 0.01);
         v.add("Экипировка", s.gear().get(GearBonus.CRIT_DAMAGE) / 100.0);
         return v.cap(3.5);
     }
 
     public static Value dodge(PlayerStats s) {
         Value v = new Value("Уклонение", "%.1f%%");
-        v.add("Ловкость ×0.3%", s.getStat(Stat.AGILITY) * 0.3);
-        v.add("Удача ×0.2%", s.getStat(Stat.LUCK) * 0.2);
+        v.add("Ловкость ×0.09%", s.statPower(Stat.AGILITY) * 0.3);
+        v.add("Удача ×0.06%", s.statPower(Stat.LUCK) * 0.2);
         int st = styleWeight(s, Style.STEALTH);
         if (st > 0) v.add(cls(s), st * 1.5);
         v.add("Экипировка", s.gear().get(GearBonus.DODGE));
@@ -221,7 +222,7 @@ public final class StatBreakdown {
     public static Value maxMana(PlayerStats s) {
         Value v = new Value("Мана", "%.0f");
         v.add("База", 40);
-        v.add("Интеллект ×8", s.getStat(Stat.INTELLIGENCE) * 8);
+        v.add("Интеллект ×2.4", s.statPower(Stat.INTELLIGENCE) * 8);
         v.add("Уровень (+3 за уровень)", (s.getLevel() - 1) * 3);
         if (s.getPlayerClass() != null) {
             int c = (s.getPlayerClass().primary == Stat.INTELLIGENCE ? 30 : 0) + ("mage".equals(s.getPlayerClass().key) ? 20 : 0);
@@ -233,9 +234,9 @@ public final class StatBreakdown {
 
     public static Value manaRegen(PlayerStats s) {
         Value v = new Value("Восстановление маны", "%.2f/с");
-        double base = 0.8 + s.getStat(Stat.INTELLIGENCE) * 0.12 + s.getLevel() * 0.04;
+        double base = 0.8 + s.statPower(Stat.INTELLIGENCE) * 0.12 + s.getLevel() * 0.04;
         v.add("База", 0.8);
-        v.add("Интеллект ×0.12", s.getStat(Stat.INTELLIGENCE) * 0.12);
+        v.add("Интеллект ×0.036", s.statPower(Stat.INTELLIGENCE) * 0.12);
         v.add("Уровень ×0.04", s.getLevel() * 0.04);
         double mult = 1;
         v.add("Экипировка (+" + Math.round(s.gear().get(GearBonus.MANA_REGEN)) + "%)",
@@ -251,7 +252,7 @@ public final class StatBreakdown {
 
     public static Value lootBonus(PlayerStats s) {
         Value v = new Value("Шанс добычи", "+%.0f%%");
-        v.add("Удача ×1%", s.getStat(Stat.LUCK));
+        v.add("Удача ×0.3%", s.statPower(Stat.LUCK));
         v.add("Экипировка", s.gear().get(GearBonus.LOOT));
         if (s.gear().has(com.andrey.litrpg.gear.Passive.TREASURE_HUNTER)) v.note = "«Кладоискатель»: шанс ещё ×2.";
         return v;

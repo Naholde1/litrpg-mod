@@ -338,7 +338,7 @@ public class AbilityHandler {
             case VITALITY -> 0.6f;
             default -> 0.7f;
         };
-        float v = 4 + s.getStat(a.scale) * k + s.getLevel() * 0.5f;
+        float v = 4 + (float) s.statPower(a.scale) * k + s.getLevel() * 0.5f;
         return v * boost;
     }
 
@@ -889,8 +889,10 @@ public class AbilityHandler {
 
     /** Лечение союзников: настоящий лекарь — только поддержка; гибриды (паладин, друид-боец) лечат вполсилы. */
     public static float healMult(PlayerStats s) {
-        if (s.getRole() == null) return 1f;
-        return switch (s.getRole()) {
+        // «сила лечения» с экипировки — проценты, которыми предметы и заменяют прежние чистые характеристики
+        float gear = 1 + s.gear().get(com.andrey.litrpg.gear.GearBonus.HEAL_POWER) / 100f;
+        if (s.getRole() == null) return gear;
+        return gear * switch (s.getRole()) {
             case SUPPORT -> 2.2f;
             case DAMAGE -> 0.55f;
             case TANK -> 0.45f;

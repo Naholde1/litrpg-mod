@@ -136,10 +136,11 @@ public final class PlayerClass {
     public static PlayerClass byKey(String key) { return key == null ? null : BY_KEY.get(key); }
 
     /** Сколько очков характеристики класс дал к этому уровню. */
+    /** Рост от класса: втрое крупнее, чтобы не потеряться на фоне десяти очков за уровень. */
     public int growth(Stat s, int level) {
         int v = 0;
-        if (s == primary) v += level - 1;
-        if (s == secondary) v += (level - 1) / 2;
+        if (s == primary) v += 3 * (level - 1);
+        if (s == secondary) v += 3 * (level - 1) / 2;
         return v;
     }
 

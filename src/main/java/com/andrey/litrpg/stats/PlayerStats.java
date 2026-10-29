@@ -13,7 +13,14 @@ import java.util.Set;
 /** Всё, что Система знает об игроке. */
 public class PlayerStats {
     public static final int MAX_LEVEL = 50;
-    public static final int POINTS_PER_LEVEL = 3;
+    /**
+     * Очков характеристик за уровень. Десять вместо трёх: вкладывать можно понемногу,
+     * и промах одним очком больше ничего не решает. Чтобы сила персонажа от этого не
+     * выросла втрое, каждое очко во столько же раз слабее — см. {@link #POINT_SCALE}.
+     */
+    public static final int POINTS_PER_LEVEL = 10;
+    /** Во сколько раз одно очко слабее прежнего. Расчёты берут характеристику через {@link #statPower}. */
+    public static final double POINT_SCALE = 0.3;
     private static final int DATA_VERSION = 2;
 
     private int level = 1;
@@ -112,6 +119,12 @@ public class PlayerStats {
         v += gear.stats[s.ordinal()];
         return Math.max(0, v);
     }
+
+    /**
+     * Характеристика в расчётах. Окно персонажа показывает крупное число ({@link #getStat}),
+     * а формулы считают от него же, но с шагом нового очка.
+     */
+    public double statPower(Stat s) { return getStat(s) * POINT_SCALE; }
 
     public int getSpent(Stat s) { return spent[s.ordinal()]; }
     public void setSpent(Stat s, int v) { spent[s.ordinal()] = Math.max(0, v); }
