@@ -110,6 +110,13 @@ public abstract class StageBoss extends BossBase {
     private int wavesDone = 0;
     private int waveTheme = 0;
     private long waveStarted = 0;
+    /**
+     * Сколько раз отработала {@link #runWave()} — она вызывается раз в 5 тиков, и считать время
+     * волны по остатку от возраста нельзя: возраст попадает только в свой класс по модулю 5,
+     * поэтому «каждую секунду» и «каждые две секунды» просто не наступали. Осколки Бездны
+     * из-за этого не лечили хранителя вообще.
+     */
+    private int waveTicks = 0;
 
     /** Тема волн: по этапу (уровень хранителя 1–10 — первый этап и т.д.). Хранитель может отключить — вернуть 0. */
     protected int waveTheme() {
@@ -157,6 +164,7 @@ public abstract class StageBoss extends BossBase {
     private void startWave(int theme) {
         waveTheme = theme;
         waveStarted = level().getGameTime();
+        waveTicks = 0;
         Consumer<Mob> tag = m -> m.getPersistentData().putBoolean(WAVE, true);
         switch (theme) {
             case 1 -> {
@@ -211,9 +219,10 @@ public abstract class StageBoss extends BossBase {
             return;
         }
         long age = level().getGameTime() - waveStarted;
+        waveTicks++;
         switch (waveTheme) {
             case 1 -> {
-                if (age % 40 == 0) for (Mob m : list) Fx.chains(level(), this, m, 0.35, 42, 0xC0D0C8B0);
+                if (waveTicks % 8 == 1) for (Mob m : list) Fx.chains(level(), this, m, 0.35, 42, 0xC0D0C8B0);
             }
             case 2 -> {
                 if (age >= 120) {
@@ -259,8 +268,10 @@ public abstract class StageBoss extends BossBase {
                 }
             }
             default -> {
-                if (age % 20 == 0) {
-                    heal(getMaxHealth() * 0.01f * list.size());
+                if (waveTicks % 4 == 1) {
+                    // по 0,5% за осколок в секунду: при 1% три осколка возвращали хранителю
+                    // четверть здоровья за восемь секунд — отряд не успевал их добить
+                    heal(getMaxHealth() * 0.005f * list.size());
                     for (Mob m : list) fxBeam(chestOf(m), chest(), 0.15, 18, 0xC0A060FF);
                 }
             }
@@ -328,6 +339,7 @@ public abstract class StageBoss extends BossBase {
         hazards.clear();
         wavesDone = 0;
         waveTheme = 0;
+        waveTicks = 0;
     }
 
     /** Точка арены на полу (по сетке блоков). */
