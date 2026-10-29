@@ -66,7 +66,7 @@ public final class Laws {
     static boolean declare(ServerPlayer p, Ability a) {
         Kind kind = Kind.byKey(a.law);
         if (kind == null) return false;
-        long until = p.level().getGameTime() + a.duration;
+        long until = p.level().getGameTime() + AbilityHandler.dur(a);
         ACTIVE.put(p.getUUID(), new Law(kind, until));
         for (ServerPlayer o : nearby(p)) {
             o.displayClientMessage(Component.literal("§6" + kind.title + "§7: " + kind.demand

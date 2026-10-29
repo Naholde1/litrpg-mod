@@ -146,6 +146,12 @@ public class TwinNecromancerEntity extends StageBoss {
 
     // ---------------- сестра ----------------
 
+    /** Волны зовёт только одна из пары, иначе их было бы две разом. */
+    @Override
+    protected int waveTheme() {
+        return morra ? super.waveTheme() : 0;
+    }
+
     private TwinNecromancerEntity sister() {
         if (partner == null || !(level() instanceof ServerLevel sl)) return null;
         Entity e = sl.getEntity(partner);

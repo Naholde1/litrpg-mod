@@ -203,7 +203,7 @@ public final class SkillEffects {
                 }
             }
         }
-        MINES.add(new Mine(p.level().dimension(), pos, p.getUUID(), a, p.level().getGameTime() + a.duration));
+        MINES.add(new Mine(p.level().dimension(), pos, p.getUUID(), a, p.level().getGameTime() + AbilityHandler.dur(a)));
     }
 
     // ================= стены =================

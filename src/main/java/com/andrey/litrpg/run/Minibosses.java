@@ -46,6 +46,8 @@ public final class Minibosses {
         }
 
         if (!mo.name().isEmpty()) {
+            // именной — мини-хранитель: у роли появляется свой приём (MiniFights)
+            m.getPersistentData().putString(MiniFights.ROLE, mo.role().isEmpty() ? "giant" : mo.role());
             knockback(m, (double)1.0F);
             m.addEffect(new MobEffectInstance(MobEffects.GLOWING, inf, 0, false, false));
         }

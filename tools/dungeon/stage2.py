@@ -11,6 +11,7 @@ import math
 
 from .build import Map, Theme, Stage, apply_gates, h3, noise2
 from . import decor as D
+from . import secrets
 
 OX, OZ = 2048, 0
 Y = 64      # привал
@@ -108,6 +109,8 @@ def build():
     st.exit = [X(-17), YF, Z(-395), X(-11), YF + 6, Z(-391)]
     m.auto_lights(spacing=9, soul=False, themes={'s2_stump', 's2_moon'}, min_h=5)
     m.glow(spacing=5, level=9)
+    # секретные комнаты с пасхалками (ищутся сами — tools/dungeon/secrets.py)
+    secrets.add(m, st, 2, (st.box[0], st.box[2], st.box[3], st.box[5]), seed=201)
     apply_gates(m, st)
     m.shell(thick=2)
     return m, st

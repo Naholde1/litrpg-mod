@@ -408,6 +408,11 @@ public class AbilityHandler {
      */
     private static float durBoost = 1f;
 
+    /** Длительность навыка с рангом: зоны, оглушения, метки, лечение со временем. Время чтения не растёт. */
+    static int dur(Ability a) {
+        return Math.round(a.duration * durBoost);
+    }
+
     static void applyFoe(Ability a, LivingEntity e, ServerPlayer p) {
         for (Ability.Fx fx : a.enemy) e.addEffect(new MobEffectInstance(fx.effect(), Math.round(fx.duration() * durBoost), fx.amplifier()), p);
     }
@@ -723,7 +728,7 @@ public class AbilityHandler {
         float dmg = b * a.power;
         boolean heals = a.element == Element.HOLY || a.element == Element.NATURE || a.power < 0;
         float healAmount = b * Math.abs(a.power) * 0.6f * healMult(s);
-        int ticks = Math.max(1, a.duration / 20);
+        int ticks = Math.max(1, dur(a) / 20);
         ParticleOptions part = particle(a.element);
         Scheduler.repeat(1, 20, ticks, i -> {
             AABB box = new AABB(center, center).inflate(a.radius, 3, a.radius);
@@ -808,7 +813,7 @@ public class AbilityHandler {
         Vec3 target = lookPoint(p, 40);
         ServerLevel level = p.serverLevel();
         double dmg = base(s, a) * 0.15 * a.power;
-        Scheduler.repeat(1, 2, a.duration / 2, i -> {
+        Scheduler.repeat(1, 2, dur(a) / 2, i -> {
             for (int k = 0; k < 3; k++) {
                 double ox = (p.getRandom().nextDouble() - 0.5) * a.radius * 2;
                 double oz = (p.getRandom().nextDouble() - 0.5) * a.radius * 2;
@@ -831,7 +836,7 @@ public class AbilityHandler {
         // облик — не бафф на время, а состояние: держится, пока есть шкала
         if (a.form) return Forms.toggle(p, StatsManager.get(p), a);
         applySelf(a, p);
-        if (a.reflect) p.getPersistentData().putLong(REFLECT_TAG, p.level().getGameTime() + a.duration);
+        if (a.reflect) p.getPersistentData().putLong(REFLECT_TAG, p.level().getGameTime() + dur(a));
         p.serverLevel().sendParticles(ParticleTypes.TOTEM_OF_UNDYING, p.getX(), p.getY() + 1, p.getZ(), 20, 0.4, 0.6, 0.4, 0.2);
         sound(p, SoundEvents.ARMOR_EQUIP_NETHERITE, 1.0f, 1.0f);
         return true;
@@ -902,7 +907,7 @@ public class AbilityHandler {
         if (a.radius > 0) {
             for (LivingEntity e : enemiesAround(p, p.getBoundingBox().inflate(a.radius))) applyFoe(a, e, p);
         }
-        Stealth.hide(p, a.duration);
+        Stealth.hide(p, dur(a));
         applySelf(a, p);
         p.serverLevel().sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, p.getX(), p.getY() + 1, p.getZ(), 40, 1.5, 1.0, 1.5, 0.01);
         sound(p, SoundEvents.FIRE_EXTINGUISH, 1.0f, 0.7f);
@@ -923,8 +928,8 @@ public class AbilityHandler {
     private static boolean mark(ServerPlayer p, Ability a) {
         LivingEntity t = lookEnemy(p, a.radius);
         if (!isEnemy(p, t)) return noTarget(p);
-        t.getPersistentData().putLong(MARK_TAG, p.level().getGameTime() + a.duration);
-        t.addEffect(new MobEffectInstance(MobEffects.GLOWING, a.duration, 0));
+        t.getPersistentData().putLong(MARK_TAG, p.level().getGameTime() + dur(a));
+        t.addEffect(new MobEffectInstance(MobEffects.GLOWING, dur(a), 0));
         p.serverLevel().sendParticles(ParticleTypes.CRIT, t.getX(), t.getY() + t.getBbHeight() + 0.5, t.getZ(), 20, 0.3, 0.3, 0.3, 0.1);
         sound(p, SoundEvents.EXPERIENCE_ORB_PICKUP, 1.0f, 0.6f);
         return true;
@@ -997,7 +1002,7 @@ public class AbilityHandler {
         Vec3 c = lookPoint(p, 32);
         float dmg = base(s, a) * a.power;
         ParticleOptions part = a.element == null ? ParticleTypes.PORTAL : particle(a.element);
-        Scheduler.repeat(1, 2, Math.max(1, a.duration / 2), i -> {
+        Scheduler.repeat(1, 2, Math.max(1, dur(a) / 2), i -> {
             for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, new AABB(c, c).inflate(a.radius, 3, a.radius), e -> isEnemy(p, e))) {
                 Vec3 v = c.subtract(e.position());
                 if (v.length() > 0.8) {
@@ -1078,7 +1083,7 @@ public class AbilityHandler {
         float dmg = base(s, a) * a.power;
         if (dmg > 0) hurt(p, a, t, dmg);
         else applyFoe(a, t, p);
-        SkillEffects.stun(t, a.duration);
+        SkillEffects.stun(t, dur(a));
         if (t instanceof com.andrey.litrpg.entity.BossBase b) b.interrupt(p);
         ServerLevel level = p.serverLevel();
         if (a.radius > 6) line(level, p.getEyePosition(), t.position().add(0, t.getBbHeight() * 0.6, 0), particle(a.element));
@@ -1092,10 +1097,10 @@ public class AbilityHandler {
         ServerLevel level = p.serverLevel();
         Vec3 c = lookPoint(p, 32);
         for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, new AABB(c, c).inflate(a.radius, 3, a.radius), e -> isEnemy(p, e))) {
-            SkillEffects.stun(e, a.duration);
+            SkillEffects.stun(e, dur(a));
             applyFoe(a, e, p);
         }
-        Scheduler.repeat(1, 10, Math.max(1, a.duration / 10), i -> {
+        Scheduler.repeat(1, 10, Math.max(1, dur(a) / 10), i -> {
             ring(level, c.add(0, 0.2, 0), a.radius, ParticleTypes.END_ROD, (int) (a.radius * 6));
             ring(level, c.add(0, 2.2, 0), a.radius * 0.8, ParticleTypes.REVERSE_PORTAL, (int) (a.radius * 5));
             return true;
@@ -1124,7 +1129,7 @@ public class AbilityHandler {
             BlockPos base = BlockPos.containing(at.x, p.getY(), at.z);
             for (int k = 0; k < 3 && level.getBlockState(base.below()).isAir(); k++) base = base.below();
             for (int h = 0; h < 3; h++) {
-                if (SkillEffects.placeWall(level, base.above(h), state, a.duration)) placed++;
+                if (SkillEffects.placeWall(level, base.above(h), state, dur(a))) placed++;
             }
         }
         if (placed == 0) {
@@ -1219,7 +1224,7 @@ public class AbilityHandler {
         List<LivingEntity> foes = enemiesAround(p, p.getBoundingBox().inflate(a.radius));
         if (foes.isEmpty()) return noTarget(p);
         for (LivingEntity e : foes) {
-            SkillEffects.charm(e, a.duration);
+            SkillEffects.charm(e, dur(a));
             applyFoe(a, e, p);
         }
         ring(p.serverLevel(), p.position().add(0, 0.5, 0), a.radius * 0.7, ParticleTypes.HEART, 20);
@@ -1241,9 +1246,9 @@ public class AbilityHandler {
             p.displayClientMessage(Component.literal("Цель слишком сильна (ур. " + lvl + ")").withStyle(ChatFormatting.RED), true);
             return false;
         }
-        Minions.dominate(m, p, a.duration);
+        Minions.dominate(m, p, dur(a));
         // Дух не просто подчиняет — он входит внутрь и дерётся этим телом
-        if (a.possess) Possession.start(p, m, a.duration);
+        if (a.possess) Possession.start(p, m, dur(a));
         p.serverLevel().sendParticles(ParticleTypes.SOUL_FIRE_FLAME, m.getX(), m.getY() + 1, m.getZ(), 40, 0.4, 0.6, 0.4, 0.03);
         sound(p, SoundEvents.EVOKER_PREPARE_WOLOLO, 1f, 1f);
         return true;
@@ -1251,11 +1256,11 @@ public class AbilityHandler {
 
     /** Подсветить и пометить врагов вокруг. */
     private static boolean reveal(ServerPlayer p, Ability a) {
-        long until = p.level().getGameTime() + a.duration;
+        long until = p.level().getGameTime() + dur(a);
         int n = 0;
         for (LivingEntity e : enemiesAround(p, p.getBoundingBox().inflate(a.radius))) {
             e.removeEffect(MobEffects.INVISIBILITY);
-            e.addEffect(new MobEffectInstance(MobEffects.GLOWING, a.duration, 0));
+            e.addEffect(new MobEffectInstance(MobEffects.GLOWING, dur(a), 0));
             e.getPersistentData().putLong(MARK_TAG, until);
             applyFoe(a, e, p);
             n++;
@@ -1350,7 +1355,7 @@ public class AbilityHandler {
         float amount = base(s, a) * a.power * 0.25f * healMult(s);
         ServerLevel level = p.serverLevel();
         applySelf(a, target);
-        Scheduler.repeat(1, 20, Math.max(1, a.duration / 20), i -> {
+        Scheduler.repeat(1, 20, Math.max(1, dur(a) / 20), i -> {
             if (!p.isAlive() || !target.isAlive() || target.distanceToSqr(p) > a.radius * a.radius * 2.25) return false;
             float before = target.getHealth();
             target.heal(amount);
@@ -1367,7 +1372,7 @@ public class AbilityHandler {
     private static boolean ward(ServerPlayer p, Ability a) {
         LivingEntity t = allyTarget(p, a.radius, true);
         if (t == null) t = p;
-        SkillEffects.ward(t, a.duration);
+        SkillEffects.ward(t, dur(a));
         applySelf(a, t);
         p.serverLevel().sendParticles(ParticleTypes.TOTEM_OF_UNDYING, t.getX(), t.getY() + 1.5, t.getZ(), 25, 0.3, 0.5, 0.3, 0.2);
         if (t != p) p.displayClientMessage(Component.literal("Оберег: ").append(t.getDisplayName()).withStyle(ChatFormatting.GOLD), true);

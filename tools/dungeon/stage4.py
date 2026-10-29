@@ -11,6 +11,7 @@ import math
 
 from .build import Map, Theme, Stage, apply_gates, h3
 from . import decor as D
+from . import secrets
 
 OX, OZ = 4096, 0
 Y = 64       # привал
@@ -97,6 +98,8 @@ def build():
     st.trader = [X(-5), Y, Z(3), 135]
     m.auto_lights(spacing=8, soul=False, themes={'s4_guard', 's4_forge', 's4_hall'}, min_h=6)
     m.glow(spacing=5, level=11)
+    # секретные комнаты с пасхалками (ищутся сами — tools/dungeon/secrets.py)
+    secrets.add(m, st, 2, (st.box[0], st.box[2], st.box[3], st.box[5]), seed=401)
     apply_gates(m, st)
     m.shell(thick=2)
     return m, st

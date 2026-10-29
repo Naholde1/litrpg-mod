@@ -132,10 +132,11 @@ public final class Dynamic {
 
     public static boolean hot(ServerPlayer p, PlayerStats s, Ability a) {
         LivingEntity t = healTarget(p, a.radius);
-        int secs = Math.max(1, a.duration / 20);
-        float per = healAmount(s, a, 1f) / secs;
+        int secs = Math.max(1, AbilityHandler.dur(a) / 20);
+        // тик считается от исходной длительности: ранг удлиняет лечение, а не размазывает его
+        float per = healAmount(s, a, 1f) / Math.max(1, a.duration / 20);
         int c = healColor(a);
-        Fx.mark(p.level(), t, 0.35, 3, a.duration, c);
+        Fx.mark(p.level(), t, 0.35, 3, AbilityHandler.dur(a), c);
         Fx.spiral(p.level(), t, 0.8, 2.2, 2, 20, c);
         Scheduler.repeat(20, 20, secs, i -> {
             if (!t.isAlive() || !p.isAlive()) return false;
@@ -230,10 +231,10 @@ public final class Dynamic {
             p.displayClientMessage(Component.literal("Нет цели").withStyle(ChatFormatting.YELLOW), true);
             return false;
         }
-        int secs = Math.max(1, a.duration / 20);
+        int secs = Math.max(1, AbilityHandler.dur(a) / 20);
         float per = AbilityHandler.base(s, a) * a.power;
         int c = color(a);
-        Fx.mark(p.level(), t, 0.4, 1, a.duration, c);
+        Fx.mark(p.level(), t, 0.4, 1, AbilityHandler.dur(a), c);
         Fx.beam(p.level(), p.getEyePosition().subtract(0, 0.3, 0), t.position().add(0, t.getBbHeight() * 0.6, 0), 0.15, 6, c);
         Scheduler.repeat(20, 20, secs, i -> {
             if (!t.isAlive() || !p.isAlive()) return false;

@@ -15,6 +15,7 @@ import math
 
 from .build import Map, Theme, Stage, apply_gates
 from . import decor as D
+from . import secrets
 
 OX, OZ = 1024, 0
 Y = 64          # пол привала
@@ -150,6 +151,8 @@ def build():
     st.camp = [X(0), Y, Z(10), 180]
     st.trader = [X(-6), Y, Z(3), 135]
     st.exit = [X(-3), YT, Z(-399), X(3), YT + 6, Z(-395)]
+    # секретные комнаты с пасхалками (ищутся сами — tools/dungeon/secrets.py)
+    secrets.add(m, st, 2, (st.box[0], st.box[2], st.box[3], st.box[5]), seed=101)
     apply_gates(m, st)
     m.shell(thick=2)
     return m, st

@@ -122,6 +122,12 @@ public class FireTwinEntity extends StageBoss {
                 .add(Attributes.FOLLOW_RANGE, 44.0);
     }
 
+    /** Волны зовёт только одна из пары, иначе их было бы две разом. */
+    @Override
+    protected int waveTheme() {
+        return ignis ? super.waveTheme() : 0;
+    }
+
     @Override public int getBossLevel() { return 37; }
     @Override public int getXpReward() { return 0; }
     @Override protected float ehp() { return 18000; }

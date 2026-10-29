@@ -95,7 +95,183 @@ public abstract class StageBoss extends BossBase {
     @Override
     public void tick() {
         super.tick();
-        if (!level().isClientSide && isAlive()) tickHazards();
+        if (!level().isClientSide && isAlive()) {
+            tickHazards();
+            tickWaves();
+        }
+    }
+
+    // ---------------- идейные волны ----------------
+
+    /** Волны на 75% и 45% здоровья: у каждого этапа своя идея, а не просто «ещё мобы». */
+    private static final float[] WAVE_AT = {0.75f, 0.45f};
+    private static final String WAVE = "litrpg_wave";
+    private static final String FUSE = "litrpg_wave_fuse";
+    private int wavesDone = 0;
+    private int waveTheme = 0;
+    private long waveStarted = 0;
+
+    /** Тема волн: по этапу (уровень хранителя 1–10 — первый этап и т.д.). Хранитель может отключить — вернуть 0. */
+    protected int waveTheme() {
+        return Math.max(1, Math.min(5, (getBossLevel() - 1) / 10 + 1));
+    }
+
+    private List<Mob> waveMobs() {
+        List<Mob> out = new ArrayList<>();
+        for (Mob m : minions()) if (m.getPersistentData().getBoolean(WAVE)) out.add(m);
+        return out;
+    }
+
+    private void tell(String text) {
+        for (ServerPlayer p : players()) {
+            p.displayClientMessage(net.minecraft.network.chat.Component.literal(text).withStyle(net.minecraft.ChatFormatting.GOLD), true);
+        }
+    }
+
+    /** Точки по кругу у края арены вокруг хранителя. */
+    private List<Vec3> ring(int n, double r) {
+        List<Vec3> out = new ArrayList<>();
+        double off = random.nextDouble() * Math.PI;
+        for (int i = 0; i < n; i++) {
+            double a = off + Math.PI * 2 * i / n;
+            Vec3 c = position().add(Math.cos(a) * r, 0, Math.sin(a) * r);
+            // не в стену: если там камень — ближе к хранителю
+            for (double k = 1; k > 0.3 && !level().getBlockState(BlockPos.containing(c.add(0, 0.5, 0))).isAir(); k -= 0.15) {
+                c = position().add(Math.cos(a) * r * k, 0, Math.sin(a) * r * k);
+            }
+            out.add(c);
+        }
+        return out;
+    }
+
+    private void tickWaves() {
+        if (!inCombat()) return;
+        int theme = waveTheme();
+        if (theme > 0 && wavesDone < WAVE_AT.length && getHealth() / getMaxHealth() <= WAVE_AT[wavesDone]) {
+            wavesDone++;
+            startWave(theme);
+        }
+        if (waveTheme > 0 && tickCount % 5 == 0) runWave();
+    }
+
+    private void startWave(int theme) {
+        waveTheme = theme;
+        waveStarted = level().getGameTime();
+        Consumer<Mob> tag = m -> m.getPersistentData().putBoolean(WAVE, true);
+        switch (theme) {
+            case 1 -> {
+                for (Vec3 c : ring(4, 9)) adds(EntityType.SKELETON, c, 1, 14, MobLevels.Rank.NORMAL, m -> {
+                    tag.accept(m);
+                    m.setCustomName(net.minecraft.network.chat.Component.literal("Костяной страж"));
+                });
+                tell("Костяная стража! Пока она стоит — хранитель получает вдвое меньше.");
+            }
+            case 2 -> {
+                for (Vec3 c : ring(3, 7)) adds(EntityType.SLIME, c, 1, 14, MobLevels.Rank.NORMAL, m -> {
+                    tag.accept(m);
+                    m.setSize(2, true);
+                    m.setNoAi(true);
+                    m.setCustomName(net.minecraft.network.chat.Component.literal("Кладка"));
+                    Fx.disc(level(), m.position(), 1.6, 0, 120, 0xA080E040);
+                });
+                tell("Кладка! Разбейте яйца за шесть секунд — иначе вылупятся пауки.");
+            }
+            case 3 -> {
+                for (Vec3 c : ring(4, 11)) adds(EntityType.DROWNED, c, 1, 14, MobLevels.Rank.NORMAL, m -> {
+                    tag.accept(m);
+                    m.setCustomName(net.minecraft.network.chat.Component.literal("Несущий прилив"));
+                });
+                tell("Несущие прилив идут к хранителю: каждый дошедший его лечит!");
+            }
+            case 4 -> {
+                for (Vec3 c : ring(4, 8)) adds(EntityType.MAGMA_CUBE, c, 1, 14, MobLevels.Rank.NORMAL, m -> {
+                    tag.accept(m);
+                    m.setSize(2, true);
+                    m.setCustomName(net.minecraft.network.chat.Component.literal("Пепельная бомба"));
+                });
+                tell("Пепельные бомбы! Рядом с вами они взрываются — разбегайтесь или бейте издалека.");
+            }
+            default -> {
+                for (Vec3 c : ring(3, 6)) adds(EntityType.VEX, c.add(0, 2, 0), 1, 14, MobLevels.Rank.NORMAL, m -> {
+                    tag.accept(m);
+                    m.setCustomName(net.minecraft.network.chat.Component.literal("Осколок Бездны"));
+                });
+                tell("Осколки Бездны питают хранителя — каждый живой лечит его!");
+            }
+        }
+        fxRing(position(), 0.5, 12, 20, 0xC0FFB040);
+        level().playSound(null, blockPosition(), SoundEvents.RAID_HORN.get(), net.minecraft.sounds.SoundSource.HOSTILE, 1.5f, 0.8f);
+    }
+
+    private void runWave() {
+        List<Mob> list = waveMobs();
+        if (list.isEmpty()) {
+            if (waveTheme > 0 && level().getGameTime() - waveStarted > 40) tell("Волна отбита.");
+            waveTheme = 0;
+            return;
+        }
+        long age = level().getGameTime() - waveStarted;
+        switch (waveTheme) {
+            case 1 -> {
+                if (age % 40 == 0) for (Mob m : list) Fx.chains(level(), this, m, 0.35, 42, 0xC0D0C8B0);
+            }
+            case 2 -> {
+                if (age >= 120) {
+                    for (Mob egg : list) {
+                        adds(EntityType.CAVE_SPIDER, egg.position(), 3, 20, MobLevels.Rank.NORMAL, null);
+                        level().playSound(null, egg.blockPosition(), SoundEvents.TURTLE_EGG_HATCH, net.minecraft.sounds.SoundSource.HOSTILE, 1.5f, 0.6f);
+                        egg.discard();
+                    }
+                }
+            }
+            case 3 -> {
+                for (Mob m : list) {
+                    m.setTarget(null);
+                    m.getNavigation().moveTo(this, 1.0);
+                    if (m.distanceTo(this) < 2.8) {
+                        heal(getMaxHealth() * 0.05f);
+                        fxBeam(chestOf(m), chest(), 0.3, 10, 0xC060C0FF);
+                        level().playSound(null, blockPosition(), SoundEvents.DROWNED_AMBIENT_WATER, net.minecraft.sounds.SoundSource.HOSTILE, 1.5f, 0.6f);
+                        tell("Прилив дошёл — хранитель лечится.");
+                        m.discard();
+                    }
+                }
+            }
+            case 4 -> {
+                long now = level().getGameTime();
+                for (Mob m : list) {
+                    long fuse = m.getPersistentData().getLong(FUSE);
+                    if (fuse == 0) {
+                        for (ServerPlayer p : players()) {
+                            if (p.distanceTo(m) < 2.6) {
+                                m.getPersistentData().putLong(FUSE, now + 20);
+                                Fx.disc(level(), m.position(), 3, 0, 20, 0xB0FF5010);
+                                break;
+                            }
+                        }
+                    } else if (now >= fuse) {
+                        Fx.sphere(level(), m.position().add(0, 0.5, 0), 0.4, 3, 10, 0xE0FF7020);
+                        if (level() instanceof ServerLevel sl) sl.sendParticles(ParticleTypes.EXPLOSION, m.getX(), m.getY() + 0.5, m.getZ(), 1, 0, 0, 0, 0);
+                        level().playSound(null, m.blockPosition(), SoundEvents.GENERIC_EXPLODE, net.minecraft.sounds.SoundSource.HOSTILE, 1.2f, 1.2f);
+                        for (ServerPlayer p : players()) if (p.distanceTo(m) < 3) hit(p, 0.4f);
+                        m.discard();
+                    }
+                }
+            }
+            default -> {
+                if (age % 20 == 0) {
+                    heal(getMaxHealth() * 0.01f * list.size());
+                    for (Mob m : list) fxBeam(chestOf(m), chest(), 0.15, 18, 0xC0A060FF);
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean hurt(net.minecraft.world.damagesource.DamageSource source, float amount) {
+        // костяная стража держит щит, пока стоит
+        if (waveTheme == 1 && !waveMobs().isEmpty() && source.getEntity() instanceof ServerPlayer) amount *= 0.5f;
+        return super.hurt(source, amount);
     }
 
     // ---------------- эффекты ----------------
@@ -150,6 +326,8 @@ public abstract class StageBoss extends BossBase {
     protected void onReset() {
         clearAdds();
         hazards.clear();
+        wavesDone = 0;
+        waveTheme = 0;
     }
 
     /** Точка арены на полу (по сетке блоков). */
