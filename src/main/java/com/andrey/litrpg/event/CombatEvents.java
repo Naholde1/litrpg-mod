@@ -178,6 +178,8 @@ public class CombatEvents {
                     victim.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 1));
                 }
             }
+            // «На грани» Стрижа: он бьёт без пауз, но и получает на четверть больше
+            if (com.andrey.litrpg.ability.Swift.onEdge(victim)) amount *= 1.25f;
             // пассивная стойкость: роль танка и выносливость (видно в окне «K»)
             amount *= 1f - (float) com.andrey.litrpg.stats.StatBreakdown.resistance(vs).value() / 100f;
             event.setAmount(amount);
@@ -201,6 +203,18 @@ public class CombatEvents {
 
         long markedUntil = target.getPersistentData().getLong(AbilityHandler.MARK_TAG);
         if (markedUntil > player.level().getGameTime()) amount *= 1.3f;
+
+        // засечка Стрижа: по зарубке больнее бьют все, а его удары добавляют новые
+        amount *= com.andrey.litrpg.ability.Swift.notchMult(target);
+        if (melee && target.level().getGameTime() < target.getPersistentData().getLong(
+                com.andrey.litrpg.ability.Swift.NOTCH_TAG)) {
+            com.andrey.litrpg.ability.Swift.deepen(target);
+        }
+        // призрачный шаг: подготовленный удар идёт из-за спины
+        if (melee && com.andrey.litrpg.ability.Swift.takeGhost(player)) {
+            amount *= 2.2f;
+            player.displayClientMessage(Component.literal("Удар из-за плеча!").withStyle(ChatFormatting.DARK_AQUA), true);
+        }
 
         if ((melee || arrow) && player.getRandom().nextFloat() < critChance(s)) {
             amount *= critMultiplier(s);

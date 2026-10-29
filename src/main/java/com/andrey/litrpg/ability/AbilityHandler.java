@@ -98,7 +98,8 @@ public class AbilityHandler {
         // сферы и сплетение — не удары, а набор сочетания: держать их за общим откатом
         // значило заставлять астроманта ждать секунду на каждой из трёх сфер
         boolean weaving = a.kind == Ability.Kind.ORB || a.kind == Ability.Kind.INVOKE;
-        if (!dash && !weaving && now < player.getPersistentData().getLong(GCD_TAG)) return;
+        // «На грани» Стрижа: пока держится, паузы между навыками нет совсем
+        if (!dash && !weaving && !Swift.onEdge(player) && now < player.getPersistentData().getLong(GCD_TAG)) return;
         if (com.andrey.litrpg.run.Spirits.isSpirit(player)) return;
         if (!checkCost(player, s, a)) return;
         if (Casting.isCast(a)) {
@@ -211,6 +212,8 @@ public class AbilityHandler {
                 cd = 0;
                 player.displayClientMessage(Component.literal("Магическое эхо!").withStyle(ChatFormatting.LIGHT_PURPLE), true);
             }
+            // «На грани»: ни одна анимация не доигрывает — откаты идут вдвое быстрее
+            if (Swift.onEdge(player)) cd = Math.max(1, cd / 2);
             s.setCooldownEnd(a, now + cd);
             player.getPersistentData().putLong(LAST_CAST_TAG, now);
             // объявленный закон начинает следить за отрядом сам
@@ -1509,7 +1512,10 @@ public class AbilityHandler {
     }
 
     public static boolean isEnemy(ServerPlayer p, Entity e) {
+        // торговец привала — не цель: прицельные навыки хватались за него на привале
+        // вместо настоящего врага, хотя ударить его всё равно нельзя
         return e instanceof LivingEntity le && le.isAlive() && !isAlly(p, e) && !e.isSpectator()
+                && !(e instanceof com.andrey.litrpg.run.TraderEntity)
                 && !(e instanceof net.minecraft.world.entity.decoration.ArmorStand);
     }
 
