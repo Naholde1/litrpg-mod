@@ -57,6 +57,14 @@ public final class Special {
         Graviton.register();
         MirrorKnight.register();
         StoneKit.register();
+        Werebeast.register();
+        Executioner.register();
+        Plaguelord.register();
+        Spirit.register();
+        Shade.register();
+        Pyromancer.register();
+        Monk.register();
+        SoulDrain.register();
     }
 
     /** Трогается при загрузке класса, чтобы статический блок отработал. */
