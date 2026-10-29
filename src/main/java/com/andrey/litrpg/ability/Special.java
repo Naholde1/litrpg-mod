@@ -65,6 +65,11 @@ public final class Special {
         Pyromancer.register();
         Monk.register();
         SoulDrain.register();
+        Chronologist.register();
+        Oracle.register();
+        Skald.register();
+        Wellspring.register();
+        DarkPriest.register();
     }
 
     /** Трогается при загрузке класса, чтобы статический блок отработал. */
