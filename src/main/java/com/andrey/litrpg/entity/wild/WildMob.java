@@ -347,7 +347,12 @@ public class WildMob extends PathfinderMob implements Animated {
         Species s = spec();
         if (cds == null) {
             cds = new int[s.skills.size()];
-            for (int i = 0; i < cds.length; i++) cds[i] = 20 + random.nextInt(Math.max(1, s.skills.get(i).cd() / 2));
+            // Первый приём не должен приходиться на первую секунду знакомства: раньше
+            // чемпион успевал применить его прежде, чем отряд его заметил.
+            for (int i = 0; i < cds.length; i++) {
+                int cd = Math.max(2, s.skills.get(i).cd());
+                cds[i] = cd / 2 + random.nextInt(Math.max(1, cd / 2));
+            }
         }
         if (poseTicks > 0 && --poseTicks == 0) entityData.set(POSE, 0);
         for (int i = 0; i < cds.length; i++) if (cds[i] > 0) cds[i]--;
@@ -697,12 +702,26 @@ public class WildMob extends PathfinderMob implements Animated {
             }
             case BLINK -> {
                 if (dist > r || dist < 4) return false;
+                // Перенос за спину — не мгновенный: полсекунды он виден и слышен обеим сторонам.
+                // Без этого Плакальщица появлялась за лекарем из ниоткуда и успевала ударить
+                // раньше, чем отряд понимал, что она вообще сдвинулась.
+                pose(2, 12);
+                playSound(SoundEvents.ENDERMAN_STARE, 1.2f, 1.4f);
+                if (level() instanceof ServerLevel warn) {
+                    warn.sendParticles(ParticleTypes.PORTAL, getX(), getY() + 1, getZ(), 40, 0.5, 1.0, 0.5, 0.3);
+                }
+                if (t instanceof ServerPlayer sp) {
+                    sp.displayClientMessage(Component.literal(getName().getString() + " уходит в тень — она будет за спиной!")
+                            .withStyle(ChatFormatting.LIGHT_PURPLE), true);
+                }
                 Vec3 look = t.getLookAngle();
                 Vec3 to = t.position().subtract(new Vec3(look.x, 0, look.z).normalize().scale(2.2));
-                if (level() instanceof ServerLevel sl) sl.sendParticles(ParticleTypes.PORTAL, getX(), getY() + 1, getZ(), 30, 0.4, 0.8, 0.4, 0.2);
-                if (!randomTeleport(to.x, t.getY(), to.z, true)) return false;
-                playSound(SoundEvents.ENDERMAN_TELEPORT, 1f, 0.7f);
-                ambush = true;
+                com.andrey.litrpg.util.Scheduler.later(10, () -> {
+                    if (!isAlive() || com.andrey.litrpg.ability.SkillEffects.stunned(this)) return;
+                    if (!randomTeleport(to.x, t.getY(), to.z, true)) return;
+                    playSound(SoundEvents.ENDERMAN_TELEPORT, 1f, 0.7f);
+                    ambush = true;
+                });
                 return true;
             }
             case ROOTS -> {
@@ -872,8 +891,16 @@ public class WildMob extends PathfinderMob implements Animated {
         float mult = 1f;
         if (leapTicks > 0 || swoopTicks > 0) mult *= burstPower;
         if (ambush) {
-            mult *= 2f;
+            mult *= 1.6f;
             ambush = false;
+        }
+        // Удар из засады не должен убивать с полного здоровья: от прыжка и от переноса за
+        // спину уйти нельзя, а убивать можно только за ошибку. Плакальщица на первом этаже
+        // именно так и сносила лекаря: перенос, ×2 к удару — и новичок с 22 хп лежал.
+        if (mult > 1f && target instanceof LivingEntity victim) {
+            float cap = victim.getMaxHealth() * 0.45f;
+            float dealt = dmg() * mult;
+            if (dealt > cap) mult = Math.max(1f, cap / Math.max(0.01f, dmg()));
         }
         AttributeBoost boost = mult != 1f ? new AttributeBoost(this, mult) : null;
         boolean hit = super.doHurtTarget(target);
