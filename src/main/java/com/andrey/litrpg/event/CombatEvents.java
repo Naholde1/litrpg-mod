@@ -87,6 +87,13 @@ public class CombatEvents {
      */
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onProjectileImpact(net.minecraftforge.event.entity.ProjectileImpactEvent event) {
+        // Скольжение Стрижа: хитбокс ниже, и снаряд проходит над головой
+        if (event.getRayTraceResult() instanceof net.minecraft.world.phys.EntityHitResult hit
+                && hit.getEntity() instanceof net.minecraft.server.level.ServerPlayer sp
+                && com.andrey.litrpg.ability.Swift.sliding(sp)) {
+            event.setCanceled(true);
+            return;
+        }
         if (!(event.getRayTraceResult() instanceof net.minecraft.world.phys.EntityHitResult hit)) return;
         if (!(hit.getEntity() instanceof LivingEntity target) || target instanceof Player) return;
         if (target.level().isClientSide) return;
