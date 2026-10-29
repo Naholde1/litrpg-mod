@@ -56,13 +56,20 @@ public enum Resource {
         return MANA;
     }
 
-    /** Размер шкалы: мана растёт от интеллекта и уровня, остальные ровные. */
+    /**
+     * Размер шкалы. Растить её можно всем, а не только магам: уровень добавляет понемногу,
+     * а бонус «маны» с экипировки работает на любой ресурс — иначе у классов с ровной
+     * шкалой не было бы ни одного способа её увеличить.
+     */
     public int max(PlayerStats s) {
+        float gear = s.gear().get(com.andrey.litrpg.gear.GearBonus.MANA);
         return switch (this) {
             case MANA -> (int) Math.round(StatBreakdown.maxMana(s).value());
+            // сферы — механика сплетения, их всегда три
             case ORBS -> 3;
-            case CHARGES -> 4;
-            default -> 100;
+            // ячейка сверх четырёх — только за очень весомую экипировку, и не больше двух
+            case CHARGES -> 4 + (int) Math.min(2, gear / 120);
+            default -> 100 + s.getLevel() / 2 + (int) (gear / 4);
         };
     }
 

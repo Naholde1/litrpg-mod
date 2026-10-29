@@ -129,15 +129,16 @@ C('summoner', 'Призыватель', 'Summoner', 'DAMAGE', 0x9B59B6, 'INT', '
 K('ws_claw', 'Когти', 'Claws', 'STRIKE', '🐾', m=0, cd=3.5, st='AGI', pw=1.0, r=4, combo=1, f='Короткий замах, зато без паузы')
 K('ws_pounce', 'Прыжок', 'Pounce', 'DASH_STRIKE', '⇶', m=0, cd=7, st='AGI', pw=1.2, r=3.4, f='Зверь накрывает цель с разбега')
 K('ws_snap', 'Хватка челюстей', 'Jaw Snap', 'INTERRUPT', '✖', m=10, cd=14, r=4, f='Зубы на горле сбивают чтение')
-K('ws_wolf', 'Облик волка', 'Wolf Form', 'BUFF_SELF', '🐺', m=15, cd=20, d=14, me='spd 14 2; haste 14 1',
+K('ws_wolf', 'Облик волка', 'Wolf Form', 'BUFF_SELF', '🐺', m=15, cd=20, d=14, me='spd 14 1; haste 14 2',
   fl='form',
   f='Быстрый и злой: бьёт часто, держит плохо')
 K('ws_bear', 'Облик медведя', 'Bear Form', 'BUFF_SELF', '🐻', m=15, cd=20, d=14, me='str 14 2; res 14 1; slow 14 0',
   fl='form',
   f='Тяжёлый и медленный: бьёт редко и страшно')
-K('ws_raven', 'Облик ворона', 'Raven Form', 'BUFF_SELF', '🐦', m=15, cd=20, d=14, me='slowfall 14 0; jump 14 2; spd 14 1',
+K('ws_raven', 'Облик ворона', 'Raven Form', 'BUFF_SELF', '🐦', m=15, cd=20, d=14,
+  me='spd 14 3; jump 14 4; slowfall 14 0; nightv 14 0; weak 14 1',
   fl='form',
-  f='Лёгкий: прыгает далеко и падает мягко')
+  f='Перелететь арену, уйти от механики, увидеть во тьме — но бьёт он слабо')
 K('ws_rend', 'Рвать', 'Rend', 'DOT', '〰', m=15, cd=12, pw=0.55, r=4.5, d=10, f='Рваная рана кровит')
 K('ws_howl', 'Вой', 'Howl', 'TAUNT', '❗', m=15, cd=20, r=12, d=6, foe='weak 6 1', f='Вой достаёт до костей')
 K('ws_frenzy', 'Звериный раж', 'Beast Frenzy', 'MULTI_NOVA', '✺', m=25, cd=24, st='AGI', pw=0.85, r=4.5, n=3,

@@ -75,6 +75,17 @@ public class AbilityHandler {
             player.displayClientMessage(Component.literal("Навык откроется на уровне " + need).withStyle(ChatFormatting.RED), true);
             return;
         }
+        // Снять облик или выйти из носителя — не применение навыка: это ничего не стоит,
+        // не уходит в откат и работает даже когда ресурса уже не осталось. Иначе отмена
+        // формы списывала её полную цену, то есть за отказ платили как за вход.
+        if (a.form && a.key.equals(s.getForm())) {
+            Forms.leave(player, s, "Облик снят.");
+            return;
+        }
+        if (a.possess && Possession.active(player)) {
+            Possession.end(player, "Вы вышли из носителя.");
+            return;
+        }
         long end = s.getCooldownEnd(a);
         if (now < end) {
             player.displayClientMessage(Component.literal("Перезарядка: " + String.format("%.1f", (end - now) / 20.0) + " с")

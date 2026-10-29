@@ -26,12 +26,12 @@ public final class Forms {
 
     private Forms() {}
 
-    /** Нажата способность-облик: войти, сменить или выйти. */
+    /**
+     * Нажата способность-облик: войти или сменить облик.
+     * Снятие сюда не доходит — его разбирает {@link AbilityHandler}, потому что
+     * отказ от формы не должен стоить ресурса и уходить в откат.
+     */
     static boolean toggle(ServerPlayer p, PlayerStats s, Ability a) {
-        if (a.key.equals(s.getForm())) {
-            leave(p, s, "Облик снят.");
-            return true;
-        }
         String was = s.getForm();
         if (was != null) clear(p, Ability.byKey(was));
         s.setForm(a.key);

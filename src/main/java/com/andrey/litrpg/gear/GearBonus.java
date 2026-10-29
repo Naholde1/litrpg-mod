@@ -11,7 +11,7 @@ public enum GearBonus {
     CRIT_DAMAGE("crit_damage", "силы крита", true, Slot.WEAPON),
     DODGE("dodge", "уклонения", true, Slot.ARMOR),
     LIFESTEAL("lifesteal", "вампиризма", true, Slot.WEAPON),
-    MANA("mana", "маны", false, Slot.JEWEL),
+    MANA("mana", "запаса ресурса", false, Slot.JEWEL),
     MANA_REGEN("mana_regen", "восстановления маны", true, Slot.JEWEL),
     SPELL_POWER("spell_power", "силы навыков", true, Slot.ANY),
     HEAL_POWER("heal_power", "силы лечения", true, Slot.ANY),
